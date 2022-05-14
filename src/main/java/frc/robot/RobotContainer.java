@@ -4,12 +4,16 @@
 
 package frc.robot;
 
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 import frc.robot.shuffleboard.GRTShuffleboardTab;
@@ -24,7 +28,8 @@ import frc.robot.subsystems.swerve.SwerveSubsystem;
  */
 public class RobotContainer {
     // Subsystems
-    private final SwerveSubsystem swerveSubsystem;
+    //private final SwerveSubsystem swerveSubsystem;
+    private final CANSparkMax motor;
 
     // Controllers and buttons
     private final XboxController driveController = new XboxController(0);
@@ -52,7 +57,8 @@ public class RobotContainer {
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
     public RobotContainer() {
-        swerveSubsystem = new SwerveSubsystem();
+        //swerveSubsystem = new SwerveSubsystem();
+        motor = new CANSparkMax(9, MotorType.kBrushless);
 
         // Configure the button bindings
         configureButtonBindings();
@@ -71,12 +77,15 @@ public class RobotContainer {
      * passing it to a {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
      */
     private void configureButtonBindings() {
+        /*
         swerveSubsystem.setDefaultCommand(new RunCommand(() -> {
             double xPower = -driveController.getLeftY();
             double yPower = -driveController.getLeftX();
             double angularPower = -driveController.getRightX();
             swerveSubsystem.setSwerveDrivePowers(xPower, yPower, angularPower);
         }, swerveSubsystem));
+        */
+        driveAButton.toggleWhenPressed(new StartEndCommand(() -> motor.set(0.3), () -> motor.set(0)));
     }
 
     /**
