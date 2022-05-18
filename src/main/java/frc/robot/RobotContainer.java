@@ -4,9 +4,6 @@
 
 package frc.robot;
 
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -17,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 import frc.robot.shuffleboard.GRTShuffleboardTab;
+import frc.robot.subsystems.swerve.MissileShellSwerveSubsystem;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 
 /**
@@ -29,7 +27,7 @@ import frc.robot.subsystems.swerve.SwerveSubsystem;
 public class RobotContainer {
     // Subsystems
     //private final SwerveSubsystem swerveSubsystem;
-    private final CANSparkMax motor;
+    private final MissileShellSwerveSubsystem swerveSubsystem;
 
     // Controllers and buttons
     private final XboxController driveController = new XboxController(0);
@@ -58,7 +56,7 @@ public class RobotContainer {
      */
     public RobotContainer() {
         //swerveSubsystem = new SwerveSubsystem();
-        motor = new CANSparkMax(9, MotorType.kBrushless);
+        swerveSubsystem = new MissileShellSwerveSubsystem();
 
         // Configure the button bindings
         configureButtonBindings();
@@ -85,7 +83,6 @@ public class RobotContainer {
             swerveSubsystem.setSwerveDrivePowers(xPower, yPower, angularPower);
         }, swerveSubsystem));
         */
-        driveAButton.toggleWhenPressed(new StartEndCommand(() -> motor.set(0.3), () -> motor.set(0)));
     }
 
     /**
