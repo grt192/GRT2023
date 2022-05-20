@@ -1,5 +1,9 @@
 package frc.robot.subsystems.swerve;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
@@ -10,16 +14,17 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 
+/**
+ * A swerve module with a Falcon drive motor and a NEO steer motor.
+ */
 public class SwerveModule {
-    private final CANSparkMax driveMotor;
-    private final RelativeEncoder driveEncoder;
-    private final SparkMaxPIDController drivePidController;
+    private final WPI_TalonFX driveMotor;
 
     private final CANSparkMax steerMotor;
     private final RelativeEncoder steerEncoder;
     private final SparkMaxPIDController steerPidController;
 
-    private static final double DRIVE_ROTATIONS_TO_METERS = 1.0;
+    private static final double DRIVE_TICKS_TO_METERS = 1.0;
     private static final double STEER_ROTATIONS_TO_RADIANS = 1.0;
 
     private static final double driveP = 0;
@@ -33,18 +38,14 @@ public class SwerveModule {
     private static final double steerFF = 0;
 
     public SwerveModule(int drivePort, int steerPort) {
-        driveMotor = new CANSparkMax(drivePort, MotorType.kBrushless);
-        driveMotor.restoreFactoryDefaults();
-        driveMotor.setIdleMode(IdleMode.kBrake);
+        driveMotor = new WPI_TalonFX(drivePort);
 
-        driveEncoder = driveMotor.getEncoder();
-        driveEncoder.setVelocityConversionFactor(DRIVE_ROTATIONS_TO_METERS / 60); // RPM -> m/s
-
-        drivePidController = driveMotor.getPIDController();
-        drivePidController.setP(driveP);
-        drivePidController.setI(driveI);
-        drivePidController.setD(driveD);
-        drivePidController.setFF(driveFF);
+        driveMotor.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
+        driveMotor.setSensorPhase(false);
+        driveMotor.config_kP(0, driveP);
+        driveMotor.config_kI(0, driveI);
+        driveMotor.config_kD(0, driveD);
+        driveMotor.config_kF(0, driveFF);
 
         steerMotor = new CANSparkMax(steerPort, MotorType.kBrushless);
         steerMotor.restoreFactoryDefaults();
@@ -66,7 +67,7 @@ public class SwerveModule {
      */
     public SwerveModuleState getState() {
         return new SwerveModuleState(
-            driveEncoder.getVelocity(), 
+            driveMotor.getSelectedSensorVelocity() * DRIVE_TICKS_TO_METERS * 10, // u/100ms -> m/s 
             getAngle()
         );
     }
@@ -77,7 +78,7 @@ public class SwerveModule {
      */
     public void setDesiredState(SwerveModuleState state) {
         SwerveModuleState optimized = SwerveModuleState.optimize(state, getAngle());
-        drivePidController.setReference(optimized.speedMetersPerSecond, ControlType.kVelocity);
+        driveMotor.set(ControlMode.Velocity, optimized.speedMetersPerSecond / DRIVE_TICKS_TO_METERS / 10); // m/s -> u/100ms
         steerPidController.setReference(optimized.angle.getRadians(), ControlType.kSmartMotion);
     }
 
