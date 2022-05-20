@@ -15,8 +15,8 @@ public class MissileShellSwerveSubsystem extends SubsystemBase {
 
     private final SwerveDriveKinematics kinematics;
 
-    public static final double MAX_VEL = 6000; // Max tangential velocity, in RPM
-    public static final double MAX_OMEGA = Math.toRadians(30); // Max angular velocity, in rads/s
+    public static final double MAX_VEL = 1.0; // Max robot tangential velocity, in percent output
+    public static final double MAX_OMEGA = 0; // Max robot angular velocity, in rads/s
 
     private final GRTShuffleboardTab shuffleboardTab = new GRTShuffleboardTab("Swerve");
     private final GRTNetworkTableEntry driveVelEntry, steerAngleEntry, steerVelEntry;

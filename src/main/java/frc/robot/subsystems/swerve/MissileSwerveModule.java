@@ -21,16 +21,10 @@ import frc.robot.shuffleboard.GRTShuffleboardTab;
 public class MissileSwerveModule {
     private final CANSparkMax driveMotor;
     private final RelativeEncoder driveEncoder;
-    private final SparkMaxPIDController drivePidController;
 
     private final WPI_TalonSRX steerMotor;
 
     private static final double STEER_TICKS_TO_RADIANS = Math.PI / 488.0;
-
-    private static final double driveP = 0;
-    private static final double driveI = 0;
-    private static final double driveD = 0;
-    private static final double driveFF = 0;
 
     private static final double steerP = 0.125;
     private static final double steerI = 0;
@@ -46,12 +40,6 @@ public class MissileSwerveModule {
 
         driveEncoder = driveMotor.getEncoder();
 
-        drivePidController = driveMotor.getPIDController();
-        drivePidController.setP(driveP);
-        drivePidController.setI(driveI);
-        drivePidController.setD(driveD);
-        drivePidController.setFF(driveFF);
-
         steerMotor = new WPI_TalonSRX(steerPort);
         steerMotor.configFactoryDefault();
         steerMotor.setNeutralMode(NeutralMode.Brake);
@@ -64,24 +52,13 @@ public class MissileSwerveModule {
         steerMotor.config_kF(0, steerFF);
 
         shuffleboardTab
-            .list("Drive PID")
-            .at(1, 0)
-            .withSize(1, 3)
-            .addListener("kP", driveP, this::setDriveP)
-            .addListener("kI", driveI, this::setDriveI)
-            .addListener("kD", driveD, this::setDriveD)
-            .addListener("kFF", driveFF, this::setDriveFF);
-
-        shuffleboardTab
             .list("Steer PID")
-            .at(2, 0)
+            .at(1, 0)
             .withSize(1, 3)
             .addListener("kP", steerP, this::setSteerP)
             .addListener("kI", steerI, this::setSteerI)
             .addListener("kD", steerD, this::setSteerD)
             .addListener("kFF", steerFF, this::setSteerFF);
-        
-        shuffleboardTab.addListener("Drive reference", 0, this::setDriveReference, 1, 3);
     }
 
     /**
@@ -116,7 +93,7 @@ public class MissileSwerveModule {
      */
     public SwerveModuleState getState() {
         return new SwerveModuleState(
-            driveEncoder.getVelocity(), 
+            driveMotor.get(), 
             getAngle()
         );
     }
@@ -127,8 +104,8 @@ public class MissileSwerveModule {
      */
     public void setDesiredState(SwerveModuleState state) {
         SwerveModuleState optimized = SwerveModuleState.optimize(state, getAngle());
-        drivePidController.setReference(optimized.speedMetersPerSecond, ControlType.kVelocity);
-        steerMotor.set(ControlMode.MotionMagic, optimized.angle.getRadians());
+        driveMotor.set(optimized.speedMetersPerSecond);
+        steerMotor.set(ControlMode.MotionMagic, optimized.angle.getRadians() / STEER_TICKS_TO_RADIANS);
     }
 
     /**
@@ -137,22 +114,6 @@ public class MissileSwerveModule {
      */
     private Rotation2d getAngle() {
         return new Rotation2d(steerMotor.getSelectedSensorPosition() * STEER_TICKS_TO_RADIANS);
-    }
-
-    private void setDriveP(EntryNotification change) {
-        drivePidController.setP(change.value.getDouble());
-    }
-
-    private void setDriveI(EntryNotification change) {
-        drivePidController.setI(change.value.getDouble());
-    }
-
-    private void setDriveD(EntryNotification change) {
-        drivePidController.setD(change.value.getDouble());
-    }
-
-    private void setDriveFF(EntryNotification change) {
-        drivePidController.setFF(change.value.getDouble());
     }
 
     private void setSteerP(EntryNotification change) {
@@ -169,9 +130,5 @@ public class MissileSwerveModule {
 
     private void setSteerFF(EntryNotification change) {
         steerMotor.config_kF(0, change.value.getDouble());
-    }
-
-    private void setDriveReference(EntryNotification change) {
-        drivePidController.setReference(change.value.getDouble(), ControlType.kVelocity);
     }
 }

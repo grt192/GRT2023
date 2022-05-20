@@ -27,9 +27,9 @@ public class SwerveSubsystem extends SubsystemBase {
 
     private final SwerveDriveKinematics kinematics;
 
-    public static final double MAX_VEL = 3; // Max tangential velocity, in m/s
-    public static final double MAX_ACCEL = 3; // Max tangential acceleration, in m/s^2
-    public static final double MAX_OMEGA = Math.toRadians(30); // Max angular velocity, in rads/s
+    public static final double MAX_VEL = 3; // Max robot tangential velocity, in m/s
+    public static final double MAX_ACCEL = 3; // Max robot tangential acceleration, in m/s^2
+    public static final double MAX_OMEGA = Math.toRadians(30); // Max robot angular velocity, in rads/s
 
     public SwerveSubsystem() {
         // Initialize swerve modules
