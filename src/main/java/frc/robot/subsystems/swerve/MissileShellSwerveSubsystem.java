@@ -11,7 +11,7 @@ import frc.robot.shuffleboard.GRTNetworkTableEntry;
 import frc.robot.shuffleboard.GRTShuffleboardTab;
 
 public class MissileShellSwerveSubsystem extends SubsystemBase {
-    private final MissileSwerveModule module;
+    private final NEOTalonSwerveModule module;
 
     private final SwerveDriveKinematics kinematics;
 
@@ -22,7 +22,7 @@ public class MissileShellSwerveSubsystem extends SubsystemBase {
     private final GRTNetworkTableEntry driveVelEntry, steerAngleEntry, steerVelEntry;
 
     public MissileShellSwerveSubsystem() {
-        module = new MissileSwerveModule(9, 2);
+        module = new NEOTalonSwerveModule(9, 2);
 
         // One module at the center of the robot
         kinematics = new SwerveDriveKinematics(

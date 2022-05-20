@@ -19,8 +19,8 @@ public class SwerveModule {
     private final RelativeEncoder steerEncoder;
     private final SparkMaxPIDController steerPidController;
 
-    private static final double DRIVE_ROTATIONS_TO_METERS = 0;
-    private static final double STEER_ROTATIONS_TO_RADIANS = 0;
+    private static final double DRIVE_ROTATIONS_TO_METERS = 1.0;
+    private static final double STEER_ROTATIONS_TO_RADIANS = 1.0;
 
     private static final double driveP = 0;
     private static final double driveI = 0;
