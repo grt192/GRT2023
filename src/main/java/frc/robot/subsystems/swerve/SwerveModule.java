@@ -51,7 +51,7 @@ public class SwerveModule {
         steerMotor.restoreFactoryDefaults();
         steerMotor.setIdleMode(IdleMode.kBrake);
 
-        steerEncoder = steerMotor.getAlternateEncoder(4096);
+        steerEncoder = steerMotor.getAlternateEncoder(4096); // TODO: find counts per rev of MA3 encoder
         steerEncoder.setPositionConversionFactor(STEER_ROTATIONS_TO_RADIANS);
 
         steerPidController = steerMotor.getPIDController();
@@ -67,7 +67,7 @@ public class SwerveModule {
      */
     public SwerveModuleState getState() {
         return new SwerveModuleState(
-            driveMotor.getSelectedSensorVelocity() * DRIVE_TICKS_TO_METERS * 10, // u/100ms -> m/s 
+            driveMotor.getSelectedSensorVelocity() * DRIVE_TICKS_TO_METERS * 10.0, // u/100ms -> m/s 
             getAngle()
         );
     }
@@ -78,7 +78,7 @@ public class SwerveModule {
      */
     public void setDesiredState(SwerveModuleState state) {
         SwerveModuleState optimized = SwerveModuleState.optimize(state, getAngle());
-        driveMotor.set(ControlMode.Velocity, optimized.speedMetersPerSecond / DRIVE_TICKS_TO_METERS / 10); // m/s -> u/100ms
+        driveMotor.set(ControlMode.Velocity, optimized.speedMetersPerSecond / DRIVE_TICKS_TO_METERS / 10.0); // m/s -> u/100ms
         steerPidController.setReference(optimized.angle.getRadians(), ControlType.kSmartMotion);
     }
 

@@ -30,7 +30,7 @@ public class NEOTalonSwerveModule {
 
     private final WPI_TalonSRX steerMotor;
 
-    private static final double DRIVE_ROTATIONS_TO_METERS = 1.0;
+    private static final double DRIVE_ROTATIONS_TO_METERS = 60.0;
     private static final double STEER_TICKS_TO_RADIANS = Math.PI / 488.0;
 
     private static final double driveP = 0;
@@ -51,7 +51,7 @@ public class NEOTalonSwerveModule {
         driveMotor.setIdleMode(IdleMode.kBrake);
 
         driveEncoder = driveMotor.getEncoder();
-        driveEncoder.setVelocityConversionFactor(DRIVE_ROTATIONS_TO_METERS / 60); // RPM -> m/s
+        driveEncoder.setVelocityConversionFactor(DRIVE_ROTATIONS_TO_METERS / 60.0); // RPM -> m/s
 
         drivePidController = driveMotor.getPIDController();
         drivePidController.setP(driveP);
@@ -115,7 +115,7 @@ public class NEOTalonSwerveModule {
      */
     public SwerveModuleState getState() {
         return new SwerveModuleState(
-            driveMotor.get(), 
+            driveMotor.get(), // NOTE: this is only while the wheel velocity is in percent output instead
             getAngle()
         );
     }
@@ -126,7 +126,7 @@ public class NEOTalonSwerveModule {
      */
     public void setDesiredState(SwerveModuleState state) {
         SwerveModuleState optimized = SwerveModuleState.optimize(state, getAngle());
-        driveMotor.set(optimized.speedMetersPerSecond);
+        driveMotor.set(optimized.speedMetersPerSecond); // NOTE: this is only while the wheel velocity is in percent output instead
 
         // Experimental angle wrapping code for reducing wrist flip
         // TODO: test if this actually worked
@@ -136,7 +136,7 @@ public class NEOTalonSwerveModule {
 
         // If the delta angle is greater than 180, go the other way
         double deltaRads = optimized.angle.getRadians() - currentAngle;
-        if (deltaRads > Math.PI) deltaRads = (optimized.angle.getRadians() + 2 * Math.PI) - currentAngle;
+        if (Math.abs(deltaRads) > Math.PI) deltaRads += Math.copySign(2 * Math.PI, -deltaRads); // Subtract 360 if greater than positive 180, add 360 if less than negative 180
         */
 
         steerMotor.set(ControlMode.Position, optimized.angle.getRadians() / STEER_TICKS_TO_RADIANS);

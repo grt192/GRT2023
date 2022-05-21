@@ -10,6 +10,9 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.shuffleboard.GRTNetworkTableEntry;
 import frc.robot.shuffleboard.GRTShuffleboardTab;
 
+/**
+ * A shell swerve subsystem to run a single swerve module on the missile.
+ */
 public class MissileShellSwerveSubsystem extends SubsystemBase {
     private final NEOTalonSwerveModule module;
 
@@ -48,6 +51,8 @@ public class MissileShellSwerveSubsystem extends SubsystemBase {
     public void setSwerveDrivePowers(double xPower, double yPower, double angularPower) {
         // Scale [-1.0, 1.0] powers to desired velocity, turning field-relative powers
         // into robot relative chassis speeds.
+        // For the missile's single-module setup, we assume that angular power is always 0 and
+        // the "robot" is always facing forward.
         ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(
             xPower * MAX_VEL, 
             yPower * MAX_VEL, 
