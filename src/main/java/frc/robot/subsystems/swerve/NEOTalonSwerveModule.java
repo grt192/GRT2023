@@ -12,6 +12,7 @@ import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.EntryNotification;
@@ -37,7 +38,7 @@ public class NEOTalonSwerveModule {
     private static final double driveD = 0;
     private static final double driveFF = 0;
 
-    private static final double steerP = 0.125;
+    private static final double steerP = 5.5;
     private static final double steerI = 0;
     private static final double steerD = 0;
     private static final double steerFF = 0;
@@ -68,6 +69,8 @@ public class NEOTalonSwerveModule {
         steerMotor.config_kI(0, steerI);
         steerMotor.config_kD(0, steerD);
         steerMotor.config_kF(0, steerFF);
+        steerMotor.configPeakOutputForward(0.65);
+        steerMotor.configPeakOutputReverse(-0.65);
 
         shuffleboardTab
             .list("Drive PID")
@@ -134,7 +137,7 @@ public class NEOTalonSwerveModule {
     public void setDesiredState(SwerveModuleState state) {
         SwerveModuleState optimized = SwerveModuleState.optimize(state, getAngle());
         driveMotor.set(optimized.speedMetersPerSecond);
-        steerMotor.set(ControlMode.MotionMagic, optimized.angle.getRadians() / STEER_TICKS_TO_RADIANS);
+        steerMotor.set(ControlMode.Position, optimized.angle.getRadians() / STEER_TICKS_TO_RADIANS);
     }
 
     /**
