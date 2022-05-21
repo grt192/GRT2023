@@ -18,7 +18,7 @@ public class MissileShellSwerveSubsystem extends SubsystemBase {
     public static final double MAX_VEL = 1.0; // Max robot tangential velocity, in percent output
 
     private final GRTShuffleboardTab shuffleboardTab = new GRTShuffleboardTab("Swerve");
-    private final GRTNetworkTableEntry driveVelEntry, steerAngleEntry, steerVelEntry;
+    private final GRTNetworkTableEntry driveVelEntry, steerAngleEntry;
 
     public MissileShellSwerveSubsystem() {
         module = new NEOTalonSwerveModule(9, 2);
@@ -31,14 +31,12 @@ public class MissileShellSwerveSubsystem extends SubsystemBase {
 
         driveVelEntry = shuffleboardTab.addEntry("Drive vel", 0).at(0, 0);
         steerAngleEntry = shuffleboardTab.addEntry("Steer angle", 0).at(0, 1);
-        steerVelEntry = shuffleboardTab.addEntry("Steer vel", 0).at(0, 2);
     }
 
     @Override
     public void periodic() {
         driveVelEntry.setValue(module.getDriveVelocity());
         steerAngleEntry.setValue(module.getState().angle.getDegrees());
-        steerVelEntry.setValue(module.getSteerVelocity());
     }
 
     /**

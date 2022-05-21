@@ -110,16 +110,6 @@ public class NEOTalonSwerveModule {
     }
 
     /**
-     * Testing function to get the current velocity of the steer motor, in radians/second.
-     * This relies on a correctly tuned STEER_TICKS_TO_RADIANS to return the correct units.
-     * @return The current position of the steer motor, in radians/s.
-     */
-    public double getSteerVelocity() {
-        // ticks/100ms -> rads/s
-        return steerMotor.getSelectedSensorVelocity() * 10 * STEER_TICKS_TO_RADIANS;
-    }
-
-    /**
      * Gets the current state of the module as a `SwerveModuleState`.
      * @return The state of the module.
      */
@@ -137,6 +127,18 @@ public class NEOTalonSwerveModule {
     public void setDesiredState(SwerveModuleState state) {
         SwerveModuleState optimized = SwerveModuleState.optimize(state, getAngle());
         driveMotor.set(optimized.speedMetersPerSecond);
+
+        // Experimental angle wrapping code for reducing wrist flip
+        // TODO: test if this actually worked
+        /*
+        // Wrap current angle between [0, 2pi]
+        double currentAngle = MathUtil.inputModulus(steerMotor.getSelectedSensorPosition() * STEER_TICKS_TO_RADIANS, 0, 2 * Math.PI);
+
+        // If the delta angle is greater than 180, go the other way
+        double deltaRads = optimized.angle.getRadians() - currentAngle;
+        if (deltaRads > Math.PI) deltaRads = (optimized.angle.getRadians() + 2 * Math.PI) - currentAngle;
+        */
+
         steerMotor.set(ControlMode.Position, optimized.angle.getRadians() / STEER_TICKS_TO_RADIANS);
     }
 
