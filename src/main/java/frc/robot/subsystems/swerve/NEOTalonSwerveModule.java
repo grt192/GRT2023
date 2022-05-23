@@ -31,7 +31,10 @@ public class NEOTalonSwerveModule {
     private final WPI_TalonSRX steerMotor;
 
     private static final double DRIVE_ROTATIONS_TO_METERS = 60.0;
-    private static final double STEER_TICKS_TO_RADIANS = Math.PI / 488.0;
+    // Math.PI / 488.0; <-- bad
+    // 2 * Math.PI / 1022.0;
+    // 4 * Math.PI / 2046.0;
+    private static final double STEER_TICKS_TO_RADIANS = 2 * Math.PI / 1024.0;
 
     private static final double driveP = 0;
     private static final double driveI = 0;
@@ -128,18 +131,15 @@ public class NEOTalonSwerveModule {
         SwerveModuleState optimized = SwerveModuleState.optimize(state, getAngle());
         driveMotor.set(optimized.speedMetersPerSecond); // NOTE: this is only while the wheel velocity is in percent output instead
 
-        // Experimental angle wrapping code for reducing wrist flip
-        // TODO: test if this actually worked
-        /*
         // Wrap current angle between [0, 2pi]
-        double currentAngle = MathUtil.inputModulus(steerMotor.getSelectedSensorPosition() * STEER_TICKS_TO_RADIANS, 0, 2 * Math.PI);
+        double currentAngle = getAngle().getRadians();
+        double wrappedAngle = MathUtil.inputModulus(steerMotor.getSelectedSensorPosition() * STEER_TICKS_TO_RADIANS, 0, 2 * Math.PI);
 
         // If the delta angle is greater than 180, go the other way
-        double deltaRads = optimized.angle.getRadians() - currentAngle;
+        double deltaRads = optimized.angle.getRadians() - wrappedAngle;
         if (Math.abs(deltaRads) > Math.PI) deltaRads += Math.copySign(2 * Math.PI, -deltaRads); // Subtract 360 if greater than positive 180, add 360 if less than negative 180
-        */
 
-        steerMotor.set(ControlMode.Position, optimized.angle.getRadians() / STEER_TICKS_TO_RADIANS);
+        steerMotor.set(ControlMode.Position, (currentAngle + deltaRads) / STEER_TICKS_TO_RADIANS);
     }
 
     /**

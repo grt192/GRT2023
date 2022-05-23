@@ -39,7 +39,7 @@ public class MissileShellSwerveSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         driveVelEntry.setValue(module.getDriveVelocity());
-        steerAngleEntry.setValue(module.getState().angle.getDegrees());
+        steerAngleEntry.setValue(/* module.getSteerPosition() */ module.getState().angle.getDegrees());
     }
 
     /**
