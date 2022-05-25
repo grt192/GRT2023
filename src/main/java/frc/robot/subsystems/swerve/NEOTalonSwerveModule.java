@@ -30,10 +30,9 @@ public class NEOTalonSwerveModule {
 
     private final WPI_TalonSRX steerMotor;
 
+    private final double offsetRads;
+
     private static final double DRIVE_ROTATIONS_TO_METERS = 60.0;
-    // Math.PI / 488.0; <-- bad
-    // 2 * Math.PI / 1022.0;
-    // 4 * Math.PI / 2046.0;
     private static final double STEER_TICKS_TO_RADIANS = 2 * Math.PI / 1024.0;
 
     private static final double driveP = 0;
@@ -48,7 +47,7 @@ public class NEOTalonSwerveModule {
 
     private final GRTShuffleboardTab shuffleboardTab = new GRTShuffleboardTab("Swerve");
 
-    public NEOTalonSwerveModule(int drivePort, int steerPort) {
+    public NEOTalonSwerveModule(int drivePort, int steerPort, double offsetRads) {
         driveMotor = new CANSparkMax(drivePort, MotorType.kBrushless);
         driveMotor.restoreFactoryDefaults();
         driveMotor.setIdleMode(IdleMode.kBrake);
@@ -75,6 +74,8 @@ public class NEOTalonSwerveModule {
         steerMotor.configPeakOutputForward(0.65);
         steerMotor.configPeakOutputReverse(-0.65);
 
+        this.offsetRads = offsetRads;
+
         shuffleboardTab
             .list("Drive PID")
             .at(1, 0)
@@ -94,6 +95,10 @@ public class NEOTalonSwerveModule {
             .addListener("kFF", steerFF, this::setSteerFF);
 
         shuffleboardTab.addListener("Drive reference", 0, this::setDriveReference, 1, 3);
+    }
+
+    public NEOTalonSwerveModule(int drivePort, int steerPort) {
+        this(drivePort, steerPort, 0.0);
     }
 
     /**
@@ -146,7 +151,7 @@ public class NEOTalonSwerveModule {
      * @return The current angle of the module, as a `Rotation2d`.
      */
     private Rotation2d getAngle() {
-        return new Rotation2d(steerMotor.getSelectedSensorPosition() * STEER_TICKS_TO_RADIANS);
+        return new Rotation2d(steerMotor.getSelectedSensorPosition() * STEER_TICKS_TO_RADIANS + offsetRads);
     }
 
     private void setDriveP(EntryNotification change) {

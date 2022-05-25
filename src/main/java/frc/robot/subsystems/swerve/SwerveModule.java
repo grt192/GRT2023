@@ -25,6 +25,8 @@ public class SwerveModule {
     private final RelativeEncoder steerEncoder;
     private final SparkMaxPIDController steerPidController;
 
+    private final double offsetRads;
+
     private static final double DRIVE_TICKS_TO_METERS = 1.0;
 
     private static final double driveP = 0;
@@ -37,7 +39,16 @@ public class SwerveModule {
     private static final double steerD = 0;
     private static final double steerFF = 0;
 
-    public SwerveModule(int drivePort, int steerPort) {
+    /**
+     * Constructs a SwerveModule from a drive and steer motor CAN ID and an angle offset.
+     * The offset will be applied to all angle readings to change the zero point of the 
+     * module.
+     * 
+     * @param drivePort The drive TalonFX CAN ID.
+     * @param steerPort The steer SparkMax CAN ID.
+     * @param offsetRads The angle offset, in radians.
+     */
+    public SwerveModule(int drivePort, int steerPort, double offsetRads) {
         driveMotor = new WPI_TalonFX(drivePort);
 
         driveMotor.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
@@ -59,6 +70,19 @@ public class SwerveModule {
         steerPidController.setI(steerI);
         steerPidController.setD(steerD);
         steerPidController.setFF(steerFF);
+
+        this.offsetRads = offsetRads;
+    }
+
+    /**
+     * Constructs a SwerveModule from a drive and steer motor CAN ID, 
+     * defaulting the angle offset to 0.
+     * 
+     * @param drivePort The drive TalonFX CAN ID.
+     * @param steerPort The steer SparkMax CAN ID.
+     */
+    public SwerveModule(int drivePort, int steerPort) {
+        this(drivePort, steerPort, 0.0);
     }
 
     /**
@@ -95,6 +119,6 @@ public class SwerveModule {
      * @return The current angle of the module, as a `Rotation2d`.
      */
     private Rotation2d getAngle() {
-        return new Rotation2d(steerEncoder.getPosition());
+        return new Rotation2d(steerEncoder.getPosition() + offsetRads);
     }
 }
