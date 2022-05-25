@@ -133,11 +133,10 @@ public class NEOTalonSwerveModule {
 
         // Wrap current angle between [0, 2pi]
         double currentAngle = getAngle().getRadians();
-        double wrappedAngle = MathUtil.inputModulus(steerMotor.getSelectedSensorPosition() * STEER_TICKS_TO_RADIANS, 0, 2 * Math.PI);
+        double wrappedAngle = MathUtil.inputModulus(currentAngle, 0, 2 * Math.PI);
 
-        // If the delta angle is greater than 180, go the other way
-        double deltaRads = optimized.angle.getRadians() - wrappedAngle;
-        if (Math.abs(deltaRads) > Math.PI) deltaRads += Math.copySign(2 * Math.PI, -deltaRads); // Subtract 360 if greater than positive 180, add 360 if less than negative 180
+        // If the delta angle is greater than 180, go the other way by wrapping angle between [-pi, pi]
+        double deltaRads = MathUtil.angleModulus(optimized.angle.getRadians() - wrappedAngle);
 
         steerMotor.set(ControlMode.Position, (currentAngle + deltaRads) / STEER_TICKS_TO_RADIANS);
     }

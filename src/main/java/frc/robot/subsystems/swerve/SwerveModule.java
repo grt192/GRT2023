@@ -11,6 +11,7 @@ import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 
@@ -25,7 +26,6 @@ public class SwerveModule {
     private final SparkMaxPIDController steerPidController;
 
     private static final double DRIVE_TICKS_TO_METERS = 1.0;
-    private static final double STEER_ROTATIONS_TO_RADIANS = 1.0;
 
     private static final double driveP = 0;
     private static final double driveI = 0;
@@ -51,8 +51,8 @@ public class SwerveModule {
         steerMotor.restoreFactoryDefaults();
         steerMotor.setIdleMode(IdleMode.kBrake);
 
-        steerEncoder = steerMotor.getAlternateEncoder(4096); // TODO: find counts per rev of MA3 encoder
-        steerEncoder.setPositionConversionFactor(STEER_ROTATIONS_TO_RADIANS);
+        steerEncoder = steerMotor.getAlternateEncoder(1024);
+        steerEncoder.setPositionConversionFactor(2 * Math.PI); // 1 rotation = 2pi
 
         steerPidController = steerMotor.getPIDController();
         steerPidController.setP(steerP);
@@ -79,7 +79,15 @@ public class SwerveModule {
     public void setDesiredState(SwerveModuleState state) {
         SwerveModuleState optimized = SwerveModuleState.optimize(state, getAngle());
         driveMotor.set(ControlMode.Velocity, optimized.speedMetersPerSecond / DRIVE_TICKS_TO_METERS / 10.0); // m/s -> u/100ms
-        steerPidController.setReference(optimized.angle.getRadians(), ControlType.kSmartMotion);
+
+        // Wrap current angle between [0, 2pi]
+        double currentAngle = getAngle().getRadians();
+        double wrappedAngle = MathUtil.inputModulus(currentAngle, 0, 2 * Math.PI);
+
+        // If the delta angle is greater than 180, go the other way by wrapping angle between [-pi, pi]
+        double deltaRads = MathUtil.angleModulus(optimized.angle.getRadians() - wrappedAngle);
+
+        steerPidController.setReference(currentAngle + deltaRads, ControlType.kPosition);
     }
 
     /**
