@@ -143,7 +143,7 @@ public class NEOTalonSwerveModule {
         // If the delta angle is greater than 180, go the other way by wrapping angle between [-pi, pi]
         double deltaRads = MathUtil.angleModulus(optimized.angle.getRadians() - wrappedAngle);
 
-        steerMotor.set(ControlMode.Position, (currentAngle + deltaRads) / STEER_TICKS_TO_RADIANS);
+        steerMotor.set(ControlMode.Position, (currentAngle - offsetRads + deltaRads) / STEER_TICKS_TO_RADIANS);
     }
 
     /**
@@ -151,7 +151,10 @@ public class NEOTalonSwerveModule {
      * @return The current angle of the module, as a `Rotation2d`.
      */
     private Rotation2d getAngle() {
-        return new Rotation2d(steerMotor.getSelectedSensorPosition() * STEER_TICKS_TO_RADIANS + offsetRads);
+        return new Rotation2d(
+            steerMotor.getSelectedSensorPosition() * STEER_TICKS_TO_RADIANS 
+            + offsetRads
+        );
     }
 
     private void setDriveP(EntryNotification change) {

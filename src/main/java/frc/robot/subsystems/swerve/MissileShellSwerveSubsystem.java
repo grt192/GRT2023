@@ -24,7 +24,7 @@ public class MissileShellSwerveSubsystem extends SubsystemBase {
     private final GRTNetworkTableEntry driveVelEntry, steerAngleEntry;
 
     public MissileShellSwerveSubsystem() {
-        module = new NEOTalonSwerveModule(9, 2);
+        module = new NEOTalonSwerveModule(9, 2, Math.PI / 6);
 
         // One module at the center of the robot
         kinematics = new SwerveDriveKinematics(

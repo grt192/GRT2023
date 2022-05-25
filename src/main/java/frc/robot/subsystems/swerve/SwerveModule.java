@@ -111,7 +111,7 @@ public class SwerveModule {
         // If the delta angle is greater than 180, go the other way by wrapping angle between [-pi, pi]
         double deltaRads = MathUtil.angleModulus(optimized.angle.getRadians() - wrappedAngle);
 
-        steerPidController.setReference(currentAngle + deltaRads, ControlType.kPosition);
+        steerPidController.setReference(currentAngle - offsetRads + deltaRads, ControlType.kPosition);
     }
 
     /**
