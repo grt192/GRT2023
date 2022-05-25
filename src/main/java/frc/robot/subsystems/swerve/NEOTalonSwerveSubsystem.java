@@ -11,6 +11,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -34,19 +35,31 @@ public class NEOTalonSwerveSubsystem extends SubsystemBase {
     public NEOTalonSwerveSubsystem() {
         // Initialize swerve modules
         // TODO: CAN IDs
-        topLeftModule = new NEOTalonSwerveModule(0, 0);
-        topRightModule = new NEOTalonSwerveModule(0, 0);
-        bottomLeftModule = new NEOTalonSwerveModule(0, 0);
-        bottomRightModule = new NEOTalonSwerveModule(0, 0);
+        topLeftModule = new NEOTalonSwerveModule(14, 10);
+        topRightModule = new NEOTalonSwerveModule(4, 5);
+        bottomLeftModule = new NEOTalonSwerveModule(13, 11);
+        bottomRightModule = new NEOTalonSwerveModule(1, 12);
 
         // Initialize system kinematics with top left, top right, bottom left, and bottom right swerve
         // module positions
         // TODO: positions
         kinematics = new SwerveDriveKinematics(
-            new Translation2d(),
-            new Translation2d(),
-            new Translation2d(),
-            new Translation2d()
+            new Translation2d(
+                Units.inchesToMeters(11.8125),
+                Units.inchesToMeters(11.6875)
+            ),
+            new Translation2d(
+                Units.inchesToMeters(11.8125),
+                Units.inchesToMeters(-11.6875)
+            ),
+            new Translation2d(
+                Units.inchesToMeters(-11.8125),
+                Units.inchesToMeters(11.6875)
+            ),
+            new Translation2d(
+                Units.inchesToMeters(-11.8125),
+                Units.inchesToMeters(-11.6875)
+            )
         );
 
         // Initialize NaxX and pose estimator

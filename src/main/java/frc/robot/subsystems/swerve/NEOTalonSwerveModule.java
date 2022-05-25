@@ -45,9 +45,11 @@ public class NEOTalonSwerveModule {
     private static final double steerD = 0;
     private static final double steerFF = 0;
 
-    private final GRTShuffleboardTab shuffleboardTab = new GRTShuffleboardTab("Swerve");
+    private final GRTShuffleboardTab shuffleboardTab;
 
     public NEOTalonSwerveModule(int drivePort, int steerPort, double offsetRads) {
+        shuffleboardTab = new GRTShuffleboardTab("Swerve " + drivePort);
+
         driveMotor = new CANSparkMax(drivePort, MotorType.kBrushless);
         driveMotor.restoreFactoryDefaults();
         driveMotor.setIdleMode(IdleMode.kBrake);
