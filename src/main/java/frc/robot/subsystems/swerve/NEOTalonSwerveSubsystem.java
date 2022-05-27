@@ -34,31 +34,30 @@ public class NEOTalonSwerveSubsystem extends SubsystemBase {
 
     public NEOTalonSwerveSubsystem() {
         // Initialize swerve modules
-        // TODO: CAN IDs
-        topLeftModule = new NEOTalonSwerveModule(14, 10);
-        topRightModule = new NEOTalonSwerveModule(4, 5);
-        bottomLeftModule = new NEOTalonSwerveModule(13, 11);
-        bottomRightModule = new NEOTalonSwerveModule(1, 12);
+        topLeftModule = new NEOTalonSwerveModule(14, 10, 1.53398078789);
+        topRightModule = new NEOTalonSwerveModule(4, 5, 1.31922347758 + Math.PI);
+        bottomLeftModule = new NEOTalonSwerveModule(13, 11, 2.28256341237 + Math.PI);
+        bottomRightModule = new NEOTalonSwerveModule(1, 12, 5.09281621578);
 
         // Initialize system kinematics with top left, top right, bottom left, and bottom right swerve
         // module positions
         // TODO: positions
         kinematics = new SwerveDriveKinematics(
             new Translation2d(
-                Units.inchesToMeters(11.8125),
-                Units.inchesToMeters(11.6875)
+                Units.inchesToMeters(13.1365),
+                Units.inchesToMeters(10.3865)
             ),
             new Translation2d(
-                Units.inchesToMeters(11.8125),
-                Units.inchesToMeters(-11.6875)
+                Units.inchesToMeters(13.1365),
+                Units.inchesToMeters(-10.3865)
             ),
             new Translation2d(
-                Units.inchesToMeters(-11.8125),
-                Units.inchesToMeters(11.6875)
+                Units.inchesToMeters(-13.1365),
+                Units.inchesToMeters(10.3865)
             ),
             new Translation2d(
-                Units.inchesToMeters(-11.8125),
-                Units.inchesToMeters(-11.6875)
+                Units.inchesToMeters(-13.1365),
+                Units.inchesToMeters(-10.3865)
             )
         );
 

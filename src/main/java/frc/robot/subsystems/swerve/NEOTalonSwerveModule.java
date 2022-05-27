@@ -16,7 +16,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.EntryNotification;
-
+import frc.robot.shuffleboard.GRTNetworkTableEntry;
 import frc.robot.shuffleboard.GRTShuffleboardTab;
 
 /**
@@ -46,6 +46,7 @@ public class NEOTalonSwerveModule {
     private static final double steerFF = 0;
 
     private final GRTShuffleboardTab shuffleboardTab;
+    private final GRTNetworkTableEntry veloEntry, angleEntry;
 
     public NEOTalonSwerveModule(int drivePort, int steerPort, double offsetRads) {
         shuffleboardTab = new GRTShuffleboardTab("Swerve " + drivePort);
@@ -66,6 +67,7 @@ public class NEOTalonSwerveModule {
         steerMotor = new WPI_TalonSRX(steerPort);
         steerMotor.configFactoryDefault();
         steerMotor.setNeutralMode(NeutralMode.Brake);
+        steerMotor.setInverted(true);
 
         steerMotor.configSelectedFeedbackSensor(FeedbackDevice.Analog, 0, 0);
         steerMotor.setSensorPhase(false);
@@ -77,6 +79,9 @@ public class NEOTalonSwerveModule {
         steerMotor.configPeakOutputReverse(-0.65);
 
         this.offsetRads = offsetRads;
+
+        veloEntry = shuffleboardTab.addEntry("Vel", driveEncoder.getVelocity()).at(0, 0);
+        angleEntry = shuffleboardTab.addEntry("Angle", getAngle().getRadians()).at(0, 1);
 
         shuffleboardTab
             .list("Drive PID")
@@ -146,6 +151,9 @@ public class NEOTalonSwerveModule {
         double deltaRads = MathUtil.angleModulus(optimized.angle.getRadians() - wrappedAngle);
 
         steerMotor.set(ControlMode.Position, (currentAngle - offsetRads + deltaRads) / STEER_TICKS_TO_RADIANS);
+
+        angleEntry.setValue(getAngle().getRadians());
+        veloEntry.setValue(driveEncoder.getVelocity());
     }
 
     /**
