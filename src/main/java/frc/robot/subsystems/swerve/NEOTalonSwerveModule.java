@@ -3,7 +3,6 @@ package frc.robot.subsystems.swerve;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
@@ -16,6 +15,8 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.EntryNotification;
+
+import frc.robot.motorcontrol.GRTTalonSRX;
 import frc.robot.shuffleboard.GRTNetworkTableEntry;
 import frc.robot.shuffleboard.GRTShuffleboardTab;
 
@@ -28,7 +29,7 @@ public class NEOTalonSwerveModule {
     private final RelativeEncoder driveEncoder;
     private final SparkMaxPIDController drivePidController;
 
-    private final WPI_TalonSRX steerMotor;
+    private final GRTTalonSRX steerMotor;
 
     private final double offsetRads;
 
@@ -64,13 +65,14 @@ public class NEOTalonSwerveModule {
         drivePidController.setD(driveD);
         drivePidController.setFF(driveFF);
 
-        steerMotor = new WPI_TalonSRX(steerPort);
+        steerMotor = new GRTTalonSRX(steerPort);
         steerMotor.configFactoryDefault();
         steerMotor.setNeutralMode(NeutralMode.Brake);
         steerMotor.setInverted(true);
 
         steerMotor.configSelectedFeedbackSensor(FeedbackDevice.Analog, 0, 0);
         steerMotor.setSensorPhase(false);
+        steerMotor.setPositionConversionFactor(STEER_TICKS_TO_RADIANS);
         steerMotor.config_kP(0, steerP);
         steerMotor.config_kI(0, steerI);
         steerMotor.config_kD(0, steerD);
@@ -117,14 +119,6 @@ public class NEOTalonSwerveModule {
     }
 
     /**
-     * Testing function to get the current position of the steer motor.
-     * @return The current position of the steer motor, in encoder ticks.
-     */
-    public double getSteerPosition() {
-        return steerMotor.getSelectedSensorPosition();
-    }
-
-    /**
      * Gets the current state of the module as a `SwerveModuleState`.
      * @return The state of the module.
      */
@@ -150,7 +144,7 @@ public class NEOTalonSwerveModule {
         // If the delta angle is greater than 180, go the other way by wrapping angle between [-pi, pi]
         double deltaRads = MathUtil.angleModulus(optimized.angle.getRadians() - wrappedAngle);
 
-        steerMotor.set(ControlMode.Position, (currentAngle - offsetRads + deltaRads) / STEER_TICKS_TO_RADIANS);
+        steerMotor.set(ControlMode.Position, currentAngle - offsetRads + deltaRads);
 
         angleEntry.setValue(getAngle().getRadians());
         veloEntry.setValue(driveEncoder.getVelocity());
@@ -162,8 +156,7 @@ public class NEOTalonSwerveModule {
      */
     private Rotation2d getAngle() {
         return new Rotation2d(
-            steerMotor.getSelectedSensorPosition() * STEER_TICKS_TO_RADIANS 
-            + offsetRads
+            steerMotor.getSelectedSensorPosition() + offsetRads
         );
     }
 

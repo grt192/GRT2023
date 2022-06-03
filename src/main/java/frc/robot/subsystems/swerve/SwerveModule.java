@@ -2,7 +2,7 @@ package frc.robot.subsystems.swerve;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
@@ -15,11 +15,13 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 
+import frc.robot.motorcontrol.GRTTalonFX;
+
 /**
  * A swerve module with a Falcon drive motor and a NEO steer motor.
  */
 public class SwerveModule {
-    private final WPI_TalonFX driveMotor;
+    private final GRTTalonFX driveMotor;
 
     private final CANSparkMax steerMotor;
     private final RelativeEncoder steerEncoder;
@@ -49,10 +51,13 @@ public class SwerveModule {
      * @param offsetRads The angle offset, in radians.
      */
     public SwerveModule(int drivePort, int steerPort, double offsetRads) {
-        driveMotor = new WPI_TalonFX(drivePort);
+        driveMotor = new GRTTalonFX(drivePort);
+        driveMotor.configFactoryDefault();
+        driveMotor.setNeutralMode(NeutralMode.Brake);
 
         driveMotor.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
         driveMotor.setSensorPhase(false);
+        driveMotor.setVelocityConversionFactor(DRIVE_TICKS_TO_METERS * 10.0); // u/100ms -> m/s 
         driveMotor.config_kP(0, driveP);
         driveMotor.config_kI(0, driveI);
         driveMotor.config_kD(0, driveD);
@@ -91,7 +96,7 @@ public class SwerveModule {
      */
     public SwerveModuleState getState() {
         return new SwerveModuleState(
-            driveMotor.getSelectedSensorVelocity() * DRIVE_TICKS_TO_METERS * 10.0, // u/100ms -> m/s 
+            driveMotor.getSelectedSensorVelocity(),
             getAngle()
         );
     }
@@ -102,7 +107,7 @@ public class SwerveModule {
      */
     public void setDesiredState(SwerveModuleState state) {
         SwerveModuleState optimized = SwerveModuleState.optimize(state, getAngle());
-        driveMotor.set(ControlMode.Velocity, optimized.speedMetersPerSecond / DRIVE_TICKS_TO_METERS / 10.0); // m/s -> u/100ms
+        driveMotor.set(ControlMode.Velocity, optimized.speedMetersPerSecond);
 
         // Wrap current angle between [0, 2pi]
         double currentAngle = getAngle().getRadians();

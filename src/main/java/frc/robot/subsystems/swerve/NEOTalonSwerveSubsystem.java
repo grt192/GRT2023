@@ -30,7 +30,7 @@ public class NEOTalonSwerveSubsystem extends SubsystemBase {
     private final SwerveDriveKinematics kinematics;
 
     public static final double MAX_VEL = 1.0; // Max robot tangential velocity, in percent output
-    public static final double MAX_OMEGA = Math.toRadians(30); // Max robot angular velocity, in rads/s
+    public static final double MAX_OMEGA = Math.toRadians(60); // Max robot angular velocity, in rads/s
 
     public NEOTalonSwerveSubsystem() {
         // Initialize swerve modules
@@ -41,7 +41,6 @@ public class NEOTalonSwerveSubsystem extends SubsystemBase {
 
         // Initialize system kinematics with top left, top right, bottom left, and bottom right swerve
         // module positions
-        // TODO: positions
         kinematics = new SwerveDriveKinematics(
             new Translation2d(
                 Units.inchesToMeters(13.1365),
