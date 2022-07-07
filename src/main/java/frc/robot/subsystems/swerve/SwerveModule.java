@@ -5,7 +5,7 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkMaxAnalogSensor;
 import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
@@ -24,7 +24,7 @@ public class SwerveModule {
     private final GRTTalonFX driveMotor;
 
     private final CANSparkMax steerMotor;
-    private final RelativeEncoder steerEncoder;
+    private final SparkMaxAnalogSensor steerEncoder;
     private final SparkMaxPIDController steerPidController;
 
     private final double offsetRads;
@@ -67,10 +67,11 @@ public class SwerveModule {
         steerMotor.restoreFactoryDefaults();
         steerMotor.setIdleMode(IdleMode.kBrake);
 
-        steerEncoder = steerMotor.getAlternateEncoder(1024);
+        steerEncoder = steerMotor.getAnalog(SparkMaxAnalogSensor.Mode.kAbsolute);
         steerEncoder.setPositionConversionFactor(2 * Math.PI); // 1 rotation = 2pi
 
         steerPidController = steerMotor.getPIDController();
+        steerPidController.setFeedbackDevice(steerEncoder);
         steerPidController.setP(steerP);
         steerPidController.setI(steerI);
         steerPidController.setD(steerD);
@@ -109,18 +110,17 @@ public class SwerveModule {
         SwerveModuleState optimized = SwerveModuleState.optimize(state, getAngle());
         driveMotor.set(ControlMode.Velocity, optimized.speedMetersPerSecond);
 
-        // Wrap current angle between [0, 2pi]
-        double currentAngle = getAngle().getRadians();
-        double wrappedAngle = MathUtil.inputModulus(currentAngle, 0, 2 * Math.PI);
-
         // If the delta angle is greater than 180, go the other way by wrapping angle between [-pi, pi]
-        double deltaRads = MathUtil.angleModulus(optimized.angle.getRadians() - wrappedAngle);
+        double currentAngle = getAngle().getRadians();
+        double deltaRads = MathUtil.angleModulus(state.angle.getRadians() - currentAngle);
 
         steerPidController.setReference(currentAngle - offsetRads + deltaRads, ControlType.kPosition);
     }
 
     /**
-     * Returns the current angle of the module.
+     * Returns the current angle of the module. This differs from the raw encoder reading 
+     * because this applies `offsetRads` to zero the module at a desired angle.
+     * 
      * @return The current angle of the module, as a `Rotation2d`.
      */
     private Rotation2d getAngle() {

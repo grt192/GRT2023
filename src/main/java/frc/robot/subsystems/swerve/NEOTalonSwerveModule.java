@@ -137,12 +137,9 @@ public class NEOTalonSwerveModule {
         SwerveModuleState optimized = SwerveModuleState.optimize(state, getAngle());
         driveMotor.set(optimized.speedMetersPerSecond); // NOTE: this is only while the wheel velocity is in percent output instead
 
-        // Wrap current angle between [0, 2pi]
-        double currentAngle = getAngle().getRadians();
-        double wrappedAngle = MathUtil.inputModulus(currentAngle, 0, 2 * Math.PI);
-
         // If the delta angle is greater than 180, go the other way by wrapping angle between [-pi, pi]
-        double deltaRads = MathUtil.angleModulus(optimized.angle.getRadians() - wrappedAngle);
+        double currentAngle = getAngle().getRadians();
+        double deltaRads = MathUtil.angleModulus(state.angle.getRadians() - currentAngle);
 
         steerMotor.set(ControlMode.Position, currentAngle - offsetRads + deltaRads);
 
@@ -151,7 +148,9 @@ public class NEOTalonSwerveModule {
     }
 
     /**
-     * Returns the current angle of the module.
+     * Returns the current angle of the module. This differs from the raw encoder reading 
+     * because this applies `offsetRads` to zero the module at a desired angle.
+     * 
      * @return The current angle of the module, as a `Rotation2d`.
      */
     private Rotation2d getAngle() {
