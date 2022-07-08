@@ -134,22 +134,21 @@ public class NEOTalonSwerveModule {
      * @param state The desired state of the module as a `SwerveModuleState`.
      */
     public void setDesiredState(SwerveModuleState state) {
-        double realAngle = getAngle().getRadians();
-        double wrappedAngle = MathUtil.angleModulus(realAngle);
+        double currentAngle = getAngle().getRadians();
 
         double targetVel = state.speedMetersPerSecond;
         double targetWrappedAngle = state.angle.getRadians();
-        double deltaRads = wrappedAngle - targetWrappedAngle;
+        double deltaRads = MathUtil.angleModulus(targetWrappedAngle - currentAngle);
 
         // Optimize the `SwerveModuleState` if delta angle > 90 by flipping wheel speeds
         // and going the other way.
         if (Math.abs(deltaRads) > Math.PI / 2.0) {
             targetVel = -targetVel;
-            targetWrappedAngle += deltaRads > Math.PI / 2.0 ? -Math.PI : Math.PI;
+            deltaRads += deltaRads > Math.PI / 2.0 ? -Math.PI : Math.PI;
         }
 
         driveMotor.set(targetVel); // NOTE: this is only while the wheel velocity is in percent output instead
-        steerMotor.set(ControlMode.Position, realAngle - offsetRads + deltaRads);
+        steerMotor.set(ControlMode.Position, currentAngle - offsetRads + deltaRads);
 
         angleEntry.setValue(getAngle().getRadians());
         veloEntry.setValue(driveEncoder.getVelocity());
