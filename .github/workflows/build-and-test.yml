@@ -1,0 +1,12 @@
+name: Build and test robot code
+on: [push, pull_request]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: wpilib/roborio-cross-ubuntu:2022-18.04
+    steps:
+      - uses: actions/checkout@v2
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+      - name: Compile and run tests on robot code
+        run: ./gradlew build

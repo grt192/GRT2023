@@ -126,7 +126,7 @@ public class SwerveModule {
 
         double targetVel = target.speedMetersPerSecond;
         double targetWrappedAngle = target.angle.getRadians();
-        double deltaRads = MathUtil.angleModulus(targetWrappedAngle - currentAngle.getRadians());
+        double deltaRads = MathUtil.angleModulus(targetWrappedAngle - angleRads);
 
         // Optimize the `SwerveModuleState` if delta angle > 90 by flipping wheel speeds
         // and going the other way.
