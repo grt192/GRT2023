@@ -6,7 +6,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 
 import frc.robot.subsystems.swerve.SwerveModule;
 
-public class AngleModulusTest {
+public class SwerveModuleOptimizationTest {
     private static final double ACCEPTABLE_ANGLE_DELTA = 1e-15;
 
     /**
@@ -127,6 +127,7 @@ public class AngleModulusTest {
 
     /**
      * Runs a unit test with the given parameters.
+     * 
      * @param currentAngleRads The current angle, in radians.
      * @param targetAngleRads The target angle, in radians.
      * @param expectedAngleRads The expected angle, in radians.

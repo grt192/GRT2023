@@ -14,17 +14,17 @@ import frc.robot.shuffleboard.GRTShuffleboardTab;
  * A shell swerve subsystem to run a single swerve module on the missile.
  */
 public class MissileShellSwerveSubsystem extends SubsystemBase {
-    private final NEOTalonSwerveModule module;
+    private final SwerveModule module;
 
     private final SwerveDriveKinematics kinematics;
 
     public static final double MAX_VEL = 1.0; // Max robot tangential velocity, in percent output
 
     private final GRTShuffleboardTab shuffleboardTab = new GRTShuffleboardTab("Swerve");
-    private final GRTNetworkTableEntry driveVelEntry, steerAngleEntry;
+    private final GRTNetworkTableEntry steerAngleEntry;
 
     public MissileShellSwerveSubsystem() {
-        module = new NEOTalonSwerveModule(9, 2, Math.PI / 6);
+        module = new SwerveModule(9, 2, Math.PI / 6);
 
         // One module at the center of the robot
         kinematics = new SwerveDriveKinematics(
@@ -32,13 +32,11 @@ public class MissileShellSwerveSubsystem extends SubsystemBase {
             new Translation2d()
         );
 
-        driveVelEntry = shuffleboardTab.addEntry("Drive vel", 0).at(0, 0);
-        steerAngleEntry = shuffleboardTab.addEntry("Steer angle", 0).at(0, 1);
+        steerAngleEntry = shuffleboardTab.addEntry("Steer angle", 0).at(0, 0);
     }
 
     @Override
     public void periodic() {
-        driveVelEntry.setValue(module.getDriveVelocity());
         steerAngleEntry.setValue(/* module.getSteerPosition() */ module.getState().angle.getDegrees());
     }
 
