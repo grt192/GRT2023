@@ -1,26 +1,36 @@
 package frc.robot.subsystems.swerve;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkMaxAnalogSensor;
 import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 
+import frc.robot.motorcontrol.GRTTalonFX;
+
+/**
+ * A swerve module with a Falcon drive motor and a NEO steer motor.
+ */
 public class SwerveModule {
-    private final CANSparkMax driveMotor;
-    private final RelativeEncoder driveEncoder;
-    private final SparkMaxPIDController drivePidController;
+    private final GRTTalonFX driveMotor;
 
     private final CANSparkMax steerMotor;
-    private final RelativeEncoder steerEncoder;
+    private final SparkMaxAnalogSensor steerEncoder;
     private final SparkMaxPIDController steerPidController;
 
-    private static final double DRIVE_ROTATIONS_TO_METERS = 0;
-    private static final double STEER_ROTATIONS_TO_RADIANS = 0;
+    private final double offsetRads;
+
+    private static final double DRIVE_TICKS_TO_METERS = 1.0;
 
     private static final double driveP = 0;
     private static final double driveI = 0;
@@ -32,32 +42,54 @@ public class SwerveModule {
     private static final double steerD = 0;
     private static final double steerFF = 0;
 
-    public SwerveModule(int drivePort, int steerPort) {
-        driveMotor = new CANSparkMax(drivePort, MotorType.kBrushless);
-        driveMotor.restoreFactoryDefaults();
-        driveMotor.setIdleMode(IdleMode.kBrake);
+    /**
+     * Constructs a SwerveModule from a drive and steer motor CAN ID and an angle offset.
+     * The offset will be applied to all angle readings to change the zero point of the 
+     * module.
+     * 
+     * @param drivePort The drive TalonFX CAN ID.
+     * @param steerPort The steer SparkMax CAN ID.
+     * @param offsetRads The angle offset, in radians.
+     */
+    public SwerveModule(int drivePort, int steerPort, double offsetRads) {
+        driveMotor = new GRTTalonFX(drivePort);
+        driveMotor.configFactoryDefault();
+        driveMotor.setNeutralMode(NeutralMode.Brake);
 
-        driveEncoder = driveMotor.getEncoder();
-        driveEncoder.setVelocityConversionFactor(DRIVE_ROTATIONS_TO_METERS / 60); // RPM -> m/s
-
-        drivePidController = driveMotor.getPIDController();
-        drivePidController.setP(driveP);
-        drivePidController.setI(driveI);
-        drivePidController.setD(driveD);
-        drivePidController.setFF(driveFF);
+        driveMotor.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
+        driveMotor.setSensorPhase(false);
+        driveMotor.setVelocityConversionFactor(DRIVE_TICKS_TO_METERS * 10.0); // u/100ms -> m/s 
+        driveMotor.config_kP(0, driveP);
+        driveMotor.config_kI(0, driveI);
+        driveMotor.config_kD(0, driveD);
+        driveMotor.config_kF(0, driveFF);
 
         steerMotor = new CANSparkMax(steerPort, MotorType.kBrushless);
         steerMotor.restoreFactoryDefaults();
         steerMotor.setIdleMode(IdleMode.kBrake);
 
-        steerEncoder = steerMotor.getAlternateEncoder(4096);
-        steerEncoder.setPositionConversionFactor(STEER_ROTATIONS_TO_RADIANS);
+        steerEncoder = steerMotor.getAnalog(SparkMaxAnalogSensor.Mode.kAbsolute);
+        steerEncoder.setPositionConversionFactor(2 * Math.PI); // 1 rotation = 2pi
 
         steerPidController = steerMotor.getPIDController();
+        steerPidController.setFeedbackDevice(steerEncoder);
         steerPidController.setP(steerP);
         steerPidController.setI(steerI);
         steerPidController.setD(steerD);
         steerPidController.setFF(steerFF);
+
+        this.offsetRads = offsetRads;
+    }
+
+    /**
+     * Constructs a SwerveModule from a drive and steer motor CAN ID, 
+     * defaulting the angle offset to 0.
+     * 
+     * @param drivePort The drive TalonFX CAN ID.
+     * @param steerPort The steer SparkMax CAN ID.
+     */
+    public SwerveModule(int drivePort, int steerPort) {
+        this(drivePort, steerPort, 0.0);
     }
 
     /**
@@ -66,7 +98,7 @@ public class SwerveModule {
      */
     public SwerveModuleState getState() {
         return new SwerveModuleState(
-            driveEncoder.getVelocity(), 
+            driveMotor.getSelectedSensorVelocity(),
             getAngle()
         );
     }
@@ -76,16 +108,43 @@ public class SwerveModule {
      * @param state The desired state of the module as a `SwerveModuleState`.
      */
     public void setDesiredState(SwerveModuleState state) {
-        SwerveModuleState optimized = SwerveModuleState.optimize(state, getAngle());
-        drivePidController.setReference(optimized.speedMetersPerSecond, ControlType.kVelocity);
-        steerPidController.setReference(optimized.angle.getRadians(), ControlType.kSmartMotion);
+        var optimized = optimizeModuleState(state, getAngle());
+        driveMotor.set(ControlMode.Velocity, optimized.getFirst());
+        steerPidController.setReference(optimized.getSecond() - offsetRads, ControlType.kPosition);
     }
 
     /**
-     * Returns the current angle of the module.
+     * Optimizes a `SwerveModuleState` by inverting the wheel speeds and rotating the other direction
+     * if the delta angle is greater than 90 degrees. This method also handles angle wraparound.
+     * 
+     * @param target The target `SwerveModuleState`.
+     * @param currentAngle The current angle of the module, as a `Rotation2d`.
+     * @return A pair representing [target velocity, target angle]. Note that `offsetRads` will still need to be applied before PID.
+     */
+    public static Pair<Double, Double> optimizeModuleState(SwerveModuleState target, Rotation2d currentAngle) {
+        double angleRads = currentAngle.getRadians();
+
+        double targetVel = target.speedMetersPerSecond;
+        double targetWrappedAngle = target.angle.getRadians();
+        double deltaRads = MathUtil.angleModulus(targetWrappedAngle - currentAngle.getRadians());
+
+        // Optimize the `SwerveModuleState` if delta angle > 90 by flipping wheel speeds
+        // and going the other way.
+        if (Math.abs(deltaRads) > Math.PI / 2.0) {
+            targetVel = -targetVel;
+            deltaRads += deltaRads > Math.PI / 2.0 ? -Math.PI : Math.PI;
+        }
+
+        return new Pair<>(targetVel, angleRads + deltaRads);
+    }
+
+    /**
+     * Returns the current angle of the module. This differs from the raw encoder reading 
+     * because this applies `offsetRads` to zero the module at a desired angle.
+     * 
      * @return The current angle of the module, as a `Rotation2d`.
      */
     private Rotation2d getAngle() {
-        return new Rotation2d(steerEncoder.getPosition());
+        return new Rotation2d(steerEncoder.getPosition() + offsetRads);
     }
 }

@@ -11,41 +11,53 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-import static frc.robot.Constants.SwerveConstants.*;
-
-public class SwerveSubsystem extends SubsystemBase {
-    private final SwerveModule topLeftModule;
-    private final SwerveModule topRightModule;
-    private final SwerveModule bottomLeftModule;
-    private final SwerveModule bottomRightModule;
+/**
+ * A SwerveSubsystem clone for controlling the 2020 robot.
+ */
+public class NEOTalonSwerveSubsystem extends SubsystemBase {
+    private final NEOTalonSwerveModule topLeftModule;
+    private final NEOTalonSwerveModule topRightModule;
+    private final NEOTalonSwerveModule bottomLeftModule;
+    private final NEOTalonSwerveModule bottomRightModule;
 
     private final SwerveDrivePoseEstimator poseEstimator;
     private final AHRS ahrs;
 
     private final SwerveDriveKinematics kinematics;
 
-    public static final double MAX_VEL = 3; // Max robot tangential velocity, in m/s
-    public static final double MAX_ACCEL = 3; // Max robot tangential acceleration, in m/s^2
-    public static final double MAX_OMEGA = Math.toRadians(30); // Max robot angular velocity, in rads/s
+    public static final double MAX_VEL = 1.0; // Max robot tangential velocity, in percent output
+    public static final double MAX_OMEGA = Math.toRadians(60); // Max robot angular velocity, in rads/s
 
-    public SwerveSubsystem() {
+    public NEOTalonSwerveSubsystem() {
         // Initialize swerve modules
-        topLeftModule = new SwerveModule(tlDrive, tlSteer);
-        topRightModule = new SwerveModule(trDrive, trSteer);
-        bottomLeftModule = new SwerveModule(blDrive, blSteer);
-        bottomRightModule = new SwerveModule(brDrive, brSteer);
+        topLeftModule = new NEOTalonSwerveModule(14, 10, 1.53398078789);
+        topRightModule = new NEOTalonSwerveModule(4, 5, 1.31922347758 + Math.PI);
+        bottomLeftModule = new NEOTalonSwerveModule(13, 11, 2.28256341237 + Math.PI);
+        bottomRightModule = new NEOTalonSwerveModule(1, 12, 5.09281621578);
 
         // Initialize system kinematics with top left, top right, bottom left, and bottom right swerve
         // module positions
-        // TODO: positions
         kinematics = new SwerveDriveKinematics(
-            new Translation2d(),
-            new Translation2d(),
-            new Translation2d(),
-            new Translation2d()
+            new Translation2d(
+                Units.inchesToMeters(13.1365),
+                Units.inchesToMeters(10.3865)
+            ),
+            new Translation2d(
+                Units.inchesToMeters(13.1365),
+                Units.inchesToMeters(-10.3865)
+            ),
+            new Translation2d(
+                Units.inchesToMeters(-13.1365),
+                Units.inchesToMeters(10.3865)
+            ),
+            new Translation2d(
+                Units.inchesToMeters(-13.1365),
+                Units.inchesToMeters(-10.3865)
+            )
         );
 
         // Initialize NaxX and pose estimator
