@@ -12,6 +12,7 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 
@@ -107,11 +108,25 @@ public class SwerveModule {
      * @param state The desired state of the module as a `SwerveModuleState`.
      */
     public void setDesiredState(SwerveModuleState state) {
-        double currentAngle = getAngle().getRadians();
+        var optimized = optimizeModuleState(state, getAngle());
+        driveMotor.set(ControlMode.Velocity, optimized.getFirst());
+        steerPidController.setReference(optimized.getSecond() - offsetRads, ControlType.kPosition);
+    }
 
-        double targetVel = state.speedMetersPerSecond;
-        double targetWrappedAngle = state.angle.getRadians();
-        double deltaRads = MathUtil.angleModulus(targetWrappedAngle - currentAngle);
+    /**
+     * Optimizes a `SwerveModuleState` by inverting the wheel speeds and rotating the other direction
+     * if the delta angle is greater than 90 degrees. This method also handles angle wraparound.
+     * 
+     * @param target The target `SwerveModuleState`.
+     * @param currentAngle The current angle of the module, as a `Rotation2d`.
+     * @return A pair representing [target velocity, target angle]. Note that `offsetRads` will still need to be applied before PID.
+     */
+    public static Pair<Double, Double> optimizeModuleState(SwerveModuleState target, Rotation2d currentAngle) {
+        double angleRads = currentAngle.getRadians();
+
+        double targetVel = target.speedMetersPerSecond;
+        double targetWrappedAngle = target.angle.getRadians();
+        double deltaRads = MathUtil.angleModulus(targetWrappedAngle - currentAngle.getRadians());
 
         // Optimize the `SwerveModuleState` if delta angle > 90 by flipping wheel speeds
         // and going the other way.
@@ -120,8 +135,7 @@ public class SwerveModule {
             deltaRads += deltaRads > Math.PI / 2.0 ? -Math.PI : Math.PI;
         }
 
-        driveMotor.set(ControlMode.Velocity, targetVel);
-        steerPidController.setReference(currentAngle - offsetRads + deltaRads, ControlType.kPosition);
+        return new Pair<>(targetVel, angleRads + deltaRads);
     }
 
     /**
