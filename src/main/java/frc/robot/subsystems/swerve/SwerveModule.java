@@ -147,4 +147,56 @@ public class SwerveModule {
     private Rotation2d getAngle() {
         return new Rotation2d(steerEncoder.getPosition() + offsetRads);
     }
+
+    /**
+     * Utility class to construct a top left swerve module from a module's pin offset.
+     * The offset to align the pin with the front of the robot is automatically applied.
+     */
+    public static class TopLeft extends SwerveModule {
+        public TopLeft(int drivePort, int steerPort) {
+            super(drivePort, steerPort, 0.0);
+        }
+        public TopLeft(int drivePort, int steerPort, double offsetRads) {
+            super(drivePort, steerPort, offsetRads);
+        }
+    }
+
+    /**
+     * Utility class to construct a top right swerve module from a module's pin offset.
+     * The offset to align the pin with the front of the robot is automatically applied.
+     */
+    public static class TopRight extends SwerveModule {
+        public TopRight(int drivePort, int steerPort) {
+            super(drivePort, steerPort, -Math.PI / 2.0);
+        }
+        public TopRight(int drivePort, int steerPort, double offsetRads) {
+            super(drivePort, steerPort, offsetRads - Math.PI / 2.0);
+        }
+    }
+
+    /**
+     * Utility class to construct a bottom left swerve module from a module's pin offset.
+     * The offset to align the pin with the front of the robot is automatically applied.
+     */
+    public static class BottomLeft extends SwerveModule {
+        public BottomLeft(int drivePort, int steerPort) {
+            super(drivePort, steerPort, Math.PI / 2.0);
+        }
+        public BottomLeft(int drivePort, int steerPort, double offsetRads) {
+            super(drivePort, steerPort, offsetRads + Math.PI / 2.0);
+        }
+    }
+
+    /**
+     * Utility class to construct a bottom right swerve module from a module's pin offset.
+     * The offset to align the pin with the front of the robot is automatically applied.
+     */
+    public static class BottomRight extends SwerveModule {
+        public BottomRight(int drivePort, int steerPort) {
+            super(drivePort, steerPort, Math.PI);
+        }
+        public BottomRight(int drivePort, int steerPort, double offsetRads) {
+            super(drivePort, steerPort, offsetRads + Math.PI);
+        }
+    }
 }
