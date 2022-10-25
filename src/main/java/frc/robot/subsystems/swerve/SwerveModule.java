@@ -53,7 +53,6 @@ public class SwerveModule {
      */
     public SwerveModule(int drivePort, int steerPort, double offsetRads) {
         driveMotor = new GRTTalonFX(drivePort);
-        driveMotor.configFactoryDefault();
         driveMotor.setNeutralMode(NeutralMode.Brake);
 
         driveMotor.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
