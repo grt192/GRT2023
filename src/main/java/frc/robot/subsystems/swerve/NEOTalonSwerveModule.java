@@ -66,7 +66,6 @@ public class NEOTalonSwerveModule {
         drivePidController.setFF(driveFF);
 
         steerMotor = new GRTTalonSRX(steerPort);
-        steerMotor.configFactoryDefault();
         steerMotor.setNeutralMode(NeutralMode.Brake);
         steerMotor.setInverted(true);
 

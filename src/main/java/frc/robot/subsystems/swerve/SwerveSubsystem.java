@@ -17,10 +17,10 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import static frc.robot.Constants.SwerveConstants.*;
 
 public class SwerveSubsystem extends SubsystemBase {
-    private final SwerveModule topLeftModule;
-    private final SwerveModule topRightModule;
-    private final SwerveModule bottomLeftModule;
-    private final SwerveModule bottomRightModule;
+    private final SwerveModule.TopLeft topLeftModule;
+    private final SwerveModule.TopRight topRightModule;
+    private final SwerveModule.BottomLeft bottomLeftModule;
+    private final SwerveModule.BottomRight bottomRightModule;
 
     private final SwerveDrivePoseEstimator poseEstimator;
     private final AHRS ahrs;
@@ -33,10 +33,10 @@ public class SwerveSubsystem extends SubsystemBase {
 
     public SwerveSubsystem() {
         // Initialize swerve modules
-        topLeftModule = new SwerveModule(tlDrive, tlSteer);
-        topRightModule = new SwerveModule(trDrive, trSteer);
-        bottomLeftModule = new SwerveModule(blDrive, blSteer);
-        bottomRightModule = new SwerveModule(brDrive, brSteer);
+        topLeftModule = new SwerveModule.TopLeft(tlDrive, tlSteer, tlOffsetRads);
+        topRightModule = new SwerveModule.TopRight(trDrive, trSteer, trOffsetRads);
+        bottomLeftModule = new SwerveModule.BottomLeft(blDrive, blSteer, blOffsetRads);
+        bottomRightModule = new SwerveModule.BottomRight(brDrive, brSteer, brOffsetRads);
 
         // Initialize system kinematics with top left, top right, bottom left, and bottom right swerve
         // module positions

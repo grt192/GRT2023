@@ -15,8 +15,10 @@ public class GRTTalonFX extends WPI_TalonFX {
     public GRTTalonFX(int deviceId) {
         super(deviceId);
 
-        // Set 30.0 amp current limit
-        configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 30.0, 0, 0));
+        configFactoryDefault();
+
+        // Set 60.0 amp current limit to kick in after 0.2 seconds
+        configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 60.0, 60.0, 0.2));
     }
 
     /**
