@@ -33,10 +33,10 @@ public class SwerveSubsystem extends SubsystemBase {
 
     public SwerveSubsystem() {
         // Initialize swerve modules
-        topLeftModule = new SwerveModule.TopLeft(tlDrive, tlSteer);
-        topRightModule = new SwerveModule.TopRight(trDrive, trSteer);
-        bottomLeftModule = new SwerveModule.BottomLeft(blDrive, blSteer);
-        bottomRightModule = new SwerveModule.BottomRight(brDrive, brSteer);
+        topLeftModule = new SwerveModule.TopLeft(tlDrive, tlSteer, tlOffsetRads);
+        topRightModule = new SwerveModule.TopRight(trDrive, trSteer, trOffsetRads);
+        bottomLeftModule = new SwerveModule.BottomLeft(blDrive, blSteer, blOffsetRads);
+        bottomRightModule = new SwerveModule.BottomRight(brDrive, brSteer, brOffsetRads);
 
         // Initialize system kinematics with top left, top right, bottom left, and bottom right swerve
         // module positions

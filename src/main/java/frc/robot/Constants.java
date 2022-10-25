@@ -18,15 +18,19 @@ public final class Constants {
     public static final class SwerveConstants {
         public static final int tlDrive = 1;
         public static final int tlSteer = 0;
+        public static final double tlOffsetRads = 0;
 
         public static final int trDrive = 0;
         public static final int trSteer = 0;
+        public static final double trOffsetRads = 0;
 
         public static final int blDrive = 0;
         public static final int blSteer = 0;
+        public static final double blOffsetRads = 0;
 
         public static final int brDrive = 0;
         public static final int brSteer = 0;
+        public static final double brOffsetRads = 0;
     }
 
     public static final class ShuffleboardConstants {
