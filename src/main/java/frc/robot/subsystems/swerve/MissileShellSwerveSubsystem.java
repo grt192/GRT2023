@@ -1,5 +1,11 @@
 package frc.robot.subsystems.swerve;
 
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.SparkMaxAnalogSensor;
+import com.revrobotics.SparkMaxPIDController;
+import com.revrobotics.CANSparkMax.IdleMode;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -14,30 +20,36 @@ import frc.robot.shuffleboard.GRTShuffleboardTab;
  * A shell swerve subsystem to run a single swerve module on the missile.
  */
 public class MissileShellSwerveSubsystem extends SubsystemBase {
-    private final SwerveModule module;
+    private final CANSparkMax steerMotor;
+    private final SparkMaxAnalogSensor steerEncoder;
+    private final SparkMaxPIDController steerPidController;
 
     private final SwerveDriveKinematics kinematics;
 
     public static final double MAX_VEL = 1.0; // Max robot tangential velocity, in percent output
 
     private final GRTShuffleboardTab shuffleboardTab = new GRTShuffleboardTab("Swerve");
-    private final GRTNetworkTableEntry steerAngleEntry;
 
     public MissileShellSwerveSubsystem() {
-        module = new SwerveModule(9, 2, Math.PI / 6);
+        steerMotor = new CANSparkMax(1, MotorType.kBrushless);
+        steerMotor.restoreFactoryDefaults();
+        steerMotor.setIdleMode(IdleMode.kBrake);
+
+        steerEncoder = steerMotor.getAnalog(SparkMaxAnalogSensor.Mode.kAbsolute);
+
+        steerPidController = steerMotor.getPIDController();
+        steerPidController.setFeedbackDevice(steerEncoder);
 
         // One module at the center of the robot
         kinematics = new SwerveDriveKinematics(
             new Translation2d(),
             new Translation2d()
         );
-
-        steerAngleEntry = shuffleboardTab.addEntry("Steer angle", 0).at(0, 0);
     }
 
     @Override
     public void periodic() {
-        steerAngleEntry.setValue(/* module.getSteerPosition() */ module.getState().angle.getDegrees());
+        System.out.println(steerEncoder.getPosition());
     }
 
     /**
@@ -46,6 +58,7 @@ public class MissileShellSwerveSubsystem extends SubsystemBase {
      * @param yPower The power [-1.0, 1.0] in the y (left) direction.
      * @param angularPower The angular (rotational) power [-1.0, 1.0].
      */
+    /*
     public void setSwerveDrivePowers(double xPower, double yPower, double angularPower) {
         // Scale [-1.0, 1.0] powers to desired velocity, turning field-relative powers
         // into robot relative chassis speeds.
@@ -65,4 +78,5 @@ public class MissileShellSwerveSubsystem extends SubsystemBase {
 
         module.setDesiredState(states[0]);
     }
+    */
 }
