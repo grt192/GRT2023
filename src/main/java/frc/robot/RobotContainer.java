@@ -15,7 +15,6 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 import frc.robot.shuffleboard.GRTShuffleboardTab;
 import frc.robot.subsystems.swerve.MissileShellSwerveSubsystem;
-import frc.robot.subsystems.swerve.NEOTalonSwerveSubsystem;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 
 /**
@@ -28,8 +27,7 @@ import frc.robot.subsystems.swerve.SwerveSubsystem;
 public class RobotContainer {
     // Subsystems
     //private final SwerveSubsystem swerveSubsystem;
-    private final NEOTalonSwerveSubsystem swerveSubsystem;
-    //private final MissileShellSwerveSubsystem swerveSubsystem;
+    private final MissileShellSwerveSubsystem swerveSubsystem;
 
     // Controllers and buttons
     private final XboxController driveController = new XboxController(0);
@@ -58,8 +56,7 @@ public class RobotContainer {
      */
     public RobotContainer() {
         //swerveSubsystem = new SwerveSubsystem();
-        swerveSubsystem = new NEOTalonSwerveSubsystem();
-        //swerveSubsystem = new MissileShellSwerveSubsystem();
+        swerveSubsystem = new MissileShellSwerveSubsystem();
 
         // Configure the button bindings
         configureButtonBindings();
