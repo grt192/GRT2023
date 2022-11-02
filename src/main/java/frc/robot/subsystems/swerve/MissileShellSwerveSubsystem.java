@@ -4,7 +4,6 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkMaxAnalogSensor;
 import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax.IdleMode;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -13,6 +12,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+import frc.robot.motorcontrol.MotorUtil;
 import frc.robot.shuffleboard.GRTNetworkTableEntry;
 import frc.robot.shuffleboard.GRTShuffleboardTab;
 
@@ -20,6 +20,8 @@ import frc.robot.shuffleboard.GRTShuffleboardTab;
  * A shell swerve subsystem to run a single swerve module on the missile.
  */
 public class MissileShellSwerveSubsystem extends SubsystemBase {
+    private final CANSparkMax driveMotor;
+
     private final CANSparkMax steerMotor;
     private final SparkMaxAnalogSensor steerEncoder;
     private final SparkMaxPIDController steerPidController;
@@ -31,8 +33,9 @@ public class MissileShellSwerveSubsystem extends SubsystemBase {
     private final GRTShuffleboardTab shuffleboardTab = new GRTShuffleboardTab("Swerve");
 
     public MissileShellSwerveSubsystem() {
-        steerMotor = new CANSparkMax(1, MotorType.kBrushless);
-        steerMotor.restoreFactoryDefaults();
+        driveMotor = MotorUtil.createSparkMax(2);
+
+        steerMotor = MotorUtil.createSparkMax(1);
         steerMotor.setIdleMode(IdleMode.kBrake);
 
         steerEncoder = steerMotor.getAnalog(SparkMaxAnalogSensor.Mode.kAbsolute);
