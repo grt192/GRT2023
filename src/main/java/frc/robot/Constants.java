@@ -52,6 +52,21 @@ public final class Constants {
             Units.inchesToMeters(-10.3865)
         );
     }
+    
+    public static final class IntakeConstants {
+        public static final int intakeTalonID = 6;
+        public static final int intakeSolID = 4;
+    }
+
+    public static final class InternalsConstants {
+        public static final int conveyorID = 8;
+        public static final int flywheelMainID = 3;
+        public static final int flywheelFollowID = 16;
+
+        public static final int entranceIRID = 0;
+        public static final int storageIRID = 1;
+        public static final int exitIRID = 2;
+    }
 
     public static final class ShuffleboardConstants {
         public static final double UPDATE_TIME = 0.5; // seconds between each update
