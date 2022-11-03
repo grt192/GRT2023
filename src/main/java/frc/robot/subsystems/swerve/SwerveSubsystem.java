@@ -31,6 +31,14 @@ public class SwerveSubsystem extends SubsystemBase {
     public static final double MAX_ACCEL = 3; // Max robot tangential acceleration, in m/s^2
     public static final double MAX_OMEGA = Math.toRadians(30); // Max robot angular velocity, in rads/s
 
+    // The `SwerveModuleState` setpoints for each module;
+    // states are given in a tuple of [top left, top right, bottom left, bottom right].
+    private SwerveModuleState[] states = {
+        new SwerveModuleState(),
+        new SwerveModuleState(),
+        new SwerveModuleState(),
+        new SwerveModuleState()
+    };
     private boolean locked = false;
 
     public SwerveSubsystem() {
@@ -66,14 +74,12 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
     /**
-     * Set the field-centric swerve drive powers of the subsystem.
+     * Sets the swerve module states of this subsystem from provided field-centric swerve drive powers.
      * @param xPower The power [-1.0, 1.0] in the x (forward) direction.
      * @param yPower The power [-1.0, 1.0] in the y (left) direction.
      * @param angularPower The angular (rotational) power [-1.0, 1.0].
      */
     public void setSwerveDrivePowers(double xPower, double yPower, double angularPower) {
-        if (locked) return;
-
         // Scale [-1.0, 1.0] powers to desired velocity, turning field-relative powers
         // into robot relative chassis speeds.
         ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(
@@ -83,13 +89,8 @@ public class SwerveSubsystem extends SubsystemBase {
             getGyroHeading()
         );
 
-        // Calculate swerve module states from desired chassis speeds, desaturating them to
-        // ensure all velocities are under MAX_VEL after kinematics.
-        SwerveModuleState[] states = kinematics.toSwerveModuleStates(speeds);
-        SwerveDriveKinematics.desaturateWheelSpeeds(states, MAX_VEL);
-
-        // Set module states
-        setSwerveModuleStates(states);
+        // Calculate swerve module states from desired chassis speeds
+        this.states = kinematics.toSwerveModuleStates(speeds);
     }
 
     /**
@@ -98,10 +99,7 @@ public class SwerveSubsystem extends SubsystemBase {
      * @param states The swerve module states to set.
      */
     public void setSwerveModuleStates(SwerveModuleState... states) {
-        topLeftModule.setDesiredState(states[0]);
-        topRightModule.setDesiredState(states[1]);
-        bottomLeftModule.setDesiredState(states[2]);
-        bottomRightModule.setDesiredState(states[3]);
+        this.states = states;
     }
 
     /**
@@ -123,6 +121,22 @@ public class SwerveSubsystem extends SubsystemBase {
             bottomLeftModule.getState(),
             bottomRightModule.getState()
         );
+
+        // Set swerve modules to their setpoints if unlocked, or their locked positions otherwise.
+        if (locked) {
+            topLeftModule.setDesiredState(new SwerveModuleState(0.0, new Rotation2d(Math.PI / 4.0)));
+            topRightModule.setDesiredState(new SwerveModuleState(0.0, new Rotation2d(-Math.PI / 4.0)));
+            bottomLeftModule.setDesiredState(new SwerveModuleState(0.0, new Rotation2d(-Math.PI / 4.0)));
+            bottomRightModule.setDesiredState(new SwerveModuleState(0.0, new Rotation2d(Math.PI / 4.0)));
+        } else {
+            // Desaturate speeds to ensure all velocities are under MAX_VEL after kinematics.
+            SwerveDriveKinematics.desaturateWheelSpeeds(states, MAX_VEL);
+    
+            topLeftModule.setDesiredState(states[0]);
+            topRightModule.setDesiredState(states[1]);
+            bottomLeftModule.setDesiredState(states[2]);
+            bottomRightModule.setDesiredState(states[3]);
+        }
     }
 
     /**
@@ -131,12 +145,6 @@ public class SwerveSubsystem extends SubsystemBase {
      */
     public void toggleLocked() {
         locked = !locked;
-        if (locked) {
-            topLeftModule.setDesiredState(new SwerveModuleState(0.0, new Rotation2d(Math.PI / 4.0)));
-            topRightModule.setDesiredState(new SwerveModuleState(0.0, new Rotation2d(-Math.PI / 4.0)));
-            bottomLeftModule.setDesiredState(new SwerveModuleState(0.0, new Rotation2d(-Math.PI / 4.0)));
-            bottomRightModule.setDesiredState(new SwerveModuleState(0.0, new Rotation2d(Math.PI / 4.0)));
-        }
     }
 
     /**
