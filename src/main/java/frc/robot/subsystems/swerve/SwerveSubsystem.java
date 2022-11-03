@@ -7,11 +7,11 @@ import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import static frc.robot.Constants.SwerveConstants.*;
@@ -31,6 +31,10 @@ public class SwerveSubsystem extends SubsystemBase {
     public static final double MAX_ACCEL = 3; // Max robot tangential acceleration, in m/s^2
     public static final double MAX_OMEGA = Math.toRadians(30); // Max robot angular velocity, in rads/s
 
+    private final Timer lockTimer;
+    private static final double LOCK_TIMEOUT_SECONDS = 1.0; // The elapsed idle time to wait before locking
+    private static final boolean LOCK_TIMEOUT_ENABLE = true;
+
     // The `SwerveModuleState` setpoints for each module;
     // states are given in a tuple of [top left, top right, bottom left, bottom right].
     private SwerveModuleState[] states = {
@@ -39,7 +43,6 @@ public class SwerveSubsystem extends SubsystemBase {
         new SwerveModuleState(),
         new SwerveModuleState()
     };
-    private boolean locked = false;
 
     public SwerveSubsystem() {
         // Initialize swerve modules
@@ -67,6 +70,8 @@ public class SwerveSubsystem extends SubsystemBase {
             // Vision measurement standard deviations: [X, Y, theta]
             new MatBuilder<>(Nat.N3(), Nat.N1()).fill(0.1, 0.1, 0.01)
         );
+
+        lockTimer = new Timer();
     }
 
     /**
@@ -118,8 +123,23 @@ public class SwerveSubsystem extends SubsystemBase {
             bottomRightModule.getState()
         );
 
-        // Set swerve modules to their setpoints if unlocked, or their locked positions otherwise.
-        if (locked) {
+        // If all commanded velocities are 0, the system is idle (drivers are not supplying input).
+        boolean isIdle = states[0].speedMetersPerSecond == 0.0
+            && states[1].speedMetersPerSecond == 0.0
+            && states[2].speedMetersPerSecond == 0.0
+            && states[3].speedMetersPerSecond == 0.0;
+
+        // Start lock timer when idle
+        if (isIdle) {
+            lockTimer.start();
+        } else {
+            lockTimer.stop();
+            lockTimer.reset();
+        }
+
+        // Lock the swerve modules if the lock timeout has elapsed, or set them to their setpoints if
+        // drivers are supplying non-idle input.
+        if (LOCK_TIMEOUT_ENABLE && lockTimer.hasElapsed(LOCK_TIMEOUT_SECONDS)) {
             topLeftModule.setDesiredState(new SwerveModuleState(0.0, new Rotation2d(Math.PI / 4.0)));
             topRightModule.setDesiredState(new SwerveModuleState(0.0, new Rotation2d(-Math.PI / 4.0)));
             bottomLeftModule.setDesiredState(new SwerveModuleState(0.0, new Rotation2d(-Math.PI / 4.0)));
@@ -127,20 +147,12 @@ public class SwerveSubsystem extends SubsystemBase {
         } else {
             // Desaturate speeds to ensure all velocities are under MAX_VEL after kinematics.
             SwerveDriveKinematics.desaturateWheelSpeeds(states, MAX_VEL);
-    
+
             topLeftModule.setDesiredState(states[0]);
             topRightModule.setDesiredState(states[1]);
             bottomLeftModule.setDesiredState(states[2]);
             bottomRightModule.setDesiredState(states[3]);
         }
-    }
-
-    /**
-     * Toggles whether the subsystem is locked (whether control input has no effect and the wheels 
-     * should lock themselves to prevent shoving).
-     */
-    public void toggleLocked() {
-        locked = !locked;
     }
 
     /**
