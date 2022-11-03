@@ -49,13 +49,9 @@ public class SwerveSubsystem extends SubsystemBase {
         bottomRightModule = new SwerveModule.BottomRight(brDrive, brSteer, brOffsetRads);
 
         // Initialize system kinematics with top left, top right, bottom left, and bottom right swerve
-        // module positions
-        // TODO: positions
+        // module positions.
         kinematics = new SwerveDriveKinematics(
-            new Translation2d(),
-            new Translation2d(),
-            new Translation2d(),
-            new Translation2d()
+            tlPos, trPos, blPos, brPos
         );
 
         // Initialize NaxX and pose estimator
