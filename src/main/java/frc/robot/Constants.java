@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
@@ -18,25 +19,38 @@ import edu.wpi.first.math.geometry.Translation2d;
  */
 public final class Constants {
     public static final class SwerveConstants {
-        public static final int tlDrive = 1;
-        public static final int tlSteer = 0;
-        public static final double tlOffsetRads = 0;
-        public static final Translation2d tlPos = new Translation2d();
+        
+        public static final int tlDrive = 14;
+        public static final int tlSteer = 10;
+        public static final double tlOffsetRads = 1.53398078789;
+        public static final Translation2d tlPos =  new Translation2d(
+            Units.inchesToMeters(13.1365),
+            Units.inchesToMeters(10.3865)
+        );
 
-        public static final int trDrive = 0;
-        public static final int trSteer = 0;
-        public static final double trOffsetRads = 0;
-        public static final Translation2d trPos = new Translation2d();
+        public static final int trDrive = 4;
+        public static final int trSteer = 5;
+        public static final double trOffsetRads = 1.31922347758 + Math.PI;
+        public static final Translation2d trPos = new Translation2d(
+            Units.inchesToMeters(13.1365),
+            Units.inchesToMeters(-10.3865)
+        );
 
-        public static final int blDrive = 0;
-        public static final int blSteer = 0;
-        public static final double blOffsetRads = 0;
-        public static final Translation2d blPos = new Translation2d();
+        public static final int blDrive = 13;
+        public static final int blSteer = 11;
+        public static final double blOffsetRads = 2.28256341237 + Math.PI;
+        public static final Translation2d blPos = new Translation2d(
+            Units.inchesToMeters(-13.1365),
+            Units.inchesToMeters(10.3865)
+        );
 
-        public static final int brDrive = 0;
-        public static final int brSteer = 0;
-        public static final double brOffsetRads = 0;
-        public static final Translation2d brPos = new Translation2d();
+        public static final int brDrive = 1;
+        public static final int brSteer = 12;
+        public static final double brOffsetRads = 5.09281621578;
+        public static final Translation2d brPos = new Translation2d(
+            Units.inchesToMeters(-13.1365),
+            Units.inchesToMeters(-10.3865)
+        );
     }
 
     public static final class ShuffleboardConstants {

@@ -17,19 +17,19 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import static frc.robot.Constants.SwerveConstants.*;
 
 public class SwerveSubsystem extends SubsystemBase {
-    private final SwerveModule.TopLeft topLeftModule;
-    private final SwerveModule.TopRight topRightModule;
-    private final SwerveModule.BottomLeft bottomLeftModule;
-    private final SwerveModule.BottomRight bottomRightModule;
+    private final SwerveModule topLeftModule;
+    private final SwerveModule topRightModule;
+    private final SwerveModule bottomLeftModule;
+    private final SwerveModule bottomRightModule;
 
     private final SwerveDrivePoseEstimator poseEstimator;
     private final AHRS ahrs;
 
     private final SwerveDriveKinematics kinematics;
 
-    public static final double MAX_VEL = 3; // Max robot tangential velocity, in m/s
+    public static final double MAX_VEL = 1.0; // Max robot tangential velocity, in m/s
     public static final double MAX_ACCEL = 3; // Max robot tangential acceleration, in m/s^2
-    public static final double MAX_OMEGA = Math.toRadians(30); // Max robot angular velocity, in rads/s
+    public static final double MAX_OMEGA = Math.toRadians(60); // Max robot angular velocity, in rads/s
 
     // The `SwerveModuleState` setpoints for each module;
     // states are given in a tuple of [top left, top right, bottom left, bottom right].
@@ -43,10 +43,10 @@ public class SwerveSubsystem extends SubsystemBase {
 
     public SwerveSubsystem() {
         // Initialize swerve modules
-        topLeftModule = new SwerveModule.TopLeft(tlDrive, tlSteer, tlOffsetRads);
-        topRightModule = new SwerveModule.TopRight(trDrive, trSteer, trOffsetRads);
-        bottomLeftModule = new SwerveModule.BottomLeft(blDrive, blSteer, blOffsetRads);
-        bottomRightModule = new SwerveModule.BottomRight(brDrive, brSteer, brOffsetRads);
+        topLeftModule = new SwerveModule(tlDrive, tlSteer, tlOffsetRads);
+        topRightModule = new SwerveModule(trDrive, trSteer, trOffsetRads);
+        bottomLeftModule = new SwerveModule(blDrive, blSteer, blOffsetRads);
+        bottomRightModule = new SwerveModule(brDrive, brSteer, brOffsetRads);
 
         // Initialize system kinematics with top left, top right, bottom left, and bottom right swerve
         // module positions.
