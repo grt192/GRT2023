@@ -31,6 +31,8 @@ public class SwerveSubsystem extends SubsystemBase {
     public static final double MAX_ACCEL = 3; // Max robot tangential acceleration, in m/s^2
     public static final double MAX_OMEGA = Math.toRadians(30); // Max robot angular velocity, in rads/s
 
+    private boolean locked = false;
+
     public SwerveSubsystem() {
         // Initialize swerve modules
         topLeftModule = new SwerveModule.TopLeft(tlDrive, tlSteer, tlOffsetRads);
@@ -70,6 +72,8 @@ public class SwerveSubsystem extends SubsystemBase {
      * @param angularPower The angular (rotational) power [-1.0, 1.0].
      */
     public void setSwerveDrivePowers(double xPower, double yPower, double angularPower) {
+        if (locked) return;
+
         // Scale [-1.0, 1.0] powers to desired velocity, turning field-relative powers
         // into robot relative chassis speeds.
         ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(
@@ -119,6 +123,20 @@ public class SwerveSubsystem extends SubsystemBase {
             bottomLeftModule.getState(),
             bottomRightModule.getState()
         );
+    }
+
+    /**
+     * Toggles whether the subsystem is locked (whether control input has no effect and the wheels 
+     * should lock themselves to prevent shoving).
+     */
+    public void toggleLocked() {
+        locked = !locked;
+        if (locked) {
+            topLeftModule.setDesiredState(new SwerveModuleState(0.0, new Rotation2d(Math.PI / 4.0)));
+            topRightModule.setDesiredState(new SwerveModuleState(0.0, new Rotation2d(-Math.PI / 4.0)));
+            bottomLeftModule.setDesiredState(new SwerveModuleState(0.0, new Rotation2d(-Math.PI / 4.0)));
+            bottomRightModule.setDesiredState(new SwerveModuleState(0.0, new Rotation2d(Math.PI / 4.0)));
+        }
     }
 
     /**
