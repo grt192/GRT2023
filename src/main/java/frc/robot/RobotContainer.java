@@ -80,8 +80,6 @@ public class RobotContainer {
             double angularPower = -driveController.getRightX();
             swerveSubsystem.setSwerveDrivePowers(xPower, yPower, angularPower);
         }, swerveSubsystem));
-
-        driveBButton.whenPressed(new InstantCommand(swerveSubsystem::toggleLocked, swerveSubsystem));
     }
 
     /**
