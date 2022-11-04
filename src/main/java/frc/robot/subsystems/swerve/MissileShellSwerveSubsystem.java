@@ -32,13 +32,17 @@ public class MissileShellSwerveSubsystem extends SubsystemBase {
     public static final double MAX_VEL = 1.0; // Max robot tangential velocity, in percent output
     private static final double offsetRads = 0;
 
+    private SwerveModuleState[] states = {
+        new SwerveModuleState()
+    };
+
     private final GRTShuffleboardTab shuffleboardTab = new GRTShuffleboardTab("Swerve");
 
     public MissileShellSwerveSubsystem() {
         driveMotor = MotorUtil.createSparkMax(2);
 
         steerMotor = MotorUtil.createSparkMax(1);
-        steerMotor.setIdleMode(IdleMode.kBrake);
+        steerMotor.setIdleMode(IdleMode.kCoast); // TODO: investigate strange braking behavior
 
         steerEncoder = steerMotor.getAnalog(SparkMaxAnalogSensor.Mode.kAbsolute);
         steerEncoder.setPositionConversionFactor(2 * Math.PI / 3.3); // 3.3V -> 2pi
@@ -55,7 +59,14 @@ public class MissileShellSwerveSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
+        steerMotor.set(0.4);
+        driveMotor.set(0.4);
         System.out.println(Math.toDegrees(steerEncoder.getPosition()));
+
+        /*
+        SwerveDriveKinematics.desaturateWheelSpeeds(states, MAX_VEL);
+        setDesiredState(states[0]);
+        */
     }
 
     /**
@@ -97,11 +108,7 @@ public class MissileShellSwerveSubsystem extends SubsystemBase {
             new Rotation2d()
         );
 
-        // Calculate swerve module states from desired chassis speeds, desaturating them to
-        // ensure all velocities are under MAX_VEL after kinematics.
-        SwerveModuleState[] states = kinematics.toSwerveModuleStates(speeds);
-        SwerveDriveKinematics.desaturateWheelSpeeds(states, MAX_VEL);
-
-        setDesiredState(states[0]);
+        // Calculate swerve module states from desired chassis speeds.
+        this.states = kinematics.toSwerveModuleStates(speeds);
     }
 }
