@@ -65,7 +65,7 @@ public final class Constants {
 
         public static final int entranceIRID = 0;
         public static final int storageIRID = 1;
-        public static final int exitIRID = 2;
+        public static final int stagingIRID = 2;
     }
 
     public static final class ShuffleboardConstants {

@@ -11,7 +11,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-
 import frc.robot.shuffleboard.GRTShuffleboardTab;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.InternalsSubsystem;
@@ -93,6 +92,10 @@ public class RobotContainer {
         intakeSubsystem.setDefaultCommand(new RunCommand(() -> {
             intakeSubsystem.setPower(driveController.getRightTriggerAxis() - driveController.getLeftTriggerAxis());
         }, intakeSubsystem));
+
+        driveAButton.whenPressed(new RunCommand(() -> {
+            internalsSubsystem.requestShot();
+        }, internalsSubsystem));
     }
 
     /**
