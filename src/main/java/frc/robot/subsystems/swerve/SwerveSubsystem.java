@@ -33,7 +33,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
     private final Timer lockTimer;
     private static final double LOCK_TIMEOUT_SECONDS = 1.0; // The elapsed idle time to wait before locking
-    private static final boolean LOCK_TIMEOUT_ENABLE = true;
+    private static final boolean LOCKING_ENABLE = true;
 
     // The `SwerveModuleState` setpoints for each module;
     // states are given in a tuple of [top left, top right, bottom left, bottom right].
@@ -139,7 +139,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
         // Lock the swerve modules if the lock timeout has elapsed, or set them to their setpoints if
         // drivers are supplying non-idle input.
-        if (LOCK_TIMEOUT_ENABLE && lockTimer.hasElapsed(LOCK_TIMEOUT_SECONDS)) {
+        if (LOCKING_ENABLE && lockTimer.hasElapsed(LOCK_TIMEOUT_SECONDS)) {
             topLeftModule.setDesiredState(new SwerveModuleState(0.0, new Rotation2d(Math.PI / 4.0)));
             topRightModule.setDesiredState(new SwerveModuleState(0.0, new Rotation2d(-Math.PI / 4.0)));
             bottomLeftModule.setDesiredState(new SwerveModuleState(0.0, new Rotation2d(-Math.PI / 4.0)));
