@@ -29,7 +29,6 @@ public class RobotContainer {
     private final SwerveSubsystem swerveSubsystem;
     private final IntakeSubsystem intakeSubsystem;
     private final InternalsSubsystem internalsSubsystem;
-    //private final MissileShellSwerveSubsystem swerveSubsystem;
 
     // Controllers and buttons
     private final XboxController driveController = new XboxController(0);
@@ -60,7 +59,6 @@ public class RobotContainer {
         swerveSubsystem = new SwerveSubsystem();
         intakeSubsystem = new IntakeSubsystem();
         internalsSubsystem = new InternalsSubsystem();
-        //swerveSubsystem = new MissileShellSwerveSubsystem();
 
         // Configure the button bindings
         configureButtonBindings();
