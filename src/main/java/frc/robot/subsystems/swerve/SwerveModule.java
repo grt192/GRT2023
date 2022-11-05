@@ -7,7 +7,6 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
-// import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
@@ -15,11 +14,8 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-// import edu.wpi.first.networktables.EntryNotification;
 
 import frc.robot.motorcontrol.MotorUtil;
-// import frc.robot.shuffleboard.GRTNetworkTableEntry;
-// import frc.robot.shuffleboard.GRTShuffleboardTab;
 
 /**
  * A swerve module with a NEO drive motor and a BAG steer motor, for running swerve modules on 
@@ -46,9 +42,6 @@ public class SwerveModule {
     private static final double steerI = 0;
     private static final double steerD = 0;
     private static final double steerFF = 0;
-
-    // private final GRTShuffleboardTab shuffleboardTab;
-    // private final GRTNetworkTableEntry veloEntry, angleEntry;
 
     public SwerveModule(int drivePort, int steerPort, double offsetRads) {
         
@@ -79,33 +72,6 @@ public class SwerveModule {
         steerMotor.configPeakOutputReverse(-0.65);
 
         this.offsetRads = offsetRads;
-
-        /*
-        shuffleboardTab = new GRTShuffleboardTab("Swerve " + drivePort);
-
-        veloEntry = shuffleboardTab.addEntry("Vel", driveEncoder.getVelocity()).at(0, 0);
-        angleEntry = shuffleboardTab.addEntry("Angle", getAngle().getRadians()).at(0, 1);
-
-        shuffleboardTab
-            .list("Drive PID")
-            .at(1, 0)
-            .withSize(1, 3)
-            .addListener("kP", driveP, this::setDriveP)
-            .addListener("kI", driveI, this::setDriveI)
-            .addListener("kD", driveD, this::setDriveD)
-            .addListener("kFF", driveFF, this::setDriveFF);
-
-        shuffleboardTab
-            .list("Steer PID")
-            .at(2, 0)
-            .withSize(1, 3)
-            .addListener("kP", steerP, this::setSteerP)
-            .addListener("kI", steerI, this::setSteerI)
-            .addListener("kD", steerD, this::setSteerD)
-            .addListener("kFF", steerFF, this::setSteerFF);
-
-        shuffleboardTab.addListener("Drive reference", 0, this::setDriveReference, 1, 3);
-        */
     }
 
     public SwerveModule(int drivePort, int steerPort) {
@@ -139,9 +105,6 @@ public class SwerveModule {
         var optimized = optimizeModuleState(state, getAngle());
         driveMotor.set(optimized.getFirst()); // NOTE: this is only while the wheel velocity is in percent output instead
         steerMotor.set(ControlMode.Position, (optimized.getSecond() - offsetRads) / STEER_TICKS_TO_RADIANS);
-
-        // angleEntry.setValue(getAngle().getRadians());
-        // veloEntry.setValue(driveEncoder.getVelocity());
     }
 
     /**
@@ -155,44 +118,6 @@ public class SwerveModule {
             steerMotor.getSelectedSensorPosition() * STEER_TICKS_TO_RADIANS + offsetRads
         );
     }
-    
-    /*
-    private void setDriveP(EntryNotification change) {
-        drivePidController.setP(change.value.getDouble());
-    }
-
-    private void setDriveI(EntryNotification change) {
-        drivePidController.setI(change.value.getDouble());
-    }
-
-    private void setDriveD(EntryNotification change) {
-        drivePidController.setD(change.value.getDouble());
-    }
-
-    private void setDriveFF(EntryNotification change) {
-        drivePidController.setFF(change.value.getDouble());
-    }
-
-    private void setSteerP(EntryNotification change) {
-        steerMotor.config_kP(0, change.value.getDouble());
-    }
-
-    private void setSteerI(EntryNotification change) {
-        steerMotor.config_kI(0, change.value.getDouble());
-    }
-
-    private void setSteerD(EntryNotification change) {
-        steerMotor.config_kD(0, change.value.getDouble());
-    }
-
-    private void setSteerFF(EntryNotification change) {
-        steerMotor.config_kF(0, change.value.getDouble());
-    }
-
-    private void setDriveReference(EntryNotification change) {
-        drivePidController.setReference(change.value.getDouble(), ControlType.kVelocity);
-    }
-    */
     
     /**
      * Optimizes a `SwerveModuleState` by inverting the wheel speeds and rotating the other direction
