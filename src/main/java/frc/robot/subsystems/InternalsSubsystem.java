@@ -1,20 +1,26 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import static frc.robot.Constants.InternalsConstants.*;
+
+import java.security.KeyStore.Entry;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import frc.robot.motorcontrol.MotorUtil;
+import frc.robot.shuffleboard.GRTNetworkTableEntry;
+import frc.robot.shuffleboard.GRTShuffleboardTab;
 
 public class InternalsSubsystem extends SubsystemBase {
 
     private final double ENTRANCE_THRESHOLD = .38;
     private final double STORAGE_THRESHOLD = .30;
-    private final double STAGING_THRESHOLD = .36;
+    private final double STAGING_THRESHOLD = .34;
+    private final double STAGING_THRESHOLD_SHOT = .31;
 
     private final double CONVEYOR_SPEED = .6;
     private final double FLYWHEEL_SPEED = .3;
@@ -39,11 +45,22 @@ public class InternalsSubsystem extends SubsystemBase {
 
     private boolean shotRequested;
     private boolean shotMade;
+    private boolean stagingBall;
+
+    private Timer exitTimer;
+
+    private final GRTShuffleboardTab shuffleboardTab;
+    private final GRTNetworkTableEntry entranceEntry, storageEntry, stagingEntry;
+    private final GRTNetworkTableEntry stateEntry, shotRequestedEntry, stagingBallEntry;
+    private final GRTNetworkTableEntry entranceRawEntry, storageRawEntry, stagingRawEntry;
 
     public InternalsSubsystem() {
         this.state = InternalsState.NO_BALLS;
         this.shotRequested = false;
         this.shotMade = false;
+        this.stagingBall = false;
+
+        this.exitTimer = new Timer();
 
         this.conveyor = MotorUtil.createTalonSRX(conveyorID);
         this.flywheelMain = MotorUtil.createSparkMax(flywheelMainID);
@@ -56,6 +73,20 @@ public class InternalsSubsystem extends SubsystemBase {
         this.entranceIR = new AnalogPotentiometer(entranceIRID);
         this.storageIR = new AnalogPotentiometer(storageIRID);
         this.stagingIR = new AnalogPotentiometer(stagingIRID);
+
+        // shuffleboard
+        shuffleboardTab = new GRTShuffleboardTab("Internals");
+        entranceEntry = shuffleboardTab.addEntry("Entrance", entranceIR.get() > ENTRANCE_THRESHOLD).at(0, 0);
+        storageEntry = shuffleboardTab.addEntry("Storage", storageIR.get() > STORAGE_THRESHOLD).at(1, 0);
+        stagingEntry = shuffleboardTab.addEntry("Staging", stagingIR.get() > STAGING_THRESHOLD).at(2, 0);
+
+        stateEntry = shuffleboardTab.addEntry("STATE", state.toString()).at(0, 2);
+        shotRequestedEntry = shuffleboardTab.addEntry("Shot requested", shotRequested).at(1, 2);
+        stagingBallEntry = shuffleboardTab.addEntry("Staging ball ", stagingBall).at(1, 2);
+
+        entranceRawEntry = shuffleboardTab.addEntry("Entrance raw", entranceIR.get()).at(0, 1);
+        storageRawEntry = shuffleboardTab.addEntry("Storage raw", storageIR.get()).at(2, 1);
+        stagingRawEntry = shuffleboardTab.addEntry("Staging raw", stagingIR.get()).at(4, 1);
     }
 
     @Override
@@ -90,7 +121,8 @@ public class InternalsSubsystem extends SubsystemBase {
 
             case MOVE_BALL_2_UP:
                 conveyor.set(CONVEYOR_SPEED);
-                if (!(entranceIR.get() > ENTRANCE_THRESHOLD)) {
+                
+                if (stagingIR.get() > STAGING_THRESHOLD && storageIR.get() > STORAGE_THRESHOLD) {
                     state = InternalsState.TWO_BALLS;
                 }
                 break;
@@ -101,53 +133,63 @@ public class InternalsSubsystem extends SubsystemBase {
 
         }
 
-        System.out.println(stagingIR.get());
-        
+        // System.out.println(stagingIR.get());
+        // System.out.println(state);
+
+        // System.out.println(shotRequested);
+
         if (shotRequested) {
-            System.out.println(state);
-            System.out.println(shotMade);
+            // System.out.println(state);
+            // System.out.println(shotMade);
 
             // if one ball in storage, move into staging
             if (state == InternalsState.ONE_BALL_STORAGE) {
                 if (!(stagingIR.get() > STAGING_THRESHOLD)) {
                     System.out.println("nothing in staging, run conveyor");
                     conveyor.set(CONVEYOR_SPEED);
-                }
-                else {
+                } else {
                     System.out.println("something in staging");
                 }
             }
 
             // if ball in staging
             if (stagingIR.get() > STAGING_THRESHOLD) {
-                System.out.println("ball in staging, shot made is true");
+                exitTimer.reset();
+                exitTimer.start();
+
                 flywheelMain.set(FLYWHEEL_SPEED);
-                shotMade = true;
-            }
+            } 
             
-            // if a shot was made, reset flywheel and update state
-            if (shotMade) {
+            // if exit time elapsed, mark shot as completed
+            if (exitTimer.hasElapsed(0.5)) {
+                exitTimer.stop();
+                exitTimer.reset();
+
                 flywheelMain.set(0);
-
-                shotRequested = shotMade ? false : true; // maintain shot requested if no shot was made
-                shotMade = false;
-
+                shotRequested = false;
                 if (state == InternalsState.TWO_BALLS) {
                     state = InternalsState.ONE_BALL_STORAGE;
                 }
                 if (state == InternalsState.ONE_BALL_STORAGE) {
                     state = InternalsState.NO_BALLS;
                 }
+            
+            
+                
             }
-
         }
-        // SHOOTING balls
-        // if two balls or ball 1 in storage
-        // if shot requested
-        // set flywheel speed
-        // state = move ball 2 up
 
-        // if exit ir detects then it doesn't, flywheel power to 0
+        entranceEntry.setValue(entranceIR.get() > ENTRANCE_THRESHOLD);
+        storageEntry.setValue(storageIR.get() > STORAGE_THRESHOLD);
+        stagingEntry.setValue(stagingIR.get() > STAGING_THRESHOLD);
+
+        stateEntry.setValue(state.toString());
+        shotRequestedEntry.setValue(shotRequested);
+        stagingBallEntry.setValue(stagingBall);
+        entranceRawEntry.setValue(entranceIR.get());
+        storageRawEntry.setValue(storageIR.get());
+        stagingRawEntry.setValue(stagingIR.get());
+        ;
 
     }
 

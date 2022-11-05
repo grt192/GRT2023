@@ -93,6 +93,8 @@ public class RobotContainer {
             intakeSubsystem.setPower(driveController.getRightTriggerAxis() - driveController.getLeftTriggerAxis());
         }, intakeSubsystem));
 
+        driveBButton.whenPressed(new InstantCommand(swerveSubsystem::toggleLocked, swerveSubsystem));
+        
         driveAButton.whenPressed(new RunCommand(() -> {
             internalsSubsystem.requestShot();
         }, internalsSubsystem));
