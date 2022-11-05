@@ -11,6 +11,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.networktables.EntryNotification;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.motorcontrol.MotorUtil;
@@ -32,41 +33,57 @@ public class MissileShellSwerveSubsystem extends SubsystemBase {
     public static final double MAX_VEL = 1.0; // Max robot tangential velocity, in percent output
     private static final double offsetRads = 0;
 
+    private static final double steerP = 0.4;
+    private static final double steerI = 0;
+    private static final double steerD = 0;
+    private static final double steerFF = 0;
+
     private SwerveModuleState[] states = {
         new SwerveModuleState()
     };
 
     private final GRTShuffleboardTab shuffleboardTab = new GRTShuffleboardTab("Swerve");
+    private final GRTNetworkTableEntry positionEntry, setpointEntry;
 
     public MissileShellSwerveSubsystem() {
         driveMotor = MotorUtil.createSparkMax(2);
 
         steerMotor = MotorUtil.createSparkMax(1);
-        steerMotor.setIdleMode(IdleMode.kCoast); // TODO: investigate strange braking behavior
+        steerMotor.setIdleMode(IdleMode.kBrake);
 
         steerEncoder = steerMotor.getAnalog(SparkMaxAnalogSensor.Mode.kAbsolute);
         steerEncoder.setPositionConversionFactor(2 * Math.PI / 3.3); // 3.3V -> 2pi
 
         steerPidController = steerMotor.getPIDController();
         steerPidController.setFeedbackDevice(steerEncoder);
+        steerPidController.setP(steerP);
+        steerPidController.setI(steerI);
+        steerPidController.setD(steerD);
+        steerPidController.setFF(steerFF);
 
         // One module at the center of the robot
         kinematics = new SwerveDriveKinematics(
             new Translation2d(),
             new Translation2d()
         );
+
+        positionEntry = shuffleboardTab.addEntry("Position", 0).at(0, 0);
+        setpointEntry = shuffleboardTab.addEntry("Setpoint", 0).at(1, 0);
+
+        shuffleboardTab
+            .addListener("Steer p", steerP, this::setSteerP, 0, 1)
+            .addListener("Steer i", steerI, this::setSteerI, 0, 2)
+            .addListener("Steer d", steerD, this::setSteerD, 0, 3)
+            .addListener("Steer ff", steerFF, this::setSteerFF, 0, 4);
     }
 
     @Override
     public void periodic() {
-        steerMotor.set(0.4);
-        driveMotor.set(0.4);
-        System.out.println(Math.toDegrees(steerEncoder.getPosition()));
+        positionEntry.setValue(Math.toDegrees(steerEncoder.getPosition()));
+        setpointEntry.setValue(states[0].angle.getDegrees());
 
-        /*
         SwerveDriveKinematics.desaturateWheelSpeeds(states, MAX_VEL);
         setDesiredState(states[0]);
-        */
     }
 
     /**
@@ -110,5 +127,21 @@ public class MissileShellSwerveSubsystem extends SubsystemBase {
 
         // Calculate swerve module states from desired chassis speeds.
         this.states = kinematics.toSwerveModuleStates(speeds);
+    }
+
+    private void setSteerP(EntryNotification change) {
+        steerPidController.setP(change.value.getDouble());
+    }
+
+    private void setSteerI(EntryNotification change) {
+        steerPidController.setI(change.value.getDouble());
+    }
+
+    private void setSteerD(EntryNotification change) {
+        steerPidController.setD(change.value.getDouble());
+    }
+
+    private void setSteerFF(EntryNotification change) {
+        steerPidController.setFF(change.value.getDouble());
     }
 }
