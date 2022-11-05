@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Translation2d;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
  * numerical or boolean constants. This class should not be used for any other
@@ -19,18 +21,22 @@ public final class Constants {
         public static final int tlDrive = 1;
         public static final int tlSteer = 0;
         public static final double tlOffsetRads = 0;
+        public static final Translation2d tlPos = new Translation2d();
 
         public static final int trDrive = 0;
         public static final int trSteer = 0;
         public static final double trOffsetRads = 0;
+        public static final Translation2d trPos = new Translation2d();
 
         public static final int blDrive = 0;
         public static final int blSteer = 0;
         public static final double blOffsetRads = 0;
+        public static final Translation2d blPos = new Translation2d();
 
         public static final int brDrive = 0;
         public static final int brSteer = 0;
         public static final double brOffsetRads = 0;
+        public static final Translation2d brPos = new Translation2d();
     }
 
     public static final class ShuffleboardConstants {

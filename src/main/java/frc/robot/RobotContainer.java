@@ -78,7 +78,7 @@ public class RobotContainer {
             double xPower = -driveController.getLeftY();
             double yPower = -driveController.getLeftX();
             double angularPower = -driveController.getRightX();
-            //swerveSubsystem.setSwerveDrivePowers(xPower, yPower, angularPower);
+            swerveSubsystem.setSwerveDrivePowers(xPower, yPower, angularPower);
         }, swerveSubsystem));
     }
 
