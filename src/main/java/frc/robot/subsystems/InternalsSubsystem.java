@@ -122,7 +122,7 @@ public class InternalsSubsystem extends SubsystemBase {
             case MOVE_BALL_2_UP:
                 conveyor.set(CONVEYOR_SPEED);
                 
-                if (stagingIR.get() > STAGING_THRESHOLD && storageIR.get() > STORAGE_THRESHOLD) {
+                if (stagingIR.get() > STAGING_THRESHOLD) { // && storageIR.get() > STORAGE_THRESHOLD) {
                     state = InternalsState.TWO_BALLS;
                 }
                 break;
@@ -142,23 +142,21 @@ public class InternalsSubsystem extends SubsystemBase {
             // System.out.println(state);
             // System.out.println(shotMade);
 
-            // if one ball in storage, move into staging
-            if (state == InternalsState.ONE_BALL_STORAGE) {
-                if (!(stagingIR.get() > STAGING_THRESHOLD)) {
-                    System.out.println("nothing in staging, run conveyor");
-                    conveyor.set(CONVEYOR_SPEED);
-                } else {
-                    System.out.println("something in staging");
-                }
-            }
-
             // if ball in staging
             if (stagingIR.get() > STAGING_THRESHOLD) {
                 exitTimer.reset();
                 exitTimer.start();
 
                 flywheelMain.set(FLYWHEEL_SPEED);
-            } 
+            }
+            // no ball in staging
+            else
+            {
+                if (state != InternalsState.NO_BALLS)
+                {
+                    conveyor.set(CONVEYOR_SPEED);
+                }
+            }
             
             // if exit time elapsed, mark shot as completed
             if (exitTimer.hasElapsed(0.5)) {
@@ -173,8 +171,6 @@ public class InternalsSubsystem extends SubsystemBase {
                 if (state == InternalsState.ONE_BALL_STORAGE) {
                     state = InternalsState.NO_BALLS;
                 }
-            
-            
                 
             }
         }
