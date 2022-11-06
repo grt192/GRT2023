@@ -1,6 +1,7 @@
 package frc.robot.subsystems.swerve;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxAnalogSensor;
 import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax.ControlType;
@@ -25,13 +26,17 @@ public class MissileShellSwerveSubsystem extends SubsystemBase {
     private final CANSparkMax driveMotor;
 
     private final CANSparkMax steerMotor;
-    private final SparkMaxAnalogSensor steerEncoder;
+    private final RelativeEncoder steerEncoder;
+    private final SparkMaxAnalogSensor steerAbsoluteEncoder;
     private final SparkMaxPIDController steerPidController;
 
     private final SwerveDriveKinematics kinematics;
 
     public static final double MAX_VEL = 1.0; // Max robot tangential velocity, in percent output
     private static final double offsetRads = 0;
+
+    private static final double STEER_ROTATIONS_TO_RADIANS = 1.0 / 39.0 * 2 * Math.PI; // 39:1 gear ratio, 1 rotation = 2pi
+    private static final double STEER_VOLTS_TO_RADIANS = 2 * Math.PI / 3.3; // MA3 analog output: 3.3V -> 2pi
 
     private static final double steerP = 0.4;
     private static final double steerI = 0;
@@ -51,11 +56,15 @@ public class MissileShellSwerveSubsystem extends SubsystemBase {
         steerMotor = MotorUtil.createSparkMax(1);
         steerMotor.setIdleMode(IdleMode.kBrake);
 
-        steerEncoder = steerMotor.getAnalog(SparkMaxAnalogSensor.Mode.kAbsolute);
-        steerEncoder.setPositionConversionFactor(2 * Math.PI / 3.3); // 3.3V -> 2pi
+        steerAbsoluteEncoder = steerMotor.getAnalog(SparkMaxAnalogSensor.Mode.kAbsolute);
+        steerAbsoluteEncoder.setPositionConversionFactor(STEER_VOLTS_TO_RADIANS);
+
+        steerEncoder = steerMotor.getEncoder();
+        steerEncoder.setPositionConversionFactor(STEER_ROTATIONS_TO_RADIANS);
+        steerEncoder.setPosition(steerAbsoluteEncoder.getPosition()); // Set initial position to absolute value
 
         steerPidController = steerMotor.getPIDController();
-        steerPidController.setFeedbackDevice(steerEncoder);
+        //steerPidController.setFeedbackDevice(steerEncoder);
         steerPidController.setP(steerP);
         steerPidController.setI(steerI);
         steerPidController.setD(steerD);
