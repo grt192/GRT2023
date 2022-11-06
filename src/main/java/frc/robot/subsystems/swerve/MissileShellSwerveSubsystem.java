@@ -64,7 +64,7 @@ public class MissileShellSwerveSubsystem extends SubsystemBase {
         steerEncoder.setPosition(steerAbsoluteEncoder.getPosition()); // Set initial position to absolute value
 
         steerPidController = steerMotor.getPIDController();
-        //steerPidController.setFeedbackDevice(steerEncoder);
+        //steerPidController.setFeedbackDevice(steerAbsoluteEncoder);
         steerPidController.setP(steerP);
         steerPidController.setI(steerI);
         steerPidController.setD(steerD);
