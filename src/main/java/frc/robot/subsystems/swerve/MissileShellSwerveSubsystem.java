@@ -33,9 +33,11 @@ public class MissileShellSwerveSubsystem extends SubsystemBase {
     private final SwerveDriveKinematics kinematics;
 
     public static final double MAX_VEL = 1.0; // Max robot tangential velocity, in percent output
-    private static final double offsetRads = 0;
+    private static final double offsetRads = -1.1350287199020386;
 
-    private static final double STEER_ROTATIONS_TO_RADIANS = (1.0 / 39.0) * (34.0 / 63.0) * 2 * Math.PI; // 39:1 gear ratio, 63:34 pulley ratio, 1 rotation = 2pi
+    // private static final double STEER_ROTATIONS_TO_RADIANS = (1.0 / 39.0) * (34.0 / 63.0) * 2 * Math.PI; // 39:1 gear ratio, 63:34 pulley ratio, 1 rotation = 2pi
+    private static final double STEER_ROTATIONS_TO_RADIANS = (1 / 94.65) * 2 * Math.PI; // 39:1 gear ratio, 63:34 pulley ratio, 1 rotation = 2pi
+
     private static final double STEER_VOLTS_TO_RADIANS = 2 * Math.PI / 3.3; // MA3 analog output: 3.3V -> 2pi
 
     private static final double steerP = 0.4;
@@ -64,7 +66,7 @@ public class MissileShellSwerveSubsystem extends SubsystemBase {
         steerEncoder.setPosition(steerAbsoluteEncoder.getPosition()); // Set initial position to absolute value
 
         steerPidController = steerMotor.getPIDController();
-        //steerPidController.setFeedbackDevice(steerAbsoluteEncoder);
+        steerPidController.setFeedbackDevice(steerEncoder);
         steerPidController.setP(steerP);
         steerPidController.setI(steerI);
         steerPidController.setD(steerD);
@@ -88,7 +90,7 @@ public class MissileShellSwerveSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        positionEntry.setValue(Math.toDegrees(steerEncoder.getPosition()));
+        positionEntry.setValue(Math.toDegrees(steerEncoder.getPosition() + offsetRads));
         setpointEntry.setValue(states[0].angle.getDegrees());
 
         SwerveDriveKinematics.desaturateWheelSpeeds(states, MAX_VEL);

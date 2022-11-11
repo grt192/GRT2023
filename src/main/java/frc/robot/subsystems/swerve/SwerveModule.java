@@ -77,7 +77,7 @@ public class SwerveModule {
         steerEncoder.setPosition(steerAbsoluteEncoder.getPosition()); // Set initial position to absolute value
 
         steerPidController = steerMotor.getPIDController();
-        // steerPidController.setFeedbackDevice(steerAbsoluteEncoder);
+        steerPidController.setFeedbackDevice(steerEncoder);
         steerPidController.setP(steerP);
         steerPidController.setI(steerI);
         steerPidController.setD(steerD);
