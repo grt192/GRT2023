@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.robot.subsystems.Tank;
 
 import frc.robot.shuffleboard.GRTShuffleboardTab;
 import frc.robot.subsystems.swerve.MissileShellSwerveSubsystem;
@@ -27,6 +28,7 @@ public class RobotContainer {
     // Subsystems
     //private final SwerveSubsystem swerveSubsystem;
     private final MissileShellSwerveSubsystem swerveSubsystem;
+    private final Tank m_Tank = new Tank();
 
     // Controllers and buttons
     private final XboxController driveController = new XboxController(0);
@@ -74,12 +76,7 @@ public class RobotContainer {
      * passing it to a {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
      */
     private void configureButtonBindings() {
-        swerveSubsystem.setDefaultCommand(new RunCommand(() -> {
-            double xPower = -driveController.getLeftY();
-            double yPower = -driveController.getLeftX();
-            double angularPower = -driveController.getRightX();
-            swerveSubsystem.setSwerveDrivePowers(xPower, yPower, angularPower);
-        }, swerveSubsystem));
+    
     }
 
     /**
