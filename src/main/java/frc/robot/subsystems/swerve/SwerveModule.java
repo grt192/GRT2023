@@ -33,7 +33,7 @@ public class SwerveModule {
     private final double offsetRads;
 
     private static final double DRIVE_TICKS_TO_METERS = 1.0;
-    private static final double STEER_ROTATIONS_TO_RADIANS = (1.0 / 39.0) * (34.0 / 63.0) * 2 * Math.PI; // 39:1 gear ratio, 63:34 pulley ratio, 1 rotation = 2pi
+    private static final double STEER_ROTATIONS_TO_RADIANS = (1.0 / 52.0) * (34.0 / 63.0) * 2 * Math.PI; // 52:1 gear ratio, 63:34 pulley ratio, 1 rotation = 2pi
     private static final double STEER_VOLTS_TO_RADIANS = 2 * Math.PI / 3.3; // MA3 analog output: 3.3V -> 2pi
 
     private static final double driveP = 0;
