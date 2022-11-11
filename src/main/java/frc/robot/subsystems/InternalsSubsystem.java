@@ -19,8 +19,7 @@ public class InternalsSubsystem extends SubsystemBase {
 
     private final double ENTRANCE_THRESHOLD = .38;
     private final double STORAGE_THRESHOLD = .30;
-    private final double STAGING_THRESHOLD = .34;
-    private final double STAGING_THRESHOLD_SHOT = .31;
+    private final double STAGING_THRESHOLD = .32;
 
     private final double CONVEYOR_SPEED = .6;
     private final double FLYWHEEL_SPEED = .3;
@@ -53,6 +52,7 @@ public class InternalsSubsystem extends SubsystemBase {
     private final GRTNetworkTableEntry entranceEntry, storageEntry, stagingEntry;
     private final GRTNetworkTableEntry stateEntry, shotRequestedEntry, stagingBallEntry;
     private final GRTNetworkTableEntry entranceRawEntry, storageRawEntry, stagingRawEntry;
+    private final GRTNetworkTableEntry exitTimerEntry;
 
     public InternalsSubsystem() {
         this.state = InternalsState.NO_BALLS;
@@ -82,11 +82,13 @@ public class InternalsSubsystem extends SubsystemBase {
 
         stateEntry = shuffleboardTab.addEntry("STATE", state.toString()).at(0, 2);
         shotRequestedEntry = shuffleboardTab.addEntry("Shot requested", shotRequested).at(1, 2);
-        stagingBallEntry = shuffleboardTab.addEntry("Staging ball ", stagingBall).at(1, 2);
+        stagingBallEntry = shuffleboardTab.addEntry("Staging ball ", stagingBall).at(2, 2);
 
         entranceRawEntry = shuffleboardTab.addEntry("Entrance raw", entranceIR.get()).at(0, 1);
         storageRawEntry = shuffleboardTab.addEntry("Storage raw", storageIR.get()).at(2, 1);
         stagingRawEntry = shuffleboardTab.addEntry("Staging raw", stagingIR.get()).at(4, 1);
+
+        exitTimerEntry = shuffleboardTab.addEntry("exit timer", this.exitTimer.get()).at(1, 3);
     }
 
     @Override
@@ -146,7 +148,8 @@ public class InternalsSubsystem extends SubsystemBase {
             if (stagingIR.get() > STAGING_THRESHOLD) {
                 exitTimer.reset();
                 exitTimer.start();
-
+                
+                conveyor.set(CONVEYOR_SPEED); // run staging ball up
                 flywheelMain.set(FLYWHEEL_SPEED);
             }
             // no ball in staging
@@ -157,18 +160,20 @@ public class InternalsSubsystem extends SubsystemBase {
                     conveyor.set(CONVEYOR_SPEED);
                 }
             }
+
             
             // if exit time elapsed, mark shot as completed
-            if (exitTimer.hasElapsed(0.5)) {
+            if (exitTimer.hasElapsed(0.2)) {
                 exitTimer.stop();
                 exitTimer.reset();
 
                 flywheelMain.set(0);
+                conveyor.set(0);
                 shotRequested = false;
                 if (state == InternalsState.TWO_BALLS) {
                     state = InternalsState.ONE_BALL_STORAGE;
                 }
-                if (state == InternalsState.ONE_BALL_STORAGE) {
+                else if (state == InternalsState.ONE_BALL_STORAGE) {
                     state = InternalsState.NO_BALLS;
                 }
                 
@@ -185,12 +190,17 @@ public class InternalsSubsystem extends SubsystemBase {
         entranceRawEntry.setValue(entranceIR.get());
         storageRawEntry.setValue(storageIR.get());
         stagingRawEntry.setValue(stagingIR.get());
-        ;
+
+        exitTimerEntry.setValue(exitTimer.get());
 
     }
 
     public void requestShot() {
         this.shotRequested = true;
+    }
+
+    public void resetState() {
+        this.state = InternalsState.NO_BALLS;
     }
 
 }

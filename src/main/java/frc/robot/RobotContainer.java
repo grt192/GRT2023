@@ -77,6 +77,7 @@ public class RobotContainer {
      * passing it to a {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
      */
     private void configureButtonBindings() {
+        /*
         swerveSubsystem.setDefaultCommand(new RunCommand(() -> {
             double xPower = -driveController.getLeftY();
             double yPower = -driveController.getLeftX();
@@ -85,16 +86,19 @@ public class RobotContainer {
         }, swerveSubsystem));
 
         driveBButton.whenPressed(new InstantCommand(swerveSubsystem::toggleLocked, swerveSubsystem));
-        
+        */
+
         // Run intake rollers with right and left triggers
         intakeSubsystem.setDefaultCommand(new RunCommand(() -> {
             intakeSubsystem.setPower(driveController.getRightTriggerAxis() - driveController.getLeftTriggerAxis());
         }, intakeSubsystem));
-
-        driveBButton.whenPressed(new InstantCommand(swerveSubsystem::toggleLocked, swerveSubsystem));
         
-        driveAButton.whenPressed(new RunCommand(() -> {
+        driveAButton.whenPressed(new InstantCommand(() -> {
             internalsSubsystem.requestShot();
+        }, internalsSubsystem));
+
+        driveRBumper.whenPressed(new InstantCommand(() -> {
+            internalsSubsystem.resetState();
         }, internalsSubsystem));
     }
 
