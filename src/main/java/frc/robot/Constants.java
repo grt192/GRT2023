@@ -42,4 +42,12 @@ public final class Constants {
     public static final class ShuffleboardConstants {
         public static final double UPDATE_TIME = 0.5; // seconds between each update
     }
+
+    public static final class TankConstants {
+        public static final int motorBackLeft = 1;
+        public static final int motorFrontLeft = 2;
+        public static final int motorBackRight = 3;
+        public static final int motorFrontRight = 4;
+
+    }
 }
