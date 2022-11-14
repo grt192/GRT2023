@@ -46,7 +46,7 @@ public class TankSubsystem extends SubsystemBase {
         // System.out.println(forwardpower);
         scaler = (Math.max(1., (Math.max(Math.abs(forwardpower-turnpower), Math.abs(forwardpower+turnpower) ))));
 
-        leftmotor.set((forwardpower + turnpower) / scaler);
-        rightmotor.set((forwardpower - turnpower) / scaler);
+        leftmotor.set((forwardpower - turnpower) / scaler);
+        rightmotor.set((forwardpower + turnpower) / scaler);
     }
 }
