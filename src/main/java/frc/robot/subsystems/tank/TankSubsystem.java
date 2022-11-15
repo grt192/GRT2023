@@ -19,7 +19,7 @@ public class TankSubsystem extends SubsystemBase {
     public double turnpower = 0;
     public double scaler;
 
-    public TankSubsystem() {
+    public TankSubsystem() { 
         leftmotor.configFactoryDefault();
         leftmotor2.configFactoryDefault();
         rightmotor.configFactoryDefault();
