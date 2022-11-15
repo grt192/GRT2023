@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 import frc.robot.shuffleboard.GRTShuffleboardTab;
-import frc.robot.subsystems.tank.TankSubsystem;
+import frc.robot.subsystems.TankSubsystem;
 import java.lang.Math;
 
 /**
