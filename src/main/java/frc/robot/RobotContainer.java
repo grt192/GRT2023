@@ -31,7 +31,7 @@ public class RobotContainer {
     private final InternalsSubsystem internalsSubsystem;
 
     // Controllers and buttons
-    private final XboxController driveController = new XboxController(0);
+    private final XboxController driveController = new XboxController(1);
     private final JoystickButton 
         driveAButton = new JoystickButton(driveController, XboxController.Button.kA.value),
         driveBButton = new JoystickButton(driveController, XboxController.Button.kB.value),
@@ -40,7 +40,7 @@ public class RobotContainer {
         driveLBumper = new JoystickButton(driveController, XboxController.Button.kLeftBumper.value),
         driveRBumper = new JoystickButton(driveController, XboxController.Button.kRightBumper.value);
 
-    private final XboxController mechController = new XboxController(1);
+    private final XboxController mechController = new XboxController(0);
     private final JoystickButton 
         mechAButton = new JoystickButton(mechController, XboxController.Button.kA.value),
         mechBButton = new JoystickButton(mechController, XboxController.Button.kB.value),
@@ -77,7 +77,7 @@ public class RobotContainer {
      * passing it to a {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
      */
     private void configureButtonBindings() {
-        /*
+        
         swerveSubsystem.setDefaultCommand(new RunCommand(() -> {
             double xPower = -driveController.getLeftY();
             double yPower = -driveController.getLeftX();
@@ -86,20 +86,28 @@ public class RobotContainer {
         }, swerveSubsystem));
 
         driveBButton.whenPressed(new InstantCommand(swerveSubsystem::toggleLocked, swerveSubsystem));
-        */
 
         // Run intake rollers with right and left triggers
-        intakeSubsystem.setDefaultCommand(new RunCommand(() -> {
-            intakeSubsystem.setPower(driveController.getRightTriggerAxis() - driveController.getLeftTriggerAxis());
-        }, intakeSubsystem));
+        // intakeSubsystem.setDefaultCommand(new RunCommand(() -> {
+            // intakeSubsystem.setPower(driveController.getRightTriggerAxis() - driveController.getLeftTriggerAxis());
+        // }, intakeSubsystem));
         
-        driveAButton.whenPressed(new InstantCommand(() -> {
+        mechAButton.whenPressed(new InstantCommand(() -> {
             internalsSubsystem.requestShot();
         }, internalsSubsystem));
 
-        driveRBumper.whenPressed(new InstantCommand(() -> {
+        mechRBumper.whenPressed(new InstantCommand(() -> {
             internalsSubsystem.resetState();
         }, internalsSubsystem));
+
+        internalsSubsystem.setDefaultCommand(new RunCommand(() -> {
+            internalsSubsystem.setFlywheelPower(mechController.getRightTriggerAxis());
+        }, internalsSubsystem));
+
+        mechBButton.whenPressed(new InstantCommand(() -> {
+            intakeSubsystem.toggleIntakeDeploy();
+        }, intakeSubsystem));
+
     }
 
     /**

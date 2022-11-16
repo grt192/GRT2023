@@ -2,6 +2,9 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
+import edu.wpi.first.wpilibj.PneumaticsControlModule;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import static frc.robot.Constants.IntakeConstants.*;
 
@@ -10,9 +13,15 @@ public class IntakeSubsystem extends SubsystemBase {
     private WPI_TalonSRX intakeTalon;
     private double intakePower;
 
+    private Solenoid deploySol;
+    private boolean deploy;
+
     public IntakeSubsystem() {
         intakeTalon = new WPI_TalonSRX(intakeTalonID);
         intakeTalon.configFactoryDefault();
+
+        deploySol = new Solenoid(PneumaticsModuleType.CTREPCM, 4);
+        deploy = false;
 
         this.intakePower = 0;
     }
@@ -20,6 +29,7 @@ public class IntakeSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         intakeTalon.set(intakePower);
+        deploySol.set(deploy);
     }
 
     /**
@@ -28,6 +38,11 @@ public class IntakeSubsystem extends SubsystemBase {
      */
     public void setPower(double intakePower) {
         this.intakePower = intakePower;
+    }
+
+    public void toggleIntakeDeploy() {
+        deploy = !deploy;
+
     }
     
 }

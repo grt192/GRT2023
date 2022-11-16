@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import static frc.robot.Constants.InternalsConstants.*;
 
@@ -22,7 +23,8 @@ public class InternalsSubsystem extends SubsystemBase {
     private final double STAGING_THRESHOLD = .32;
 
     private final double CONVEYOR_SPEED = .6;
-    private final double FLYWHEEL_SPEED = .3;
+    private final double FLYWHEEL_SPEED = .8;
+    private double flywheelSpeed = FLYWHEEL_SPEED;
 
     private enum InternalsState {
         NO_BALLS,
@@ -43,8 +45,8 @@ public class InternalsSubsystem extends SubsystemBase {
     private AnalogPotentiometer stagingIR;
 
     private boolean shotRequested;
-    private boolean shotMade;
     private boolean stagingBall;
+    private boolean isShooting;
 
     private Timer exitTimer;
 
@@ -53,12 +55,14 @@ public class InternalsSubsystem extends SubsystemBase {
     private final GRTNetworkTableEntry stateEntry, shotRequestedEntry, stagingBallEntry;
     private final GRTNetworkTableEntry entranceRawEntry, storageRawEntry, stagingRawEntry;
     private final GRTNetworkTableEntry exitTimerEntry;
+    private final GRTNetworkTableEntry flywheelEntry;
 
     public InternalsSubsystem() {
         this.state = InternalsState.NO_BALLS;
         this.shotRequested = false;
-        this.shotMade = false;
         this.stagingBall = false;
+
+        this.isShooting = false;
 
         this.exitTimer = new Timer();
 
@@ -89,6 +93,8 @@ public class InternalsSubsystem extends SubsystemBase {
         stagingRawEntry = shuffleboardTab.addEntry("Staging raw", stagingIR.get()).at(4, 1);
 
         exitTimerEntry = shuffleboardTab.addEntry("exit timer", this.exitTimer.get()).at(1, 3);
+
+        flywheelEntry = shuffleboardTab.addEntry("flywheel power", flywheelSpeed);
     }
 
     @Override
@@ -123,7 +129,7 @@ public class InternalsSubsystem extends SubsystemBase {
 
             case MOVE_BALL_2_UP:
                 conveyor.set(CONVEYOR_SPEED);
-                
+
                 if (stagingIR.get() > STAGING_THRESHOLD) { // && storageIR.get() > STORAGE_THRESHOLD) {
                     state = InternalsState.TWO_BALLS;
                 }
@@ -144,39 +150,49 @@ public class InternalsSubsystem extends SubsystemBase {
             // System.out.println(state);
             // System.out.println(shotMade);
 
-            // if ball in staging
+            // if ball in staging and we aren't trying to shoot yet
             if (stagingIR.get() > STAGING_THRESHOLD) {
-                exitTimer.reset();
-                exitTimer.start();
-                
-                conveyor.set(CONVEYOR_SPEED); // run staging ball up
-                flywheelMain.set(FLYWHEEL_SPEED);
+
+                if (!isShooting) {
+
+                    exitTimer.reset();
+                    exitTimer.start();
+
+                    isShooting = true;
+
+                    // conveyor.set(CONVEYOR_SPEED); // run staging ball up
+                    conveyor.set(0);
+                    flywheelMain.set(flywheelSpeed);
+                }
             }
             // no ball in staging
-            else
-            {
-                if (state != InternalsState.NO_BALLS)
-                {
+            else {
+                conveyor.set(0);
+                flywheelMain.set(0);
+                if (state != InternalsState.NO_BALLS) {
                     conveyor.set(CONVEYOR_SPEED);
                 }
             }
 
-            
-            // if exit time elapsed, mark shot as completed
-            if (exitTimer.hasElapsed(0.2)) {
+            // if flywheel up to speed + conveyor was run, mark shot as completed
+            if (exitTimer.hasElapsed(1.2)) {
                 exitTimer.stop();
                 exitTimer.reset();
 
-                flywheelMain.set(0);
                 conveyor.set(0);
+                flywheelMain.set(0);
+
                 shotRequested = false;
+                isShooting = false;
                 if (state == InternalsState.TWO_BALLS) {
                     state = InternalsState.ONE_BALL_STORAGE;
-                }
-                else if (state == InternalsState.ONE_BALL_STORAGE) {
+                } else if (state == InternalsState.ONE_BALL_STORAGE) {
                     state = InternalsState.NO_BALLS;
                 }
-                
+
+            } else if (exitTimer.hasElapsed(1.0)) {
+                conveyor.set(CONVEYOR_SPEED);
+                flywheelMain.set(flywheelSpeed);
             }
         }
 
@@ -193,6 +209,16 @@ public class InternalsSubsystem extends SubsystemBase {
 
         exitTimerEntry.setValue(exitTimer.get());
 
+        flywheelEntry.setValue(flywheelSpeed);
+    }
+
+    public void setFlywheelPower(double power) {
+        if (power == 0) {
+            // default
+            this.flywheelSpeed = FLYWHEEL_SPEED;
+        } else {
+            this.flywheelSpeed = power;
+        }
     }
 
     public void requestShot() {
