@@ -21,7 +21,7 @@ public class MissileShellSwerveSubsystem extends SubsystemBase {
     };
 
     public MissileShellSwerveSubsystem() {
-        module = new SwerveModule(2, 1, -1.1350287199020386);
+        module = new SwerveModule(2, 1, -1.1350287199020386 + Math.PI);
 
         // One module at the center of the robot
         kinematics = new SwerveDriveKinematics(

@@ -70,6 +70,7 @@ public class SwerveModule {
         */
 
         driveMotor = MotorUtil.createSparkMax(drivePort);
+        driveMotor.setIdleMode(IdleMode.kBrake);
 
         steerMotor = MotorUtil.createSparkMax(steerPort);
         steerMotor.setIdleMode(IdleMode.kBrake);
