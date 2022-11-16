@@ -19,7 +19,6 @@ public class MissileShellSwerveSubsystem extends SubsystemBase {
     private SwerveModuleState[] states = {
         new SwerveModuleState()
     };
-    private boolean isIdle = false;
 
     public MissileShellSwerveSubsystem() {
         module = new SwerveModule(2, 1, -1.1350287199020386 + Math.PI);
@@ -44,18 +43,11 @@ public class MissileShellSwerveSubsystem extends SubsystemBase {
      * @param angularPower The angular (rotational) power [-1.0, 1.0].
      */
     public void setSwerveDrivePowers(double xPower, double yPower, double angularPower) {
-        // If drivers are sending no input, we're idle; don't return modules to 0 degrees.
+        // If drivers are sending no input, stop all modules but hold their current angle.
         if (xPower == 0.0 && yPower == 0.0 && angularPower == 0.0) {
-            if (isIdle) return;
-
-            // Stop all modules but hold their current angle.
             SwerveModuleState state = module.getState();
             this.states[0] = new SwerveModuleState(0.0, state.angle);
-
-            isIdle = true;
             return;
-        } else {
-            isIdle = false;
         }
 
         // Scale [-1.0, 1.0] powers to desired velocity, turning field-relative powers

@@ -43,7 +43,6 @@ public class SwerveSubsystem extends SubsystemBase {
         new SwerveModuleState(),
         new SwerveModuleState()
     };
-    private boolean isIdle = false;
 
     public SwerveSubsystem() {
         // Initialize swerve modules
@@ -82,12 +81,8 @@ public class SwerveSubsystem extends SubsystemBase {
      * @param angularPower The angular (rotational) power [-1.0, 1.0].
      */
     public void setSwerveDrivePowers(double xPower, double yPower, double angularPower) {
-        // If drivers are sending no input, we're idle; don't return modules to 0 degrees.
+        // If drivers are sending no input, stop all modules but hold their current angle.
         if (xPower == 0.0 && yPower == 0.0 && angularPower == 0.0) {
-            // Don't repeatedly call this while idle to prevent jittering.
-            if (isIdle) return;
-
-            // Stop all modules but hold their current angle.
             SwerveModuleState tlState = topLeftModule.getState();
             SwerveModuleState trState = topRightModule.getState();
             SwerveModuleState blState = bottomLeftModule.getState();
@@ -98,10 +93,7 @@ public class SwerveSubsystem extends SubsystemBase {
             this.states[2] = new SwerveModuleState(0.0, blState.angle);
             this.states[3] = new SwerveModuleState(0.0, brState.angle);
 
-            isIdle = true;
             return;
-        } else {
-            isIdle = false;
         }
 
         // Scale [-1.0, 1.0] powers to desired velocity, turning field-relative powers
@@ -145,6 +137,12 @@ public class SwerveSubsystem extends SubsystemBase {
             bottomLeftModule.getState(),
             bottomRightModule.getState()
         );
+
+        // If all commanded velocities are 0, the system is idle (drivers / commands are not supplying input).
+        boolean isIdle = states[0].speedMetersPerSecond == 0.0
+            && states[1].speedMetersPerSecond == 0.0
+            && states[2].speedMetersPerSecond == 0.0
+            && states[3].speedMetersPerSecond == 0.0;
 
         // Start lock timer when idle
         if (isIdle) {
