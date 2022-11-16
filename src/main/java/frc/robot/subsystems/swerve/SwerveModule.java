@@ -16,8 +16,11 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.networktables.EntryNotification;
 
 import frc.robot.motorcontrol.MotorUtil;
+import frc.robot.shuffleboard.GRTNetworkTableEntry;
+import frc.robot.shuffleboard.GRTShuffleboardTab;
 
 /**
  * A swerve module with a Falcon drive motor and a NEO steer motor.
@@ -46,6 +49,10 @@ public class SwerveModule {
     private static final double steerI = 0;
     private static final double steerD = 0;
     private static final double steerFF = 0;
+
+    private GRTShuffleboardTab shuffleboardTab;
+    private GRTNetworkTableEntry rawAngleEntry, offsetAngleEntry, angleSetpointEntry;
+    private static final boolean DEBUG_ENABLE = true;
 
     /**
      * Constructs a SwerveModule from a drive and steer motor CAN ID and an angle offset.
@@ -90,6 +97,20 @@ public class SwerveModule {
         steerPidController.setFF(steerFF);
 
         this.offsetRads = offsetRads;
+
+        if (DEBUG_ENABLE) {
+            shuffleboardTab = new GRTShuffleboardTab("Swerve [" + drivePort + ", " + steerPort + "]");
+
+            rawAngleEntry = shuffleboardTab.addEntry("Raw angle", Math.toDegrees(steerEncoder.getPosition())).at(0, 0);
+            offsetAngleEntry = shuffleboardTab.addEntry("Offset angle", getAngle().getDegrees()).at(0, 1);
+            angleSetpointEntry = shuffleboardTab.addEntry("Angle setpoint", 0).at(0, 2);
+
+            shuffleboardTab
+                .addListener("Steer p", steerP, this::setSteerP, 1, 0)
+                .addListener("Steer i", steerI, this::setSteerI, 1, 1)
+                .addListener("Steer d", steerD, this::setSteerD, 1, 2)
+                .addListener("Steer ff", steerFF, this::setSteerFF, 1, 3);
+        }
     }
 
     /**
@@ -124,6 +145,12 @@ public class SwerveModule {
         // driveMotor.set(ControlMode.Velocity, optimized.getFirst() / (DRIVE_TICKS_TO_METERS * 10.0));
         driveMotor.set(optimized.getFirst()); // Only while the module is in percent output
         steerPidController.setReference(optimized.getSecond() - offsetRads, ControlType.kPosition);
+
+        if (DEBUG_ENABLE) {
+            rawAngleEntry.setValue(Math.toDegrees(steerEncoder.getPosition()));
+            offsetAngleEntry.setValue(getAngle().getDegrees());
+            angleSetpointEntry.setValue(Math.toDegrees(optimized.getSecond() - offsetRads));
+        }
     }
 
     /**
@@ -211,5 +238,21 @@ public class SwerveModule {
         public BottomRight(int drivePort, int steerPort, double offsetRads) {
             super(drivePort, steerPort, offsetRads + Math.PI);
         }
+    }
+    
+    private void setSteerP(EntryNotification change) {
+        steerPidController.setP(change.value.getDouble());
+    }
+
+    private void setSteerI(EntryNotification change) {
+        steerPidController.setI(change.value.getDouble());
+    }
+
+    private void setSteerD(EntryNotification change) {
+        steerPidController.setD(change.value.getDouble());
+    }
+
+    private void setSteerFF(EntryNotification change) {
+        steerPidController.setFF(change.value.getDouble());
     }
 }
