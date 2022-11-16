@@ -45,8 +45,7 @@ public class MissileShellSwerveSubsystem extends SubsystemBase {
     public void setSwerveDrivePowers(double xPower, double yPower, double angularPower) {
         // If drivers are sending no input, stop all modules but hold their current angle.
         if (xPower == 0.0 && yPower == 0.0 && angularPower == 0.0) {
-            SwerveModuleState state = module.getState();
-            this.states[0] = new SwerveModuleState(0.0, state.angle);
+            this.states[0] = new SwerveModuleState(0.0, this.states[0].angle);
             return;
         }
 
