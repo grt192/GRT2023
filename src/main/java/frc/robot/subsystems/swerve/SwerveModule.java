@@ -6,6 +6,7 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxAnalogSensor;
 import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax.ControlType;
@@ -22,22 +23,26 @@ import frc.robot.motorcontrol.MotorUtil;
  * A swerve module with a Falcon drive motor and a NEO steer motor.
  */
 public class SwerveModule {
-    private final WPI_TalonFX driveMotor;
+    // private final WPI_TalonFX driveMotor;
+    private final CANSparkMax driveMotor;
 
     private final CANSparkMax steerMotor;
-    private final SparkMaxAnalogSensor steerEncoder;
+    private final RelativeEncoder steerEncoder;
+    private final SparkMaxAnalogSensor steerAbsoluteEncoder;
     private final SparkMaxPIDController steerPidController;
 
     private final double offsetRads;
 
     private static final double DRIVE_TICKS_TO_METERS = 1.0;
+    private static final double STEER_ROTATIONS_TO_RADIANS = (1.0 / 52.0) * (34.0 / 63.0) * 2 * Math.PI; // 52:1 gear ratio, 63:34 pulley ratio, 1 rotation = 2pi
+    private static final double STEER_VOLTS_TO_RADIANS = 2 * Math.PI / 3.3; // MA3 analog output: 3.3V -> 2pi
 
     private static final double driveP = 0;
     private static final double driveI = 0;
     private static final double driveD = 0;
     private static final double driveFF = 0;
 
-    private static final double steerP = 0;
+    private static final double steerP = 0.4;
     private static final double steerI = 0;
     private static final double steerD = 0;
     private static final double steerFF = 0;
@@ -52,6 +57,7 @@ public class SwerveModule {
      * @param offsetRads The angle offset, in radians.
      */
     public SwerveModule(int drivePort, int steerPort, double offsetRads) {
+        /*
         driveMotor = MotorUtil.createTalonFX(drivePort);
         driveMotor.setNeutralMode(NeutralMode.Brake);
 
@@ -61,12 +67,20 @@ public class SwerveModule {
         driveMotor.config_kI(0, driveI);
         driveMotor.config_kD(0, driveD);
         driveMotor.config_kF(0, driveFF);
+        */
+
+        driveMotor = MotorUtil.createSparkMax(drivePort);
+        driveMotor.setIdleMode(IdleMode.kBrake);
 
         steerMotor = MotorUtil.createSparkMax(steerPort);
         steerMotor.setIdleMode(IdleMode.kBrake);
 
-        steerEncoder = steerMotor.getAnalog(SparkMaxAnalogSensor.Mode.kAbsolute);
-        steerEncoder.setPositionConversionFactor(2 * Math.PI); // 1 rotation = 2pi
+        steerAbsoluteEncoder = steerMotor.getAnalog(SparkMaxAnalogSensor.Mode.kAbsolute);
+        steerAbsoluteEncoder.setPositionConversionFactor(STEER_VOLTS_TO_RADIANS);
+
+        steerEncoder = steerMotor.getEncoder();
+        steerEncoder.setPositionConversionFactor(STEER_ROTATIONS_TO_RADIANS);
+        steerEncoder.setPosition(steerAbsoluteEncoder.getPosition()); // Set initial position to absolute value
 
         steerPidController = steerMotor.getPIDController();
         steerPidController.setFeedbackDevice(steerEncoder);
@@ -95,7 +109,8 @@ public class SwerveModule {
      */
     public SwerveModuleState getState() {
         return new SwerveModuleState(
-            driveMotor.getSelectedSensorVelocity() * DRIVE_TICKS_TO_METERS * 10.0,
+            // driveMotor.getSelectedSensorVelocity() * DRIVE_TICKS_TO_METERS * 10.0,
+            driveMotor.get(),
             getAngle()
         );
     }
@@ -106,7 +121,8 @@ public class SwerveModule {
      */
     public void setDesiredState(SwerveModuleState state) {
         var optimized = optimizeModuleState(state, getAngle());
-        driveMotor.set(ControlMode.Velocity, optimized.getFirst() / (DRIVE_TICKS_TO_METERS * 10.0));
+        // driveMotor.set(ControlMode.Velocity, optimized.getFirst() / (DRIVE_TICKS_TO_METERS * 10.0));
+        driveMotor.set(optimized.getFirst()); // Only while the module is in percent output
         steerPidController.setReference(optimized.getSecond() - offsetRads, ControlType.kPosition);
     }
 
