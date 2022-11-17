@@ -4,7 +4,6 @@
 
 package frc.robot;
 
-import edu.wpi.first.math.geometry.Translation2d;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
@@ -17,27 +16,27 @@ import edu.wpi.first.math.geometry.Translation2d;
  * wherever the constants are needed, to reduce verbosity.
  */
 public final class Constants {
-    public static final class SwerveConstants {
-        public static final int tlDrive = 1;
-        public static final int tlSteer = 0;
-        public static final double tlOffsetRads = 0;
-        public static final Translation2d tlPos = new Translation2d();
 
-        public static final int trDrive = 0;
-        public static final int trSteer = 0;
-        public static final double trOffsetRads = 0;
-        public static final Translation2d trPos = new Translation2d();
+    public static final class TankConstants{
+        public static final int left_main = 1;
+        public static final int left_secondary = 2;
+        public static final int right_main = 3;
+        public static final int right_secondary = 4;
 
-        public static final int blDrive = 0;
-        public static final int blSteer = 0;
-        public static final double blOffsetRads = 0;
-        public static final Translation2d blPos = new Translation2d();
-
-        public static final int brDrive = 0;
-        public static final int brSteer = 0;
-        public static final double brOffsetRads = 0;
-        public static final Translation2d brPos = new Translation2d();
     }
+    public static final class IntakeConstants{
+        public static final int front_motor = 5;
+        public static final int right_motor = 6;
+        public static final int left_motor = 7;
+    }
+    public static final class CarriageConstants{
+        public static final int carriage_solenoid = 1;
+        public static final int top_servo = 1;
+        public static final int bottom_servo = 1;
+
+
+    }
+
 
     public static final class ShuffleboardConstants {
         public static final double UPDATE_TIME = 0.5; // seconds between each update

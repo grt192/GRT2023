@@ -11,11 +11,13 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+
 import frc.robot.subsystems.Tank;
+import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Carriage;
+
 
 import frc.robot.shuffleboard.GRTShuffleboardTab;
-import frc.robot.subsystems.swerve.MissileShellSwerveSubsystem;
-import frc.robot.subsystems.swerve.SwerveSubsystem;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -26,28 +28,13 @@ import frc.robot.subsystems.swerve.SwerveSubsystem;
  */
 public class RobotContainer {
     // Subsystems
-    //private final SwerveSubsystem swerveSubsystem;
-    private final MissileShellSwerveSubsystem swerveSubsystem;
-    private final Tank m_Tank = new Tank();
+    private final Tank tank = new Tank();
+    private final Intake intake = new Intake();
+    private final Carriage carriage = new Carriage();
 
     // Controllers and buttons
     private final XboxController driveController = new XboxController(0);
-    private final JoystickButton 
-        driveAButton = new JoystickButton(driveController, XboxController.Button.kA.value),
-        driveBButton = new JoystickButton(driveController, XboxController.Button.kB.value),
-        driveXButton = new JoystickButton(driveController, XboxController.Button.kX.value),
-        driveYButton = new JoystickButton(driveController, XboxController.Button.kY.value),
-        driveLBumper = new JoystickButton(driveController, XboxController.Button.kLeftBumper.value),
-        driveRBumper = new JoystickButton(driveController, XboxController.Button.kRightBumper.value);
-
-    private final XboxController mechController = new XboxController(1);
-    private final JoystickButton 
-        mechAButton = new JoystickButton(mechController, XboxController.Button.kA.value),
-        mechBButton = new JoystickButton(mechController, XboxController.Button.kB.value),
-        mechXButton = new JoystickButton(mechController, XboxController.Button.kX.value),
-        mechYButton = new JoystickButton(mechController, XboxController.Button.kY.value),
-        mechLBumper = new JoystickButton(mechController, XboxController.Button.kLeftBumper.value),
-        mechRBumper = new JoystickButton(mechController, XboxController.Button.kRightBumper.value);
+    
 
     // Commands
     private final SendableChooser<Command> autonChooser;
@@ -56,8 +43,7 @@ public class RobotContainer {
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
     public RobotContainer() {
-        //swerveSubsystem = new SwerveSubsystem();
-        swerveSubsystem = new MissileShellSwerveSubsystem();
+         
 
         // Configure the button bindings
         configureButtonBindings();
@@ -85,5 +71,14 @@ public class RobotContainer {
      */
     public Command getAutonomousCommand() {
         return autonChooser.getSelected();
+    }
+
+    void periodic(){
+        tank.forwardComponent = -1 * controller.getLeftY(); // 1 is forward (adjusted from -1 forward)
+        tank.sideComponent = controller.getRightX(); // 1 is right
+
+
+
+
     }
 }

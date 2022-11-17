@@ -11,72 +11,57 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX; // internal Falcon motors
 
 import edu.wpi.first.wpilibj.XboxController; // controller input library
 
+import static frc.robot.Constants.TankConstants.*;
+
 public class Tank extends SubsystemBase {
-  /** Creates a new ExampleSubsystem. */
+    
+    private final WPI_TalonSRX left = new WPI_TalonSRX​(left_main); // left motor
+    private final WPI_TalonSRX left2 = new WPI_TalonSRX​(left_secondary); // left motor
+
+    private final WPI_TalonSRX right = new WPI_TalonSRX​(right_main); // right motor
+    private final WPI_TalonSRX right2 = new WPI_TalonSRX​(right_secondary); // right motor
+
+    private final XboxController controller = new XboxController(0); // controller
+
+    double sideComponent;
+    double forwardComponent;
+  
+    double leftDrive;
+    double rightDrive;
+
   public Tank() {
+
+    left.configFactoryDefault();
+    left2.configFactoryDefault();
+    right.configFactoryDefault();
+    right2.configFactoryDefault();
 
     left2.follow(left);
     right2.follow(right);
+
+    left.setNeutralMode(NeutralMode.Brake);
+    right.setNeutralMode(NeutralMode.Brake);
+    right.setInverted(true);
+
   }
-  
-  private final WPI_TalonSRX left = new WPI_TalonSRX​(1); // left motor
-  private final WPI_TalonSRX left2 = new WPI_TalonSRX​(2); // left motor
-  
-
-  private final WPI_TalonSRX right = new WPI_TalonSRX​(3); // right motor
-  private final WPI_TalonSRX right2 = new WPI_TalonSRX​(4); // right motor
-
-
-  private final XboxController controller = new XboxController(0); // controller
-
-  double sideComponent;
-  double forwardComponent;
-  
-  double leftDrive;
-  double rightDrive;
-
-  boolean inactive; // sticks centered --> stationary
-  boolean skid; // yaw only --> skid steer in place
-  boolean drive;  // drive only --> front/back motion
-  boolean bank; // skid/drive at the same time
-
 
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
 
-    forwardComponent = controller.getLeftY();
-    sideComponent = controller.getRightX();
+    leftDrive = forwardComponent + sideComponent;
+    rightDrive = forwardComponent - sideComponent;
 
-    skid = (sideComponent != 0.0) && (forwardComponent == 0.0);
-    drive = (sideComponent == 0.0) && (forwardComponent != 0.0);
-    inactive = (sideComponent == 0.0) && (forwardComponent == 0.0);
-
-    if(inactive){
-        left.set(0.0);
-        right.set(0.0);
+    if(Math.abs(leftDrive) >= 1.0){
+        leftDrive = leftDrive / Math.abs(leftDrive);
     }
-    if(drive){
-        left.set(forwardComponent);
-        right.set(forwardComponent);
-    }
-    if(skid){
-        left.set(sideComponent);
-        right.set(sideComponent * -1);
-    }
-    if(bank){
-        
-        leftDrive = (sideComponent + forwardComponent) / 2.0;
-        rightDrive = (forwardComponent - sideComponent) / 2.0;
-        
-        left.set(leftDrive);
-        right.set(rightDrive);
+    if(Math.abs(rightDrive) >= 1.0){
+        rightDrive = rightDrive / Math.abs(rightDrive);
     }
 
-    
-
-
+    left.set(leftDrive);
+    right.set(rightDrive);
     
   }
 
