@@ -9,12 +9,10 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-
 import frc.robot.shuffleboard.GRTShuffleboardTab;
+import frc.robot.subsystems.ElevatorSubsystem;
+import frc.robot.subsystems.GripperSubsystem;
 import frc.robot.subsystems.TankSubsystem;
-import java.lang.Math;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -25,9 +23,12 @@ import java.lang.Math;
  */
 public class RobotContainer {
     // Subsystems
-    //private final SwerveSubsystem swerveSubsystem;
+    // private final SwerveSubsystem swerveSubsystem;
+    final GripperSubsystem gripper = new GripperSubsystem();
+    final ElevatorSubsystem elevator = new ElevatorSubsystem();
     final TankSubsystem tank = new TankSubsystem();
-    private final XboxController controller = new XboxController(0);
+    private final XboxController driver = new XboxController(0);
+    private final XboxController stacker = new XboxController(1);
 
     // Controllers and buttons
 
@@ -38,8 +39,6 @@ public class RobotContainer {
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
     public RobotContainer() {
-        
-
 
         // Configure the button bindings
         configureButtonBindings();
@@ -62,19 +61,32 @@ public class RobotContainer {
 
     /**
      * Use this to pass the autonomous command to the main {@link Robot} class.
+     * 
      * @return the command to run in autonomous
      */
     public Command getAutonomousCommand() {
         return autonChooser.getSelected();
     }
 
-    public void periodic(){
-        //Left joystick forward/reverse
-        //Right joystick left/right
-        //Tank drive scaled by a quadratic for more precise movement
+    public void periodic() {
+        // Left joystick forward/reverse
+        // Right joystick left/right
+        // Tank drive scaled by a quadratic for more precise movement
+        tank.forwardpower = driver.getLeftY() * Math.abs(driver.getLeftY());
+        tank.turnpower = driver.getRightX() * Math.abs(driver.getRightX());
 
+        // a button on the stacker controller toggles gripping
+        if (stacker.getAButtonPressed() == true) {
+            gripper.open = !gripper.open;
+        }
 
-        tank.forwardpower = controller.getLeftY() * Math.abs(controller.getLeftY());
-        tank.turnpower = controller.getRightX() * Math.abs(controller.getRightX());
+        // bumpers move the winch up and down, they do wrap around
+        if (stacker.getRightBumperPressed()) {
+            elevator.height = elevator.height.next();
+        }
+        if (stacker.getLeftBumperPressed()) {
+            elevator.height = elevator.height.previous();
+        }
+
     }
 }

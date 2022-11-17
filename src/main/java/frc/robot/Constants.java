@@ -50,4 +50,12 @@ public final class Constants {
         public static final int motorFrontRight = 14;
 
     }
+
+    public static final class ElevatorConstants {
+        public static final int motorWinch = 17;// FIX
+    }
+
+    public static final class GripperConstants {
+        public static final int solenoidPort = 17;// FIX
+    }
 }

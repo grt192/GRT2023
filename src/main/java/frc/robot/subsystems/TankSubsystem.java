@@ -1,13 +1,16 @@
 
 package frc.robot.subsystems;
 
+import static frc.robot.Constants.TankConstants.motorBackLeft;
+import static frc.robot.Constants.TankConstants.motorBackRight;
+import static frc.robot.Constants.TankConstants.motorFrontLeft;
+import static frc.robot.Constants.TankConstants.motorFrontRight;
+
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.motorcontrol.MotorUtil;
-
-import static frc.robot.Constants.TankConstants.*;
 
 public class TankSubsystem extends SubsystemBase {
     private final WPI_TalonSRX leftmotor = MotorUtil.createTalonSRX(motorBackLeft);
@@ -19,7 +22,7 @@ public class TankSubsystem extends SubsystemBase {
     public double turnpower = 0;
     public double scaler;
 
-    public TankSubsystem() { 
+    public TankSubsystem() {
         leftmotor.configFactoryDefault();
         leftmotor2.configFactoryDefault();
         rightmotor.configFactoryDefault();
@@ -44,7 +47,7 @@ public class TankSubsystem extends SubsystemBase {
         // (Basically just scales the motors when turning)
 
         // System.out.println(forwardpower);
-        scaler = (Math.max(1., (Math.max(Math.abs(forwardpower-turnpower), Math.abs(forwardpower+turnpower) ))));
+        scaler = (Math.max(1., (Math.max(Math.abs(forwardpower - turnpower), Math.abs(forwardpower + turnpower)))));
 
         leftmotor.set((forwardpower - turnpower) / scaler);
         rightmotor.set((forwardpower + turnpower) / scaler);
