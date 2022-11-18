@@ -10,7 +10,6 @@ jobs:
         run: chmod +x gradlew
       - name: Compile and run tests on robot code
         run: ./gradlew build
-      - run: echo "${{ toJson(github) }}"
       - name: Report Status
         if: always()
         uses: ravsamhq/notify-slack-action@master
@@ -18,6 +17,5 @@ jobs:
           status: ${{ job.status }}
           notify_when: 'failure'
           token: ${{ secrets.GITHUB_TOKEN }}
-          footer: "'${{ github.event.head_commit.message }}' by ${{ github.event.head_commit.author.name }} | <{workflow_url}|View Action>"
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.ACTION_MONITORING_SLACK }}
