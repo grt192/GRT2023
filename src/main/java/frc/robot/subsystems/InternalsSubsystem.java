@@ -23,8 +23,10 @@ public class InternalsSubsystem extends SubsystemBase {
     private final double STAGING_THRESHOLD = .32;
 
     private final double CONVEYOR_SPEED = .6;
-    private final double FLYWHEEL_SPEED = .8;
-    private double flywheelSpeed = FLYWHEEL_SPEED;
+    private double flywheelSpeed;
+
+    private double periodicFlywheelSpeed;
+    private double periodicConveyorSpeed;
 
     private enum InternalsState {
         NO_BALLS,
@@ -61,6 +63,11 @@ public class InternalsSubsystem extends SubsystemBase {
         this.state = InternalsState.NO_BALLS;
         this.shotRequested = false;
         this.stagingBall = false;
+
+        this.flywheelSpeed = 0.8; // starting flywheel speed
+
+        this.periodicFlywheelSpeed = 0;
+        this.periodicConveyorSpeed = 0;
 
         this.isShooting = false;
 
@@ -100,11 +107,15 @@ public class InternalsSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
 
-        // flywheelMain.set(FLYWHEEL_SPEED);
+        // flywheelMain.set(flywheelSpeed);
+
+        flywheelMain.set(periodicFlywheelSpeed);
+        conveyor.set(periodicConveyorSpeed);
 
         switch (state) {
             case NO_BALLS:
-                conveyor.set(0);
+                periodicConveyorSpeed = 0;
+
                 if (entranceIR.get() > ENTRANCE_THRESHOLD) {
                     // System.out.println("ball at entrance");
                     state = InternalsState.MOVE_BALL_1_UP;
@@ -113,7 +124,7 @@ public class InternalsSubsystem extends SubsystemBase {
 
             case MOVE_BALL_1_UP:
                 // System.out.println("MOVE_BALL_1_UP");
-                conveyor.set(CONVEYOR_SPEED);
+                periodicConveyorSpeed = CONVEYOR_SPEED;
                 if (storageIR.get() > STORAGE_THRESHOLD) {
                     // System.out.println("ball at storage");
                     state = InternalsState.ONE_BALL_STORAGE;
@@ -121,22 +132,21 @@ public class InternalsSubsystem extends SubsystemBase {
                 break;
 
             case ONE_BALL_STORAGE:
-                conveyor.set(0);
+                periodicConveyorSpeed = 0;
                 if (entranceIR.get() > ENTRANCE_THRESHOLD) {
                     state = InternalsState.MOVE_BALL_2_UP;
                 }
                 break;
 
             case MOVE_BALL_2_UP:
-                conveyor.set(CONVEYOR_SPEED);
+                periodicConveyorSpeed = CONVEYOR_SPEED;
 
                 if (stagingIR.get() > STAGING_THRESHOLD) { // && storageIR.get() > STORAGE_THRESHOLD) {
                     state = InternalsState.TWO_BALLS;
                 }
                 break;
             case TWO_BALLS:
-                conveyor.set(0);
-
+                periodicConveyorSpeed = 0;
                 break;
 
         }
@@ -150,8 +160,9 @@ public class InternalsSubsystem extends SubsystemBase {
             // System.out.println(state);
             // System.out.println(shotMade);
 
-            // if ball in staging and we aren't trying to shoot yet
-            if (stagingIR.get() > STAGING_THRESHOLD) {
+            // if ball in staging and we aren't shooting yet, initiate shoot sequence
+            // if (stagingIR.get() > STAGING_THRESHOLD) {
+            if (state == InternalsState.ONE_BALL_STORAGE || state != InternalsState.TWO_BALLS) {
 
                 if (!isShooting) {
 
@@ -160,27 +171,31 @@ public class InternalsSubsystem extends SubsystemBase {
 
                     isShooting = true;
 
-                    // conveyor.set(CONVEYOR_SPEED); // run staging ball up
-                    conveyor.set(0);
-                    flywheelMain.set(flywheelSpeed);
+                    periodicConveyorSpeed = 0;
+                    periodicFlywheelSpeed = flywheelSpeed;
                 }
             }
-            // no ball in staging
-            else {
-                conveyor.set(0);
-                flywheelMain.set(0);
-                if (state != InternalsState.NO_BALLS) {
-                    conveyor.set(CONVEYOR_SPEED);
-                }
-            }
+            /*
+             * // no ball in staging
+             * else {
+             * periodicFlywheelSpeed = 0;
+             * 
+             * if (state != InternalsState.NO_BALLS) {
+             * periodicConveyorSpeed = CONVEYOR_SPEED;
+             * }
+             * else {
+             * periodicConveyorSpeed = 0;
+             * }
+             * }
+             */
 
             // if flywheel up to speed + conveyor was run, mark shot as completed
-            if (exitTimer.hasElapsed(1.2)) {
+            if (exitTimer.hasElapsed(1.8)) {
                 exitTimer.stop();
                 exitTimer.reset();
 
-                conveyor.set(0);
-                flywheelMain.set(0);
+                periodicConveyorSpeed = 0;
+                periodicFlywheelSpeed = 0;
 
                 shotRequested = false;
                 isShooting = false;
@@ -191,8 +206,8 @@ public class InternalsSubsystem extends SubsystemBase {
                 }
 
             } else if (exitTimer.hasElapsed(1.0)) {
-                conveyor.set(CONVEYOR_SPEED);
-                flywheelMain.set(flywheelSpeed);
+                periodicConveyorSpeed = CONVEYOR_SPEED;
+                periodicFlywheelSpeed = flywheelSpeed;
             }
         }
 
@@ -210,15 +225,15 @@ public class InternalsSubsystem extends SubsystemBase {
         exitTimerEntry.setValue(exitTimer.get());
 
         flywheelEntry.setValue(flywheelSpeed);
+
     }
 
     public void setFlywheelPower(double power) {
-        if (power == 0) {
-            // default
-            this.flywheelSpeed = FLYWHEEL_SPEED;
-        } else {
-            this.flywheelSpeed = power;
-        }
+        this.flywheelSpeed = power;
+    }
+
+    public double getFlywheelPower() {
+        return flywheelSpeed;
     }
 
     public void requestShot() {

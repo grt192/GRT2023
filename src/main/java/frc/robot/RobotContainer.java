@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-
+import edu.wpi.first.wpilibj2.command.button.POVButton;
 import frc.robot.shuffleboard.GRTShuffleboardTab;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.InternalsSubsystem;
@@ -88,26 +88,35 @@ public class RobotContainer {
         driveBButton.whenPressed(new InstantCommand(swerveSubsystem::toggleLocked, swerveSubsystem));
 
         // Run intake rollers with right and left triggers
-        // intakeSubsystem.setDefaultCommand(new RunCommand(() -> {
-            // intakeSubsystem.setPower(driveController.getRightTriggerAxis() - driveController.getLeftTriggerAxis());
-        // }, intakeSubsystem));
+        intakeSubsystem.setDefaultCommand(new RunCommand(() -> {
+            intakeSubsystem.setPower(mechController.getRightTriggerAxis() - mechController.getLeftTriggerAxis());
+        }, intakeSubsystem));
         
         mechAButton.whenPressed(new InstantCommand(() -> {
             internalsSubsystem.requestShot();
         }, internalsSubsystem));
 
-        mechRBumper.whenPressed(new InstantCommand(() -> {
+        mechYButton.whenPressed(new InstantCommand(() -> {
             internalsSubsystem.resetState();
         }, internalsSubsystem));
 
+        /*
         internalsSubsystem.setDefaultCommand(new RunCommand(() -> {
             internalsSubsystem.setFlywheelPower(mechController.getRightTriggerAxis());
         }, internalsSubsystem));
+        */
 
         mechBButton.whenPressed(new InstantCommand(() -> {
             intakeSubsystem.toggleIntakeDeploy();
         }, intakeSubsystem));
 
+        mechRBumper.whenPressed(new InstantCommand(() -> {
+            internalsSubsystem.setFlywheelPower(internalsSubsystem.getFlywheelPower() + 0.025);
+        }, internalsSubsystem));
+
+        mechLBumper.whenPressed(new InstantCommand(() -> {
+            internalsSubsystem.setFlywheelPower(internalsSubsystem.getFlywheelPower() - 0.025);
+        }, internalsSubsystem));
     }
 
     /**
