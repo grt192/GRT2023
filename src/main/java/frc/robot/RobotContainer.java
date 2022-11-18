@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.shuffleboard.GRTShuffleboardTab;
+import frc.robot.subsystems.AlignerSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.GripperSubsystem;
 import frc.robot.subsystems.TankSubsystem;
@@ -27,6 +28,7 @@ public class RobotContainer {
     final GripperSubsystem gripper = new GripperSubsystem();
     final ElevatorSubsystem elevator = new ElevatorSubsystem();
     final TankSubsystem tank = new TankSubsystem();
+    final AlignerSubsystem aligner = new AlignerSubsystem();
     private final XboxController driver = new XboxController(0);
     private final XboxController stacker = new XboxController(1);
 

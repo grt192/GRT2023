@@ -52,16 +52,16 @@ public final class Constants {
     }
 
     public static final class ElevatorConstants {
-        public static final int motorWinch = 17;// FIX
+        public static final int motorWinch = 2;// FIX
     }
 
     public static final class GripperConstants {
-        public static final int solenoidPort = 17;// FIX
+        public static final int solenoidPort = 0;// FIX
     }
 
     public static final class AlignerConstants {
-        public static final int slapId = 5;
-        public static final int angleId = 6;
+        public static final int slapId = 0;
+        public static final int angleId = 1;
     }
 
 }
