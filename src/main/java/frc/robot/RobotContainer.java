@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import frc.robot.shuffleboard.GRTShuffleboardTab;
+import frc.robot.subsystems.HoodSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.InternalsSubsystem;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
@@ -29,9 +30,10 @@ public class RobotContainer {
     private final SwerveSubsystem swerveSubsystem;
     private final IntakeSubsystem intakeSubsystem;
     private final InternalsSubsystem internalsSubsystem;
+    private final HoodSubsystem hoodSubsystem;
 
     // Controllers and buttons
-    private final XboxController driveController = new XboxController(1);
+    private final XboxController driveController = new XboxController(0);
     private final JoystickButton 
         driveAButton = new JoystickButton(driveController, XboxController.Button.kA.value),
         driveBButton = new JoystickButton(driveController, XboxController.Button.kB.value),
@@ -40,7 +42,7 @@ public class RobotContainer {
         driveLBumper = new JoystickButton(driveController, XboxController.Button.kLeftBumper.value),
         driveRBumper = new JoystickButton(driveController, XboxController.Button.kRightBumper.value);
 
-    private final XboxController mechController = new XboxController(0);
+    private final XboxController mechController = new XboxController(1);
     private final JoystickButton 
         mechAButton = new JoystickButton(mechController, XboxController.Button.kA.value),
         mechBButton = new JoystickButton(mechController, XboxController.Button.kB.value),
@@ -59,6 +61,7 @@ public class RobotContainer {
         swerveSubsystem = new SwerveSubsystem();
         intakeSubsystem = new IntakeSubsystem();
         internalsSubsystem = new InternalsSubsystem();
+        hoodSubsystem = new HoodSubsystem();
 
         // Configure the button bindings
         configureButtonBindings();
