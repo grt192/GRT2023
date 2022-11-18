@@ -43,6 +43,12 @@ public class MissileShellSwerveSubsystem extends SubsystemBase {
      * @param angularPower The angular (rotational) power [-1.0, 1.0].
      */
     public void setSwerveDrivePowers(double xPower, double yPower, double angularPower) {
+        // If drivers are sending no input, stop all modules but hold their current angle.
+        if (xPower == 0.0 && yPower == 0.0 && angularPower == 0.0) {
+            this.states[0] = new SwerveModuleState(0.0, this.states[0].angle);
+            return;
+        }
+
         // Scale [-1.0, 1.0] powers to desired velocity, turning field-relative powers
         // into robot relative chassis speeds.
         // For the missile's single-module setup, we assume that angular power is always 0 and
