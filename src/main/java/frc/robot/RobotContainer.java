@@ -85,13 +85,11 @@ public class RobotContainer {
             swerveSubsystem.setSwerveDrivePowers(xPower, yPower, angularPower);
         }, swerveSubsystem));
 
-        driveBButton.whenPressed(new InstantCommand(swerveSubsystem::toggleLocked, swerveSubsystem));
-
         // Run intake rollers with right and left triggers
         // intakeSubsystem.setDefaultCommand(new RunCommand(() -> {
             // intakeSubsystem.setPower(driveController.getRightTriggerAxis() - driveController.getLeftTriggerAxis());
         // }, intakeSubsystem));
-        
+
         mechAButton.whenPressed(new InstantCommand(() -> {
             internalsSubsystem.requestShot();
         }, internalsSubsystem));
@@ -107,7 +105,6 @@ public class RobotContainer {
         mechBButton.whenPressed(new InstantCommand(() -> {
             intakeSubsystem.toggleIntakeDeploy();
         }, intakeSubsystem));
-
     }
 
     /**
