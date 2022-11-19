@@ -18,12 +18,13 @@ import static frc.robot.Constants.IntakeConstants.*;
 
 public class Intake extends SubsystemBase {
     
-    private final CANSparkMax front = new CANSparkMax(front_motor, MotorType.kBrushless); // front motor for intake
-    private final WPI_TalonSRX right = new WPI_TalonSRX​(right_motor); // right roller between intake and carriage
-    private final WPI_TalonSRX left = new WPI_TalonSRX​(left_motor); // left roller between intake and carriage
+    private final CANSparkMax front = new CANSparkMax(FRONT_MOTOR, MotorType.kBrushless); // front motor for intake
+    private final WPI_TalonSRX right = new WPI_TalonSRX​(RIGHT_MOTOR); // right roller between intake and carriage
+    private final WPI_TalonSRX left = new WPI_TalonSRX​(LEFT_MOTOR); // left roller between intake and carriage
 
-    private final XboxController controller = new XboxController(0); // controller
+    Servo intake_servo = new Servo(INTAKE_SERVO);
 
+    boolean intake_down = false;
     boolean intake_on = false;
 
   public Intake() {
@@ -36,25 +37,30 @@ public class Intake extends SubsystemBase {
     left.setNeutralMode(NeutralMode.Brake);
     right.setNeutralMode(NeutralMode.Brake);
 
+    left.follow(right);
+    left.setInverted(true);
+
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
 
+    if(controller.getBButton()){ //engage the intake arm by pressing x on the controller
+        intake_down = true;
+        intake_servo.set(INTAKE_SERVO_DOWN);
+    }
     if(controller.getXButton()){
         intake_on = !intake_on; //toggle on/off intake
     }
 
     if(intake_on){
         front.set(1.0);
-        right.set(0.75);
-        left.set(-0.75);
+        right.set(0.75);   
     }
     else{
         front.set(0.0);
         right.set(0.0);
-        left.set(0.0);
     }
 
     

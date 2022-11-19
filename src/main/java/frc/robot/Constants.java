@@ -18,21 +18,30 @@ package frc.robot;
 public final class Constants {
 
     public static final class TankConstants{
-        public static final int left_main = 1;
-        public static final int left_secondary = 2;
-        public static final int right_main = 3;
-        public static final int right_secondary = 4;
+        public static final int LEFT_MAIN = 1;
+        public static final int LEFT_SECONDARY = 2;
+        public static final int RIGHT_MAIN = 3;
+        public static final int RIGHT_SECONDARY = 4;
 
     }
     public static final class IntakeConstants{
-        public static final int front_motor = 5;
-        public static final int right_motor = 6;
-        public static final int left_motor = 7;
+        public static final int FRONT_MOTOR = 5;
+        public static final int RIGHT_MOTOR = 6;
+        public static final int LEFT_MOTOR = 7;
+
+        public static final int INTAKE_SERVO = 10; //servo pin ID
+        public static final int INTAKE_SERVO_DOWN = 90; //degree value
     }
     public static final class CarriageConstants{
-        public static final int carriage_solenoid = 1;
-        public static final int top_servo = 1;
-        public static final int bottom_servo = 1;
+        public static final int CARRIAGE_SOLENOID = 1;
+        public static final int TOP_SERVO = 1;
+        public static final int BOTTOM_SERVO = 1;
+
+        public static final int TOP_OPEN = 90; // servo position when the door is open
+        public static final int TOP_CLOSED = 0; // servo position when the door is closed
+
+        public static final int BOTTOM_OPEN = 90; // servo position when the door is open
+        public static final int BOTTOM_CLOSED = 0; // servo position when the door is closed
 
 
     }

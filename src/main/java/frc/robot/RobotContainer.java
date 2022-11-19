@@ -33,7 +33,7 @@ public class RobotContainer {
     private final Carriage carriage = new Carriage();
 
     // Controllers and buttons
-    private final XboxController driveController = new XboxController(0);
+    private final XboxController controller = new XboxController(0);
     
 
     // Commands

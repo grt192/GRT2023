@@ -21,15 +21,10 @@ public class Carriage extends SubsystemBase {
     boolean openDoor = false; // tracks whether door should be open or closed
     boolean liftCarriage = false;  // tracks whether carriage should be lifted
 
-    int open = 90; // servo position when the door is open
-    int closed = 0; // servo position when the door is closed
-
-    Solenoid piston = new Solenoid(PneumaticsModuleType.CTREPCM, carriage_solenoid); // lifts carriage
+    Solenoid piston = new Solenoid(PneumaticsModuleType.CTREPCM, CARRIAGE_SOLENOID); // lifts carriage
     
-    Servo top = new Servo(top_servo); // top servo opening door
-    Servo bottom = new Servo(bottom_servo); // bottom servo opening door
-
-    private final XboxController controller = new XboxController(0); // controller
+    Servo top = new Servo(TOP_SERVO); // top servo opening door
+    Servo bottom = new Servo(BOTTOM_SERVO); // bottom servo opening door
 
   public Carriage() {
 
@@ -50,12 +45,12 @@ public class Carriage extends SubsystemBase {
     piston.set(liftCarriage);
 
     if(openDoor){
-        top.set(open);
-        bottom.set(open);
+        top.set(TOP_OPEN);
+        bottom.set(BOTTOM_OPEN);
     }
     else{
-        top.set(closed);
-        bottom.set(closed);
+        top.set(TOP_CLOSED);
+        bottom.set(BOTTOM_CLOSED);
     }
 
     

@@ -15,13 +15,11 @@ import static frc.robot.Constants.TankConstants.*;
 
 public class Tank extends SubsystemBase {
     
-    private final WPI_TalonSRX left = new WPI_TalonSRX​(left_main); // left motor
-    private final WPI_TalonSRX left2 = new WPI_TalonSRX​(left_secondary); // left motor
+    private final WPI_TalonSRX left = new WPI_TalonSRX​(LEFT_MAIN); // left motor
+    private final WPI_TalonSRX left2 = new WPI_TalonSRX​(LEFT_SECONDARY); // left motor
 
-    private final WPI_TalonSRX right = new WPI_TalonSRX​(right_main); // right motor
-    private final WPI_TalonSRX right2 = new WPI_TalonSRX​(right_secondary); // right motor
-
-    private final XboxController controller = new XboxController(0); // controller
+    private final WPI_TalonSRX right = new WPI_TalonSRX​(RIGHT_MAIN); // right motor
+    private final WPI_TalonSRX right2 = new WPI_TalonSRX​(RIGHT_SECONDARY); // right motor
 
     double sideComponent;
     double forwardComponent;
