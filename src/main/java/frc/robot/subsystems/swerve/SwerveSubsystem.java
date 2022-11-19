@@ -87,7 +87,7 @@ public class SwerveSubsystem extends SubsystemBase {
             xPower * MAX_VEL, 
             yPower * MAX_VEL, 
             angularPower * MAX_OMEGA,
-            getGyroHeading()
+            getRobotPosition().getRotation()
         );
 
         // Calculate swerve module states from desired chassis speeds
