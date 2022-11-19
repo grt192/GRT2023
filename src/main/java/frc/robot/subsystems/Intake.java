@@ -8,11 +8,16 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import com.ctre.phoenix.motorcontrol.can.BaseMotorController; 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX; // internal Falcon motors
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 import edu.wpi.first.wpilibj.XboxController; // controller input 
 
 import com.revrobotics.CANSparkMax; // front intake motor
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
+import com.revrobotics.CANSparkMax.IdleMode;
+
+import edu.wpi.first.wpilibj.Servo;
 
 import static frc.robot.Constants.IntakeConstants.*;
 
@@ -33,7 +38,7 @@ public class Intake extends SubsystemBase {
     right.configFactoryDefault();
     left.configFactoryDefault();
 
-    front.setIdleMode(kBrake);
+    front.setIdleMode(IdleMode.kBrake);
     left.setNeutralMode(NeutralMode.Brake);
     right.setNeutralMode(NeutralMode.Brake);
 
@@ -46,7 +51,7 @@ public class Intake extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
 
-    if(controller.getBButton()){ //engage the intake arm by pressing x on the controller
+    if(controller.getBButton()){ //engage the intake arm by pressing B on the controller
         intake_down = true;
         intake_servo.set(INTAKE_SERVO_DOWN);
     }

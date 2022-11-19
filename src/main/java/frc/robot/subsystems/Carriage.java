@@ -14,6 +14,10 @@ import edu.wpi.first.wpilibj.XboxController; // controller input
 import com.revrobotics.CANSparkMax; // front intake motor
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.Servo;
+
 import static frc.robot.Constants.CarriageConstants.*;
 
 public class Carriage extends SubsystemBase {

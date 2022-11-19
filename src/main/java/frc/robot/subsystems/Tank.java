@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import com.ctre.phoenix.motorcontrol.can.BaseMotorController; 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX; // internal Falcon motors
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 import edu.wpi.first.wpilibj.XboxController; // controller input library
 
@@ -21,8 +22,8 @@ public class Tank extends SubsystemBase {
     private final WPI_TalonSRX right = new WPI_TalonSRX​(RIGHT_MAIN); // right motor
     private final WPI_TalonSRX right2 = new WPI_TalonSRX​(RIGHT_SECONDARY); // right motor
 
-    double sideComponent;
-    double forwardComponent;
+    public double sideComponent;
+    public double forwardComponent;
   
     double leftDrive;
     double rightDrive;
