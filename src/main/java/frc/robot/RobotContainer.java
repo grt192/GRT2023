@@ -88,7 +88,7 @@ public class RobotContainer {
             swerveSubsystem.setSwerveDrivePowers(xPower, yPower, angularPower);
         }, swerveSubsystem));
 
-        driveBButton.whenPressed(new InstantCommand(swerveSubsystem::resetPosition));
+        driveBButton.whenPressed(new InstantCommand(swerveSubsystem::resetHeading));
 
         // Run intake rollers with right and left triggers
         intakeSubsystem.setDefaultCommand(new RunCommand(() -> {

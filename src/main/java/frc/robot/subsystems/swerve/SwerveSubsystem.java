@@ -2,10 +2,6 @@ package frc.robot.subsystems.swerve;
 
 import com.kauailabs.navx.frc.AHRS;
 
-import edu.wpi.first.math.MatBuilder;
-import edu.wpi.first.math.Nat;
-import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -22,7 +18,6 @@ public class SwerveSubsystem extends SubsystemBase {
     private final SwerveModule bottomLeftModule;
     private final SwerveModule bottomRightModule;
 
-    private final SwerveDrivePoseEstimator poseEstimator;
     private final AHRS ahrs;
 
     private final SwerveDriveKinematics kinematics;
@@ -57,19 +52,8 @@ public class SwerveSubsystem extends SubsystemBase {
             tlPos, trPos, blPos, brPos
         );
 
-        // Initialize NaxX and pose estimator
+        // Initialize NaxX
         ahrs = new AHRS(SPI.Port.kMXP);
-        poseEstimator = new SwerveDrivePoseEstimator(
-            getGyroHeading(), 
-            new Pose2d(), 
-            kinematics, 
-            // State measurement standard deviations: [X, Y, theta]
-            new MatBuilder<>(Nat.N3(), Nat.N1()).fill(0.02, 0.02, 0.01), 
-            // Odometry measurement standard deviations: [gyro]
-            new MatBuilder<>(Nat.N1(), Nat.N1()).fill(0.01), 
-            // Vision measurement standard deviations: [X, Y, theta]
-            new MatBuilder<>(Nat.N3(), Nat.N1()).fill(0.1, 0.1, 0.01)
-        );
 
         lockTimer = new Timer();
     }
@@ -87,7 +71,7 @@ public class SwerveSubsystem extends SubsystemBase {
             xPower * MAX_VEL, 
             yPower * MAX_VEL, 
             angularPower * MAX_OMEGA,
-            getRobotPosition().getRotation()
+            getGyroHeading()
         );
 
         // Calculate swerve module states from desired chassis speeds
@@ -113,16 +97,6 @@ public class SwerveSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        // Update pose estimator from swerve module states
-        Rotation2d gyroAngle = getGyroHeading();
-        poseEstimator.update(
-            gyroAngle,
-            topLeftModule.getState(),
-            topRightModule.getState(),
-            bottomLeftModule.getState(),
-            bottomRightModule.getState()
-        );
-
         // If all commanded velocities are 0, the system is idle (drivers are not supplying input).
         boolean isIdle = states[0].speedMetersPerSecond == 0.0
             && states[1].speedMetersPerSecond == 0.0
@@ -156,28 +130,10 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
     /**
-     * Gets the estimated current position of the robot.
-     * @return The estimated position of the robot as a Pose2d.
+     * Resets the NavX's gyro heading.
      */
-    public Pose2d getRobotPosition() {
-        return poseEstimator.getEstimatedPosition();
-    }
-
-    /**
-     * Reset the robot's position to a given Pose2d.
-     * @param position The position to reset the pose estimator to.
-     */
-    public void resetPosition(Pose2d position) {
-        Rotation2d gyroAngle = getGyroHeading();
-        poseEstimator.resetPosition(position, gyroAngle);
-    }
-
-    /**
-     * Zeros the robot's position.
-     * This method zeros both the robot's translation *and* rotation.
-     */
-    public void resetPosition() {
-        resetPosition(new Pose2d());
+    public void resetHeading() {
+        ahrs.zeroYaw();
     }
 
     /**
