@@ -30,7 +30,7 @@ public class SwerveSubsystem extends SubsystemBase {
     private static final double LOCK_TIMEOUT_SECONDS = 1.0; // The elapsed idle time to wait before locking
     private static final boolean LOCKING_ENABLE = true;
 
-    // The `SwerveModuleState` setpoints for each module;
+    // The driver or auton commanded `SwerveModuleState` setpoints for each module;
     // states are given in a tuple of [top left, top right, bottom left, bottom right].
     private SwerveModuleState[] states = {
         new SwerveModuleState(),
@@ -65,6 +65,15 @@ public class SwerveSubsystem extends SubsystemBase {
      * @param angularPower The angular (rotational) power [-1.0, 1.0].
      */
     public void setSwerveDrivePowers(double xPower, double yPower, double angularPower) {
+        // If drivers are sending no input, stop all modules but hold their current angle.
+        if (xPower == 0.0 && yPower == 0.0 && angularPower == 0.0) {
+            this.states[0] = new SwerveModuleState(0.0, this.states[0].angle);
+            this.states[1] = new SwerveModuleState(0.0, this.states[1].angle);
+            this.states[2] = new SwerveModuleState(0.0, this.states[2].angle);
+            this.states[3] = new SwerveModuleState(0.0, this.states[3].angle);
+            return;
+        }
+
         // Scale [-1.0, 1.0] powers to desired velocity, turning field-relative powers
         // into robot relative chassis speeds.
         ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(
@@ -97,7 +106,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        // If all commanded velocities are 0, the system is idle (drivers are not supplying input).
+        // If all commanded velocities are 0, the system is idle (drivers / commands are not supplying input).
         boolean isIdle = states[0].speedMetersPerSecond == 0.0
             && states[1].speedMetersPerSecond == 0.0
             && states[2].speedMetersPerSecond == 0.0
