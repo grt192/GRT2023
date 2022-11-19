@@ -20,10 +20,11 @@ import edu.wpi.first.wpilibj.Servo;
 
 import static frc.robot.Constants.CarriageConstants.*;
 
+
 public class Carriage extends SubsystemBase {
     
-    boolean openDoor = false; // tracks whether door should be open or closed
-    boolean liftCarriage = false;  // tracks whether carriage should be lifted
+    public boolean openDoor = false; // tracks whether door should be open or closed
+    public boolean liftCarriage = false;  // tracks whether carriage should be lifted
 
     Solenoid piston = new Solenoid(PneumaticsModuleType.CTREPCM, CARRIAGE_SOLENOID); // lifts carriage
     
@@ -38,13 +39,7 @@ public class Carriage extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
 
-    if(controller.getRightBumper()){
-        liftCarriage = !liftCarriage; // toggle switch (true --> false or false --> true)
-    }
-
-    if(controller.getLeftBumper()){
-        openDoor = !openDoor;
-    }
+    
 
     piston.set(liftCarriage);
 

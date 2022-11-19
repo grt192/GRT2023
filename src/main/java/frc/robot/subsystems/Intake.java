@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.Servo;
 
 import static frc.robot.Constants.IntakeConstants.*;
 
+
 public class Intake extends SubsystemBase {
     
     private final CANSparkMax front = new CANSparkMax(FRONT_MOTOR, MotorType.kBrushless); // front motor for intake
@@ -29,8 +30,8 @@ public class Intake extends SubsystemBase {
 
     Servo intake_servo = new Servo(INTAKE_SERVO);
 
-    boolean intake_down = false;
-    boolean intake_on = false;
+    public boolean intake_down = false;
+    public boolean intake_on = false;
 
   public Intake() {
 
@@ -51,12 +52,8 @@ public class Intake extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
 
-    if(controller.getBButton()){ //engage the intake arm by pressing B on the controller
-        intake_down = true;
+    if(intake_down){
         intake_servo.set(INTAKE_SERVO_DOWN);
-    }
-    if(controller.getXButton()){
-        intake_on = !intake_on; //toggle on/off intake
     }
 
     if(intake_on){
