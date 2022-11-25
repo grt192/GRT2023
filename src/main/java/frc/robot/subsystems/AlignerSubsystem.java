@@ -12,13 +12,13 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 public class AlignerSubsystem extends SubsystemBase {
-    
+
     public double state = 0;
 
     private final WPI_TalonSRX motorSlapper = MotorUtil.createTalonSRX(slapId);
     private final WPI_TalonSRX motorAngler = MotorUtil.createTalonSRX(angleId);
     private final GRTShuffleboardTab shuffleboardTab = new GRTShuffleboardTab("Aligner");
-    private final GRTNetworkTableEntry positionEntry = shuffleboardTab.addEntry("Slapperposition", 0).at(0, 0); 
+    private final GRTNetworkTableEntry positionEntry = shuffleboardTab.addEntry("Slapperposition", 0).at(0, 0);
 
     public double slapper;
     public double angler;
@@ -31,7 +31,8 @@ public class AlignerSubsystem extends SubsystemBase {
         motorSlapper.setSensorPhase(true);
 
     }
-    public void periodic(){
+
+    public void periodic() {
         motorSlapper.set(.5);
         positionEntry.setValue(motorSlapper.getSelectedSensorPosition());
 
