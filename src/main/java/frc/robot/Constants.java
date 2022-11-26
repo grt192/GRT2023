@@ -60,8 +60,19 @@ public final class Constants {
     }
 
     public static final class AlignerConstants {
-        public static final int slapId = 0;
-        public static final int angleId = 1;
+        public static final int SLAPID = 0;
+        public static final int ANGLEID = 1;
+
+        // open position target encoder values
+        public static final double OPENSLAP = 1;// placehold
+        public static final double OPENANGLER = 1;// placehold
+
+        // slap slapper target encoder values
+        public static final  double SLAPSLAP = 1;// placehold
+
+        // closed position target encoder values
+        public static final double CLOSEDSLAP = 1;// placehold
+        public static final double CLOSEDANGLER = 1;// placehold
     }
 
 }
