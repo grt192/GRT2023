@@ -44,10 +44,10 @@ public final class Constants {
     }
 
     public static final class TankConstants {
-        public static final int motorBackLeft = 13;
-        public static final int motorFrontLeft = 12;
-        public static final int motorBackRight = 15;
-        public static final int motorFrontRight = 14;
+        public static final int motorBackLeft = 14;
+        public static final int motorFrontLeft = 15;
+        public static final int motorBackRight = 12;
+        public static final int motorFrontRight = 13;
 
     }
 

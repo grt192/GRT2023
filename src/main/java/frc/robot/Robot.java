@@ -34,7 +34,6 @@ public class Robot extends TimedRobot {
         // and running subsystem periodic() methods. This must be called from the robot's periodic
         // block in order for anything in the Command-based framework to work.
         CommandScheduler.getInstance().run();
-        robotContainer.periodic();
     }
 
     @Override
@@ -59,6 +58,8 @@ public class Robot extends TimedRobot {
         // teleop starts running. If you want the autonomous to
         // continue until interrupted by another command, remove
         // this line or comment it out.
+        
+        robotContainer.periodic();
         if (autonomousCommand != null) autonomousCommand.cancel();
     }
 

@@ -23,20 +23,20 @@ public class TankSubsystem extends SubsystemBase {
     public double scaler;
 
     public TankSubsystem() {
-        leftmotor.configFactoryDefault();
-        leftmotor2.configFactoryDefault();
-        rightmotor.configFactoryDefault();
-        rightmotor2.configFactoryDefault();
+
 
         leftmotor.setNeutralMode(NeutralMode.Brake);
         leftmotor2.setNeutralMode(NeutralMode.Brake);
         rightmotor.setNeutralMode(NeutralMode.Brake);
         rightmotor2.setNeutralMode(NeutralMode.Brake);
 
+
         leftmotor2.follow(leftmotor);
         rightmotor2.follow(rightmotor);
 
         leftmotor.setInverted(true);
+        leftmotor2.setInverted(true);
+
     }
 
     @Override
