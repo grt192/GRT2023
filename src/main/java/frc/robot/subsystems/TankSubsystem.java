@@ -1,10 +1,7 @@
 
 package frc.robot.subsystems;
 
-import static frc.robot.Constants.TankConstants.motorBackLeft;
-import static frc.robot.Constants.TankConstants.motorBackRight;
-import static frc.robot.Constants.TankConstants.motorFrontLeft;
-import static frc.robot.Constants.TankConstants.motorFrontRight;
+import static frc.robot.Constants.TankConstants.*;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
@@ -13,10 +10,10 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.motorcontrol.MotorUtil;
 
 public class TankSubsystem extends SubsystemBase {
-    private final WPI_TalonSRX leftmotor = MotorUtil.createTalonSRX(motorBackLeft);
-    private final WPI_TalonSRX leftmotor2 = MotorUtil.createTalonSRX(motorFrontLeft);
-    private final WPI_TalonSRX rightmotor = MotorUtil.createTalonSRX(motorBackRight);
-    private final WPI_TalonSRX rightmotor2 = MotorUtil.createTalonSRX(motorFrontRight);
+    private final WPI_TalonSRX leftmotor = MotorUtil.createTalonSRX(MOTOR_BACKLEFT);
+    private final WPI_TalonSRX leftmotor2 = MotorUtil.createTalonSRX(MOTOR_FRONTLEFT);
+    private final WPI_TalonSRX rightmotor = MotorUtil.createTalonSRX(MOTOR_BACKRIGHT);
+    private final WPI_TalonSRX rightmotor2 = MotorUtil.createTalonSRX(MOTOR_FRONTRIGHT);
 
     public double forwardpower = 0;
     public double turnpower = 0;
