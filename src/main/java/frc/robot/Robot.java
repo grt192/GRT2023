@@ -59,12 +59,14 @@ public class Robot extends TimedRobot {
         // continue until interrupted by another command, remove
         // this line or comment it out.
         
-        robotContainer.periodic();
+        
         if (autonomousCommand != null) autonomousCommand.cancel();
     }
 
     @Override
-    public void teleopPeriodic() {}
+    public void teleopPeriodic() {
+        robotContainer.periodic();
+    }
 
     @Override
     public void testInit() {}
