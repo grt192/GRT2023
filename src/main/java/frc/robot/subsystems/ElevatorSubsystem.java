@@ -1,6 +1,6 @@
 package frc.robot.subsystems;
 
-import static frc.robot.Constants.ElevatorConstants.motorWinch;
+import static frc.robot.Constants.ElevatorConstants.MOTORWINCH;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
@@ -33,7 +33,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
 
     public Height height;
-    private final WPI_TalonSRX winchmotor = MotorUtil.createTalonSRX(motorWinch);
+    private final WPI_TalonSRX winchmotor = MotorUtil.createTalonSRX(MOTORWINCH);
 
     public ElevatorSubsystem() {
         height = Height.GROUND;
