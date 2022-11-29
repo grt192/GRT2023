@@ -52,16 +52,18 @@ public final class Constants {
     }
 
     public static final class ElevatorConstants {
-        public static final int motorWinch = 2;// FIX
+        public static final int MOTORWINCH = 2;// FIX
     }
 
     public static final class GripperConstants {
-        public static final int solenoidPort = 0;// FIX
+        public static final int SOLENOIDPORT = 0;// FIX
     }
 
     public static final class AlignerConstants {
         public static final int SLAPID = 0;
         public static final int ANGLEID = 1;
+
+        public static final double TRIGGERCUTOFF = .2;
 
         // open position target encoder values
         public static final double OPENSLAP = 1;// placehold

@@ -6,7 +6,6 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.motorcontrol.MotorUtil;
 import frc.robot.shuffleboard.GRTNetworkTableEntry;
@@ -15,8 +14,8 @@ import frc.robot.shuffleboard.GRTShuffleboardTab;
 public class AlignerSubsystem extends SubsystemBase {
 
     public boolean to_open;
-
-    private final XboxController controller = new XboxController(0);
+    public boolean to_slap;
+    public boolean to_grab;
 
     private final WPI_TalonSRX motorSlapper = MotorUtil.createTalonSRX(SLAPID);
     private final WPI_TalonSRX motorAngler = MotorUtil.createTalonSRX(ANGLEID);
@@ -24,10 +23,6 @@ public class AlignerSubsystem extends SubsystemBase {
     private final GRTShuffleboardTab shuffleboardTab = new GRTShuffleboardTab("Aligner");
     private final GRTNetworkTableEntry slapperPositionEntry = shuffleboardTab.addEntry("Slapperposition", 0).at(0, 0);
     private final GRTNetworkTableEntry anglerPositionEntry = shuffleboardTab.addEntry("Anglerposition", 0).at(1, 0);
-
-    // variables for controller buttons
-    public double slaptrigger;
-    public double anglertrigger;
 
     // variables for motor positions
     public double slappos;
@@ -52,16 +47,13 @@ public class AlignerSubsystem extends SubsystemBase {
 
     public void periodic() {
         to_open = false;
-        // get current trigger positions
-        slaptrigger = controller.getLeftTriggerAxis();
-        anglertrigger = controller.getRightTriggerAxis();
-
+        
         // get current motor positions
         slappos = motorSlapper.getSelectedSensorPosition();
         anglerpos = motorAngler.getSelectedSensorPosition();
 
         // check if slapper trigger is pressed (and angler is not pressed)
-        if (slaptrigger != 0 && anglertrigger == 0) {
+        if (to_slap) {
             // move slapper to target position
             if (slappos < SLAPSLAP) {
                 motorSlapper.set(.5); // turn motor on ; potentially pid
@@ -74,7 +66,7 @@ public class AlignerSubsystem extends SubsystemBase {
         }
 
         // check if both triggers are pressed
-        else if (slaptrigger != 0 && anglertrigger != 0) {
+        else if (to_grab) {
             // if slap trigger was already held down
             if (slappos > CLOSEDSLAP) {
                 motorSlapper.set(-.5); // move left

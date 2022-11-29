@@ -15,6 +15,9 @@ import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.GripperSubsystem;
 import frc.robot.subsystems.TankSubsystem;
 
+//import constants for aligner
+import static frc.robot.Constants.AlignerConstants.*;
+
 /**
  * This class is where the bulk of the robot should be declared. Since
  * Command-based is a "declarative" paradigm, very little robot logic should
@@ -30,7 +33,7 @@ public class RobotContainer {
     final TankSubsystem tank = new TankSubsystem();
     final AlignerSubsystem aligner = new AlignerSubsystem();
     private final XboxController driver = new XboxController(0);
-    private final XboxController stacker = new XboxController(1);
+    private final XboxController mech = new XboxController(1);
 
     // Controllers and buttons
 
@@ -78,16 +81,31 @@ public class RobotContainer {
         tank.turnpower = driver.getRightX() * Math.abs(driver.getRightX());
 
         // a button on the stacker controller toggles gripping
-        if (stacker.getAButtonPressed() == true) {
+        if (mech.getAButtonPressed() == true) {
             gripper.open = !gripper.open;
         }
 
         // bumpers move the winch up and down, they do wrap around
-        if (stacker.getRightBumperPressed()) {
+        if (mech.getRightBumperPressed()) {
             elevator.height = elevator.height.next();
         }
-        if (stacker.getLeftBumperPressed()) {
+        if (mech.getLeftBumperPressed()) {
             elevator.height = elevator.height.previous();
+        }
+
+        //check if slapper should slap (if left trigger is pressed)
+        if (mech.getLeftTriggerAxis() > TRIGGERCUTOFF && mech.getRightTriggerAxis() == 0 ){
+            aligner.to_slap = true;
+        }
+        else{
+            aligner.to_slap = false;
+        }
+        //check if grab   (if left and right tirgger are pressed)
+        if (mech.getLeftTriggerAxis() > TRIGGERCUTOFF && mech.getRightTriggerAxis() > TRIGGERCUTOFF){
+            aligner.to_grab = true;
+        }
+        else{
+            aligner.to_grab = false;
         }
 
     }
