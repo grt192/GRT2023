@@ -13,15 +13,16 @@ import org.zeromq.ZMQ;
 public class JetsonConnection extends Thread {
     private final Gson gson = new Gson();
 
-    private static final String SERVER_IP = "tcp://10.1.92.12:5000";
+    private static final String SERVER_IP = "tcp://*:5000";
 
     @Override
     public void run() {
         try (ZContext context = new ZContext()) {
-            // ZeroMQ reply server bound to static IP, jetson connects via REQ.
-            System.out.println("Connecting a REP server to " + SERVER_IP);
-            ZMQ.Socket socket = context.createSocket(SocketType.REP);
-            socket.bind(SERVER_IP);
+            // ZeroMQ subscription client connecting to jetson static IP, jetson publishes via PUB.
+            System.out.println("Connecting a SUB client to " + SERVER_IP);
+            ZMQ.Socket socket = context.createSocket(SocketType.SUB);
+            socket.connect(SERVER_IP);
+            socket.subscribe("");
 
             // While the thread is still running, keep waiting for messages from the jetson.
             while (!Thread.currentThread().isInterrupted()) {
@@ -30,13 +31,16 @@ public class JetsonConnection extends Thread {
 
                 JetsonData data = gson.fromJson(message, JetsonData.class);
                 System.out.println(data.x + " " + data.y + " " + data.z);
-
-                Thread.sleep(1000);
-
-                socket.send("Hello!");
             }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
         }
+    }
+
+    /**
+     * Debug main method to test connections locally. Constructs and runs the connection
+     * as a thread.
+     */
+    public static void main(String... args) {
+        JetsonConnection connection = new JetsonConnection();
+        connection.start();
     }
 }
