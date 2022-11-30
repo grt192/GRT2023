@@ -52,11 +52,20 @@ public final class Constants {
     }
 
     public static final class ElevatorConstants {
-        public static final int MOTORWINCH = 2;// FIX
+        public static final int MOTORWINCH = 2;
+
+        //encoder values, STUB
+        public static final double GROUNDHEIGHT = 0; //0 inches
+        public static final double LOWHEIGHT = 100; //1 inch
+        public static final double BLOCKHEIGHT = 600; //6 inches
+        public static final double HIGHHEIGHT = 700; //7 inches
+
+        public static final double WINCHSPEED = .2;
+        public static final double WINCHTOLERANCE = 20;
     }
 
     public static final class GripperConstants {
-        public static final int SOLENOIDPORT = 0;// FIX
+        public static final int SOLENOIDPORT = 0;
     }
 
     public static final class AlignerConstants {
