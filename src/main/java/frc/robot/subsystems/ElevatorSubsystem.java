@@ -21,7 +21,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     public enum Height {
         GROUND {
             public Height previous() {
-                return Height.HIGH;
+                return Height.GROUND;
             }
             public double get(){
                 return GROUNDHEIGHT;
@@ -39,7 +39,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         }, // exactly 6 inches up (for setting blocks on another after being on HIGH)
         HIGH {
             public Height next() {
-                return Height.GROUND;
+                return Height.HIGH;
             }
             public double get(){
                 return HIGHHEIGHT;

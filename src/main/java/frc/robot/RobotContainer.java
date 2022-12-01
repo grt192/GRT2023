@@ -85,7 +85,7 @@ public class RobotContainer {
             gripper.open = !gripper.open;
         }
 
-        // bumpers move the winch up and down, they do wrap around
+        // bumpers move the winch up and down, they do NOT wrap around
         if (mech.getRightBumperPressed()) {
             elevator.height = elevator.height.next();
         }
