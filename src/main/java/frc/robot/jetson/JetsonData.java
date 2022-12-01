@@ -7,4 +7,5 @@ public class JetsonData {
     public double x;
     public double y;
     public double z;
+    public long ts;
 }

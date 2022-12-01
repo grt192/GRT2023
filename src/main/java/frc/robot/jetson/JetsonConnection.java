@@ -30,7 +30,10 @@ public class JetsonConnection extends Thread {
                 System.out.println(message);
 
                 JetsonData data = gson.fromJson(message, JetsonData.class);
-                System.out.println(data.x + " " + data.y + " " + data.z);
+                System.out.println(data.x + " " + data.y + " " + data.z + " " + data.ts);
+
+                long delay = System.currentTimeMillis() - data.ts;
+                System.out.println(delay);
             }
         }
     }
