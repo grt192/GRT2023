@@ -12,10 +12,14 @@ import frc.robot.shuffleboard.GRTNetworkTableEntry;
 import frc.robot.shuffleboard.GRTShuffleboardTab;
 
 public class AlignerSubsystem extends SubsystemBase {
-
-    public boolean to_open;
+    // current target position for motors
+    public double current_slaptarget = OPENSLAP;
+    public double current_anglertarget = OPENANGLER;
+    // current action state
     public boolean to_slap;
     public boolean to_grab;
+    // state of angler(open or closed)
+    public boolean angler_open = true;
 
     private final WPI_TalonSRX motorSlapper = MotorUtil.createTalonSRX(SLAPID);
     private final WPI_TalonSRX motorAngler = MotorUtil.createTalonSRX(ANGLEID);
@@ -46,72 +50,49 @@ public class AlignerSubsystem extends SubsystemBase {
     // no code for catching/fixing motor over-turning
 
     public void periodic() {
-        to_open = false;
-        
+
         // get current motor positions
         slappos = motorSlapper.getSelectedSensorPosition();
         anglerpos = motorAngler.getSelectedSensorPosition();
 
-        // check if slapper trigger is pressed (and angler is not pressed)
+        // check if slapper trigger is pressed
         if (to_slap) {
-            // move slapper to target position
-            if (slappos < SLAPSLAP) {
-                motorSlapper.set(.5); // turn motor on ; potentially pid
-            }
-            // else keep slapper at target position
-            else {
-                motorSlapper.set(0);
-            }
-
+            current_slaptarget = SLAPSLAP;
         }
-
-        // check if both triggers are pressed
-        else if (to_grab) {
-            // if slap trigger was already held down
-            if (slappos > CLOSEDSLAP) {
-                motorSlapper.set(-.5); // move left
-            }
-            // else if slap trigger was not already held down
-            else if (slappos < CLOSEDSLAP) {
-                motorSlapper.set(.5); // move right
-            }
-            // else keep slapper at target position
-            else {
-                motorSlapper.set(0);
-            }
-
-            // move angler to target closed position
-            if (anglerpos > CLOSEDANGLER) {
-                motorAngler.set(-.5);
-            }
-            // else keep angler at target position
-            else {
-                motorAngler.set(0);
-            }
-
+        // check if grab trigger is pressed and angler is open
+        else if (to_grab && angler_open) {
+            current_slaptarget = CLOSEDSLAP;
+            current_anglertarget = CLOSEDANGLER;
+            angler_open = false;
+        }
+        // check if grab trigger is pressed and angler is closed
+        else if (to_grab && !angler_open) {
+            current_slaptarget = OPENSLAP;
+            current_anglertarget = OPENANGLER;
+            angler_open = true;
         }
         // else return to open state
         else {
-            to_open = true;
+            current_slaptarget = OPENSLAP;
+            current_anglertarget = OPENANGLER;
         }
-        // if position back to open is true
-        if (to_open) {
-            // if slapper is not at open position, get there
-            if (slappos > OPENSLAP) {
-                motorSlapper.set(-.5);
-            }
-            // else keep slapper at target position
-            else {
-                motorSlapper.set(0);
-            }
-            // if angler is not at open position get there
-            if (anglerpos < OPENANGLER) {
-                motorAngler.set(.5);
-            }
-            // else keep angler at target position
-            else {
-                motorAngler.set(0);
-            }
+
+        // get slapper to current target
+        if (slappos > current_slaptarget) {
+            motorSlapper.set(-.5); // move left
+        } else if (slappos < current_slaptarget) {
+            motorSlapper.set(.5); // move right
+        } else {
+            motorSlapper.set(0);
+        }
+
+        // get angler to current target
+        if (anglerpos > current_anglertarget) {
+            motorAngler.set(-.5); // move left
+        } else if (anglerpos < current_anglertarget) {
+            motorAngler.set(.5); // move right
+        } else {
+            motorAngler.set(0);
         }
 
         slapperPositionEntry.setValue(motorSlapper.getSelectedSensorPosition());

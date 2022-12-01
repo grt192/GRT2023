@@ -100,8 +100,8 @@ public class RobotContainer {
         else{
             aligner.to_slap = false;
         }
-        //check if grab   (if left and right tirgger are pressed)
-        if (mech.getLeftTriggerAxis() > TRIGGERCUTOFF && mech.getRightTriggerAxis() > TRIGGERCUTOFF){
+        //check if grab   (if right trigger (or both) is pressed)
+        if (mech.getRightTriggerAxis() > TRIGGERCUTOFF){
             aligner.to_grab = true;
         }
         else{
