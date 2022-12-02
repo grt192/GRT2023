@@ -27,6 +27,8 @@ public class JetsonConnection extends Thread {
             socket.connect(SERVER_IP);
             socket.setIdentity("RIO".getBytes(ZMQ.CHARSET));
 
+            socket.send("Hello!");
+
             // While the thread is still running, keep waiting for messages from the jetson.
             while (!Thread.currentThread().isInterrupted()) {
                 socket.recv(0);
