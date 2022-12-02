@@ -13,7 +13,10 @@ import org.zeromq.ZMQ;
 public class JetsonConnection extends Thread {
     private final Gson gson = new Gson();
 
-    private static final String SERVER_IP = "tcp://*:5000";
+    private static final boolean LOCAL_DEBUG = false;
+    private static final String SERVER_IP = LOCAL_DEBUG 
+        ? "tcp://*:5000"
+        : "tcp://10.1.92.94:5000";
 
     @Override
     public void run() {

@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
+import frc.robot.jetson.JetsonConnection;
 import frc.robot.shuffleboard.GRTShuffleboardTab;
 import frc.robot.subsystems.swerve.MissileShellSwerveSubsystem;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
@@ -27,6 +28,8 @@ public class RobotContainer {
     // Subsystems
     //private final SwerveSubsystem swerveSubsystem;
     private final MissileShellSwerveSubsystem swerveSubsystem;
+
+    private final JetsonConnection jetsonConnection;
 
     // Controllers and buttons
     private final XboxController driveController = new XboxController(0);
@@ -56,6 +59,9 @@ public class RobotContainer {
     public RobotContainer() {
         //swerveSubsystem = new SwerveSubsystem();
         swerveSubsystem = new MissileShellSwerveSubsystem();
+
+        jetsonConnection = new JetsonConnection();
+        jetsonConnection.start();
 
         // Configure the button bindings
         configureButtonBindings();
