@@ -13,7 +13,7 @@ import org.zeromq.ZMQ;
 public class JetsonConnection extends Thread {
     private final Gson gson = new Gson();
 
-    private static final boolean LOCAL_DEBUG = false;
+    private static final boolean LOCAL_DEBUG = true;
     private static final String SERVER_IP = LOCAL_DEBUG 
         ? "tcp://*:5000"
         : "tcp://10.1.92.94:5000";
@@ -21,14 +21,15 @@ public class JetsonConnection extends Thread {
     @Override
     public void run() {
         try (ZContext context = new ZContext()) {
-            // ZeroMQ subscription client connecting to jetson static IP, jetson publishes via PUB.
-            System.out.println("Connecting a SUB client to " + SERVER_IP);
-            ZMQ.Socket socket = context.createSocket(SocketType.SUB);
+            // ZeroMQ DEALER connecting to jetson static IP; jetson sends data via ROUTER.
+            System.out.println("Connecting a DEALER to " + SERVER_IP);
+            ZMQ.Socket socket = context.createSocket(SocketType.DEALER);
             socket.connect(SERVER_IP);
-            socket.subscribe("");
+            socket.setIdentity("RIO".getBytes(ZMQ.CHARSET));
 
             // While the thread is still running, keep waiting for messages from the jetson.
             while (!Thread.currentThread().isInterrupted()) {
+                socket.recv(0);
                 String message = socket.recvStr(0);
                 System.out.println(message);
 
