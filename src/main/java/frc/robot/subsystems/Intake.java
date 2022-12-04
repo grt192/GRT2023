@@ -25,8 +25,8 @@ import static frc.robot.Constants.IntakeConstants.*;
 public class Intake extends SubsystemBase {
     
     private final CANSparkMax front = new CANSparkMax(FRONT_MOTOR, MotorType.kBrushless); // front motor for intake
-    private final WPI_TalonSRX right = new WPI_TalonSRX​(RIGHT_MOTOR); // right roller between intake and carriage
-    private final WPI_TalonSRX left = new WPI_TalonSRX​(LEFT_MOTOR); // left roller between intake and carriage
+    private final WPI_TalonSRX right = new WPI_TalonSRX(RIGHT_MOTOR); // right roller between intake and carriage
+    private final WPI_TalonSRX left = new WPI_TalonSRX(LEFT_MOTOR); // left roller between intake and carriage
 
     Servo intake_servo = new Servo(INTAKE_SERVO);
 

@@ -32,8 +32,8 @@ import frc.robot.shuffleboard.GRTShuffleboardTab;
 public class RobotContainer {
     // Subsystems
     private final Tank tank = new Tank();
-    private final Intake intake = new Intake();
-    private final Carriage carriage = new Carriage();
+    //private final Intake intake = new Intake();
+    //private final Carriage carriage = new Carriage();
 
     // Controllers and buttons
     public final XboxController controller = new XboxController(0);
@@ -80,21 +80,21 @@ public class RobotContainer {
         tank.forwardComponent = -1 * controller.getLeftY(); // 1 is forward (adjusted from -1 forward)
         tank.sideComponent = controller.getRightX(); // 1 is right
 
-        if(controller.getBButton()){ //engage the intake arm by pressing B on the controller
-            intake.intake_down = true;
+        // if(controller.getBButton()){ //engage the intake arm by pressing B on the controller
+        //     intake.intake_down = true;
 
-        }
-        if(controller.getXButton()){
-            intake.intake_on = !intake.intake_on; //toggle on/off intake
-        }
+        // }
+        // if(controller.getXButton()){
+        //     intake.intake_on = !intake.intake_on; //toggle on/off intake
+        // }
 
-        if(controller.getRightBumper()){
-        carriage.liftCarriage = !carriage.liftCarriage; // carriage lift toggle switch (true --> false or false --> true)
-        }
+        // if(controller.getRightBumper()){
+        // carriage.liftCarriage = true; // carriage lift toggle switch (true --> false or false --> true)
+        // }
 
-        if(controller.getLeftBumper()){ //open the door toggle for carriage (left bumper)
-            carriage.openDoor = !carriage.openDoor;
-        }
+        // if(controller.getLeftBumper()){ //open the door toggle for carriage (left bumper)
+        //     carriage.openDoor = !carriage.openDoor;
+        // }
 
     }
 }
