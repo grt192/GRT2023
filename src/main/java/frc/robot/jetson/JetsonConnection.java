@@ -44,9 +44,8 @@ public class JetsonConnection extends Thread {
             while (!Thread.currentThread().isInterrupted()) {
                 // Poll for inbound messages
                 if (poller.poll(0) > 0) {
-                    socket.recv(0);
                     String message = socket.recvStr(0);
-                    System.out.println(message);
+                    System.out.println("Received: " + message);
 
                     JetsonData data = gson.fromJson(message, JetsonData.class);
                     System.out.println(data.x + " " + data.y + " " + data.z + " " + data.ts);
