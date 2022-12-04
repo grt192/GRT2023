@@ -20,8 +20,8 @@ public class JetsonConnection extends Thread {
 
     private static final boolean LOCAL_DEBUG = true;
     private static final String SERVER_IP = LOCAL_DEBUG 
-        ? "tcp://*:5000"
-        : "tcp://10.1.92.94:5000";
+        ? "tcp://*:5800"
+        : "tcp://10.1.92.94:5800";
     private static final String RIO_IDENT = "RIO";
 
     private int messageIndex = 0;
