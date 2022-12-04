@@ -66,6 +66,7 @@ public final class Constants {
 
     public static final class GripperConstants {
         public static final int SOLENOIDPORT = 0;
+        public static final int SOLENOIDPORT2 = 1;
     }
 
     public static final class AlignerConstants {
