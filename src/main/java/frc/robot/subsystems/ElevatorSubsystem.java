@@ -66,16 +66,24 @@ public class ElevatorSubsystem extends SubsystemBase {
 
         motorElevator.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
         motorElevator.setSensorPhase(true);
+        motorElevator.setSelectedSensorPosition(0);
+    }
+
+    public double speedfromdistance(double x){
+
+        return (((-1.) / ( (1/4096) * Math.abs(x) + 1)) + 1) * (x / Math.abs(x));
     }
 
     public void periodic() {
         elevatorPositionEntry.setValue(motorElevator.getSelectedSensorPosition());
         
-        if(motorElevator.getSelectedSensorPosition() > height.get() + WINCHTOLERANCE){
-            motorElevator.set(WINCHSPEED); // WARNING: IF THIS MOTOR IS INVERTED, THIS WILL GO TERRIBLY WRONG
-            // MAKE SURE THAT THIS GOES THE RIGHT WAY BEFORE TESTING THOROUGHLY
-        } else if(motorElevator.getSelectedSensorPosition() < height.get() - WINCHTOLERANCE){
-            motorElevator.set(WINCHSPEED * -1);
+        double distance = height.get() - motorElevator.getSelectedSensorPosition();
+
+        if(Math.abs(distance) < WINCHTOLERANCE){
+            
+            motorElevator.set(0);
+        } else {
+            motorElevator.set(speedfromdistance(distance) * WINCHSPEED);
         }
     }
 }

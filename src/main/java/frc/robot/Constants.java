@@ -54,7 +54,7 @@ public final class Constants {
     public static final class ElevatorConstants {
         public static final int MOTORWINCH = 2;
 
-        //encoder values, STUB
+        //encoder values, STUB https://docs.ctre-phoenix.com/en/stable/ch14_MCSensor.html
         public static final double GROUNDHEIGHT = 0; //0 inches
         public static final double LOWHEIGHT = 100; //1 inch
         public static final double BLOCKHEIGHT = 600; //6 inches
