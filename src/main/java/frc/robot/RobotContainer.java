@@ -36,7 +36,23 @@ public class RobotContainer {
     //private final Carriage carriage = new Carriage();
 
     // Controllers and buttons
-    public final XboxController controller = new XboxController(0);
+    private final XboxController driveController = new XboxController(0);
+    private final JoystickButton 
+        driveAButton = new JoystickButton(driveController, XboxController.Button.kA.value),
+        driveBButton = new JoystickButton(driveController, XboxController.Button.kB.value),
+        driveXButton = new JoystickButton(driveController, XboxController.Button.kX.value),
+        driveYButton = new JoystickButton(driveController, XboxController.Button.kY.value),
+        driveLBumper = new JoystickButton(driveController, XboxController.Button.kLeftBumper.value),
+        driveRBumper = new JoystickButton(driveController, XboxController.Button.kRightBumper.value);
+
+    private final XboxController mechController = new XboxController(1);
+    private final JoystickButton 
+        mechAButton = new JoystickButton(mechController, XboxController.Button.kA.value),
+        mechBButton = new JoystickButton(mechController, XboxController.Button.kB.value),
+        mechXButton = new JoystickButton(mechController, XboxController.Button.kX.value),
+        mechYButton = new JoystickButton(mechController, XboxController.Button.kY.value),
+        mechLBumper = new JoystickButton(mechController, XboxController.Button.kLeftBumper.value),
+        mechRBumper = new JoystickButton(mechController, XboxController.Button.kRightBumper.value);
     
 
     // Commands
@@ -77,23 +93,24 @@ public class RobotContainer {
     }
 
     void periodic(){
-        tank.forwardComponent = -1 * controller.getLeftY(); // 1 is forward (adjusted from -1 forward)
-        tank.sideComponent = controller.getRightX(); // 1 is right
+        tank.forwardComponent = -1 * driveController.getLeftY(); // 1 is forward (adjusted from -1 forward)
+        tank.sideComponent = driveController.getRightX(); // 1 is right
 
-        // if(controller.getBButton()){ //engage the intake arm by pressing B on the controller
-        //     intake.intake_down = true;
 
-        // }
-        // if(controller.getXButton()){
+        // if(mechController.getXButtonPressed() && controller.getXButtonReleased()){
         //     intake.intake_on = !intake.intake_on; //toggle on/off intake
         // }
 
-        // if(controller.getRightBumper()){
+        // if(mechController.getXButtonPressed() && controller.getXButtonReleased()){
+        //     intake.intake_on = !intake.intake_on; //toggle on/off intake
+        // }
+
+        // if(mechController.getRightBumperPressed() && controller.getRightBumperReleased()){
         // carriage.liftCarriage = true; // carriage lift toggle switch (true --> false or false --> true)
         // }
 
-        // if(controller.getLeftBumper()){ //open the door toggle for carriage (left bumper)
-        //     carriage.openDoor = !carriage.openDoor;
+        // if(mechController.getLeftBumperPressed() && controller.getLeftBumperReleased()){ 
+        //     carriage.openDoor = !carriage.openDoor; //open the door toggle for carriage (left bumper)
         // }
 
     }

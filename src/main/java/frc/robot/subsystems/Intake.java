@@ -7,7 +7,8 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import com.ctre.phoenix.motorcontrol.can.BaseMotorController; 
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX; // internal Falcon motors
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX; // internal talon motors
+import frc.robot.motorcontrol.MotorUtil;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 import edu.wpi.first.wpilibj.XboxController; // controller input 
@@ -23,28 +24,29 @@ import static frc.robot.Constants.IntakeConstants.*;
 
 
 public class Intake extends SubsystemBase {
-    
-    private final CANSparkMax front = new CANSparkMax(FRONT_MOTOR, MotorType.kBrushless); // front motor for intake
-    private final WPI_TalonSRX right = new WPI_TalonSRX(RIGHT_MOTOR); // right roller between intake and carriage
-    private final WPI_TalonSRX left = new WPI_TalonSRX(LEFT_MOTOR); // left roller between intake and carriage
 
-    Servo intake_servo = new Servo(INTAKE_SERVO);
+  public boolean intake_down = false;
+  public boolean intake_on = false;
+  public double intake_power;
 
-    public boolean intake_down = false;
-    public boolean intake_on = false;
+  private final CANSparkMax front = MotorUtil.createSparkMax(FRONT_MOTOR); // front motor for intake
+  private final CANSparkMax frontOpposite = MotorUtil.createSparkMax(FRONT_OPP_MOTOR);// motor opposite front motor for intake
+  
+  private final WPI_TalonSRX main_roller = MotorUtil.createTalonSRX(RIGHT_MOTOR); // right roller between intake and carriage
+  private final WPI_TalonSRX opp_roller = MotorUtil.createTalonSRX(LEFT_MOTOR); // left roller between intake and carriage
 
   public Intake() {
 
-    front.restoreFactoryDefaults();
-    right.configFactoryDefault();
-    left.configFactoryDefault();
-
     front.setIdleMode(IdleMode.kBrake);
-    left.setNeutralMode(NeutralMode.Brake);
-    right.setNeutralMode(NeutralMode.Brake);
+    frontOpposite.setIdleMode(IdleMode.kBrake);
+    opp_roller.setNeutralMode(NeutralMode.Brake);
+    main_roller.setNeutralMode(NeutralMode.Brake);
 
-    left.follow(right);
-    left.setInverted(true);
+    frontOpposite.setInverted(true);
+    frontOpposite.follow(front);
+    opp_roller.setInverted(true);
+    opp_roller.follow(main_roller);
+    
 
   }
 
@@ -52,17 +54,13 @@ public class Intake extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
 
-    if(intake_down){
-        intake_servo.set(INTAKE_SERVO_DOWN);
-    }
-
     if(intake_on){
-        front.set(1.0);
-        right.set(0.75);   
+        front.set(intake_power);
+        main_roller.set(0.5);   
     }
     else{
         front.set(0.0);
-        right.set(0.0);
+        main_roller.set(0.0);
     }
 
     

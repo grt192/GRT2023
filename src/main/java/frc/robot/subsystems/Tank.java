@@ -7,7 +7,8 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import com.ctre.phoenix.motorcontrol.can.BaseMotorController; 
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX; // internal Falcon motors
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX; // internal notfalcon CIM motors
+import frc.robot.motorcontrol.MotorUtil;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 import edu.wpi.first.wpilibj.XboxController; // controller input library
@@ -16,11 +17,11 @@ import static frc.robot.Constants.TankConstants.*;
 
 public class Tank extends SubsystemBase {
     
-    private final WPI_TalonSRX left = new WPI_TalonSRX(LEFT_MAIN); // left motor
-    private final WPI_TalonSRX left2 = new WPI_TalonSRX(LEFT_SECONDARY); // left motor
+    private final WPI_TalonSRX left = MotorUtil.createTalonSRX(LEFT_MAIN); // left motor
+    private final WPI_TalonSRX left2 = MotorUtil.createTalonSRX(LEFT_SECONDARY); // left motor
 
-    private final WPI_TalonSRX right = new WPI_TalonSRX(RIGHT_MAIN); // right motor
-    private final WPI_TalonSRX right2 = new WPI_TalonSRX(RIGHT_SECONDARY); // right motor
+    private final WPI_TalonSRX right = MotorUtil.createTalonSRX(RIGHT_MAIN); // right motor
+    private final WPI_TalonSRX right2 = MotorUtil.createTalonSRX(RIGHT_SECONDARY); // right motor
 
     public double sideComponent;
     public double forwardComponent;
@@ -29,11 +30,6 @@ public class Tank extends SubsystemBase {
     double rightDrive;
 
   public Tank() {
-
-    left.configFactoryDefault();
-    left2.configFactoryDefault();
-    right.configFactoryDefault();
-    right2.configFactoryDefault();
 
     left2.follow(left);
     right2.follow(right);
@@ -55,10 +51,12 @@ public class Tank extends SubsystemBase {
     rightDrive = forwardComponent - sideComponent;
 
     if(Math.abs(leftDrive) >= 1.0){
-        leftDrive = leftDrive / Math.abs(leftDrive);
+      leftDrive = leftDrive / Math.abs(leftDrive);
+      rightDrive = rightDrive / Math.abs(leftDrive);
     }
     if(Math.abs(rightDrive) >= 1.0){
         rightDrive = rightDrive / Math.abs(rightDrive);
+        leftDrive = leftDrive / Math.abs(rightDrive);
     }
 
     left.set(leftDrive);
