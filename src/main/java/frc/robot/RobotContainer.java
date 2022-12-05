@@ -36,6 +36,9 @@ public class RobotContainer {
     private final XboxController driver = new XboxController(0);
     private final XboxController mech = new XboxController(1);
 
+    //aligner toggle boolean
+    public boolean was_pressed;
+
     // Controllers and buttons
 
     // Commands
@@ -106,11 +109,17 @@ public class RobotContainer {
             aligner.to_slap = false;
         }
         //check if grab   (if right trigger (or both) is pressed)
-        if (mech.getRightTriggerAxis() > TRIGGERCUTOFF){
-            aligner.to_grab = true;
+        if (mech.getRightTriggerAxis() > TRIGGERCUTOFF ){
+            //if trigger was previously not pressed, it is a new press, so change aligner position to other
+            if (!was_pressed){
+                aligner.angler_open = !aligner.angler_open;
+            }
+            was_pressed = true;
+            aligner.right_pressed = true;
         }
         else{
-            aligner.to_grab = false;
+            aligner.right_pressed = false;
+            was_pressed = false;
         }
 
     }

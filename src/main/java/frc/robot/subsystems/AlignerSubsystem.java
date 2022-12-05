@@ -17,7 +17,7 @@ public class AlignerSubsystem extends SubsystemBase {
     public double current_anglertarget = OPENANGLER;
     // current action state
     public boolean to_slap;
-    public boolean to_grab;
+    public boolean right_pressed;
     // state of angler(open or closed)
     public boolean angler_open = true;
 
@@ -60,16 +60,14 @@ public class AlignerSubsystem extends SubsystemBase {
             current_slaptarget = SLAPSLAP;
         }
         // check if grab trigger is pressed and angler is open
-        else if (to_grab && angler_open) {
+        else if (right_pressed && angler_open) {
             current_slaptarget = CLOSEDSLAP;
             current_anglertarget = CLOSEDANGLER;
-            angler_open = false;
         }
         // check if grab trigger is pressed and angler is closed
-        else if (to_grab && !angler_open) {
+        else if (right_pressed && !angler_open) {
             current_slaptarget = OPENSLAP;
             current_anglertarget = OPENANGLER;
-            angler_open = true;
         }
         // else return to open state
         else {
