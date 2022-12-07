@@ -4,30 +4,27 @@
 
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import static frc.robot.Constants.IntakeConstants.FRONT_MOTOR;
+import static frc.robot.Constants.IntakeConstants.FRONT_OPP_MOTOR;
+import static frc.robot.Constants.IntakeConstants.LEFT_MOTOR;
+import static frc.robot.Constants.IntakeConstants.RIGHT_MOTOR;
 
-import com.ctre.phoenix.motorcontrol.can.BaseMotorController; 
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX; // internal talon motors
-import frc.robot.motorcontrol.MotorUtil;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-
-import edu.wpi.first.wpilibj.XboxController; // controller input 
-
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX; // internal talon motors
 import com.revrobotics.CANSparkMax; // front intake motor
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-
 import com.revrobotics.CANSparkMax.IdleMode;
 
-import edu.wpi.first.wpilibj.Servo;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.motorcontrol.MotorUtil;
 
-import static frc.robot.Constants.IntakeConstants.*;
 
 
 public class Intake extends SubsystemBase {
 
-  public boolean intake_down = false;
-  public boolean intake_on = false;
+  public boolean intake_off = false;
   public double intake_power;
+  public double intake_power_forward;
+  public double intake_power_reverse;
 
   private final CANSparkMax front = MotorUtil.createSparkMax(FRONT_MOTOR); // front motor for intake
   private final CANSparkMax frontOpposite = MotorUtil.createSparkMax(FRONT_OPP_MOTOR);// motor opposite front motor for intake
@@ -54,15 +51,20 @@ public class Intake extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
 
-    if(intake_on){
-        front.set(intake_power);
-        main_roller.set(0.5);   
+    // create an intake_power from the forward/reverse intake components
+    // both shouldn't need to be pressed at the same time, so one of them will likely be 0 anyways
+    intake_power = intake_power_forward + intake_power_reverse;
+
+    // if intake needs to be disabled for whatever reason (more disabled than just not pressing anything)
+    if(intake_off){
+        front.set(0.0);
+        main_roller.set(0.0);   
     }
     else{
-        front.set(0.0);
-        main_roller.set(0.0);
+      front.set(intake_power);
+      main_roller.set(intake_power); 
+      // assuming the rollers should be set to match the intake as opposed to being set to a fixed value
     }
-
     
   }
 

@@ -4,16 +4,16 @@
 
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import static frc.robot.Constants.TankConstants.LEFT_MAIN;
+import static frc.robot.Constants.TankConstants.LEFT_SECONDARY;
+import static frc.robot.Constants.TankConstants.RIGHT_MAIN;
+import static frc.robot.Constants.TankConstants.RIGHT_SECONDARY;
 
-import com.ctre.phoenix.motorcontrol.can.BaseMotorController; 
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX; // internal notfalcon CIM motors
-import frc.robot.motorcontrol.MotorUtil;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX; // internal notfalcon CIM motors
 
-import edu.wpi.first.wpilibj.XboxController; // controller input library
-
-import static frc.robot.Constants.TankConstants.*;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.motorcontrol.MotorUtil;
 
 public class Tank extends SubsystemBase {
     

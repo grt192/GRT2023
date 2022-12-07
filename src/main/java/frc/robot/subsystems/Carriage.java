@@ -4,21 +4,19 @@
 
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import static frc.robot.Constants.CarriageConstants.BOTTOM_CLOSED;
+import static frc.robot.Constants.CarriageConstants.BOTTOM_OPEN;
+import static frc.robot.Constants.CarriageConstants.BOTTOM_SERVO;
+import static frc.robot.Constants.CarriageConstants.CARRIAGE_SOLENOID_F;
+import static frc.robot.Constants.CarriageConstants.CARRIAGE_SOLENOID_R;
+import static frc.robot.Constants.CarriageConstants.TOP_CLOSED;
+import static frc.robot.Constants.CarriageConstants.TOP_OPEN;
+import static frc.robot.Constants.CarriageConstants.TOP_SERVO;
 
-import com.ctre.phoenix.motorcontrol.can.BaseMotorController; 
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX; // internal talon motors
-
-import edu.wpi.first.wpilibj.XboxController; // controller input 
-
-import com.revrobotics.CANSparkMax; // front intake motor
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-
-import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Servo;
-
-import static frc.robot.Constants.CarriageConstants.*;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 
 public class Carriage extends SubsystemBase {
@@ -39,11 +37,10 @@ public class Carriage extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
 
-    
+    // if the button is pressed, toggle the piston using the class toggle method (didn't want to pass Value to set method)
     if(liftCarriage){
+      liftCarriage = false; 
       piston.toggle();
-      liftCarriage = false;
-
     }
     
 

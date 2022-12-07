@@ -25,17 +25,17 @@ public final class Constants {
 
     }
     public static final class IntakeConstants{
-        public static final int FRONT_MOTOR = 5;
-        public static final int FRONT_OPP_MOTOR = 6;
-        public static final int RIGHT_MOTOR = 7;
-        public static final int LEFT_MOTOR = 8;
+        public static final int FRONT_MOTOR = 2;
+        public static final int FRONT_OPP_MOTOR = 3;
+        public static final int RIGHT_MOTOR = 0;
+        public static final int LEFT_MOTOR = 1;
 
     }
     public static final class CarriageConstants{
-        public static final int CARRIAGE_SOLENOID_F = 1;
-        public static final int CARRIAGE_SOLENOID_R = 2;
-        public static final int TOP_SERVO = 3;
-        public static final int BOTTOM_SERVO = 4;
+        public static final int CARRIAGE_SOLENOID_F = 6;
+        public static final int CARRIAGE_SOLENOID_R = 7;
+        public static final int TOP_SERVO = 4;
+        public static final int BOTTOM_SERVO = 5;
 
         public static final int TOP_OPEN = 90; // servo position when the door is open
         public static final int TOP_CLOSED = 0; // servo position when the door is closed

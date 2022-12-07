@@ -9,18 +9,9 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import static frc.robot.Constants.CarriageConstants.*;
-import static frc.robot.Constants.TankConstants.*;
-import static frc.robot.Constants.IntakeConstants.*;
-
-import frc.robot.subsystems.Tank;
-import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.Carriage;
-
-
 import frc.robot.shuffleboard.GRTShuffleboardTab;
+import frc.robot.subsystems.Tank;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -98,15 +89,14 @@ public class RobotContainer {
 
 
         // if(mechController.getXButtonPressed() && controller.getXButtonReleased()){
-        //     intake.intake_on = !intake.intake_on; //toggle on/off intake
+        //     intake.intake_off = !intake.intake_off; //toggle on/off intake
         // }
-
-        // if(mechController.getXButtonPressed() && controller.getXButtonReleased()){
-        //     intake.intake_on = !intake.intake_on; //toggle on/off intake
-        // }
+        
+        // intake.intake_power_forward = mechController.getRightTriggerAxis() * 0.5;
+        // intake.intake_power_reverse = mechController.getLeftTriggerAxis() * -0.5;
 
         // if(mechController.getRightBumperPressed() && controller.getRightBumperReleased()){
-        // carriage.liftCarriage = true; // carriage lift toggle switch (true --> false or false --> true)
+        // carriage.liftCarriage = true; // lift the carriage (it's a bit jank ik)
         // }
 
         // if(mechController.getLeftBumperPressed() && controller.getLeftBumperReleased()){ 
