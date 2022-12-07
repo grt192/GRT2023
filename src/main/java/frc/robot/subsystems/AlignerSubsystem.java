@@ -17,7 +17,7 @@ public class AlignerSubsystem extends SubsystemBase {
     public double current_anglertarget = OPENANGLER;
     // current action state
     public boolean to_slap;
-    public boolean right_pressed;
+    public boolean right_pressed = false;
     // state of angler(open or closed)
     public boolean angler_open = true;
 
@@ -55,9 +55,11 @@ public class AlignerSubsystem extends SubsystemBase {
         slappos = motorSlapper.getSelectedSensorPosition();
         anglerpos = motorAngler.getSelectedSensorPosition();
 
-        // check if slapper trigger is pressed
-        if (to_slap) {
-            current_slaptarget = SLAPSLAP;
+        // check if slapper trigger (only when arms are open) is pressed
+        if (angler_open) {
+            if (to_slap) {
+                current_slaptarget = SLAPSLAP;
+            }
         }
         // check if grab trigger is pressed and angler is open
         else if (right_pressed && angler_open) {
