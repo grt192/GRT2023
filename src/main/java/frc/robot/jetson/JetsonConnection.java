@@ -1,5 +1,8 @@
 package frc.robot.jetson;
 
+import java.util.ArrayDeque;
+import java.util.Queue;
+
 import com.google.gson.Gson;
 
 import org.zeromq.SocketType;
@@ -8,24 +11,20 @@ import org.zeromq.ZMQ;
 import org.zeromq.ZMQ.Poller;
 import org.zeromq.ZMQ.Socket;
 
-import edu.wpi.first.wpilibj.Timer;
-
 /**
  * A ZeroMQ socket connection to the jetson. The connection binds to a static port on the RIO, sends data to the 
  * jetson via REP, and receives JSON data via REQ.
  */
 public class JetsonConnection extends Thread {
-    //private final Timer timer = new Timer();
+    private final Queue<JetsonConfig> messageQueue = new ArrayDeque<>();
+
     private final Gson gson = new Gson();
 
-    private static final boolean LOCAL_DEBUG = true;
+    private static final boolean LOCAL_DEBUG = false;
     private static final String SERVER_IP = LOCAL_DEBUG 
         ? "tcp://*:5800"
         : "tcp://10.1.92.94:5800";
     private static final String RIO_IDENT = "RIO";
-
-    private int messageIndex = 0;
-    private long millis = System.currentTimeMillis();
 
     @Override
     public void run() {
@@ -54,12 +53,12 @@ public class JetsonConnection extends Thread {
                     System.out.println(delay);
                 }
 
-                // Send a dummy message every 3 seconds
-                // TODO: test on robot with `Timer` class
-                if (System.currentTimeMillis() - millis > 3000L /* timer.advanceIfElapsed(3) */) {
-                    System.out.println("Sending message " + messageIndex);
-                    socket.send("Message " + messageIndex++);
-                    millis = System.currentTimeMillis();
+                // If there's a config update, send it to the jetson
+                JetsonConfig configUpdate = messageQueue.poll();
+                if (configUpdate != null) {
+                    String message = gson.toJson(configUpdate);
+                    System.out.println("Sending message " + message);
+                    socket.send(message);
                 }
             }
         }
