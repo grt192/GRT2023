@@ -11,6 +11,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.shuffleboard.GRTShuffleboardTab;
+import frc.robot.subsystems.Carriage;
+import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Tank;
 
 /**
@@ -22,9 +24,9 @@ import frc.robot.subsystems.Tank;
  */
 public class RobotContainer {
     // Subsystems
-    private final Tank tank = new Tank();
-    //private final Intake intake = new Intake();
-    //private final Carriage carriage = new Carriage();
+    // private final Tank tank = new Tank();
+    private final Intake intake = new Intake();
+    private final Carriage carriage = new Carriage();
 
     // Controllers and buttons
     private final XboxController driveController = new XboxController(0);
@@ -84,20 +86,20 @@ public class RobotContainer {
     }
 
     void periodic(){
-        tank.forwardComponent = -1 * driveController.getLeftY(); // 1 is forward (adjusted from -1 forward)
-        tank.sideComponent = driveController.getRightX(); // 1 is right
+        // tank.forwardComponent = -1 * driveController.getLeftY(); // 1 is forward (adjusted from -1 forward)
+        // tank.sideComponent = driveController.getRightX(); // 1 is right
 
 
-        // if(mechController.getXButtonPressed() && controller.getXButtonReleased()){
-        //     intake.intake_off = !intake.intake_off; //toggle on/off intake
-        // }
+        if(mechController.getXButtonPressed() && mechController.getXButtonReleased()){
+            intake.intake_off = !intake.intake_off; //toggle on/off intake
+        }
         
-        // intake.intake_power_forward = mechController.getRightTriggerAxis() * 0.5;
-        // intake.intake_power_reverse = mechController.getLeftTriggerAxis() * -0.5;
+        intake.intake_power_forward = mechController.getRightTriggerAxis() * 0.5;
+        intake.intake_power_reverse = mechController.getLeftTriggerAxis() * -0.5;
 
-        // if(mechController.getRightBumperPressed() && controller.getRightBumperReleased()){
-        // carriage.liftCarriage = true; // lift the carriage (it's a bit jank ik)
-        // }
+         if(mechController.getRightBumperPressed() && mechController.getRightBumperReleased()){
+         carriage.liftCarriage = true; // lift the carriage (it's a bit jank ik)
+         }
 
         // if(mechController.getLeftBumperPressed() && controller.getLeftBumperReleased()){ 
         //     carriage.openDoor = !carriage.openDoor; //open the door toggle for carriage (left bumper)

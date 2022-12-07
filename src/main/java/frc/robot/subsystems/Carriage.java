@@ -44,14 +44,14 @@ public class Carriage extends SubsystemBase {
     }
     
 
-    if(openDoor){
-        top.set(TOP_OPEN);
-        bottom.set(BOTTOM_OPEN);
-    }
-    else{
-        top.set(TOP_CLOSED);
-        bottom.set(BOTTOM_CLOSED);
-    }
+    // if(openDoor){
+    //     top.set(TOP_OPEN);
+    //     bottom.set(BOTTOM_OPEN);
+    // }
+    // else{
+    //     top.set(TOP_CLOSED);
+    //     bottom.set(BOTTOM_CLOSED);
+    // }
 
     
   }

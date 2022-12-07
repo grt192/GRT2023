@@ -29,19 +29,19 @@ public class Intake extends SubsystemBase {
   private final CANSparkMax front = MotorUtil.createSparkMax(FRONT_MOTOR); // front motor for intake
   private final CANSparkMax frontOpposite = MotorUtil.createSparkMax(FRONT_OPP_MOTOR);// motor opposite front motor for intake
   
-  private final WPI_TalonSRX main_roller = MotorUtil.createTalonSRX(RIGHT_MOTOR); // right roller between intake and carriage
-  private final WPI_TalonSRX opp_roller = MotorUtil.createTalonSRX(LEFT_MOTOR); // left roller between intake and carriage
+  private final CANSparkMax main_roller = MotorUtil.createSparkMax(RIGHT_MOTOR); // right roller between intake and carriage
+  private final CANSparkMax opp_roller = MotorUtil.createSparkMax(LEFT_MOTOR); // left roller between intake and carriage
 
   public Intake() {
 
-    front.setIdleMode(IdleMode.kBrake);
-    frontOpposite.setIdleMode(IdleMode.kBrake);
-    opp_roller.setNeutralMode(NeutralMode.Brake);
-    main_roller.setNeutralMode(NeutralMode.Brake);
+    front.setIdleMode(IdleMode.kCoast);
+    front.setInverted(true);
+    frontOpposite.setIdleMode(IdleMode.kCoast);
+    opp_roller.setIdleMode(IdleMode.kCoast);
+    main_roller.setIdleMode(IdleMode.kCoast);
 
-    frontOpposite.setInverted(true);
+    
     frontOpposite.follow(front);
-    opp_roller.setInverted(true);
     opp_roller.follow(main_roller);
     
 

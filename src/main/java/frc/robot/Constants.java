@@ -25,10 +25,10 @@ public final class Constants {
 
     }
     public static final class IntakeConstants{
-        public static final int FRONT_MOTOR = 2;
-        public static final int FRONT_OPP_MOTOR = 3;
-        public static final int RIGHT_MOTOR = 0;
-        public static final int LEFT_MOTOR = 1;
+        public static final int FRONT_MOTOR = 16;
+        public static final int FRONT_OPP_MOTOR = 1;
+        public static final int RIGHT_MOTOR = 2;
+        public static final int LEFT_MOTOR = 3;
 
     }
     public static final class CarriageConstants{
