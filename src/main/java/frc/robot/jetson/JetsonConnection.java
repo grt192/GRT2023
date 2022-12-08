@@ -1,5 +1,8 @@
 package frc.robot.jetson;
 
+import java.util.ArrayDeque;
+import java.util.Queue;
+
 import com.google.gson.Gson;
 
 import org.zeromq.SocketType;
@@ -12,6 +15,7 @@ import org.zeromq.ZMQ.Socket;
  */
 public class JetsonConnection extends Thread {
     private final Gson gson = new Gson();
+    private final Queue<JetsonData> dataQueue = new ArrayDeque<>();
 
     private static final boolean LOCAL_DEBUG = true;
     private static final String SERVER_IP = LOCAL_DEBUG 
@@ -30,15 +34,22 @@ public class JetsonConnection extends Thread {
             // While the thread is running, keep waiting for messages from the jetson.
             while (!Thread.currentThread().isInterrupted()) {
                 String message = socket.recvStr(0);
-                System.out.println("Received: " + message);
-
                 JetsonData data = gson.fromJson(message, JetsonData.class);
-                System.out.println(data.x + " " + data.y + " " + data.z + " " + data.ts);
 
                 long delay = System.currentTimeMillis() - data.ts;
                 System.out.println(delay);
+
+                dataQueue.add(data);
             }
         }
+    }
+
+    /**
+     * Polls the data queue for data.
+     * @return Jetson data as a `JetsonData` object, or `null` if there is no data queued for processing.
+     */
+    public JetsonData getData() {
+        return dataQueue.poll();
     }
 
     /**
@@ -48,5 +59,11 @@ public class JetsonConnection extends Thread {
     public static void main(String... args) {
         JetsonConnection connection = new JetsonConnection();
         connection.start();
+
+        while (true) {
+            JetsonData data = connection.getData();
+            if (data == null) continue;
+            System.out.println(data.x + " " + data.y + " " + data.z + " " + data.ts);
+        }
     }
 }
