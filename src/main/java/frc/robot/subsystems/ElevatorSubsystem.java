@@ -93,18 +93,30 @@ public class ElevatorSubsystem extends SubsystemBase {
 
         // motorElevator.set(speed);
 
-        if(Math.abs(distance) < WINCHTOLERANCE){
-            
-            motorElevator.set(0);
-            System.out.println("LJKSFDA");
-        } else {
-            if(distance > 50000){
-                distance = 50000;
+
+
+        if(Math.abs(distance) > WINCHTOLERANCE){
+            if(distance > 0){
+                motorElevator.set(WINCHUPSPEED);
+            } else {
+                motorElevator.set(WINCHDOWNSPEED);
             }
+        } else {
+            motorElevator.set(WINCHSTOPSPEED);
+        }
+
+        // if(Math.abs(distance) < WINCHTOLERANCE){
+            
+        //     motorElevator.set(0);
+        //     System.out.println("LJKSFDA");
+        // } else {
+        //     if(distance > 50000){
+        //         distance = 50000;
+        //     }
             // motorElevator.set(distance / 100000);
 
             // System.out.println(distance / 100000);
-        }
+        // }
         // System.out.println(height);
     }
 }
