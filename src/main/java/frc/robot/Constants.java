@@ -76,8 +76,8 @@ public final class Constants {
         public static final double TRIGGERCUTOFF = .2;
 
         // open position target encoder values
-        public static final double OPENSLAP = 1;// placehold
-        public static final double OPENANGLER = 1;// placehold
+        public static final double OPENSLAP = 0;// should be 0, as motor starts from this position
+        public static final double OPENANGLER = 0;// should be 0, as motor starts from this position
 
         // slap slapper target encoder values
         public static final  double SLAPSLAP = 1;// placehold
