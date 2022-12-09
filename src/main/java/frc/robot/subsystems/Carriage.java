@@ -12,6 +12,7 @@ import static frc.robot.Constants.CarriageConstants.CARRIAGE_SOLENOID_R;
 import static frc.robot.Constants.CarriageConstants.TOP_CLOSED;
 import static frc.robot.Constants.CarriageConstants.TOP_OPEN;
 import static frc.robot.Constants.CarriageConstants.TOP_SERVO;
+import static edu.wpi.first.wpilibj.DoubleSolenoid.Value.*;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
@@ -24,14 +25,14 @@ public class Carriage extends SubsystemBase {
     
     public boolean openDoor = false; // tracks whether door should be open or closed
     public boolean liftCarriage = false;  // tracks whether carriage should be lifted
-
+    public boolean timer_enabled;
     DoubleSolenoid piston = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, CARRIAGE_SOLENOID_F,CARRIAGE_SOLENOID_R); // lifts carriage
     Timer timer = new Timer();
     Servo top = new Servo(TOP_SERVO); // top servo opening door
     Servo bottom = new Servo(BOTTOM_SERVO); // bottom servo opening door
 
   public Carriage() {
-
+    
   }
 
   @Override
@@ -40,31 +41,42 @@ public class Carriage extends SubsystemBase {
 
     
     if(liftCarriage){ 
-      top.setAngle(TOP_CLOSED); // if set to lift carriage, first close the doors
-      bottom.setAngle(BOTTOM_CLOSED);
-      timer.reset(); // reset and start timer to make sure doors are closed before lift
-      timer.start();
-      liftCarriage = false; // set to false so we don't keep resetting timer
+
+       
+      if(!timer_enabled){
+        top.setAngle(TOP_CLOSED);
+        bottom.setAngle(BOTTOM_CLOSED);
+        openDoor = false;
+        timer.reset(); // reset and start timer to make sure doors are closed before lift
+        timer.start();
+        timer_enabled = true;
+      }
+      if(timer.get() >= 0.2){
+        piston.set(kForward);
+        timer.stop();
+        timer.reset();
+        //timer_enabled = false;
+      }
       
     }
-    else{ // if not to lift carriage, set the door to be open
+    else{
+      piston.set(kReverse);
+    }
+
+    // if(timer.get() >= 0.2){ //if time elapsed meets criterion, 
+    //   timer.stop();
+    //   timer.reset();
+    //   System.out.println("setting pneumatic");
+    //   piston.set(kForward);
+    // }
+
+    if(openDoor && !liftCarriage){
       top.setAngle(TOP_OPEN);
       bottom.setAngle(BOTTOM_OPEN);
     }
-
-    if(timer.get() >= 0.2){ //if time elapsed meets criterion, 
-      timer.stop();
-      timer.reset();
-      piston.toggle();
-    }
-
-    if(openDoor){
-        top.setAngle(TOP_OPEN);
-        bottom.setAngle(BOTTOM_OPEN);
-    }
     else{
-        top.setAngle(TOP_CLOSED);
-        bottom.setAngle(BOTTOM_CLOSED);
+      top.setAngle(TOP_CLOSED);
+      bottom.setAngle(BOTTOM_CLOSED);
     }
 
     

@@ -97,13 +97,13 @@ public class RobotContainer {
         intake.intake_power_forward = mechController.getRightTriggerAxis() * 0.5;
         intake.intake_power_reverse = mechController.getLeftTriggerAxis() * -0.5;
 
-         if(mechController.getRightBumperPressed() && mechController.getRightBumperReleased()){
-         carriage.liftCarriage = true; // lift the carriage (it's a bit jank ik)
+         if(mechController.getRightBumperPressed()){
+         carriage.liftCarriage = !carriage.liftCarriage; // lift the carriage (it's a bit jank ik)
          }
 
-        // if(mechController.getLeftBumperPressed() && controller.getLeftBumperReleased()){ 
-        //     carriage.openDoor = !carriage.openDoor; //open the door toggle for carriage (left bumper)
-        // }
+         if(mechController.getLeftBumperPressed() && mechController.getLeftBumperReleased()){ 
+            carriage.openDoor = !carriage.openDoor; //open the door toggle for carriage (left bumper)
+         }
 
     }
 }

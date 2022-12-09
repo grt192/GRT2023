@@ -37,11 +37,11 @@ public final class Constants {
         public static final int TOP_SERVO = 4;
         public static final int BOTTOM_SERVO = 5;
 
-        public static final int TOP_OPEN = 90; // servo position when the door is open
-        public static final int TOP_CLOSED = 0; // servo position when the door is closed
+        public static final int TOP_OPEN = 25; // servo position when the door is open
+        public static final int TOP_CLOSED = 160; // servo position when the door is closed
 
-        public static final int BOTTOM_OPEN = 90; // servo position when the door is open
-        public static final int BOTTOM_CLOSED = 0; // servo position when the door is closed
+        public static final int BOTTOM_OPEN = 25; // servo position when the door is open
+        public static final int BOTTOM_CLOSED = 160; // servo position when the door is closed
 
 
     }
