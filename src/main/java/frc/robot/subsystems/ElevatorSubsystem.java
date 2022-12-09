@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import static frc.robot.Constants.ElevatorConstants.*;
 
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -12,7 +13,7 @@ import frc.robot.shuffleboard.GRTShuffleboardTab;
 
 public class ElevatorSubsystem extends SubsystemBase {
 
-    
+    public double speed = 0;
     private final WPI_TalonSRX motorElevator = MotorUtil.createTalonSRX(MOTORWINCH);
 
     private final GRTShuffleboardTab shuffleboardTab = new GRTShuffleboardTab("Elevator");
@@ -32,11 +33,11 @@ public class ElevatorSubsystem extends SubsystemBase {
                 return LOWHEIGHT;
             }
         }, // a few inches above the ground so that you can move
-        BLOCK {
-            public double get(){
-                return BLOCKHEIGHT;
-            }
-        }, // exactly 6 inches up (for setting blocks on another after being on HIGH)
+        // BLOCK {
+        //     public double get(){
+        //         return BLOCKHEIGHT;
+        //     }
+        // }, // exactly 6 inches up (for setting blocks on another after being on HIGH)
         HIGH {
             public Height next() {
                 return Height.HIGH;
@@ -51,6 +52,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         }
 
         public Height next() {
+            System.out.println(ordinal());
             return values()[ordinal() + 1];
         }
 
@@ -65,8 +67,18 @@ public class ElevatorSubsystem extends SubsystemBase {
         height = Height.GROUND;
 
         motorElevator.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
-        motorElevator.setSensorPhase(true);
+        motorElevator.setSensorPhase(false);
         motorElevator.setSelectedSensorPosition(0);
+        motorElevator.setNeutralMode(NeutralMode.Brake);
+        motorElevator.setInverted(true);
+
+        
+        motorElevator.configForwardSoftLimitThreshold(WINCHMAX, 0);
+        motorElevator.configForwardSoftLimitEnable(true, 0);
+
+        motorElevator.configReverseSoftLimitThreshold(0, 0);
+        motorElevator.configReverseSoftLimitEnable(true, 0);
+
     }
 
     public double speedfromdistance(double x){
@@ -79,11 +91,20 @@ public class ElevatorSubsystem extends SubsystemBase {
         
         double distance = height.get() - motorElevator.getSelectedSensorPosition();
 
+        // motorElevator.set(speed);
+
         if(Math.abs(distance) < WINCHTOLERANCE){
             
             motorElevator.set(0);
+            System.out.println("LJKSFDA");
         } else {
-            motorElevator.set(speedfromdistance(distance) * WINCHSPEED);
+            if(distance > 50000){
+                distance = 50000;
+            }
+            // motorElevator.set(distance / 100000);
+
+            // System.out.println(distance / 100000);
         }
+        // System.out.println(height);
     }
 }

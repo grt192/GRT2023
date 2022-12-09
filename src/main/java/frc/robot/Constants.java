@@ -56,12 +56,14 @@ public final class Constants {
 
         //encoder values, STUB https://docs.ctre-phoenix.com/en/stable/ch14_MCSensor.html
         public static final double GROUNDHEIGHT = 0; //0 inches
-        public static final double LOWHEIGHT = 100; //1 inch
-        public static final double BLOCKHEIGHT = 600; //6 inches
-        public static final double HIGHHEIGHT = 700; //7 inches
+        public static final double LOWHEIGHT = 30000; //1 inch
+        //public static final double BLOCKHEIGHT = 600; //6 inches
+        public static final double HIGHHEIGHT = 170000; //7 inches
 
         public static final double WINCHSPEED = .2;
         public static final double WINCHTOLERANCE = 20;
+
+        public static final double WINCHMAX = 170000;
     }
 
     public static final class GripperConstants {

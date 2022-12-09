@@ -86,6 +86,7 @@ public class RobotContainer {
         if (mech.getAButtonPressed() == true) {
             if (gripper.open == Value.kForward){
                 gripper.open = Value.kReverse;
+                
             } else { 
                 gripper.open = Value.kForward;
             }
@@ -117,6 +118,10 @@ public class RobotContainer {
         else{
             aligner.right_pressed = false;
         }
+
+        elevator.speed = -1 * mech.getRightY();
+
+        
 
     }
 }

@@ -50,7 +50,7 @@ public class AlignerSubsystem extends SubsystemBase {
     // no code for catching/fixing motor over-turning
 
     public void periodic() {
-
+    
         // get current motor positions
         slappos = motorSlapper.getSelectedSensorPosition();
         anglerpos = motorAngler.getSelectedSensorPosition();
@@ -79,20 +79,20 @@ public class AlignerSubsystem extends SubsystemBase {
 
         // get slapper to current target
         if (slappos > current_slaptarget) {
-            motorSlapper.set(-.5); // move left
+            // motorSlapper.set(-.5); // move left
         } else if (slappos < current_slaptarget) {
-            motorSlapper.set(.5); // move right
+            // motorSlapper.set(.5); // move right
         } else {
-            motorSlapper.set(0);
+            // motorSlapper.set(0);
         }
 
         // get angler to current target
         if (anglerpos > current_anglertarget) {
-            motorAngler.set(-.5); // move left
+            // motorAngler.set(-.5); // move left
         } else if (anglerpos < current_anglertarget) {
-            motorAngler.set(.5); // move right
+            // motorAngler.set(.5); // move right
         } else {
-            motorAngler.set(0);
+            // motorAngler.set(0);
         }
 
         slapperPositionEntry.setValue(motorSlapper.getSelectedSensorPosition());
