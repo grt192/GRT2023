@@ -9,8 +9,6 @@ import static frc.robot.Constants.IntakeConstants.FRONT_OPP_MOTOR;
 import static frc.robot.Constants.IntakeConstants.LEFT_MOTOR;
 import static frc.robot.Constants.IntakeConstants.RIGHT_MOTOR;
 
-import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX; // internal talon motors
 import com.revrobotics.CANSparkMax; // front intake motor
 import com.revrobotics.CANSparkMax.IdleMode;
 
@@ -21,12 +19,10 @@ import frc.robot.motorcontrol.MotorUtil;
 
 public class Intake extends SubsystemBase {
 
-  public boolean intake_off = false;
+  public boolean bondMode;
   public double intake_power;
   public double intake_power_forward;
   public double intake_power_reverse;
-
-  public boolean ideal;
 
   private final CANSparkMax front = MotorUtil.createSparkMax(FRONT_MOTOR); // front motor for intake
   private final CANSparkMax frontOpposite = MotorUtil.createSparkMax(FRONT_OPP_MOTOR);// motor opposite front motor for intake
@@ -56,25 +52,31 @@ public class Intake extends SubsystemBase {
     // create an intake_power from the forward/reverse intake components
     // both shouldn't need to be pressed at the same time, so one of them will likely be 0 anyways
     //intake_power = intake_power_forward + intake_power_reverse;
-    intake_power += intake_power_forward;
-    intake_power += intake_power_reverse;
-    // if intake needs to be disabled for whatever reason (more disabled than just not pressing anything)
-    if(intake_off){
-        front.set(0.0);
-        main_roller.set(0.0);   
+
+    intake_power = 0.0; // reset intake power value (so it doesnt compound and go beserk (#learninglessons))
+
+    if(intake_power_forward <= 0.10){ // if forward intake trigger is not pressed significantly, dont make it spin
+      intake_power += 0.0;
+    }
+    if(intake_power_forward > 0.10 && intake_power_forward < 0.85){ // if its pressed a little, make it spin slow
+      intake_power += 0.18;
+    }
+    else{
+      intake_power += 0.35; // if its pressed a lot, make it spin fast
+    }
+    if(intake_power_reverse >= 0.4){ // if there is some reverse component, make it spin that way 
+      intake_power -= 0.45;
+    }
+    
+    if(bondMode){ // the mode we've all been waiting for, inspired by 007 himself
+      front.set(intake_power * 1.5);
+      main_roller.set(intake_power * 0.75);
     }
     else{
       front.set(intake_power);
-      if(ideal){
-        System.out.println("ideal intake power: " + Double.toString(intake_power));
-      }
-      else{
-        System.out.println("intake power: " + Double.toString(intake_power));
-      }
       main_roller.set(intake_power * 0.75); 
-      // assuming the rollers should be set to match the intake as opposed to being set to a fixed value
     }
-    
+  
   }
 
   @Override

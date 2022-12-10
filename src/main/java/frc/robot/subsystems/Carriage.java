@@ -23,8 +23,9 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Carriage extends SubsystemBase {
     
-    public boolean openDoor = false; // tracks whether door should be open or closed
+    public boolean openDoor = true; // tracks whether door should be open or closed
     public boolean liftCarriage = false;  // tracks whether carriage should be lifted
+    public boolean carriageEject;
     public boolean timer_enabled;
     DoubleSolenoid piston = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, CARRIAGE_SOLENOID_F,CARRIAGE_SOLENOID_R); // lifts carriage
     Timer timer = new Timer();
@@ -39,9 +40,12 @@ public class Carriage extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
 
-    
-    if(liftCarriage){ 
+    if(carriageEject){ // if we need to eject something from above the carriage
+      piston.set(kForward); // note that this mode may lead to good blocks being ejected as well
+      carriageEject = false;
+    }
 
+    if(liftCarriage){ //lifting carriage for normal operation
        
       if(!timer_enabled){ //if the timer was not enabled, close the door and then start the timer
         top.setAngle(TOP_CLOSED);
@@ -59,15 +63,11 @@ public class Carriage extends SubsystemBase {
     }
     else{ // if liftcarriage not true (shouldn't be lifting/lifted), set the piston to the down position 
       piston.set(kReverse);
+      if(timer_enabled){ // timer_enabled is true from the liftcarriage until this point 
+        openDoor = true; // this allows us to automatically open the servo door so we don't forget to
+      }
       timer_enabled = false;
     }
-
-    // if(timer.get() >= 0.2){ //if time elapsed meets criterion, 
-    //   timer.stop();
-    //   timer.reset();
-    //   System.out.println("setting pneumatic");
-    //   piston.set(kForward);
-    // }
 
     if(openDoor){
       top.setAngle(TOP_OPEN);

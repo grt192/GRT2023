@@ -86,22 +86,26 @@ public class RobotContainer {
     }
 
     void periodic(){
-        tank.forwardComponent = -1 * mechController.getLeftY(); // 1 is forward (adjusted from -1 forward)
-        tank.sideComponent = mechController.getRightX(); // 1 is right
+        tank.forwardComponent = -1 * driveController.getLeftY(); // 1 is forward (adjusted from -1 forward)
+        tank.sideComponent = driveController.getRightX(); // 1 is right
 
 
         if(mechController.getXButtonPressed() && mechController.getXButtonReleased()){
-            intake.intake_off = !intake.intake_off; //toggle on/off intake
+            intake.bondMode = !intake.bondMode; //toggle on/off intake
         }
         
-        intake.intake_power_forward = mechController.getRightTriggerAxis() * 0.01;
-        intake.intake_power_reverse = mechController.getLeftTriggerAxis() * -0.01;
+        intake.intake_power_forward = mechController.getRightTriggerAxis();
+        intake.intake_power_reverse = mechController.getLeftTriggerAxis();
 
-         if(mechController.getRightBumperPressed()){
+        if(mechController.getRightBumperPressed() && mechController.getLeftBumperPressed()){
+            carriage.carriageEject = true; // eject something stuck on carriage
+        }
+
+         if(mechController.getRightBumperPressed() && !mechController.getLeftBumperPressed()){
          carriage.liftCarriage = !carriage.liftCarriage; // lift the carriage (it's a bit jank ik)
          }
 
-         if(mechController.getLeftBumperPressed() && mechController.getLeftBumperReleased()){ 
+         if(mechController.getLeftBumperPressed() && !mechController.getRightBumperPressed()){ 
             carriage.openDoor = !carriage.openDoor; //open the door toggle for carriage (left bumper)
          }
 
