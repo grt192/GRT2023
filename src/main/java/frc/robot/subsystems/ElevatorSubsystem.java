@@ -91,19 +91,19 @@ public class ElevatorSubsystem extends SubsystemBase {
         
         double distance = height.get() - motorElevator.getSelectedSensorPosition();
 
-        motorElevator.set(speed);
+        // motorElevator.set(speed);
 
 
 
-        // if(Math.abs(distance) > WINCHTOLERANCE){
-        //     if(distance > 0){
-        //         motorElevator.set(WINCHUPSPEED);
-        //     } else {
-        //         motorElevator.set(WINCHDOWNSPEED);
-        //     }
-        // } else {
-        //     motorElevator.set(WINCHSTOPSPEED);
-        // }
+        if(Math.abs(distance) > WINCHTOLERANCE){
+            if(distance > 0){
+                motorElevator.set(WINCHUPSPEED);
+            } else {
+                motorElevator.set(WINCHDOWNSPEED);
+            }
+        } else {
+            motorElevator.set(WINCHSTOPSPEED);
+        }
 
         // if(Math.abs(distance) < WINCHTOLERANCE){
             
@@ -117,6 +117,6 @@ public class ElevatorSubsystem extends SubsystemBase {
 
             // System.out.println(distance / 100000);
         // }
-        // System.out.println(height);
+        System.out.println(height);
     }
 }

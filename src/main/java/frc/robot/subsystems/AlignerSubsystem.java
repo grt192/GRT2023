@@ -101,11 +101,11 @@ public class AlignerSubsystem extends SubsystemBase {
 
         // get slapper to current target
         if (slappos > current_slaptarget) {
-            motorSlapper.set(-.3); // move left
+            // motorSlapper.set(-.3); // move left
         } else if (slappos < current_slaptarget) {
-            motorSlapper.set(.3); // move right
+            // motorSlapper.set(.3); // move right
         } else {
-            motorSlapper.set(0);
+            // motorSlapper.set(0);
         }
 
         // get angler to current target
