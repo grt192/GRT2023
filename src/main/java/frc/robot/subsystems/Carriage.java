@@ -43,7 +43,7 @@ public class Carriage extends SubsystemBase {
     if(liftCarriage){ 
 
        
-      if(!timer_enabled){
+      if(!timer_enabled){ //if the timer was not enabled, close the door and then start the timer
         top.setAngle(TOP_CLOSED);
         bottom.setAngle(BOTTOM_CLOSED);
         openDoor = false;
@@ -51,16 +51,15 @@ public class Carriage extends SubsystemBase {
         timer.start();
         timer_enabled = true;
       }
-      if(timer.get() >= 0.2){
+      if(timer.get() >= 0.2){ // if 0.2 seconds pass, set the piston forward
         piston.set(kForward);
         timer.stop();
-        timer.reset();
-        //timer_enabled = false;
       }
       
     }
-    else{
+    else{ // if liftcarriage not true (shouldn't be lifting/lifted), set the piston to the down position 
       piston.set(kReverse);
+      timer_enabled = false;
     }
 
     // if(timer.get() >= 0.2){ //if time elapsed meets criterion, 
@@ -70,7 +69,7 @@ public class Carriage extends SubsystemBase {
     //   piston.set(kForward);
     // }
 
-    if(openDoor && !liftCarriage){
+    if(openDoor){
       top.setAngle(TOP_OPEN);
       bottom.setAngle(BOTTOM_OPEN);
     }

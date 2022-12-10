@@ -26,6 +26,8 @@ public class Intake extends SubsystemBase {
   public double intake_power_forward;
   public double intake_power_reverse;
 
+  public boolean ideal;
+
   private final CANSparkMax front = MotorUtil.createSparkMax(FRONT_MOTOR); // front motor for intake
   private final CANSparkMax frontOpposite = MotorUtil.createSparkMax(FRONT_OPP_MOTOR);// motor opposite front motor for intake
   
@@ -53,8 +55,9 @@ public class Intake extends SubsystemBase {
 
     // create an intake_power from the forward/reverse intake components
     // both shouldn't need to be pressed at the same time, so one of them will likely be 0 anyways
-    intake_power = intake_power_forward + intake_power_reverse;
-
+    //intake_power = intake_power_forward + intake_power_reverse;
+    intake_power += intake_power_forward;
+    intake_power += intake_power_reverse;
     // if intake needs to be disabled for whatever reason (more disabled than just not pressing anything)
     if(intake_off){
         front.set(0.0);
@@ -62,7 +65,13 @@ public class Intake extends SubsystemBase {
     }
     else{
       front.set(intake_power);
-      main_roller.set(intake_power); 
+      if(ideal){
+        System.out.println("ideal intake power: " + Double.toString(intake_power));
+      }
+      else{
+        System.out.println("intake power: " + Double.toString(intake_power));
+      }
+      main_roller.set(intake_power * 0.75); 
       // assuming the rollers should be set to match the intake as opposed to being set to a fixed value
     }
     

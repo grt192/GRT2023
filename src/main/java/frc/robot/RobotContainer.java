@@ -24,7 +24,7 @@ import frc.robot.subsystems.Tank;
  */
 public class RobotContainer {
     // Subsystems
-    // private final Tank tank = new Tank();
+    private final Tank tank = new Tank();
     private final Intake intake = new Intake();
     private final Carriage carriage = new Carriage();
 
@@ -86,16 +86,16 @@ public class RobotContainer {
     }
 
     void periodic(){
-        // tank.forwardComponent = -1 * driveController.getLeftY(); // 1 is forward (adjusted from -1 forward)
-        // tank.sideComponent = driveController.getRightX(); // 1 is right
+        tank.forwardComponent = -1 * mechController.getLeftY(); // 1 is forward (adjusted from -1 forward)
+        tank.sideComponent = mechController.getRightX(); // 1 is right
 
 
         if(mechController.getXButtonPressed() && mechController.getXButtonReleased()){
             intake.intake_off = !intake.intake_off; //toggle on/off intake
         }
         
-        intake.intake_power_forward = mechController.getRightTriggerAxis() * 0.5;
-        intake.intake_power_reverse = mechController.getLeftTriggerAxis() * -0.5;
+        intake.intake_power_forward = mechController.getRightTriggerAxis() * 0.01;
+        intake.intake_power_reverse = mechController.getLeftTriggerAxis() * -0.01;
 
          if(mechController.getRightBumperPressed()){
          carriage.liftCarriage = !carriage.liftCarriage; // lift the carriage (it's a bit jank ik)
