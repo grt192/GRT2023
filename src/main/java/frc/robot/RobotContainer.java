@@ -119,7 +119,8 @@ public class RobotContainer {
             aligner.right_pressed = false;
         }
 
-        elevator.speed = -1 * mech.getRightY();
+        //aligner.speed = mech.getRightY() / 3;
+        //aligner.speed2 = mech.getLeftY() / 3;
 
         
 

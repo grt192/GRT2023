@@ -21,6 +21,9 @@ public class AlignerSubsystem extends SubsystemBase {
     // state of angler(open or closed)
     public boolean angler_open = true;
 
+    public double speed;
+    public double speed2;
+
     private final WPI_TalonSRX motorSlapper = MotorUtil.createTalonSRX(SLAPID);
     private final WPI_TalonSRX motorAngler = MotorUtil.createTalonSRX(ANGLEID);
 
@@ -37,12 +40,28 @@ public class AlignerSubsystem extends SubsystemBase {
         motorSlapper.setNeutralMode(NeutralMode.Brake);
         motorAngler.setNeutralMode(NeutralMode.Brake);
 
+        motorSlapper.setInverted(true);
+
         // setup encoders for motors
         motorSlapper.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
-        motorSlapper.setSensorPhase(true);
+        motorSlapper.setSensorPhase(false);
+        motorSlapper.setSelectedSensorPosition(0);
+        //open limit
+        motorSlapper.configReverseSoftLimitThreshold(0, 0);
+        motorSlapper.configReverseSoftLimitEnable(true, 0);
+        //closed limit   
+        motorSlapper.configForwardSoftLimitThreshold(SLAPSLAP, 0);
+        motorSlapper.configForwardSoftLimitEnable(true, 0);
 
         motorAngler.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
         motorAngler.setSensorPhase(true);
+        motorAngler.setSelectedSensorPosition(0);
+        //open limit
+        motorAngler.configForwardSoftLimitThreshold(0, 0);
+        motorAngler.configForwardSoftLimitEnable(true, 0);
+        //closed limit
+        motorAngler.configReverseSoftLimitThreshold(CLOSEDANGLER, 0);
+        motorAngler.configReverseSoftLimitEnable(true, 0);
 
     }
     // as of now:
@@ -50,6 +69,9 @@ public class AlignerSubsystem extends SubsystemBase {
     // no code for catching/fixing motor over-turning
 
     public void periodic() {
+
+        motorSlapper.set(speed);
+        motorAngler.set(speed2);
     
         // get current motor positions
         slappos = motorSlapper.getSelectedSensorPosition();
@@ -79,15 +101,15 @@ public class AlignerSubsystem extends SubsystemBase {
 
         // get slapper to current target
         if (slappos > current_slaptarget) {
-            // motorSlapper.set(-.5); // move left
+            motorSlapper.set(-.3); // move left
         } else if (slappos < current_slaptarget) {
-            // motorSlapper.set(.5); // move right
+            motorSlapper.set(.3); // move right
         } else {
-            // motorSlapper.set(0);
+            motorSlapper.set(0);
         }
 
         // get angler to current target
-        if (anglerpos > current_anglertarget) {
+        if (Math.abs(anglerpos - current_anglertarget) <= 1000 ) {
             // motorAngler.set(-.5); // move left
         } else if (anglerpos < current_anglertarget) {
             // motorAngler.set(.5); // move right

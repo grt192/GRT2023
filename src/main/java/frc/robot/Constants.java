@@ -80,15 +80,15 @@ public final class Constants {
         public static final double TRIGGERCUTOFF = .2;
 
         // open position target encoder values
-        public static final double OPENSLAP = 0;// should be 0, as motor starts from this position
-        public static final double OPENANGLER = 0;// should be 0, as motor starts from this position
+        public static final double OPENSLAP = 108940;// should be 0, as motor starts from this position
+        public static final double OPENANGLER = -83339;// should be 0, as motor starts from this position
 
         // slap slapper target encoder values
-        public static final  double SLAPSLAP = 1;// placehold
+        public static final  double SLAPSLAP = 190000;// 
 
         // closed position target encoder values
-        public static final double CLOSEDSLAP = 1;// placehold
-        public static final double CLOSEDANGLER = 1;// placehold
+        public static final double CLOSEDSLAP = 162720;// 
+        public static final double CLOSEDANGLER = -149329;// 
     }
 
 }

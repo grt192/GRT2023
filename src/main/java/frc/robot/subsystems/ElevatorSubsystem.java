@@ -73,11 +73,11 @@ public class ElevatorSubsystem extends SubsystemBase {
         motorElevator.setInverted(true);
 
         
-        motorElevator.configForwardSoftLimitThreshold(WINCHMAX, 0);
-        motorElevator.configForwardSoftLimitEnable(true, 0);
+        // motorElevator.configForwardSoftLimitThreshold(WINCHMAX, 0);
+        // motorElevator.configForwardSoftLimitEnable(true, 0);
 
-        motorElevator.configReverseSoftLimitThreshold(0, 0);
-        motorElevator.configReverseSoftLimitEnable(true, 0);
+        // motorElevator.configReverseSoftLimitThreshold(0, 0);
+        // motorElevator.configReverseSoftLimitEnable(true, 0);
 
     }
 
@@ -91,19 +91,19 @@ public class ElevatorSubsystem extends SubsystemBase {
         
         double distance = height.get() - motorElevator.getSelectedSensorPosition();
 
-        // motorElevator.set(speed);
+        motorElevator.set(speed);
 
 
 
-        if(Math.abs(distance) > WINCHTOLERANCE){
-            if(distance > 0){
-                motorElevator.set(WINCHUPSPEED);
-            } else {
-                motorElevator.set(WINCHDOWNSPEED);
-            }
-        } else {
-            motorElevator.set(WINCHSTOPSPEED);
-        }
+        // if(Math.abs(distance) > WINCHTOLERANCE){
+        //     if(distance > 0){
+        //         motorElevator.set(WINCHUPSPEED);
+        //     } else {
+        //         motorElevator.set(WINCHDOWNSPEED);
+        //     }
+        // } else {
+        //     motorElevator.set(WINCHSTOPSPEED);
+        // }
 
         // if(Math.abs(distance) < WINCHTOLERANCE){
             
