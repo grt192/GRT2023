@@ -12,6 +12,8 @@ import frc.robot.shuffleboard.GRTNetworkTableEntry;
 import frc.robot.shuffleboard.GRTShuffleboardTab;
 
 public class AlignerSubsystem extends SubsystemBase {
+    //manual pid state
+    public int motorrange;
     // current target position for motors
     public double current_slaptarget = OPENSLAP;
     public double current_anglertarget = OPENANGLER;
@@ -100,21 +102,21 @@ public class AlignerSubsystem extends SubsystemBase {
         }
 
         // get slapper to current target
-        if (slappos > current_slaptarget) {
-            // motorSlapper.set(-.3); // move left
+        if (Math.abs(slappos - current_slaptarget) <= motorrange) {
+            // motorSlapper.set(0); // move left
         } else if (slappos < current_slaptarget) {
             // motorSlapper.set(.3); // move right
-        } else {
-            // motorSlapper.set(0);
+        } else if (slappos > current_slaptarget){
+            motorSlapper.set(-.3);
         }
 
         // get angler to current target
-        if (Math.abs(anglerpos - current_anglertarget) <= 1000 ) {
-            // motorAngler.set(-.5); // move left
+        if (Math.abs(anglerpos - current_anglertarget) <= motorrange ) {
+            //motorAngler.set(0);
         } else if (anglerpos < current_anglertarget) {
-            // motorAngler.set(.5); // move right
-        } else {
-            // motorAngler.set(0);
+            // motorAngler.set(.3); // move right
+        } else if (anglerpos > current_anglertarget){
+            //motorAngler.set(-.3);
         }
 
         slapperPositionEntry.setValue(motorSlapper.getSelectedSensorPosition());
