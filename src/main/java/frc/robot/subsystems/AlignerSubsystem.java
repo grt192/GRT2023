@@ -21,7 +21,7 @@ public class AlignerSubsystem extends SubsystemBase {
     public boolean to_slap;
     public boolean right_pressed = false;
     // state of angler(open or closed)
-    public boolean angler_open = true;
+    public boolean angler_toclose = false;
 
     public double speed;
     public double speed2;
@@ -79,22 +79,15 @@ public class AlignerSubsystem extends SubsystemBase {
         slappos = motorSlapper.getSelectedSensorPosition();
         anglerpos = motorAngler.getSelectedSensorPosition();
 
-        // check if slapper trigger (only when arms are open) is pressed
-        if (angler_open) {
-            if (to_slap) {
-                current_slaptarget = SLAPSLAP;
-            }
-        }
-        // check if grab trigger is pressed and angler is open
-        else if (right_pressed && angler_open) {
+        if (angler_toclose) {
             current_slaptarget = CLOSEDSLAP;
             current_anglertarget = CLOSEDANGLER;
         }
-        // check if grab trigger is pressed and angler is closed
-        else if (right_pressed && !angler_open) {
-            current_slaptarget = OPENSLAP;
-            current_anglertarget = OPENANGLER;
-        }
+        // else check if slapper trigger is pressed
+        else if (to_slap) {
+                current_slaptarget = SLAPSLAP;
+            }
+            
         // else return to open state
         else {
             current_slaptarget = OPENSLAP;

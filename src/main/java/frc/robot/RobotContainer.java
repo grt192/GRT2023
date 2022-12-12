@@ -111,7 +111,7 @@ public class RobotContainer {
         if (mech.getRightTriggerAxis() > TRIGGERCUTOFF ){
             //if trigger was previously not pressed, it is a new press, so change aligner position to other
             if (!aligner.right_pressed){
-                aligner.angler_open = !aligner.angler_open;
+                aligner.angler_toclose = !aligner.angler_toclose;
             }
             aligner.right_pressed = true;
         }
