@@ -22,6 +22,7 @@ public class AlignerSubsystem extends SubsystemBase {
     public boolean right_pressed = false;
     // state of angler(open or closed)
     public boolean angler_toclose = false;
+    public boolean tozero = false;
 
     public double speed;
     public double speed2;
@@ -87,6 +88,11 @@ public class AlignerSubsystem extends SubsystemBase {
         else if (to_slap) {
                 current_slaptarget = SLAPSLAP;
             }
+
+        else if (tozero){
+            current_slaptarget = 0;
+            current_anglertarget = 0;
+        }
             
         // else return to open state
         else {
