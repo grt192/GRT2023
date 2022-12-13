@@ -17,6 +17,8 @@ import frc.robot.motorcontrol.MotorUtil;
 
 public class Tank extends SubsystemBase {
     
+    public boolean driveInvert;
+
     private final WPI_TalonSRX left = MotorUtil.createTalonSRX(LEFT_MAIN); // left motor
     private final WPI_TalonSRX left2 = MotorUtil.createTalonSRX(LEFT_SECONDARY); // left motor
 
@@ -47,8 +49,9 @@ public class Tank extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
 
-    leftDrive = forwardComponent + sideComponent;
-    rightDrive = forwardComponent - sideComponent;
+    leftDrive = forwardComponent + sideComponent*0.75;
+    rightDrive = forwardComponent - sideComponent*0.75;
+
 
     if(Math.abs(leftDrive) >= 1.0){
       leftDrive = leftDrive / Math.abs(leftDrive);
@@ -57,6 +60,11 @@ public class Tank extends SubsystemBase {
     if(Math.abs(rightDrive) >= 1.0){
         rightDrive = rightDrive / Math.abs(rightDrive);
         leftDrive = leftDrive / Math.abs(rightDrive);
+    }
+    
+    if(driveInvert){
+      leftDrive = leftDrive * -1;
+      rightDrive = rightDrive * -1;
     }
 
     left.set(leftDrive);

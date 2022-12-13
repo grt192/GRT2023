@@ -61,21 +61,15 @@ public class Intake extends SubsystemBase {
     if(intake_power_forward > 0.10 && intake_power_forward < 0.85){ // if its pressed a little, make it spin slow
       intake_power += 0.18;
     }
-    else{
+    if(intake_power_forward > 0.85){
       intake_power += 0.35; // if its pressed a lot, make it spin fast
     }
     if(intake_power_reverse >= 0.4){ // if there is some reverse component, make it spin that way 
       intake_power -= 0.45;
     }
     
-    if(bondMode){ // the mode we've all been waiting for, inspired by 007 himself
-      front.set(intake_power * 1.5);
-      main_roller.set(intake_power * 0.75);
-    }
-    else{
       front.set(intake_power);
       main_roller.set(intake_power * 0.75); 
-    }
   
   }
 

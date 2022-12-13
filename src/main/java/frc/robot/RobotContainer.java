@@ -88,26 +88,27 @@ public class RobotContainer {
     void periodic(){
         tank.forwardComponent = -1 * driveController.getLeftY(); // 1 is forward (adjusted from -1 forward)
         tank.sideComponent = driveController.getRightX(); // 1 is right
-
-
-        if(mechController.getXButtonPressed() && mechController.getXButtonReleased()){
-            intake.bondMode = !intake.bondMode; //toggle on/off intake
-        }
         
-        intake.intake_power_forward = mechController.getRightTriggerAxis();
-        intake.intake_power_reverse = mechController.getLeftTriggerAxis();
+        if(driveController.getRightBumperPressed() && driveController.getLeftBumperPressed()){
+            tank.driveInvert = !tank.driveInvert; // if switching to pusher, flip orientation
+        }
+
+        intake.intake_power_forward = mechController.getRightTriggerAxis(); // RIGHT TRIGGER
+        intake.intake_power_reverse = mechController.getLeftTriggerAxis(); // LEFT TRIGGER
+
+        if(mechController.getXButtonPressed() && !mechController.getYButtonPressed()){
+            carriage.liftCarriage = !carriage.liftCarriage; // lift the carriage (X BUTTON)
+        }
+   
+        if(mechController.getYButtonPressed() && !mechController.getXButtonPressed()){
+            carriage.openDoor = !carriage.openDoor; //open the door toggle for carriage (Y BUTTON)
+        }
 
         if(mechController.getRightBumperPressed() && mechController.getLeftBumperPressed()){
             carriage.carriageEject = true; // eject something stuck on carriage
         }
 
-         if(mechController.getRightBumperPressed() && !mechController.getLeftBumperPressed()){
-         carriage.liftCarriage = !carriage.liftCarriage; // lift the carriage (it's a bit jank ik)
-         }
-
-         if(mechController.getLeftBumperPressed() && !mechController.getRightBumperPressed()){ 
-            carriage.openDoor = !carriage.openDoor; //open the door toggle for carriage (left bumper)
-         }
+        
 
     }
 }
