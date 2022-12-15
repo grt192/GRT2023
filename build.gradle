@@ -45,6 +45,10 @@ wpi.java.debugJni = false
 // Set this to true to enable desktop support.
 def includeDesktopSupport = false
 
+repositories {
+   mavenCentral()
+}
+
 // Defining my dependencies. In this case, WPILib (+ friends), and vendor libraries.
 // Also defines JUnit 4.
 dependencies {
@@ -64,6 +68,9 @@ dependencies {
     nativeRelease wpi.java.deps.wpilibJniRelease(wpi.platforms.desktop)
     nativeRelease wpi.java.vendor.jniRelease(wpi.platforms.desktop)
     simulationRelease wpi.sim.enableRelease()
+
+    implementation 'org.zeromq:jeromq:0.5.2'
+    implementation 'com.google.code.gson:gson:2.10'
 
     testImplementation 'junit:junit:4.13.1'
 }
