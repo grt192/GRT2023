@@ -17,13 +17,29 @@ public class JetsonConnection extends Thread {
     private final Gson gson = new Gson();
     private final Queue<JetsonData> dataQueue = new ArrayDeque<>();
 
-    private static final boolean LOCAL_DEBUG = true;
-    private static final String SERVER_IP = LOCAL_DEBUG 
-        ? "tcp://*:5800"
-        : "tcp://10.1.92.94:5800";
+    /**
+     * Constructs a `JetsonConnection` to either the jetson or a local port.
+     * @param debug Whether to debug the connection locally on tcp://*:5800.
+     */
+    public JetsonConnection(boolean debug) {
+        this.LOCAL_DEBUG = debug;
+    }
+
+    /**
+     * Constructs a `JetsonConnection` to the jetson's static IP.
+     */
+    public JetsonConnection() {
+        this(false);
+    }
+
+    private final boolean LOCAL_DEBUG;
+    public static final String LOCAL_IP = "tcp://*:5800";
+    public static final String JETSON_IP = "tcp://10.1.92.94:5800";
 
     @Override
     public void run() {
+        final String SERVER_IP = LOCAL_DEBUG ? LOCAL_IP : JETSON_IP;
+
         try (ZContext context = new ZContext()) {
             // ZeroMQ SUB client connecting to jetson static IP; jetson sends data via PUB.
             System.out.println("Connecting a SUB client to " + SERVER_IP);
@@ -57,7 +73,7 @@ public class JetsonConnection extends Thread {
      * as a thread.
      */
     public static void main(String... args) {
-        JetsonConnection connection = new JetsonConnection();
+        JetsonConnection connection = new JetsonConnection(true);
         connection.start();
 
         while (true) {
