@@ -96,14 +96,15 @@ public class ElevatorSubsystem extends SubsystemBase {
 
 
 
-        
+        // System.out.println(distance);
         if(Math.abs(distance) > WINCHTOLERANCE){
             if(distance > 0){
-                
-                motorElevator.set(WINCHUPSPEED);
+                motorElevator.set(clip(distance * 0.0000145));
+                // motorElevator.set(WINCHUPSPEED);
             } else {
                 // System.out.println(distance);
-                motorElevator.set(WINCHDOWNSPEED);
+                // motorElevator.set(WINCHDOWNSPEED);
+                motorElevator.set(clip(distance * 0.000003));
             }
         } else {
             motorElevator.set(WINCHSTOPSPEED);
@@ -122,5 +123,9 @@ public class ElevatorSubsystem extends SubsystemBase {
             // System.out.println(distance / 100000);
         // }
         // System.out.println(height);
+    }
+
+    private double clip(double d) {
+        return Math.min(Math.max(d, -1.), 1.);
     }
 }

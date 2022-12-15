@@ -119,7 +119,7 @@ public class RobotContainer {
             aligner.right_pressed = false;
         }
 
-        if (mech.getBButtonPressed()){
+        if (mech.getXButtonPressed()){
             aligner.tozero = !aligner.tozero;
         }
 

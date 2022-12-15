@@ -99,7 +99,7 @@ public class AlignerSubsystem extends SubsystemBase {
             current_slaptarget = OPENSLAP;
             current_anglertarget = OPENANGLER;
         }
-        System.out.println(current_slaptarget);
+        // System.out.println(current_slaptarget);
 
         // get slapper to current target
         if (Math.abs(slappos - current_slaptarget) <= motorrange) {
