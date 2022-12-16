@@ -10,6 +10,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -27,9 +28,9 @@ public class SwerveSubsystem extends SubsystemBase {
 
     private final SwerveDriveKinematics kinematics;
 
-    public static final double MAX_VEL = 3; // Max robot tangential velocity, in m/s
+    public static final double MAX_VEL = Units.feetToMeters(16.10); // Max robot tangential velocity, in m/s
     public static final double MAX_ACCEL = 3; // Max robot tangential acceleration, in m/s^2
-    public static final double MAX_OMEGA = Math.toRadians(30); // Max robot angular velocity, in rads/s
+    public static final double MAX_OMEGA = MAX_VEL / 1.0; // Max robot angular velocity, in rads/s (omega = v / r)
 
     private final Timer lockTimer;
     private static final double LOCK_TIMEOUT_SECONDS = 1.0; // The elapsed idle time to wait before locking

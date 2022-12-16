@@ -26,6 +26,8 @@ import frc.robot.motorcontrol.MotorUtil;
 public class SwerveModule {
     // private final WPI_TalonFX driveMotor;
     private final CANSparkMax driveMotor;
+    private final RelativeEncoder driveEncoder;
+    private final SparkMaxPIDController drivePidController;
 
     private final CANSparkMax steerMotor;
     private final RelativeEncoder steerEncoder;
@@ -34,7 +36,7 @@ public class SwerveModule {
 
     private final double offsetRads;
 
-    private static final double DRIVE_ROTATIONS_TO_METERS = (1.0 / 3.0) * (13.0 / 8.0) * (1.0 / 3.0) * Math.PI * Units.inchesToMeters(4.0);
+    private static final double DRIVE_RPM_TO_MPS = (1.0 / 3.0) * (13.0 / 8.0) * (1.0 / 3.0) * Math.PI * Units.inchesToMeters(4.0) / 60.0; // 3:1, 8:13, 3:1 gear ratios, 4.0" wheel diameter, circumference = pi * d, min = 60s
     private static final double STEER_ROTATIONS_TO_RADIANS = (1.0 / 52.0) * (34.0 / 63.0) * 2 * Math.PI; // 52:1 gear ratio, 63:34 pulley ratio, 1 rotation = 2pi
     private static final double STEER_VOLTS_TO_RADIANS = 2 * Math.PI / 3.3; // MA3 analog output: 3.3V -> 2pi
 
@@ -72,6 +74,15 @@ public class SwerveModule {
 
         driveMotor = MotorUtil.createSparkMax(drivePort);
         driveMotor.setIdleMode(IdleMode.kBrake);
+
+        driveEncoder = driveMotor.getEncoder();
+        driveEncoder.setVelocityConversionFactor(DRIVE_RPM_TO_MPS);
+
+        drivePidController = driveMotor.getPIDController();
+        drivePidController.setP(driveP);
+        drivePidController.setI(driveI);
+        drivePidController.setD(driveD);
+        drivePidController.setFF(driveFF);
 
         steerMotor = MotorUtil.createSparkMax(steerPort);
         steerMotor.setIdleMode(IdleMode.kBrake);
