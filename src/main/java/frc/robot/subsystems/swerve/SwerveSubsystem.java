@@ -124,8 +124,6 @@ public class SwerveSubsystem extends SubsystemBase {
             bottomRightModule.getState()
         );
 
-        System.out.println(MathUtil.angleModulus(bottomRightModule.getState().angle.getRadians()));
-
         // If all commanded velocities are 0, the system is idle (drivers are not supplying input).
         boolean isIdle = states[0].speedMetersPerSecond == 0.0
             && states[1].speedMetersPerSecond == 0.0
