@@ -46,13 +46,13 @@ public final class Constants {
 
         public static final int brDrive = 1;
         public static final int brSteer = 12;
-        public static final double brOffsetRads = 5.09281621578;
+        public static final double brOffsetRads = 3.135456730438264;
         public static final Translation2d brPos = new Translation2d(
             Units.inchesToMeters(-13.1365),
             Units.inchesToMeters(-10.3865)
         );
     }
-    
+
     public static final class IntakeConstants {
         public static final int intakeTalonID = 6;
         public static final int intakeSolID = 4;

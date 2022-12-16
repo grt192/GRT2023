@@ -3,6 +3,7 @@ package frc.robot.subsystems.swerve;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.math.MatBuilder;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -122,6 +123,8 @@ public class SwerveSubsystem extends SubsystemBase {
             bottomLeftModule.getState(),
             bottomRightModule.getState()
         );
+
+        System.out.println(MathUtil.angleModulus(bottomRightModule.getState().angle.getRadians()));
 
         // If all commanded velocities are 0, the system is idle (drivers are not supplying input).
         boolean isIdle = states[0].speedMetersPerSecond == 0.0
