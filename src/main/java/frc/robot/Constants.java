@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
@@ -21,22 +22,34 @@ public final class Constants {
         public static final int tlDrive = 1;
         public static final int tlSteer = 0;
         public static final double tlOffsetRads = 0;
-        public static final Translation2d tlPos = new Translation2d();
+        public static final Translation2d tlPos = new Translation2d(
+            Units.inchesToMeters(11.0),
+            Units.inchesToMeters(11.0)
+        );
 
         public static final int trDrive = 0;
         public static final int trSteer = 0;
         public static final double trOffsetRads = 0;
-        public static final Translation2d trPos = new Translation2d();
+        public static final Translation2d trPos = new Translation2d(
+            Units.inchesToMeters(11.0),
+            Units.inchesToMeters(-11.0)
+        );
 
         public static final int blDrive = 0;
         public static final int blSteer = 0;
         public static final double blOffsetRads = 0;
-        public static final Translation2d blPos = new Translation2d();
+        public static final Translation2d blPos = new Translation2d(
+            Units.inchesToMeters(-11.0),
+            Units.inchesToMeters(11.0)
+        );
 
         public static final int brDrive = 0;
         public static final int brSteer = 0;
         public static final double brOffsetRads = 0;
-        public static final Translation2d brPos = new Translation2d();
+        public static final Translation2d brPos = new Translation2d(
+            Units.inchesToMeters(-11.0),
+            Units.inchesToMeters(-11.0)
+        );
     }
 
     public static final class ShuffleboardConstants {

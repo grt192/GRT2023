@@ -30,7 +30,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
     public static final double MAX_VEL = Units.feetToMeters(16.10); // Max robot tangential velocity, in m/s
     public static final double MAX_ACCEL = 3; // Max robot tangential acceleration, in m/s^2
-    public static final double MAX_OMEGA = MAX_VEL / 1.0; // Max robot angular velocity, in rads/s (omega = v / r)
+    public static final double MAX_OMEGA = MAX_VEL / tlPos.getNorm(); // Max robot angular velocity, in rads/s (omega = v / r)
 
     private final Timer lockTimer;
     private static final double LOCK_TIMEOUT_SECONDS = 1.0; // The elapsed idle time to wait before locking
