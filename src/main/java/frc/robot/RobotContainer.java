@@ -6,6 +6,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -32,6 +33,7 @@ public class RobotContainer {
     private final JetsonConnection jetsonConnection;
 
     // Controllers and buttons
+    private final Joystick joystick = new Joystick(2);
     private final XboxController driveController = new XboxController(0);
     private final JoystickButton 
         driveAButton = new JoystickButton(driveController, XboxController.Button.kA.value),
@@ -81,8 +83,10 @@ public class RobotContainer {
      */
     private void configureButtonBindings() {
         swerveSubsystem.setDefaultCommand(new RunCommand(() -> {
-            double xPower = -driveController.getLeftY();
-            double yPower = -driveController.getLeftX();
+            // double xPower = -driveController.getLeftY();
+            double xPower = -joystick.getLefY();
+            // double yPower = -driveController.getLeftX();
+            double yPower = -joystick.getLeftX();
             double angularPower = -driveController.getRightX();
             swerveSubsystem.setSwerveDrivePowers(xPower, yPower, angularPower);
         }, swerveSubsystem));
