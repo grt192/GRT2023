@@ -34,6 +34,7 @@ public class RobotContainer {
 
     // Controllers and buttons
     private final Joystick joystick = new Joystick(2);
+    private final GenericHID switchboard = new GenericHID(3);
     private final XboxController driveController = new XboxController(0);
     private final JoystickButton 
         driveAButton = new JoystickButton(driveController, XboxController.Button.kA.value),
@@ -98,5 +99,19 @@ public class RobotContainer {
      */
     public Command getAutonomousCommand() {
         return autonChooser.getSelected();
+    }
+
+    void periodic(){
+
+
+        System.out.println(switchboard.getName()); // get. name. 
+        System.out.println("Num buttons " + switchboard.getButtonCount()); // get. button. count.
+
+        for(int i = 1; i <= switchboard.getButtonCount(); i++){
+            if(switchboard.getRawButton(i)){
+                System.out.println("Switch triggered: " + i); // see what button number each switch corresponds to and put in constants
+            }
+        }
+
     }
 }
