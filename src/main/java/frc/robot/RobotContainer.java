@@ -6,6 +6,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -32,6 +33,19 @@ public class RobotContainer {
     private final JetsonConnection jetsonConnection;
 
     // Controllers and buttons
+    private final Joystick joystick = new Joystick(2);
+    private final GenericHID switchboard = new GenericHID(3);
+    private final JoystickButton
+        tlSwitch = new JoystickButton(switchboard, 3),
+        tmSwitch = new JoystickButton(switchboard, 2),
+        trSwitch = new JoystickButton(switchboard, 1),
+        mlSwitch = new JoystickButton(switchboard, 6),
+        mmSwitch = new JoystickButton(switchboard, 5),
+        mrSwitch = new JoystickButton(switchboard, 4),
+        blSwitch = new JoystickButton(switchboard, 9),
+        bmSwitch = new JoystickButton(switchboard, 8),
+        brSwitch = new JoystickButton(switchboard, 7);
+
     private final XboxController driveController = new XboxController(0);
     private final JoystickButton 
         driveAButton = new JoystickButton(driveController, XboxController.Button.kA.value),
@@ -81,8 +95,10 @@ public class RobotContainer {
      */
     private void configureButtonBindings() {
         swerveSubsystem.setDefaultCommand(new RunCommand(() -> {
-            double xPower = -driveController.getLeftY();
-            double yPower = -driveController.getLeftX();
+            // double xPower = -driveController.getLeftY();
+            double xPower = -joystick.getY();
+            // double yPower = -driveController.getLeftX();
+            double yPower = -joystick.getX();
             double angularPower = -driveController.getRightX();
             swerveSubsystem.setSwerveDrivePowers(xPower, yPower, angularPower);
         }, swerveSubsystem));
