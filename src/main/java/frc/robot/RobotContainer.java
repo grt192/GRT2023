@@ -101,7 +101,7 @@ public class RobotContainer {
         return autonChooser.getSelected();
     }
 
-    void periodic(){
+    public void periodic(){
 
 
         System.out.println(switchboard.getName()); // get. name. 
