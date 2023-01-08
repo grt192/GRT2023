@@ -35,6 +35,17 @@ public class RobotContainer {
     // Controllers and buttons
     private final Joystick joystick = new Joystick(2);
     private final GenericHID switchboard = new GenericHID(3);
+    private final JoystickButton
+        tlSwitch = new JoystickButton(switchboard, 3),
+        tmSwitch = new JoystickButton(switchboard, 2),
+        trSwitch = new JoystickButton(switchboard, 1),
+        mlSwitch = new JoystickButton(switchboard, 6),
+        mmSwitch = new JoystickButton(switchboard, 5),
+        mrSwitch = new JoystickButton(switchboard, 4),
+        blSwitch = new JoystickButton(switchboard, 9),
+        bmSwitch = new JoystickButton(switchboard, 8),
+        brSwitch = new JoystickButton(switchboard, 7);
+
     private final XboxController driveController = new XboxController(0);
     private final JoystickButton 
         driveAButton = new JoystickButton(driveController, XboxController.Button.kA.value),
@@ -101,17 +112,14 @@ public class RobotContainer {
         return autonChooser.getSelected();
     }
 
-    public void periodic(){
-
-
+    public void periodic() {
         System.out.println(switchboard.getName()); // get. name. 
         System.out.println("Num buttons " + switchboard.getButtonCount()); // get. button. count.
 
-        for(int i = 1; i <= switchboard.getButtonCount(); i++){
-            if(switchboard.getRawButton(i)){
+        for (int i = 1; i <= switchboard.getButtonCount(); i++){
+            if (switchboard.getRawButton(i)){
                 System.out.println("Switch triggered: " + i); // see what button number each switch corresponds to and put in constants
             }
         }
-
     }
 }
