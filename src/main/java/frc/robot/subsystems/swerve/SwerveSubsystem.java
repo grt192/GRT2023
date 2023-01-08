@@ -9,6 +9,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.SPI;
@@ -61,13 +62,12 @@ public class SwerveSubsystem extends SubsystemBase {
         // Initialize NaxX and pose estimator
         ahrs = new AHRS(SPI.Port.kMXP);
         poseEstimator = new SwerveDrivePoseEstimator(
-            getGyroHeading(), 
+            kinematics,
+            getGyroHeading(),
+            getModuleStates(),
             new Pose2d(), 
-            kinematics, 
             // State measurement standard deviations: [X, Y, theta]
             new MatBuilder<>(Nat.N3(), Nat.N1()).fill(0.02, 0.02, 0.01), 
-            // Odometry measurement standard deviations: [gyro]
-            new MatBuilder<>(Nat.N1(), Nat.N1()).fill(0.01), 
             // Vision measurement standard deviations: [X, Y, theta]
             new MatBuilder<>(Nat.N3(), Nat.N1()).fill(0.1, 0.1, 0.01)
         );
@@ -127,10 +127,7 @@ public class SwerveSubsystem extends SubsystemBase {
         Rotation2d gyroAngle = getGyroHeading();
         poseEstimator.update(
             gyroAngle,
-            topLeftModule.getState(),
-            topRightModule.getState(),
-            bottomLeftModule.getState(),
-            bottomRightModule.getState()
+            getModuleStates()
         );
 
         // If all commanded velocities are 0, the system is idle (drivers / commands are not supplying input).
@@ -166,6 +163,19 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
     /**
+     * Gets the states of each module as a `SwerveModulePosition[]`.
+     * @return The states of each module.
+     */
+    private SwerveModulePosition[] getModuleStates() {
+        return new SwerveModulePosition[] {
+            topLeftModule.getState(),
+            topRightModule.getState(),
+            bottomLeftModule.getState(),
+            bottomRightModule.getState()
+        };
+    }
+
+    /**
      * Gets the estimated current position of the robot.
      * @return The estimated position of the robot as a Pose2d.
      */
@@ -179,7 +189,11 @@ public class SwerveSubsystem extends SubsystemBase {
      */
     public void resetPosition(Pose2d position) {
         Rotation2d gyroAngle = getGyroHeading();
-        poseEstimator.resetPosition(position, gyroAngle);
+        poseEstimator.resetPosition(
+            gyroAngle,
+            getModuleStates(),
+            position
+        );
     }
 
     /**

@@ -15,6 +15,7 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 
@@ -36,7 +37,7 @@ public class SwerveModule {
 
     private final double offsetRads;
 
-    private static final double DRIVE_RPM_TO_MPS = (1.0 / 3.0) * (13.0 / 8.0) * (1.0 / 3.0) * Math.PI * Units.inchesToMeters(4.0) / 60.0; // 3:1, 8:13, 3:1 gear ratios, 4.0" wheel diameter, circumference = pi * d, min = 60s
+    private static final double DRIVE_ROTATIONS_TO_METERS = (1.0 / 3.0) * (13.0 / 8.0) * (1.0 / 3.0) * Math.PI * Units.inchesToMeters(4.0); // 3:1, 8:13, 3:1 gear ratios, 4.0" wheel diameter, circumference = pi * d
     private static final double STEER_ROTATIONS_TO_RADIANS = (1.0 / 52.0) * (34.0 / 63.0) * 2 * Math.PI; // 52:1 gear ratio, 63:34 pulley ratio, 1 rotation = 2pi
     private static final double STEER_VOLTS_TO_RADIANS = 2 * Math.PI / 3.3; // MA3 analog output: 3.3V -> 2pi
 
@@ -76,7 +77,8 @@ public class SwerveModule {
         driveMotor.setIdleMode(IdleMode.kBrake);
 
         driveEncoder = driveMotor.getEncoder();
-        driveEncoder.setVelocityConversionFactor(DRIVE_RPM_TO_MPS);
+        driveEncoder.setPositionConversionFactor(DRIVE_ROTATIONS_TO_METERS);
+        driveEncoder.setVelocityConversionFactor(DRIVE_ROTATIONS_TO_METERS / 60.0); // min = 60s
 
         drivePidController = driveMotor.getPIDController();
         drivePidController.setP(driveP);
@@ -116,13 +118,13 @@ public class SwerveModule {
     }
 
     /**
-     * Gets the current state of the module as a `SwerveModuleState`.
+     * Gets the current state of the module as a `SwerveModulePosition`.
      * @return The state of the module.
      */
-    public SwerveModuleState getState() {
-        return new SwerveModuleState(
-            // driveMotor.getSelectedSensorVelocity() * DRIVE_TICKS_TO_METERS * 10.0,
-            driveMotor.get(),
+    public SwerveModulePosition getState() {
+        return new SwerveModulePosition(
+            // driveMotor.getSelectedSensorPosition() * DRIVE_TICKS_TO_METERS,
+            driveEncoder.getPosition(),
             getAngle()
         );
     }
