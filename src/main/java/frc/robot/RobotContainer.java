@@ -93,10 +93,8 @@ public class RobotContainer {
      */
     private void configureButtonBindings() {
         swerveSubsystem.setDefaultCommand(new RunCommand(() -> {
-            // double xPower = -driveController.getLeftY();
-            double xPower = -joystick.getY();
-            // double yPower = -driveController.getLeftX();
-            double yPower = -joystick.getX();
+            double xPower = -driveController.getLeftY();
+            double yPower = -driveController.getLeftX();
             double angularPower = -driveController.getRightX();
             swerveSubsystem.setSwerveDrivePowers(xPower, yPower, angularPower);
         }, swerveSubsystem));
