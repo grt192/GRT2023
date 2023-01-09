@@ -14,7 +14,6 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 import frc.robot.jetson.JetsonConnection;
-import frc.robot.shuffleboard.GRTShuffleboardTab;
 import frc.robot.subsystems.swerve.MissileShellSwerveSubsystem;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 
@@ -81,10 +80,9 @@ public class RobotContainer {
         configureButtonBindings();
 
         // Add auton sequences to the chooser and add the chooser to shuffleboard
+        // TODO: shuffleboard
         autonChooser = new SendableChooser<>();
         autonChooser.setDefaultOption("Skip auton", new InstantCommand());
-
-        new GRTShuffleboardTab("Drivetrain").addWidget("Auton sequence", autonChooser);
     }
 
     /**
