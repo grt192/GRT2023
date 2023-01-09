@@ -12,7 +12,6 @@ import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -36,7 +35,6 @@ public class SwerveModule {
     private final double offsetRads;
 
     private static final double DRIVE_ROTATIONS_TO_METERS = (1.0 / 3.0) * (13.0 / 8.0) * (1.0 / 3.0) * Math.PI * Units.inchesToMeters(4.0); // 3:1, 8:13, 3:1 gear ratios, 4.0" wheel diameter, circumference = pi * d
-    private static final double STEER_ROTATIONS_TO_RADIANS = (1.0 / 52.0) * (34.0 / 63.0) * 2 * Math.PI; // 52:1 gear ratio, 63:34 pulley ratio, 1 rotation = 2pi
     private static final double STEER_VOLTS_TO_RADIANS = 2 * Math.PI / 3.3; // MA3 analog output: 3.3V -> 2pi
 
     private static final double driveP = 0;
@@ -132,35 +130,10 @@ public class SwerveModule {
      * @param state The desired state of the module as a `SwerveModuleState`.
      */
     public void setDesiredState(SwerveModuleState state) {
-        SwerveModuleState optimized = optimizeModuleState(state, getAngle());
+        SwerveModuleState optimized = SwerveModuleState.optimize(state, getAngle());
         // driveMotor.set(ControlMode.Velocity, optimized.getFirst() / (DRIVE_TICKS_TO_METERS * 10.0));
         driveMotor.set(optimized.speedMetersPerSecond); // Only while the module is in percent output
         steerPidController.setReference(optimized.angle.getRadians() - offsetRads, ControlType.kPosition);
-    }
-
-    /**
-     * Optimizes a `SwerveModuleState` by inverting the wheel speeds and rotating the other direction
-     * if the delta angle is greater than 90 degrees.
-     * 
-     * @param target The target `SwerveModuleState`.
-     * @param currentAngle The current angle of the module, as a `Rotation2d`.
-     * @return The optimized `SwerveModuleState`. Note that `offsetRads` will still need to be applied before PID.
-     */
-    public static SwerveModuleState optimizeModuleState(SwerveModuleState target, Rotation2d currentAngle) {
-        double angleRads = currentAngle.getRadians();
-
-        double targetVel = target.speedMetersPerSecond;
-        double targetWrappedAngle = target.angle.getRadians();
-        double deltaRads = MathUtil.angleModulus(targetWrappedAngle - angleRads);
-
-        // Optimize the `SwerveModuleState` if delta angle > 90 by flipping wheel speeds
-        // and going the other way.
-        if (Math.abs(deltaRads) > Math.PI / 2.0) {
-            targetVel = -targetVel;
-            deltaRads += deltaRads > Math.PI / 2.0 ? -Math.PI : Math.PI;
-        }
-
-        return new SwerveModuleState(targetVel, new Rotation2d(angleRads + deltaRads));
     }
 
     /**
