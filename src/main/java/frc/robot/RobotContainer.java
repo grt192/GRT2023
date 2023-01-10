@@ -14,6 +14,8 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 import frc.robot.jetson.JetsonConnection;
+import frc.robot.subsystems.Balancer;
+import frc.robot.subsystems.Tank;
 import frc.robot.subsystems.swerve.MissileShellSwerveSubsystem;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 import frc.robot.subsystems.swerve.BaseSwerveSubsystem;
@@ -30,6 +32,11 @@ public class RobotContainer {
     // Subsystems
     private final BaseSwerveSubsystem swerveSubsystem;
     // private final MissileShellSwerveSubsystem swerveSubsystem;
+    //private final SwerveSubsystem swerveSubsystem;
+    //private final MissileShellSwerveSubsystem swerveSubsystem;
+    private final Tank tank = new Tank();
+    private final Balancer autobal = new Balancer();
+
 
     private final JetsonConnection jetsonConnection;
 
@@ -85,6 +92,8 @@ public class RobotContainer {
         // TODO: shuffleboard
         autonChooser = new SendableChooser<>();
         autonChooser.setDefaultOption("Skip auton", new InstantCommand());
+
+        
     }
 
     /**
@@ -94,6 +103,7 @@ public class RobotContainer {
      * passing it to a {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
      */
     private void configureButtonBindings() {
+         /* 
         swerveSubsystem.setDefaultCommand(new RunCommand(() -> {
             double xPower = -driveController.getLeftY();
             double yPower = -driveController.getLeftX();
@@ -102,7 +112,23 @@ public class RobotContainer {
         }, swerveSubsystem));
 
         driveAButton.onTrue(new InstantCommand(swerveSubsystem::resetFieldAngle, swerveSubsystem));
+        */
     }
+
+
+    void periodic(){
+        if(driveController.getRightTriggerAxis() >= 0.2){
+            tank.forwardComponent = autobal.calcPower();
+            tank.sideComponent = 0.0;
+        }
+        else{
+            tank.forwardComponent = -1 * driveController.getLeftY(); // 1 is forward (adjusted from -1 forward)
+            tank.sideComponent = driveController.getRightX(); // 1 is right
+            autobal.step = 1;
+        }
+        
+    }
+
 
     /**
      * Use this to pass the autonomous command to the main {@link Robot} class.
