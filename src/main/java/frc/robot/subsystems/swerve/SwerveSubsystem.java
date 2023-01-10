@@ -16,9 +16,13 @@ import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+import frc.robot.vision.PhotonVision;
+
 import static frc.robot.Constants.SwerveConstants.*;
 
 public class SwerveSubsystem extends SubsystemBase {
+    private final PhotonVision vision;
+
     private final SwerveModule.TopLeft topLeftModule;
     private final SwerveModule.TopRight topRightModule;
     private final SwerveModule.BottomLeft bottomLeftModule;
@@ -46,7 +50,9 @@ public class SwerveSubsystem extends SubsystemBase {
         new SwerveModuleState()
     };
 
-    public SwerveSubsystem() {
+    public SwerveSubsystem(PhotonVision vision) {
+        this.vision = vision;
+
         // Initialize swerve modules
         topLeftModule = new SwerveModule.TopLeft(tlDrive, tlSteer, tlOffsetRads);
         topRightModule = new SwerveModule.TopRight(trDrive, trSteer, trOffsetRads);
@@ -125,10 +131,14 @@ public class SwerveSubsystem extends SubsystemBase {
     public void periodic() {
         // Update pose estimator from swerve module states
         Rotation2d gyroAngle = getGyroHeading();
-        poseEstimator.update(
+        Pose2d estimate = poseEstimator.update(
             gyroAngle,
             getModuleStates()
         );
+
+        // Add vision pose estimate to pose estimator
+        var res = vision.getRobotPose(estimate);
+        poseEstimator.addVisionMeasurement(res.getFirst(), res.getSecond());
 
         // If all commanded velocities are 0, the system is idle (drivers / commands are not supplying input).
         boolean isIdle = states[0].speedMetersPerSecond == 0.0

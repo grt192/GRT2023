@@ -52,10 +52,10 @@ public class PhotonVision {
      * Gets the estimated robot pose from vision. Call this every periodic loop to update the drivetrain pose 
      * estimator in `SwerveSubsystem` with vision data.
      * 
-     * @param prevEstimatedRobotPose
+     * @param prevEstimatedRobotPose The last odometry robot pose estimate, for setting the vision reference pose.
      * @return A tuple representing [estimated pose, timestamp].
      */
-    public Pair<Pose2d, Double> getVisionPose(Pose2d prevEstimatedRobotPose) {
+    public Pair<Pose2d, Double> getRobotPose(Pose2d prevEstimatedRobotPose) {
         visionPoseEstimator.setReferencePose(prevEstimatedRobotPose);
 
         double currentTime = Timer.getFPGATimestamp();

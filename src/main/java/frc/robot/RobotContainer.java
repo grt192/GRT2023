@@ -72,9 +72,8 @@ public class RobotContainer {
     public RobotContainer() {
         vision = new PhotonVision();
 
-        //swerveSubsystem = new SwerveSubsystem();
+        //swerveSubsystem = new SwerveSubsystem(vision);
         swerveSubsystem = new MissileShellSwerveSubsystem();
-
 
         // Configure the button bindings
         configureButtonBindings();
