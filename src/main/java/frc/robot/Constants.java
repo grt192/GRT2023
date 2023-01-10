@@ -58,13 +58,13 @@ public final class Constants {
         public static final double GROUNDHEIGHT = 0; //0 inches
         public static final double LOWHEIGHT = 280000; //1 inch
         //public static final double BLOCKHEIGHT = 600; //6 inches
-        public static final double HIGHHEIGHT = 325000; //7 inches
+        public static final double HIGHHEIGHT = 345000; //7 inches
 
         public static final double WINCHUPSPEED = .6;
         //this is swapped rn
         public static final double WINCHDOWNSPEED = -.4;
         public static final double WINCHSTOPSPEED = 0;
-        public static final double WINCHTOLERANCE = 10000;
+        public static final double WINCHTOLERANCE = 3000;
 
         public static final double WINCHMAX = HIGHHEIGHT;
     }

@@ -114,9 +114,9 @@ public class AlignerSubsystem extends SubsystemBase {
         if (Math.abs(anglerpos - current_anglertarget) <= motorrange ) {
             motorAngler.set(0);
         } else if (anglerpos < current_anglertarget) {
-            motorAngler.set(.3); // move right
+            motorAngler.set(.2); // move right
         } else if (anglerpos > current_anglertarget){
-            motorAngler.set(-.3);
+            motorAngler.set(-.2);
         }
 
         slapperPositionEntry.setValue(motorSlapper.getSelectedSensorPosition());
