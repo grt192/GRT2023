@@ -4,7 +4,10 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 
 /**
@@ -49,6 +52,15 @@ public final class Constants {
         public static final Translation2d brPos = new Translation2d(
             Units.inchesToMeters(-11.0),
             Units.inchesToMeters(-11.0)
+        );
+    }
+
+    // TODO
+    public static final class VisionConstants {
+        public static final String cameraName = "...";
+        public static final Transform3d cameraPos = new Transform3d(
+            new Translation3d(0, 0, 0),
+            new Rotation3d()
         );
     }
 

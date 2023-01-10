@@ -13,9 +13,9 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
-import frc.robot.jetson.JetsonConnection;
 import frc.robot.subsystems.swerve.MissileShellSwerveSubsystem;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
+import frc.robot.vision.PhotonVision;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -29,7 +29,7 @@ public class RobotContainer {
     //private final SwerveSubsystem swerveSubsystem;
     private final MissileShellSwerveSubsystem swerveSubsystem;
 
-    private final JetsonConnection jetsonConnection;
+    private final PhotonVision vision;
 
     // Controllers and buttons
     private final Joystick joystick = new Joystick(2);
@@ -70,11 +70,11 @@ public class RobotContainer {
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
     public RobotContainer() {
+        vision = new PhotonVision();
+
         //swerveSubsystem = new SwerveSubsystem();
         swerveSubsystem = new MissileShellSwerveSubsystem();
 
-        jetsonConnection = new JetsonConnection();
-        jetsonConnection.start();
 
         // Configure the button bindings
         configureButtonBindings();
