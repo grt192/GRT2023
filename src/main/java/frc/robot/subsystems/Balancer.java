@@ -6,47 +6,21 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Balancer extends SubsystemBase {
 
-    public int step;
+    public int phase;
+    public int initialHeading;
 
-    double returnPower;
-    double oldAngle;
-    double currentAngle;
-    double gain = 0.01;
+    double returnPower; //power to be returned to DT
+    double oldAngle; // logging previous pitch angle for use in controller
+    double currentAngle; // current pitch angle
+    double gain = 0.01; // gain for controller
 
-    private final AHRS ahrs;
+    private final AHRS ahrs; 
 
   public Balancer() {
     ahrs = new AHRS(SPI.Port.kMXP);
+    initialHeading = (int) ahrs.getCompassHeading();
 
   }
-
-  private boolean stage1(){
-    // if the angle increases
-    if(ahrs.getPitch() >= 15.0){
-        oldAngle = ahrs.getPitch();
-        return true;
-    }
-    else{
-        return false;
-    }
-  }
-
-  private boolean stage2(){
-    // start proportional controller until angle is within 2 degrees
-    return true;
-    
-
-
-
-  }
-
-  private boolean stage3(){
-    // kill power
-    return true;
-
-
-  }
-
 
   public double calcPower(){
     
@@ -54,35 +28,38 @@ public class Balancer extends SubsystemBase {
     // start proportional controller until angle is within 2 degrees
     // kill power
 
-
-    switch (step) {
+    switch (phase) {
         case 1:
-            if(stage1()){
-                step ++; // increase the stage number
+            if((ahrs.getPitch() >= 9.0)){
+                phase ++; // increase the stage number if stage 1 completed and conditions met
             }
             else{
-                returnPower = 0.1; // drive robot slowly towards the station
+                returnPower = 0.1; // drive robot slowly (towards the station)
             }
             break;
         case 2:
-            if(stage2()){
-                step ++;
+            
+            // proportional-ish controller
+            currentAngle = ahrs.getPitch();
+            // double angleDelta  = currentAngle - oldAngle; // figure out the change in angle
+            if(Math.abs(currentAngle) <= 2.0){ // if the angle is within 2 degrees of level
+                phase++;
             }
             else{
-                // proportional-ish controller
-                currentAngle = ahrs.getPitch();
-                double angledelta  = currentAngle - oldAngle;
-                returnPower += gain * angledelta;
+                returnPower += gain * currentAngle; // the desired angle is level, so the current angle of the robot is inherently the error
             }
+                        
             break;
         
         case 3:
-            if(stage3()){
-                // kill
-            }
-            else{
-                // constant value
-            }
+            // if(stage3()){
+            //     // kill
+            // }
+            // else{
+            //     // constant value
+            // }
+            returnPower = 0.0;
+
             break;
     
         default:
