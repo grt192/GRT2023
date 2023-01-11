@@ -122,8 +122,8 @@ public class RobotContainer {
             tank.sideComponent = 0.0;
         }
         else{
-            tank.forwardComponent = -1 * driveController.getLeftY(); // 1 is forward (adjusted from -1 forward)
-            tank.sideComponent = driveController.getRightX(); // 1 is right
+            tank.forwardComponent = -0.75 * driveController.getLeftY(); // 1 is forward (adjusted from -1 forward)
+            tank.sideComponent = 0.75 * driveController.getRightX(); // 1 is right
             autobal.phase = 1;
         }
         

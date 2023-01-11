@@ -45,8 +45,8 @@ public class Tank extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
 
-    leftDrive = forwardComponent + sideComponent*0.75;
-    rightDrive = forwardComponent - sideComponent*0.75;
+    leftDrive = forwardComponent + sideComponent;
+    rightDrive = forwardComponent - sideComponent;
 
 
     if(Math.abs(leftDrive) >= 1.0){

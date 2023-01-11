@@ -6,11 +6,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Balancer extends SubsystemBase {
 
-    public int phase;
-    public int initialHeading;
-
+    public int phase = 1;
     double returnPower; //power to be returned to DT
-    double oldAngle; // logging previous pitch angle for use in controller
     double currentAngle; // current pitch angle
     double gain = 0.01; // gain for controller
 
@@ -18,7 +15,6 @@ public class Balancer extends SubsystemBase {
 
   public Balancer() {
     ahrs = new AHRS(SPI.Port.kMXP);
-    initialHeading = (int) ahrs.getCompassHeading();
 
   }
 
@@ -41,7 +37,6 @@ public class Balancer extends SubsystemBase {
             
             // proportional-ish controller
             currentAngle = ahrs.getPitch();
-            // double angleDelta  = currentAngle - oldAngle; // figure out the change in angle
             if(Math.abs(currentAngle) <= 2.0){ // if the angle is within 2 degrees of level
                 phase++;
             }
@@ -52,12 +47,6 @@ public class Balancer extends SubsystemBase {
             break;
         
         case 3:
-            // if(stage3()){
-            //     // kill
-            // }
-            // else{
-            //     // constant value
-            // }
             returnPower = 0.0;
 
             break;
