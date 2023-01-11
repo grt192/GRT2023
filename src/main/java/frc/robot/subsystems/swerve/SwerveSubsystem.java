@@ -19,14 +19,13 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import static frc.robot.Constants.SwerveConstants.*;
 
-public class SwerveSubsystem extends ISwerveSubsystem{
+public class SwerveSubsystem extends AbstractSwerveSubsystem{
     private final SwerveModule.TopLeft topLeftModule;
     private final SwerveModule.TopRight topRightModule;
     private final SwerveModule.BottomLeft bottomLeftModule;
     private final SwerveModule.BottomRight bottomRightModule;
 
     private final SwerveDrivePoseEstimator poseEstimator;
-    private final AHRS ahrs;
 
     private final SwerveDriveKinematics kinematics;
 
@@ -38,7 +37,6 @@ public class SwerveSubsystem extends ISwerveSubsystem{
     private static final double LOCK_TIMEOUT_SECONDS = 1.0; // The elapsed idle time to wait before locking
     private static final boolean LOCKING_ENABLE = true;
 
-    private double angleoffset = 0;
 
     // The driver or auton commanded `SwerveModuleState` setpoints for each module;
     // states are given in a tuple of [top left, top right, bottom left, bottom right].
@@ -63,7 +61,7 @@ public class SwerveSubsystem extends ISwerveSubsystem{
         );
 
         // Initialize NaxX and pose estimator
-        ahrs = new AHRS(SPI.Port.kMXP);
+        
         poseEstimator = new SwerveDrivePoseEstimator(
             kinematics,
             getGyroHeading(),
@@ -100,7 +98,7 @@ public class SwerveSubsystem extends ISwerveSubsystem{
             xPower * MAX_VEL, 
             yPower * MAX_VEL, 
             angularPower * MAX_OMEGA,
-            getGyroForField()
+            super.getGyroForField()
         );
 
         // Calculate swerve module states from desired chassis speeds
@@ -211,16 +209,6 @@ public class SwerveSubsystem extends ISwerveSubsystem{
      * Gets the gyro angle given by the NavX AHRS, inverted to be counterclockwise positive.
      * @return The robot heading as a Rotation2d.
      */
-    private Rotation2d getGyroHeading() {
-        return Rotation2d.fromDegrees(-ahrs.getAngle());
-    }
-
-    private Rotation2d getGyroForField() {
-        return Rotation2d.fromDegrees(-(ahrs.getAngle() - angleoffset));
-    }
-
-    public void resetFieldAngle() {
-        angleoffset = ahrs.getAngle();
-    }
+    
 
 }

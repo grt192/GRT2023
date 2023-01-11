@@ -13,13 +13,12 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import static frc.robot.Constants.SwerveConstants2020.*;
 
-public class SwerveSubsystem2020 extends ISwerveSubsystem{
+public class SwerveSubsystem2020 extends AbstractSwerveSubsystem{
     private final SwerveModule2020 topLeftModule;
     private final SwerveModule2020 topRightModule;
     private final SwerveModule2020 bottomLeftModule;
     private final SwerveModule2020 bottomRightModule;
 
-    private final AHRS ahrs;
     private final SwerveDriveKinematics kinematics;
 
     public static final double MAX_VEL = 1.0; // Max robot tangential velocity, in m/s
@@ -30,7 +29,6 @@ public class SwerveSubsystem2020 extends ISwerveSubsystem{
     private static final double LOCK_TIMEOUT_SECONDS = 1.0; // The elapsed idle time to wait before locking
     private static final boolean LOCKING_ENABLE = true;
 
-    private double angleoffset = 0;
 
     // The `SwerveModuleState` setpoints for each module;
     // states are given in a tuple of [top left, top right, bottom left, bottom right].
@@ -48,7 +46,6 @@ public class SwerveSubsystem2020 extends ISwerveSubsystem{
         bottomLeftModule = new SwerveModule2020(blDrive, blSteer, blOffsetRads);
         bottomRightModule = new SwerveModule2020(brDrive, brSteer, brOffsetRads);
 
-        ahrs = new AHRS(SPI.Port.kMXP);
 
         // Initialize system kinematics with top left, top right, bottom left, and bottom right swerve
         // module positions.
@@ -72,7 +69,7 @@ public class SwerveSubsystem2020 extends ISwerveSubsystem{
             xPower * MAX_VEL, 
             yPower * MAX_VEL, 
             angularPower * MAX_OMEGA,
-            getGyroHeading()
+            super.getGyroForField()
         );
 
         // Calculate swerve module states from desired chassis speeds
@@ -134,16 +131,8 @@ public class SwerveSubsystem2020 extends ISwerveSubsystem{
      * Gets the gyro angle given by the NavX AHRS, inverted to be counterclockwise positive.
      * @return The robot heading as a Rotation2d.
      */
-    private Rotation2d getGyroHeading() {
-        return Rotation2d.fromDegrees(-ahrs.getAngle());
-    }
+    
 
-    private Rotation2d getGyroForField() {
-        return Rotation2d.fromDegrees(-(ahrs.getAngle() - angleoffset));
-    }
-
-    public void resetFieldAngle() {
-        angleoffset = ahrs.getAngle();
-    }
+    
 
 }
