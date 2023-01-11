@@ -16,7 +16,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.jetson.JetsonConnection;
 import frc.robot.subsystems.swerve.MissileShellSwerveSubsystem;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
-import frc.robot.subsystems.swerve.ISwerveSubsystem;
+import frc.robot.subsystems.swerve.AbstractSwerveSubsystem;
 import frc.robot.subsystems.swerve.SwerveSubsystem2020;
 
 /**
@@ -28,7 +28,7 @@ import frc.robot.subsystems.swerve.SwerveSubsystem2020;
  */
 public class RobotContainer {
     // Subsystems
-    private final ISwerveSubsystem swerveSubsystem;
+    private final AbstractSwerveSubsystem swerveSubsystem;
     // private final MissileShellSwerveSubsystem swerveSubsystem;
 
     private final JetsonConnection jetsonConnection;

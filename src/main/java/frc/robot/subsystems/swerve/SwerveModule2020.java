@@ -18,7 +18,8 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import frc.robot.motorcontrol.MotorUtil;
 
 /**
- * A swerve module with a NEO drive motor and a BAG steer motor, for running swerve modules on 
+ * A swerve module with a NEO drive motor and a BAG steer motor, for running
+ * swerve modules on
  * the 2020 robot.
  */
 public class SwerveModule2020 {
@@ -44,7 +45,7 @@ public class SwerveModule2020 {
     private static final double steerFF = 0;
 
     public SwerveModule2020(int drivePort, int steerPort, double offsetRads) {
-        
+
         driveMotor = new CANSparkMax(drivePort, MotorType.kBrushless);
         driveMotor.restoreFactoryDefaults();
         driveMotor.setIdleMode(IdleMode.kBrake);
@@ -80,6 +81,7 @@ public class SwerveModule2020 {
 
     /**
      * Testing function to get the current velocity of the drive motor.
+     * 
      * @return The current velocity of the drive motor, in RPM.
      */
     public double getDriveVelocity() {
@@ -88,44 +90,49 @@ public class SwerveModule2020 {
 
     /**
      * Gets the current state of the module as a `SwerveModuleState`.
+     * 
      * @return The state of the module.
      */
     public SwerveModuleState getState() {
         return new SwerveModuleState(
-            driveMotor.get(), // NOTE: this is only while the wheel velocity is in percent output instead
-            getAngle()
-        );
+                driveMotor.get(), // NOTE: this is only while the wheel velocity is in percent output instead
+                getAngle());
     }
 
     /**
      * Sets the desired state of the module.
+     * 
      * @param state The desired state of the module as a `SwerveModuleState`.
      */
     public void setDesiredState(SwerveModuleState state) {
         var optimized = optimizeModuleState(state, getAngle());
-        driveMotor.set(optimized.getFirst()); // NOTE: this is only while the wheel velocity is in percent output instead
+        driveMotor.set(optimized.getFirst()); // NOTE: this is only while the wheel velocity is in percent output
+                                              // instead
         steerMotor.set(ControlMode.Position, (optimized.getSecond() - offsetRads) / STEER_TICKS_TO_RADIANS);
     }
 
     /**
-     * Returns the current angle of the module. This differs from the raw encoder reading 
+     * Returns the current angle of the module. This differs from the raw encoder
+     * reading
      * because this applies `offsetRads` to zero the module at a desired angle.
      * 
      * @return The current angle of the module, as a `Rotation2d`.
      */
     private Rotation2d getAngle() {
         return new Rotation2d(
-            steerMotor.getSelectedSensorPosition() * STEER_TICKS_TO_RADIANS + offsetRads
-        );
+                steerMotor.getSelectedSensorPosition() * STEER_TICKS_TO_RADIANS + offsetRads);
     }
-    
+
     /**
-     * Optimizes a `SwerveModuleState` by inverting the wheel speeds and rotating the other direction
-     * if the delta angle is greater than 90 degrees. This method also handles angle wraparound.
+     * Optimizes a `SwerveModuleState` by inverting the wheel speeds and rotating
+     * the other direction
+     * if the delta angle is greater than 90 degrees. This method also handles angle
+     * wraparound.
      * 
-     * @param target The target `SwerveModuleState`.
+     * @param target       The target `SwerveModuleState`.
      * @param currentAngle The current angle of the module, as a `Rotation2d`.
-     * @return A pair representing [target velocity, target angle]. Note that `offsetRads` will still need to be applied before PID.
+     * @return A pair representing [target velocity, target angle]. Note that
+     *         `offsetRads` will still need to be applied before PID.
      */
     public static Pair<Double, Double> optimizeModuleState(SwerveModuleState target, Rotation2d currentAngle) {
         double angleRads = currentAngle.getRadians();
