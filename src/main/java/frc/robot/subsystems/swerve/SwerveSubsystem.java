@@ -37,6 +37,8 @@ public class SwerveSubsystem extends SubsystemBase {
     private static final double LOCK_TIMEOUT_SECONDS = 1.0; // The elapsed idle time to wait before locking
     private static final boolean LOCKING_ENABLE = true;
 
+    private double angleoffset = 0;
+
     // The driver or auton commanded `SwerveModuleState` setpoints for each module;
     // states are given in a tuple of [top left, top right, bottom left, bottom right].
     private SwerveModuleState[] states = {
@@ -97,7 +99,7 @@ public class SwerveSubsystem extends SubsystemBase {
             xPower * MAX_VEL, 
             yPower * MAX_VEL, 
             angularPower * MAX_OMEGA,
-            getGyroHeading()
+            getGyroForField()
         );
 
         // Calculate swerve module states from desired chassis speeds
@@ -210,5 +212,13 @@ public class SwerveSubsystem extends SubsystemBase {
      */
     private Rotation2d getGyroHeading() {
         return Rotation2d.fromDegrees(-ahrs.getAngle());
+    }
+
+    private Rotation2d getGyroForField(){
+        return Rotation2d.fromDegrees(-(ahrs.getAngle() - angleoffset));
+    }
+
+    private void resetFieldAngle(){
+        angleoffset = ahrs.getAngle();
     }
 }
