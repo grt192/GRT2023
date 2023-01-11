@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.BalancerCommand;
 import frc.robot.subsystems.drivetrain.TankSubsystem;
 import frc.robot.vision.PhotonWrapper;
+import frc.robot.subsystems.ShuffleboardSubsystem;
 import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
 import frc.robot.subsystems.drivetrain.MissileShellSwerveSubsystem;
 import frc.robot.subsystems.drivetrain.SwerveSubsystem;
@@ -35,6 +36,7 @@ public class RobotContainer {
     private final BaseDrivetrain driveSubsystem;
     // private final GripperSubsytem gripperSubsystem;
     // private final RollerSubsystem rollerSubsystem;
+    private final ShuffleboardSubsystem shuffleboardSubsystem;
 
     private final PhotonWrapper photonWrapper;
 
@@ -83,6 +85,7 @@ public class RobotContainer {
         // gripperSubsystem = new GripperSubsytem();
         // rollerSubsystem = new RollerSubsystem();
 
+        shuffleboardSubsystem = new ShuffleboardSubsystem();
         balancerCommand = new BalancerCommand(driveSubsystem);
 
         // Configure the button bindings
