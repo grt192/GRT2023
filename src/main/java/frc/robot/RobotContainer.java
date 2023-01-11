@@ -13,7 +13,6 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
-import frc.robot.subsystems.MissileShellVisionSubsystem;
 import frc.robot.subsystems.swerve.MissileShellSwerveSubsystem;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 import frc.robot.vision.PhotonVision;
@@ -29,7 +28,6 @@ public class RobotContainer {
     // Subsystems
     //private final SwerveSubsystem swerveSubsystem;
     private final MissileShellSwerveSubsystem swerveSubsystem;
-    private final MissileShellVisionSubsystem visionTestSubsystem;
 
     private final PhotonVision vision;
 
@@ -76,7 +74,6 @@ public class RobotContainer {
 
         //swerveSubsystem = new SwerveSubsystem(vision);
         swerveSubsystem = new MissileShellSwerveSubsystem();
-        visionTestSubsystem = new MissileShellVisionSubsystem(vision);
 
         // Configure the button bindings
         configureButtonBindings();
