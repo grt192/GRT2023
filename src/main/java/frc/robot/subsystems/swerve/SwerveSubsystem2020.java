@@ -8,11 +8,12 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import static frc.robot.Constants.SwerveConstants2020.*;
 
-public class SwerveSubsystem2020 extends SubsystemBase {
+public class SwerveSubsystem2020 extends ISwerveSubsystem{
     private final SwerveModule2020 topLeftModule;
     private final SwerveModule2020 topRightModule;
     private final SwerveModule2020 bottomLeftModule;
@@ -28,6 +29,8 @@ public class SwerveSubsystem2020 extends SubsystemBase {
     private final Timer lockTimer;
     private static final double LOCK_TIMEOUT_SECONDS = 1.0; // The elapsed idle time to wait before locking
     private static final boolean LOCKING_ENABLE = true;
+
+    private double angleoffset = 0;
 
     // The `SwerveModuleState` setpoints for each module;
     // states are given in a tuple of [top left, top right, bottom left, bottom right].
@@ -134,4 +137,13 @@ public class SwerveSubsystem2020 extends SubsystemBase {
     private Rotation2d getGyroHeading() {
         return Rotation2d.fromDegrees(-ahrs.getAngle());
     }
+
+    private Rotation2d getGyroForField() {
+        return Rotation2d.fromDegrees(-(ahrs.getAngle() - angleoffset));
+    }
+
+    public void resetFieldAngle() {
+        angleoffset = ahrs.getAngle();
+    }
+
 }

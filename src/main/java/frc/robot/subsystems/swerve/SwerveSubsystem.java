@@ -14,11 +14,12 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import static frc.robot.Constants.SwerveConstants.*;
 
-public class SwerveSubsystem extends SubsystemBase {
+public class SwerveSubsystem extends ISwerveSubsystem{
     private final SwerveModule.TopLeft topLeftModule;
     private final SwerveModule.TopRight topRightModule;
     private final SwerveModule.BottomLeft bottomLeftModule;
@@ -221,4 +222,5 @@ public class SwerveSubsystem extends SubsystemBase {
     public void resetFieldAngle() {
         angleoffset = ahrs.getAngle();
     }
+
 }

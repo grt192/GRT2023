@@ -16,6 +16,8 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.jetson.JetsonConnection;
 import frc.robot.subsystems.swerve.MissileShellSwerveSubsystem;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
+import frc.robot.subsystems.swerve.ISwerveSubsystem;
+import frc.robot.subsystems.swerve.SwerveSubsystem2020;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -26,7 +28,7 @@ import frc.robot.subsystems.swerve.SwerveSubsystem;
  */
 public class RobotContainer {
     // Subsystems
-    private final SwerveSubsystem swerveSubsystem;
+    private final ISwerveSubsystem swerveSubsystem;
     // private final MissileShellSwerveSubsystem swerveSubsystem;
 
     private final JetsonConnection jetsonConnection;
@@ -70,7 +72,7 @@ public class RobotContainer {
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
     public RobotContainer() {
-        swerveSubsystem = new SwerveSubsystem();
+        swerveSubsystem = new SwerveSubsystem2020();
         // swerveSubsystem = new MissileShellSwerveSubsystem();
 
         jetsonConnection = new JetsonConnection();
