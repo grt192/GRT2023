@@ -214,11 +214,11 @@ public class SwerveSubsystem extends SubsystemBase {
         return Rotation2d.fromDegrees(-ahrs.getAngle());
     }
 
-    private Rotation2d getGyroForField(){
+    private Rotation2d getGyroForField() {
         return Rotation2d.fromDegrees(-(ahrs.getAngle() - angleoffset));
     }
 
-    private void resetFieldAngle(){
+    public void resetFieldAngle() {
         angleoffset = ahrs.getAngle();
     }
 }

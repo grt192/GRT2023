@@ -26,8 +26,8 @@ import frc.robot.subsystems.swerve.SwerveSubsystem;
  */
 public class RobotContainer {
     // Subsystems
-    //private final SwerveSubsystem swerveSubsystem;
-    private final MissileShellSwerveSubsystem swerveSubsystem;
+    private final SwerveSubsystem swerveSubsystem;
+    // private final MissileShellSwerveSubsystem swerveSubsystem;
 
     private final JetsonConnection jetsonConnection;
 
@@ -70,8 +70,8 @@ public class RobotContainer {
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
     public RobotContainer() {
-        //swerveSubsystem = new SwerveSubsystem();
-        swerveSubsystem = new MissileShellSwerveSubsystem();
+        swerveSubsystem = new SwerveSubsystem();
+        // swerveSubsystem = new MissileShellSwerveSubsystem();
 
         jetsonConnection = new JetsonConnection();
         jetsonConnection.start();
@@ -98,6 +98,8 @@ public class RobotContainer {
             double angularPower = -driveController.getRightX();
             swerveSubsystem.setSwerveDrivePowers(xPower, yPower, angularPower);
         }, swerveSubsystem));
+
+        driveAButton.onTrue(new InstantCommand(swerveSubsystem::resetFieldAngle, swerveSubsystem));
     }
 
     /**
