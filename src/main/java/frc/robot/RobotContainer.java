@@ -74,14 +74,14 @@ public class RobotContainer {
 
     // Commands
     private final SendableChooser<Command> autonChooser;
-    private final Command autonCommand;
+    private final Command balanceCommand;
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
     public RobotContainer() {
         swerveSubsystem = new SwerveSubsystem2020();
         ahrs = new AHRS(SPI.Port.kMXP);
-        autonCommand = new BalancerCommand(swerveSubsystem,ahrs); // pass DT of choice into balancer
+        balanceCommand = new BalancerCommand(swerveSubsystem,ahrs); // pass DT of choice into balancer
 
         jetsonConnection = new JetsonConnection();
         jetsonConnection.start();
@@ -94,7 +94,7 @@ public class RobotContainer {
 
         autonChooser = new SendableChooser<>();
         autonChooser.setDefaultOption("Skip auton", new InstantCommand());
-
+        driveRBumper.whileTrue(balanceCommand);
         
     }
 
@@ -119,9 +119,10 @@ public class RobotContainer {
 
 
     void periodic(){
-        tank.forwardComponent = -0.75 * driveController.getLeftY(); // 1 is forward (adjusted from -1 forward)
-        tank.sideComponent = 0.75 * driveController.getRightX(); // 1 is right
-        
+        if(!driveRBumper.getAsBoolean()){
+            tank.forwardComponent = -0.75 * driveController.getLeftY(); // 1 is forward (adjusted from -1 forward)
+            tank.sideComponent = 0.75 * driveController.getRightX(); // 1 is right
+        }
     }
 
 
