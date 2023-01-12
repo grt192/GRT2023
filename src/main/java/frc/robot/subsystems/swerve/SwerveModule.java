@@ -22,7 +22,7 @@ import frc.robot.motorcontrol.MotorUtil;
 /**
  * A swerve module with a Falcon drive motor and a NEO steer motor.
  */
-public class SwerveModule {
+public class SwerveModule implements BaseSwerveModule{
     // private final WPI_TalonFX driveMotor;
     private final CANSparkMax driveMotor;
     private final RelativeEncoder driveEncoder;

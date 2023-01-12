@@ -13,6 +13,7 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 
 import frc.robot.motorcontrol.MotorUtil;
@@ -22,7 +23,7 @@ import frc.robot.motorcontrol.MotorUtil;
  * swerve modules on
  * the 2020 robot.
  */
-public class SwerveModule2020 {
+public class SwerveModule2020 implements BaseSwerveModule{
     private final CANSparkMax driveMotor;
     private final RelativeEncoder driveEncoder;
     private final SparkMaxPIDController drivePidController;
@@ -93,9 +94,9 @@ public class SwerveModule2020 {
      * 
      * @return The state of the module.
      */
-    public SwerveModuleState getState() {
-        return new SwerveModuleState(
-                driveMotor.get(), // NOTE: this is only while the wheel velocity is in percent output instead
+    public SwerveModulePosition getState() {
+        return new SwerveModulePosition(
+                driveEncoder.getPosition(), // NOTE: this is only while the wheel velocity is in percent output instead
                 getAngle());
     }
 
