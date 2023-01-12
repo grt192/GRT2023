@@ -81,7 +81,7 @@ public class RobotContainer {
     public RobotContainer() {
         swerveSubsystem = new SwerveSubsystem2020();
         ahrs = new AHRS(SPI.Port.kMXP);
-        autonCommand = new BalancerCommand(swerveSubsystem,ahrs);
+        autonCommand = new BalancerCommand(swerveSubsystem,ahrs); // pass DT of choice into balancer
 
         jetsonConnection = new JetsonConnection();
         jetsonConnection.start();

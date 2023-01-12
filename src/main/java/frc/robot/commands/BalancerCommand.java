@@ -6,12 +6,17 @@ import edu.wpi.first.wpilibj.SPI;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.swerve.BaseSwerveSubsystem;
+import frc.robot.subsystems.Tank;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 
 /** An example command that uses an example subsystem. */
 public class BalancerCommand extends CommandBase {
 
   private final BaseSwerveSubsystem swerveSubsystem;
+
+  private Tank tank;
+  String dtType;
+
   public int phase = 1;
     double returnPower; //power to be returned to DT
     double currentAngle; // current pitch angle
@@ -29,6 +34,15 @@ public class BalancerCommand extends CommandBase {
   public BalancerCommand(BaseSwerveSubsystem swerveSubsystem2,AHRS ahrs) {
     swerveSubsystem = swerveSubsystem2;
     this.ahrs = ahrs;
+    dtType = "swerve";
+    // Use addRequirements() here to declare subsystem dependencies.
+    // addRequirements(subsystem);
+  }
+
+  public BalancerCommand(Tank subsystem,AHRS ahrs) {
+    tank = subsystem;
+    this.ahrs = ahrs;
+    dtType = "tank";
     // Use addRequirements() here to declare subsystem dependencies.
     // addRequirements(subsystem);
   }
@@ -73,7 +87,13 @@ public class BalancerCommand extends CommandBase {
         default:
             break;
     }
-    swerveSubsystem.setSwerveDrivePowers(returnPower,0.0,initialHeading);
+    if(dtType == "swerve"){
+        swerveSubsystem.setSwerveDrivePowers(returnPower,0.0,initialHeading);    
+    }
+    if(dtType == "tank"){
+        tank.forwardComponent = returnPower;
+        tank.sideComponent = 0.0;
+    }
   }
 
   // Called once the command ends or is interrupted.

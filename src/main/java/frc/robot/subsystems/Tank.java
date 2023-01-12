@@ -12,8 +12,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.motorcontrol.MotorUtil;
 
 public class Tank extends SubsystemBase {
-    
-    public boolean driveInvert;
 
     private final WPI_TalonSRX left = MotorUtil.createTalonSRX(LEFT_MAIN); // left motor
     private final WPI_TalonSRX left2 = MotorUtil.createTalonSRX(LEFT_SECONDARY); // left motor
@@ -58,11 +56,6 @@ public class Tank extends SubsystemBase {
         leftDrive = leftDrive / Math.abs(rightDrive);
     }
     
-    if(driveInvert){
-      leftDrive = leftDrive * -1;
-      rightDrive = rightDrive * -1;
-    }
-
     left.set(leftDrive);
     right.set(rightDrive);
     
