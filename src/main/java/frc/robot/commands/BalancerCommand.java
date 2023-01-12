@@ -15,6 +15,7 @@ public class BalancerCommand extends CommandBase {
   private final BaseSwerveSubsystem swerveSubsystem;
 
   private Tank tank;
+  private DriveTrain driveTrain;
   String dtType;
 
   public int phase = 1;
@@ -31,18 +32,15 @@ public class BalancerCommand extends CommandBase {
    *
    * @param swerveSubsystem2 The subsystem used by this command.
    */
+<<<<<<< HEAD
   public BalancerCommand(BaseSwerveSubsystem swerveSubsystem2,AHRS ahrs) {
     swerveSubsystem = swerveSubsystem2;
+=======
+  public BalancerCommand(DriveTrain subsystem,AHRS ahrs) {
+    driveTrain = subsystem;
+>>>>>>> 743ea1f (consolidated DT to DriveTrain class)
     this.ahrs = ahrs;
-    dtType = "swerve";
-    // Use addRequirements() here to declare subsystem dependencies.
-    // addRequirements(subsystem);
-  }
 
-  public BalancerCommand(Tank subsystem,AHRS ahrs) {
-    tank = subsystem;
-    this.ahrs = ahrs;
-    dtType = "tank";
     // Use addRequirements() here to declare subsystem dependencies.
     // addRequirements(subsystem);
   }
@@ -87,13 +85,8 @@ public class BalancerCommand extends CommandBase {
         default:
             break;
     }
-    if(dtType == "swerve"){
-        swerveSubsystem.setSwerveDrivePowers(returnPower,0.0,initialHeading);    
-    }
-    if(dtType == "tank"){
-        tank.forwardComponent = returnPower;
-        tank.sideComponent = 0.0;
-    }
+    driveTrain.setDrivePowers(returnPower,0.0,initialHeading);
+
   }
 
   // Called once the command ends or is interrupted.

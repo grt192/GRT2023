@@ -120,8 +120,7 @@ public class RobotContainer {
 
     void periodic(){
         if(!driveRBumper.getAsBoolean()){
-            tank.forwardComponent = -0.75 * driveController.getLeftY(); // 1 is forward (adjusted from -1 forward)
-            tank.sideComponent = 0.75 * driveController.getRightX(); // 1 is right
+            tank.setDrivePowers(-0.75 * driveController.getLeftY(),  0.75 * driveController.getRightX(), 0);
         }
     }
 

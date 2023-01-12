@@ -1,4 +1,4 @@
-package frc.robot.subsystems;
+package frc.robot.subsystems.drivetrain;
 
 import static frc.robot.Constants.TankConstants.LEFT_MAIN;
 import static frc.robot.Constants.TankConstants.LEFT_SECONDARY;
@@ -11,16 +11,13 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX; // internal notfalcon CIM
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.motorcontrol.MotorUtil;
 
-public class Tank extends SubsystemBase {
+public class Tank extends DriveTrain {
 
     private final WPI_TalonSRX left = MotorUtil.createTalonSRX(LEFT_MAIN); // left motor
     private final WPI_TalonSRX left2 = MotorUtil.createTalonSRX(LEFT_SECONDARY); // left motor
 
     private final WPI_TalonSRX right = MotorUtil.createTalonSRX(RIGHT_MAIN); // right motor
     private final WPI_TalonSRX right2 = MotorUtil.createTalonSRX(RIGHT_SECONDARY); // right motor
-
-    public double sideComponent;
-    public double forwardComponent;
   
     double leftDrive;
     double rightDrive;
@@ -38,13 +35,11 @@ public class Tank extends SubsystemBase {
 
   }
 
-
-  @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
-
-    leftDrive = forwardComponent + sideComponent;
-    rightDrive = forwardComponent - sideComponent;
+  public void setDTDrivePowers(){
+    // POSSIBLE/CONCEPT -- double theta = Math.atan(yPower/xPower); // if the robot needs to move some amount laterally, it can rotate to this angle and move in that direction
+    
+    leftDrive = xPower + yPower;
+    rightDrive = xPower - yPower;
 
 
     if(Math.abs(leftDrive) >= 1.0){
@@ -58,6 +53,13 @@ public class Tank extends SubsystemBase {
     
     left.set(leftDrive);
     right.set(rightDrive);
+  }
+
+  @Override
+  public void periodic() {
+    // This method will be called once per scheduler run
+
+    setDTDrivePowers();
     
   }
 
