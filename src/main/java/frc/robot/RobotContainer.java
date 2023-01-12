@@ -4,6 +4,9 @@
 
 package frc.robot;
 
+import com.kauailabs.navx.frc.AHRS;
+import edu.wpi.first.wpilibj.SPI;
+
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.Joystick;
@@ -12,9 +15,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-
+import frc.robot.commands.BalancerCommand;
 import frc.robot.jetson.JetsonConnection;
-import frc.robot.subsystems.Balancer;
 import frc.robot.subsystems.Tank;
 import frc.robot.subsystems.swerve.MissileShellSwerveSubsystem;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
@@ -31,11 +33,9 @@ import frc.robot.subsystems.swerve.SwerveSubsystem2020;
 public class RobotContainer {
     // Subsystems
     private final BaseSwerveSubsystem swerveSubsystem;
-    // private final MissileShellSwerveSubsystem swerveSubsystem;
-    //private final SwerveSubsystem swerveSubsystem;
-    //private final MissileShellSwerveSubsystem swerveSubsystem;
+    
     private final Tank tank = new Tank();
-    private final Balancer autobal = new Balancer();
+    private final AHRS ahrs;
 
 
     private final JetsonConnection jetsonConnection;
@@ -74,13 +74,14 @@ public class RobotContainer {
 
     // Commands
     private final SendableChooser<Command> autonChooser;
-
+    private final Command autonCommand;
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
     public RobotContainer() {
         swerveSubsystem = new SwerveSubsystem2020();
-        // swerveSubsystem = new MissileShellSwerveSubsystem();
+        ahrs = new AHRS(SPI.Port.kMXP);
+        autonCommand = new BalancerCommand(swerveSubsystem,ahrs);
 
         jetsonConnection = new JetsonConnection();
         jetsonConnection.start();
@@ -90,6 +91,7 @@ public class RobotContainer {
 
         // Add auton sequences to the chooser and add the chooser to shuffleboard
         // TODO: shuffleboard
+
         autonChooser = new SendableChooser<>();
         autonChooser.setDefaultOption("Skip auton", new InstantCommand());
 
@@ -117,15 +119,8 @@ public class RobotContainer {
 
 
     void periodic(){
-        if(driveController.getRightTriggerAxis() >= 0.2){
-            tank.forwardComponent = autobal.calcPower();
-            tank.sideComponent = 0.0;
-        }
-        else{
-            tank.forwardComponent = -0.75 * driveController.getLeftY(); // 1 is forward (adjusted from -1 forward)
-            tank.sideComponent = 0.75 * driveController.getRightX(); // 1 is right
-            autobal.phase = 1;
-        }
+        tank.forwardComponent = -0.75 * driveController.getLeftY(); // 1 is forward (adjusted from -1 forward)
+        tank.sideComponent = 0.75 * driveController.getRightX(); // 1 is right
         
     }
 
