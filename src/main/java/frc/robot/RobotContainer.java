@@ -17,11 +17,14 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.BalancerCommand;
 import frc.robot.jetson.JetsonConnection;
+
 import frc.robot.subsystems.Tank;
 import frc.robot.subsystems.swerve.MissileShellSwerveSubsystem;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 import frc.robot.subsystems.swerve.BaseSwerveSubsystem;
 import frc.robot.subsystems.swerve.SwerveSubsystem2020;
+
+import frc.robot.subsystems.drivetrain.DriveTrain;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -35,6 +38,8 @@ public class RobotContainer {
     private final BaseSwerveSubsystem swerveSubsystem;
     
     private final Tank tank = new Tank();
+    private final DriveTrain dt; // declare DT of choice 
+
     private final AHRS ahrs;
 
 
@@ -79,9 +84,9 @@ public class RobotContainer {
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
     public RobotContainer() {
-        swerveSubsystem = new SwerveSubsystem2020();
+        dt = new DriveTrain(); // initialize DT of choice
         ahrs = new AHRS(SPI.Port.kMXP);
-        balanceCommand = new BalancerCommand(swerveSubsystem,ahrs); // pass DT of choice into balancer
+        balanceCommand = new BalancerCommand(dt,ahrs); // pass DT of choice into balancer
 
         jetsonConnection = new JetsonConnection();
         jetsonConnection.start();
@@ -120,7 +125,7 @@ public class RobotContainer {
 
     void periodic(){
         if(!driveRBumper.getAsBoolean()){
-            tank.setDrivePowers(-0.75 * driveController.getLeftY(),  0.75 * driveController.getRightX(), 0);
+            dt.setDrivePowers(-0.75 * driveController.getLeftY(),  0.75 * driveController.getRightX(), 0); // currently set up for tank
         }
     }
 

@@ -32,13 +32,8 @@ public class BalancerCommand extends CommandBase {
    *
    * @param swerveSubsystem2 The subsystem used by this command.
    */
-<<<<<<< HEAD
-  public BalancerCommand(BaseSwerveSubsystem swerveSubsystem2,AHRS ahrs) {
-    swerveSubsystem = swerveSubsystem2;
-=======
   public BalancerCommand(DriveTrain subsystem,AHRS ahrs) {
     driveTrain = subsystem;
->>>>>>> 743ea1f (consolidated DT to DriveTrain class)
     this.ahrs = ahrs;
 
     // Use addRequirements() here to declare subsystem dependencies.
