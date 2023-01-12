@@ -8,88 +8,34 @@ import edu.wpi.first.wpilibj.Timer;
 
 import static frc.robot.Constants.SwerveConstants2020.*;
 
-public class SwerveSubsystem2020 extends AbstractSwerveSubsystem {
+public class SwerveSubsystem2020 extends BaseSwerveSubsystem {
     private final SwerveModule2020 topLeftModule;
     private final SwerveModule2020 topRightModule;
     private final SwerveModule2020 bottomLeftModule;
     private final SwerveModule2020 bottomRightModule;
 
-    private final SwerveDriveKinematics kinematics;
 
     public static final double MAX_VEL = 1.0; // Max robot tangential velocity, in m/s
     public static final double MAX_ACCEL = 3; // Max robot tangential acceleration, in m/s^2
     public static final double MAX_OMEGA = Math.toRadians(60); // Max robot angular velocity, in rads/s
 
-    private final Timer lockTimer;
-    private static final double LOCK_TIMEOUT_SECONDS = 1.0; // The elapsed idle time to wait before locking
-    private static final boolean LOCKING_ENABLE = true;
+    
 
-    // The `SwerveModuleState` setpoints for each module;
-    // states are given in a tuple of [top left, top right, bottom left, bottom
-    // right].
-    private SwerveModuleState[] states = {
-            new SwerveModuleState(),
-            new SwerveModuleState(),
-            new SwerveModuleState(),
-            new SwerveModuleState()
-    };
 
     public SwerveSubsystem2020() {
+        super(MAX_VEL, MAX_ACCEL, MAX_OMEGA,new SwerveDriveKinematics(
+            tlPos, trPos, blPos, brPos));
+        
         // Initialize swerve modules
         topLeftModule = new SwerveModule2020(tlDrive, tlSteer, tlOffsetRads);
         topRightModule = new SwerveModule2020(trDrive, trSteer, trOffsetRads);
         bottomLeftModule = new SwerveModule2020(blDrive, blSteer, blOffsetRads);
         bottomRightModule = new SwerveModule2020(brDrive, brSteer, brOffsetRads);
 
-        // Initialize system kinematics with top left, top right, bottom left, and
-        // bottom right swerve
-        // module positions.
-        kinematics = new SwerveDriveKinematics(
-                tlPos, trPos, blPos, brPos);
 
-        lockTimer = new Timer();
+
     }
-
-    /**
-     * Sets the swerve module states of this subsystem from provided field-centric
-     * swerve drive powers.
-     * 
-     * @param xPower       The power [-1.0, 1.0] in the x (forward) direction.
-     * @param yPower       The power [-1.0, 1.0] in the y (left) direction.
-     * @param angularPower The angular (rotational) power [-1.0, 1.0].
-     */
-    public void setSwerveDrivePowers(double xPower, double yPower, double angularPower) {
-        // Scale [-1.0, 1.0] powers to desired velocity, turning field-relative powers
-        // into robot relative chassis speeds.
-        ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(
-                xPower * MAX_VEL,
-                yPower * MAX_VEL,
-                angularPower * MAX_OMEGA,
-                super.getGyroForField());
-
-        // Calculate swerve module states from desired chassis speeds
-        this.states = kinematics.toSwerveModuleStates(speeds);
-    }
-
-    /**
-     * Sets the swerve module states of this subsystem. Module states are assumed to
-     * be passed
-     * in a tuple of [top left, top right, bottom left, bottom right].
-     * 
-     * @param states The swerve module states to set.
-     */
-    public void setSwerveModuleStates(SwerveModuleState... states) {
-        this.states = states;
-    }
-
-    /**
-     * Gets the subsystems `SwerveDriveKinematics` instance.
-     * 
-     * @return The SwerveDriveKinematics representing this system's kinematics.
-     */
-    public SwerveDriveKinematics getKinematics() {
-        return kinematics;
-    }
+    
 
     @Override
     public void periodic() {
@@ -128,11 +74,5 @@ public class SwerveSubsystem2020 extends AbstractSwerveSubsystem {
         }
     }
 
-    /**
-     * Gets the gyro angle given by the NavX AHRS, inverted to be counterclockwise
-     * positive.
-     * 
-     * @return The robot heading as a Rotation2d.
-     */
 
 }
