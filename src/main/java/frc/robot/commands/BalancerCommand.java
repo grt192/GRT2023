@@ -64,7 +64,7 @@ public class BalancerCommand extends CommandBase {
                 returnPower = 0.0;
                 phase ++; // increase the stage number if stage 1 completed and conditions met
             }
-            else{
+            else{ 
                 System.out.println("auton speed");
                 returnPower = 0.2; // drive robot slowly (towards the station)
                 oldAngle = currentAngle;
@@ -101,7 +101,7 @@ public class BalancerCommand extends CommandBase {
         default:
             break;
     }
-    driveTrain.setDrivePowers(returnPower,0.0,initialHeading);
+    driveTrain.updateDrivePowers(returnPower,0.0,initialHeading);
 
   }
 

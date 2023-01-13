@@ -35,7 +35,7 @@ public class Tank extends DriveTrain {
 
   }
 
-  public void setDTDrivePowers(){
+  public void updateDrivePowers(double forwardComponent, double sideComponent, double angularPower){
     // POSSIBLE/CONCEPT -- double theta = Math.atan(yPower/xPower); // if the robot needs to move some amount laterally, it can rotate to this angle and move in that direction
     
     leftDrive = xPower + yPower;
@@ -55,11 +55,32 @@ public class Tank extends DriveTrain {
     right.set(rightDrive);
   }
 
+  public void updateDrivePowers(){
+    // POSSIBLE/CONCEPT -- double theta = Math.atan(yPower/xPower); // if the robot needs to move some amount laterally, it can rotate to this angle and move in that direction
+    
+    leftDrive = xPower + yPower;
+    rightDrive = xPower - yPower;
+
+
+    if(Math.abs(leftDrive) >= 1.0){
+      leftDrive = leftDrive / Math.abs(leftDrive);
+      rightDrive = rightDrive / Math.abs(leftDrive);
+    }
+    if(Math.abs(rightDrive) >= 1.0){
+        rightDrive = rightDrive / Math.abs(rightDrive);
+        leftDrive = leftDrive / Math.abs(rightDrive);
+    }
+    
+    left.set(leftDrive);
+    right.set(rightDrive);
+  }
+
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
 
-    // setDTDrivePowers();
+    updateDrivePowers();
     // System.out.println("setting dt drive powers");
     
   }

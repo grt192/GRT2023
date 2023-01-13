@@ -99,7 +99,7 @@ public class RobotContainer {
 
         autonChooser = new SendableChooser<>();
         autonChooser.setDefaultOption("Skip auton", new InstantCommand());
-        driveRBumper.whileTrue(balanceCommand);
+        
         
     }
 
@@ -110,26 +110,28 @@ public class RobotContainer {
      * passing it to a {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
      */
     private void configureButtonBindings() {
-         /* 
-        swerveSubsystem.setDefaultCommand(new RunCommand(() -> {
-            double xPower = -driveController.getLeftY();
-            double yPower = -driveController.getLeftX();
-            double angularPower = -driveController.getRightX();
-            swerveSubsystem.setSwerveDrivePowers(xPower, yPower, angularPower);
-        }, swerveSubsystem));
 
+        driveRBumper.whileTrue(balanceCommand);
         driveAButton.onTrue(new InstantCommand(swerveSubsystem::resetFieldAngle, swerveSubsystem));
-        */
+        
+        dt.setDefaultCommand(new RunCommand(() -> {
+            if(dt instanceof Tank){
+                dt.updateDrivePowers(-0.75 * driveController.getLeftY(), 0.75 * driveController.getRightX(),0);
+            }  
+            if(dt instanceof SwerveSubsystem){
+                dt.updateDrivePowers(-driveController.getLeftY(), -driveController.getLeftX(),-driveController.getRightX());   
+            }
+            
+        }, dt));
     }
 
 
     void periodic(){
-        if(!driveRBumper.getAsBoolean()){
-            dt.setDrivePowers(-0.75 * driveController.getLeftY(),  0.75 * driveController.getRightX(), 0); // currently set up for tank
-            System.out.println("passing driver inputs" + -0.75 * driveController.getLeftY());
-        }
-        dt.setDTDrivePowers();
-        System.out.println("setting dt drive powers");
+        // if(!driveRBumper.getAsBoolean()){
+        //     dt.updateDrivePowers(-0.75 * driveController.getLeftY(),  0.75 * driveController.getRightX(), 0); // currently set up for tank
+        //     System.out.println("passing driver inputs" + -0.75 * driveController.getLeftY());
+        // }
+        
     }
 
 

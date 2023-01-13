@@ -8,11 +8,11 @@ public class DriveTrain extends SubsystemBase {
     double yPower;
     double angularPower;
 
-    public void setDrivePowers(double forwardComponent, double sideComponent, double angularPower){
-        xPower = forwardComponent;
-        yPower = sideComponent;
-        this.angularPower = angularPower;
-        System.out.println("dt received drive powers");
+    public void updateDrivePowers(double forwardComponent, double sideComponent, double angularPower){
+        // xPower = forwardComponent;
+        // yPower = sideComponent;
+        // this.angularPower = angularPower;
+        // System.out.println("dt received drive powers");
     }
 
 }
