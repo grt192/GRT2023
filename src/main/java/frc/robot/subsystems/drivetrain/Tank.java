@@ -59,7 +59,8 @@ public class Tank extends DriveTrain {
   public void periodic() {
     // This method will be called once per scheduler run
 
-    setDTDrivePowers();
+    // setDTDrivePowers();
+    // System.out.println("setting dt drive powers");
     
   }
 

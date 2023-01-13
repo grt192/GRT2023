@@ -18,11 +18,11 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.BalancerCommand;
 import frc.robot.jetson.JetsonConnection;
 
-import frc.robot.subsystems.Tank;
-import frc.robot.subsystems.swerve.MissileShellSwerveSubsystem;
-import frc.robot.subsystems.swerve.SwerveSubsystem;
-import frc.robot.subsystems.swerve.BaseSwerveSubsystem;
-import frc.robot.subsystems.swerve.SwerveSubsystem2020;
+import frc.robot.subsystems.drivetrain.Tank;
+import frc.robot.subsystems.drivetrain.MissileShellSwerveSubsystem;
+import frc.robot.subsystems.drivetrain.SwerveSubsystem;
+import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
+import frc.robot.subsystems.drivetrain.SwerveSubsystem2020;
 
 import frc.robot.subsystems.drivetrain.DriveTrain;
 
@@ -37,16 +37,16 @@ public class RobotContainer {
     // Subsystems
     private final BaseSwerveSubsystem swerveSubsystem;
     
-    private final Tank tank = new Tank();
     private final DriveTrain dt; // declare DT of choice 
+    
 
     private final AHRS ahrs;
 
 
-    private final JetsonConnection jetsonConnection;
+    //private final JetsonConnection jetsonConnection;
 
     // Controllers and buttons
-    private final Joystick joystick = new Joystick(2);
+    // private final Joystick joystick = new Joystick(2);
     private final GenericHID switchboard = new GenericHID(3);
     private final JoystickButton
         tlSwitch = new JoystickButton(switchboard, 3),
@@ -84,7 +84,7 @@ public class RobotContainer {
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
     public RobotContainer() {
-        dt = new DriveTrain(); // initialize DT of choice
+        dt = new Tank(); // initialize DT of choice
         ahrs = new AHRS(SPI.Port.kMXP);
         balanceCommand = new BalancerCommand(dt,ahrs); // pass DT of choice into balancer
 
@@ -126,7 +126,10 @@ public class RobotContainer {
     void periodic(){
         if(!driveRBumper.getAsBoolean()){
             dt.setDrivePowers(-0.75 * driveController.getLeftY(),  0.75 * driveController.getRightX(), 0); // currently set up for tank
+            System.out.println("passing driver inputs" + -0.75 * driveController.getLeftY());
         }
+        dt.setDTDrivePowers();
+        System.out.println("setting dt drive powers");
     }
 
 
