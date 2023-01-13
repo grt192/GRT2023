@@ -16,6 +16,16 @@ public class GripperSubsytem extends SubsystemBase{
         state = Value.kForward;
     }
 
+    //instant command method
+    public void GripToggle(){
+        if (state == Value.kForward){
+            state = Value.kReverse;
+        }
+        else {
+            state = Value.kForward;
+        }
+    }
+
     @Override
     public void periodic() {
         pfft.set(state);
