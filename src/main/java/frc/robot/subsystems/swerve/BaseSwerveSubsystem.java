@@ -29,7 +29,7 @@ public abstract class BaseSwerveSubsystem extends SubsystemBase {
     private final SwerveDriveKinematics kinematics;
 
     private final AHRS ahrs;
-    private double angleoffset = 0;
+    private double angleOffset = 0;
 
     public final double MAX_VEL; // Max robot tangential velocity, in m/s
     public final double MAX_ACCEL; // Max robot tangential acceleration, in m/s^2
@@ -221,14 +221,14 @@ public abstract class BaseSwerveSubsystem extends SubsystemBase {
      * This this has *no effect* on odometry.
      */
     public void resetFieldAngle() {
-        angleoffset = ahrs.getAngle();
+        angleOffset = ahrs.getAngle();
     }
 
     /**
      * Gets the gyro angle given by the NavX AHRS, inverted to be counterclockwise positive.
      * @return The robot heading as a Rotation2d.
      */
-    protected Rotation2d getGyroHeading() {
+    private Rotation2d getGyroHeading() {
         return Rotation2d.fromDegrees(-ahrs.getAngle());
     }
 
@@ -237,7 +237,7 @@ public abstract class BaseSwerveSubsystem extends SubsystemBase {
      * This is equivalent to `getGyroHeading()` but with an offset applied.
      * @return The robot heading (with offset) as a Rotation2d.
      */
-    protected Rotation2d getFieldHeading() {
-        return getGyroHeading().plus(new Rotation2d(angleoffset));
+    private Rotation2d getFieldHeading() {
+        return getGyroHeading().plus(Rotation2d.fromDegrees(angleOffset));
     }
 }
