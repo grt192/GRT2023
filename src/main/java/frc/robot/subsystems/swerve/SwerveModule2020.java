@@ -4,11 +4,11 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax.IdleMode;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Pair;
@@ -20,10 +20,9 @@ import frc.robot.motorcontrol.MotorUtil;
 
 /**
  * A swerve module with a NEO drive motor and a BAG steer motor, for running
- * swerve modules on
- * the 2020 robot.
+ * swerve modules on the 2020 robot.
  */
-public class SwerveModule2020 implements BaseSwerveModule{
+public class SwerveModule2020 implements BaseSwerveModule {
     private final CANSparkMax driveMotor;
     private final RelativeEncoder driveEncoder;
     private final SparkMaxPIDController drivePidController;
@@ -46,9 +45,7 @@ public class SwerveModule2020 implements BaseSwerveModule{
     private static final double steerFF = 0;
 
     public SwerveModule2020(int drivePort, int steerPort, double offsetRads) {
-
-        driveMotor = new CANSparkMax(drivePort, MotorType.kBrushless);
-        driveMotor.restoreFactoryDefaults();
+        driveMotor = MotorUtil.createSparkMax(drivePort);
         driveMotor.setIdleMode(IdleMode.kBrake);
 
         driveEncoder = driveMotor.getEncoder();
@@ -81,40 +78,28 @@ public class SwerveModule2020 implements BaseSwerveModule{
     }
 
     /**
-     * Testing function to get the current velocity of the drive motor.
-     * 
-     * @return The current velocity of the drive motor, in RPM.
-     */
-    public double getDriveVelocity() {
-        return driveEncoder.getVelocity();
-    }
-
-    /**
      * Gets the current state of the module as a `SwerveModuleState`.
-     * 
      * @return The state of the module.
      */
     public SwerveModulePosition getState() {
         return new SwerveModulePosition(
-                driveEncoder.getPosition(), // NOTE: this is only while the wheel velocity is in percent output instead
-                getAngle());
+            driveEncoder.getPosition(), // NOTE: this is only while the wheel velocity is in percent output instead
+            getAngle()
+        );
     }
 
     /**
      * Sets the desired state of the module.
-     * 
      * @param state The desired state of the module as a `SwerveModuleState`.
      */
     public void setDesiredState(SwerveModuleState state) {
         var optimized = optimizeModuleState(state, getAngle());
-        driveMotor.set(optimized.getFirst()); // NOTE: this is only while the wheel velocity is in percent output
-                                              // instead
+        driveMotor.set(optimized.getFirst()); // NOTE: this is only while the wheel velocity is in percent output instead
         steerMotor.set(ControlMode.Position, (optimized.getSecond() - offsetRads) / STEER_TICKS_TO_RADIANS);
     }
 
     /**
-     * Returns the current angle of the module. This differs from the raw encoder
-     * reading
+     * Returns the current angle of the module. This differs from the raw encoder reading
      * because this applies `offsetRads` to zero the module at a desired angle.
      * 
      * @return The current angle of the module, as a `Rotation2d`.
@@ -125,15 +110,12 @@ public class SwerveModule2020 implements BaseSwerveModule{
     }
 
     /**
-     * Optimizes a `SwerveModuleState` by inverting the wheel speeds and rotating
-     * the other direction
-     * if the delta angle is greater than 90 degrees. This method also handles angle
-     * wraparound.
+     * Optimizes a `SwerveModuleState` by inverting the wheel speeds and rotating the other direction
+     * if the delta angle is greater than 90 degrees. This method also handles angle wraparound.
      * 
-     * @param target       The target `SwerveModuleState`.
+     * @param target The target `SwerveModuleState`.
      * @param currentAngle The current angle of the module, as a `Rotation2d`.
-     * @return A pair representing [target velocity, target angle]. Note that
-     *         `offsetRads` will still need to be applied before PID.
+     * @return A pair representing [target velocity, target angle]. Note that `offsetRads` will still need to be applied before PID.
      */
     public static Pair<Double, Double> optimizeModuleState(SwerveModuleState target, Rotation2d currentAngle) {
         double angleRads = currentAngle.getRadians();
@@ -151,5 +133,4 @@ public class SwerveModule2020 implements BaseSwerveModule{
 
         return new Pair<>(targetVel, angleRads + deltaRads);
     }
-
 }

@@ -53,7 +53,6 @@ public final class Constants {
     }
 
     public static final class SwerveConstants2020 {
-        
         public static final int tlDrive = 14;
         public static final int tlSteer = 10;
         public static final double tlOffsetRads = 1.53398078789;
@@ -85,9 +84,5 @@ public final class Constants {
             Units.inchesToMeters(-13.1365),
             Units.inchesToMeters(-10.3865)
         );
-    }
-
-    public static final class ShuffleboardConstants {
-        public static final double UPDATE_TIME = 0.5; // seconds between each update
     }
 }
