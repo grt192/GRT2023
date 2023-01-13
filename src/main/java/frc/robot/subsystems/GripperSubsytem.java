@@ -12,6 +12,7 @@ public class GripperSubsytem extends SubsystemBase{
     DoubleSolenoid pfft = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 0, 1);
 
     public GripperSubsytem(){
+        //first set to forward
         state = Value.kForward;
     }
 

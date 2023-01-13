@@ -136,6 +136,7 @@ public class RobotContainer {
     }
 
     public void periodic(){
+        //check if button presses, switch state accordingly
         if (mechController.getAButtonPressed() == true){
             if (gripper.state == Value.kForward){
                 gripper.state = Value.kReverse;
