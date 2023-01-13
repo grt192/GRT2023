@@ -14,6 +14,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.constraint.SwerveDriveKinematicsConstraint;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 
+import frc.robot.subsystems.swerve.BaseSwerveSubsystem;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 
 public class FollowPathCommand extends SwerveControllerCommand {
@@ -28,7 +29,7 @@ public class FollowPathCommand extends SwerveControllerCommand {
      * @param swerveSubsystem The swerve subsystem.
      * @param trajectory The trajectory to follow.
      */
-    public FollowPathCommand(SwerveSubsystem swerveSubsystem, Trajectory trajectory) {
+    public FollowPathCommand(BaseSwerveSubsystem swerveSubsystem, Trajectory trajectory) {
         super(
             trajectory,
             swerveSubsystem::getRobotPosition,
@@ -55,7 +56,7 @@ public class FollowPathCommand extends SwerveControllerCommand {
      * @param end The end point of the trajectory as a Pose2d.
      * @param reversed Whether the trajectory is reversed.
      */
-    public FollowPathCommand(SwerveSubsystem swerveSubsystem, Pose2d start, List<Translation2d> waypoints, Pose2d end, boolean reversed) {
+    public FollowPathCommand(BaseSwerveSubsystem swerveSubsystem, Pose2d start, List<Translation2d> waypoints, Pose2d end, boolean reversed) {
         this(
             swerveSubsystem,
             // Target trajectory
@@ -82,7 +83,7 @@ public class FollowPathCommand extends SwerveControllerCommand {
      * @param waypoints A list of waypoints the robot must pass through as a List<Translation2d>.
      * @param end The end point of the trajectory as a Pose2d.
      */
-    public FollowPathCommand(SwerveSubsystem swerveSubsystem, Pose2d start, List<Translation2d> waypoints, Pose2d end) {
+    public FollowPathCommand(BaseSwerveSubsystem swerveSubsystem, Pose2d start, List<Translation2d> waypoints, Pose2d end) {
         this(swerveSubsystem, start, waypoints, end, false);
     }
 }

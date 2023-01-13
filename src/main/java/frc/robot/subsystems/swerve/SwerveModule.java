@@ -22,7 +22,7 @@ import frc.robot.motorcontrol.MotorUtil;
 /**
  * A swerve module with a Falcon drive motor and a NEO steer motor.
  */
-public class SwerveModule {
+public class SwerveModule implements BaseSwerveModule {
     // private final WPI_TalonFX driveMotor;
     private final CANSparkMax driveMotor;
     private final RelativeEncoder driveEncoder;
@@ -49,7 +49,7 @@ public class SwerveModule {
 
     /**
      * Constructs a SwerveModule from a drive and steer motor CAN ID and an angle offset.
-     * The offset will be applied to all angle readings to change the zero point of the 
+     * The offset will be applied to all angle readings to change the zero point of the
      * module.
      * 
      * @param drivePort The drive TalonFX CAN ID.
@@ -58,16 +58,16 @@ public class SwerveModule {
      */
     public SwerveModule(int drivePort, int steerPort, double offsetRads) {
         /*
-        driveMotor = MotorUtil.createTalonFX(drivePort);
-        driveMotor.setNeutralMode(NeutralMode.Brake);
-
-        driveMotor.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
-        driveMotor.setSensorPhase(false);
-        driveMotor.config_kP(0, driveP);
-        driveMotor.config_kI(0, driveI);
-        driveMotor.config_kD(0, driveD);
-        driveMotor.config_kF(0, driveFF);
-        */
+         * driveMotor = MotorUtil.createTalonFX(drivePort);
+         * driveMotor.setNeutralMode(NeutralMode.Brake);
+         * 
+         * driveMotor.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
+         * driveMotor.setSensorPhase(false);
+         * driveMotor.config_kP(0, driveP);
+         * driveMotor.config_kI(0, driveI);
+         * driveMotor.config_kD(0, driveD);
+         * driveMotor.config_kF(0, driveFF);
+         */
 
         driveMotor = MotorUtil.createSparkMax(drivePort);
         driveMotor.setIdleMode(IdleMode.kBrake);
@@ -103,7 +103,7 @@ public class SwerveModule {
     }
 
     /**
-     * Constructs a SwerveModule from a drive and steer motor CAN ID, 
+     * Constructs a SwerveModule from a drive and steer motor CAN ID,
      * defaulting the angle offset to 0.
      * 
      * @param drivePort The drive TalonFX CAN ID.
@@ -119,10 +119,9 @@ public class SwerveModule {
      */
     public SwerveModulePosition getState() {
         return new SwerveModulePosition(
-            // driveMotor.getSelectedSensorPosition() * DRIVE_TICKS_TO_METERS,
-            driveEncoder.getPosition(),
-            getAngle()
-        );
+                // driveMotor.getSelectedSensorPosition() * DRIVE_TICKS_TO_METERS,
+                driveEncoder.getPosition(),
+                getAngle());
     }
 
     /**
@@ -131,13 +130,14 @@ public class SwerveModule {
      */
     public void setDesiredState(SwerveModuleState state) {
         SwerveModuleState optimized = SwerveModuleState.optimize(state, getAngle());
-        // driveMotor.set(ControlMode.Velocity, optimized.getFirst() / (DRIVE_TICKS_TO_METERS * 10.0));
+        // driveMotor.set(ControlMode.Velocity, optimized.getFirst() /
+        // (DRIVE_TICKS_TO_METERS * 10.0));
         driveMotor.set(optimized.speedMetersPerSecond); // Only while the module is in percent output
         steerPidController.setReference(optimized.angle.getRadians() - offsetRads, ControlType.kPosition);
     }
 
     /**
-     * Returns the current angle of the module. This differs from the raw encoder reading 
+     * Returns the current angle of the module. This differs from the raw encoder reading
      * because this applies `offsetRads` to zero the module at a desired angle.
      * 
      * @return The current angle of the module, as a `Rotation2d`.
@@ -154,6 +154,7 @@ public class SwerveModule {
         public TopLeft(int drivePort, int steerPort) {
             super(drivePort, steerPort, 0.0);
         }
+
         public TopLeft(int drivePort, int steerPort, double offsetRads) {
             super(drivePort, steerPort, offsetRads);
         }
@@ -167,6 +168,7 @@ public class SwerveModule {
         public TopRight(int drivePort, int steerPort) {
             super(drivePort, steerPort, -Math.PI / 2.0);
         }
+
         public TopRight(int drivePort, int steerPort, double offsetRads) {
             super(drivePort, steerPort, offsetRads - Math.PI / 2.0);
         }
@@ -180,6 +182,7 @@ public class SwerveModule {
         public BottomLeft(int drivePort, int steerPort) {
             super(drivePort, steerPort, Math.PI / 2.0);
         }
+
         public BottomLeft(int drivePort, int steerPort, double offsetRads) {
             super(drivePort, steerPort, offsetRads + Math.PI / 2.0);
         }
@@ -193,6 +196,7 @@ public class SwerveModule {
         public BottomRight(int drivePort, int steerPort) {
             super(drivePort, steerPort, Math.PI);
         }
+
         public BottomRight(int drivePort, int steerPort, double offsetRads) {
             super(drivePort, steerPort, offsetRads + Math.PI);
         }

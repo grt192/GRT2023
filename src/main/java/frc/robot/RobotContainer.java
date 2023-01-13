@@ -16,6 +16,8 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.jetson.JetsonConnection;
 import frc.robot.subsystems.swerve.MissileShellSwerveSubsystem;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
+import frc.robot.subsystems.swerve.BaseSwerveSubsystem;
+import frc.robot.subsystems.swerve.SwerveSubsystem2020;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -26,8 +28,8 @@ import frc.robot.subsystems.swerve.SwerveSubsystem;
  */
 public class RobotContainer {
     // Subsystems
-    //private final SwerveSubsystem swerveSubsystem;
-    private final MissileShellSwerveSubsystem swerveSubsystem;
+    private final BaseSwerveSubsystem swerveSubsystem;
+    // private final MissileShellSwerveSubsystem swerveSubsystem;
 
     private final JetsonConnection jetsonConnection;
 
@@ -70,8 +72,8 @@ public class RobotContainer {
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
     public RobotContainer() {
-        //swerveSubsystem = new SwerveSubsystem();
-        swerveSubsystem = new MissileShellSwerveSubsystem();
+        swerveSubsystem = new SwerveSubsystem2020();
+        // swerveSubsystem = new MissileShellSwerveSubsystem();
 
         jetsonConnection = new JetsonConnection();
         jetsonConnection.start();
@@ -98,6 +100,8 @@ public class RobotContainer {
             double angularPower = -driveController.getRightX();
             swerveSubsystem.setSwerveDrivePowers(xPower, yPower, angularPower);
         }, swerveSubsystem));
+
+        driveAButton.onTrue(new InstantCommand(swerveSubsystem::resetFieldAngle, swerveSubsystem));
     }
 
     /**
