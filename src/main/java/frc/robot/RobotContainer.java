@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import com.fasterxml.jackson.databind.JsonSerializable.Base;
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.SPI;
 
@@ -24,7 +25,7 @@ import frc.robot.subsystems.drivetrain.SwerveSubsystem;
 import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
 import frc.robot.subsystems.drivetrain.SwerveSubsystem2020;
 
-import frc.robot.subsystems.drivetrain.DriveTrain;
+import frc.robot.subsystems.drivetrain.Drivetrain;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -36,7 +37,7 @@ import frc.robot.subsystems.drivetrain.DriveTrain;
 public class RobotContainer {
     // Subsystems
     
-    private final DriveTrain dt; // declare DT of choice 
+    private final Drivetrain dt; // declare DT of choice 
     
 
     private final AHRS ahrs;
@@ -111,7 +112,9 @@ public class RobotContainer {
     private void configureButtonBindings() {
 
         driveRBumper.whileTrue(balanceCommand);
-        // driveAButton.onTrue(new InstantCommand(dt::resetFieldAngle, dt));
+        // if(dt instanceof BaseSwerveSubsystem){   
+        //     driveAButton.onTrue(new InstantCommand(dt::resetFieldAngle, dt));
+        // }
         
         dt.setDefaultCommand(new RunCommand(() -> {
             if(dt instanceof Tank){

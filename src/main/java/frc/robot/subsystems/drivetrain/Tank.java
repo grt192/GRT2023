@@ -11,7 +11,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX; // internal notfalcon CIM
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.motorcontrol.MotorUtil;
 
-public class Tank extends DriveTrain {
+public class Tank extends Drivetrain {
 
     private final WPI_TalonSRX left = MotorUtil.createTalonSRX(LEFT_MAIN); // left motor
     private final WPI_TalonSRX left2 = MotorUtil.createTalonSRX(LEFT_SECONDARY); // left motor

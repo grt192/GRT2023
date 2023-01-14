@@ -17,7 +17,7 @@ import edu.wpi.first.wpilibj.Timer;
  * The superclass for the current `SwerveSubsystem` and `SwerveSubsystem2020` that contains all the
  * logic for managing module states, updating odometry, and taking driver input.
  */
-public abstract class BaseSwerveSubsystem extends DriveTrain {
+public abstract class BaseSwerveSubsystem extends Drivetrain {
     private final BaseSwerveModule topLeftModule;
     private final BaseSwerveModule topRightModule;
     private final BaseSwerveModule bottomLeftModule;
