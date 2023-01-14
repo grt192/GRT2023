@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import com.fasterxml.jackson.databind.JsonSerializable.Base;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.Joystick;
@@ -12,12 +13,12 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-
+import frc.robot.commands.BalancerCommand;
 import frc.robot.jetson.JetsonConnection;
-import frc.robot.subsystems.swerve.MissileShellSwerveSubsystem;
-import frc.robot.subsystems.swerve.SwerveSubsystem;
-import frc.robot.subsystems.swerve.BaseSwerveSubsystem;
-import frc.robot.subsystems.swerve.SwerveSubsystem2020;
+
+import frc.robot.subsystems.drivetrain.Tank;
+import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
+import frc.robot.subsystems.drivetrain.Drivetrain;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -28,13 +29,12 @@ import frc.robot.subsystems.swerve.SwerveSubsystem2020;
  */
 public class RobotContainer {
     // Subsystems
-    private final BaseSwerveSubsystem swerveSubsystem;
-    // private final MissileShellSwerveSubsystem swerveSubsystem;
+    private final Drivetrain dt; // declare DT of choice 
 
-    private final JetsonConnection jetsonConnection;
+    //private final JetsonConnection jetsonConnection;
 
     // Controllers and buttons
-    private final Joystick joystick = new Joystick(2);
+    // private final Joystick joystick = new Joystick(2);
     private final GenericHID switchboard = new GenericHID(3);
     private final JoystickButton
         tlSwitch = new JoystickButton(switchboard, 3),
@@ -67,22 +67,23 @@ public class RobotContainer {
 
     // Commands
     private final SendableChooser<Command> autonChooser;
-
+    private final Command balanceCommand;
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
     public RobotContainer() {
-        swerveSubsystem = new SwerveSubsystem2020();
-        // swerveSubsystem = new MissileShellSwerveSubsystem();
+        dt = new Tank(); // initialize DT of choice
+        balanceCommand = new BalancerCommand(dt); // pass DT of choice into balancer
 
-        jetsonConnection = new JetsonConnection();
-        jetsonConnection.start();
+        // jetsonConnection = new JetsonConnection();
+        // jetsonConnection.start();
 
         // Configure the button bindings
         configureButtonBindings();
 
         // Add auton sequences to the chooser and add the chooser to shuffleboard
         // TODO: shuffleboard
+
         autonChooser = new SendableChooser<>();
         autonChooser.setDefaultOption("Skip auton", new InstantCommand());
     }
@@ -94,14 +95,22 @@ public class RobotContainer {
      * passing it to a {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
      */
     private void configureButtonBindings() {
-        swerveSubsystem.setDefaultCommand(new RunCommand(() -> {
-            double xPower = -driveController.getLeftY();
-            double yPower = -driveController.getLeftX();
-            double angularPower = -driveController.getRightX();
-            swerveSubsystem.setSwerveDrivePowers(xPower, yPower, angularPower);
-        }, swerveSubsystem));
 
-        driveAButton.onTrue(new InstantCommand(swerveSubsystem::resetFieldAngle, swerveSubsystem));
+        driveRBumper.whileTrue(balanceCommand);
+         if(dt instanceof BaseSwerveSubsystem){   
+             driveAButton.onTrue(new InstantCommand(((BaseSwerveSubsystem)dt)::resetFieldAngle, dt));
+        }
+        
+        dt.setDefaultCommand(new RunCommand(() -> {
+            if(dt instanceof Tank){
+                dt.updateDrivePowers(-0.75 * driveController.getLeftY(), 0.75 * driveController.getRightX(),0);
+                //System.out.println("calling driver");
+            }  
+            if(dt instanceof BaseSwerveSubsystem){
+                dt.updateDrivePowers(-driveController.getLeftY(), -driveController.getLeftX(),-driveController.getRightX());   
+            }
+            
+        }, dt));
     }
 
     /**

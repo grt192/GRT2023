@@ -1,4 +1,4 @@
-package frc.robot.subsystems.swerve;
+package frc.robot.subsystems.drivetrain;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
@@ -45,6 +45,7 @@ public class SwerveModule2020 implements BaseSwerveModule {
     private static final double steerFF = 0;
 
     public SwerveModule2020(int drivePort, int steerPort, double offsetRads) {
+        
         driveMotor = MotorUtil.createSparkMax(drivePort);
         driveMotor.setIdleMode(IdleMode.kBrake);
 
