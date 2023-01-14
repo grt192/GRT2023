@@ -10,7 +10,6 @@ public class Drivetrain extends SubsystemBase {
 
     public Drivetrain(){
         ahrs = new AHRS(SPI.Port.kMXP);
-
     }
 
     public void updateDrivePowers(double forwardComponent, double sideComponent, double angularPower){}

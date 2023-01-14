@@ -5,8 +5,6 @@
 package frc.robot;
 
 import com.fasterxml.jackson.databind.JsonSerializable.Base;
-
-
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.Joystick;
@@ -19,11 +17,7 @@ import frc.robot.commands.BalancerCommand;
 import frc.robot.jetson.JetsonConnection;
 
 import frc.robot.subsystems.drivetrain.Tank;
-import frc.robot.subsystems.drivetrain.MissileShellSwerveSubsystem;
-import frc.robot.subsystems.drivetrain.SwerveSubsystem;
 import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
-import frc.robot.subsystems.drivetrain.SwerveSubsystem2020;
-
 import frc.robot.subsystems.drivetrain.Drivetrain;
 
 /**
@@ -35,12 +29,7 @@ import frc.robot.subsystems.drivetrain.Drivetrain;
  */
 public class RobotContainer {
     // Subsystems
-    
     private final Drivetrain dt; // declare DT of choice 
-    
-
-    
-
 
     //private final JetsonConnection jetsonConnection;
 
@@ -84,8 +73,7 @@ public class RobotContainer {
      */
     public RobotContainer() {
         dt = new Tank(); // initialize DT of choice
-        
-        balanceCommand = new BalancerCommand(dt,dt.ahrs); // pass DT of choice into balancer
+        balanceCommand = new BalancerCommand(dt); // pass DT of choice into balancer
 
         // jetsonConnection = new JetsonConnection();
         // jetsonConnection.start();
@@ -98,8 +86,6 @@ public class RobotContainer {
 
         autonChooser = new SendableChooser<>();
         autonChooser.setDefaultOption("Skip auton", new InstantCommand());
-        
-        
     }
 
     /**
@@ -118,6 +104,7 @@ public class RobotContainer {
         dt.setDefaultCommand(new RunCommand(() -> {
             if(dt instanceof Tank){
                 dt.updateDrivePowers(-0.75 * driveController.getLeftY(), 0.75 * driveController.getRightX(),0);
+                //System.out.println("calling driver");
             }  
             if(dt instanceof BaseSwerveSubsystem){
                 dt.updateDrivePowers(-driveController.getLeftY(), -driveController.getLeftX(),-driveController.getRightX());   
@@ -125,7 +112,6 @@ public class RobotContainer {
             
         }, dt));
     }
-
 
     /**
      * Use this to pass the autonomous command to the main {@link Robot} class.
