@@ -110,6 +110,7 @@ public final class Constants {
 
     public static final class MoverConstants {
         public static final int ROTATION_MOTOR_PORT = -1; //STUB
+        public static final int ROTATION_FOLLOWER_MOTOR_PORT = -1; //STUB
         public static final int EXTENSION_MOTOR_PORT = -1; //STUB
 
         public static final double ROTATION_GEAR_RATIO = 102.67;

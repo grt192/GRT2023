@@ -296,6 +296,7 @@ public class RobotContainer {
         moverSubsystem.setDefaultCommand(new RunCommand(() -> {
             double xPower = -mechController.getLeftX();
             double yPower = -mechController.getRightY();
+            moverSubsystem.setPowers(xPower, yPower);
         }, moverSubsystem));
 
         mechYButton.onTrue(new InstantCommand(() ->{

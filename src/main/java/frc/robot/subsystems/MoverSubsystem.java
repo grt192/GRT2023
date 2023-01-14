@@ -8,15 +8,19 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMax.SoftLimitDirection;
 
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.motorcontrol.MotorUtil;
 import static frc.robot.Constants.MoverConstants.*;
 
 public class MoverSubsystem extends SubsystemBase{
-
     private final CANSparkMax rotationMotor;
     private final RelativeEncoder rotationEncoder;
     private final SparkMaxPIDController rotationPidController;
+
+    private final CANSparkMax rotationMotorFollower;
 
     private final CANSparkMax extensionMotor;
     private final RelativeEncoder extensionEncoder;
@@ -38,6 +42,15 @@ public class MoverSubsystem extends SubsystemBase{
 
     private MoverPosition currentState = MoverPosition.GROUND;
 
+    private final boolean TESTING = true;
+
+    private final ShuffleboardTab shuffleboardTab = Shuffleboard.getTab("Mover Subsystem");
+    private final GenericEntry currentAngleEntry = shuffleboardTab.add("current angle",  0.0).getEntry();
+    private final GenericEntry currentExtensionEntry = shuffleboardTab.add("current extension", 0.0).getEntry();
+    private final GenericEntry targetAngleEntry = shuffleboardTab.add("target angle", 0.0).getEntry();
+    private final GenericEntry targetExtensionEntry = shuffleboardTab.add("target extension", 0.0).getEntry();
+
+
     public enum GamePiece {
         CONE, CUBE;
     }
@@ -50,8 +63,8 @@ public class MoverSubsystem extends SubsystemBase{
         CONEMID(0,0), CONEHIGH(0,0)
         ;
 
-        public double angle; //Radians
-        public double extension; //Meters, 0 extension is 25 inches from pivot
+        public double angle; //radians, 0 is vertical
+        public double extension; //meters, 0 extension is 25 inches from pivot
 
         private MoverPosition(double angle, double extension){
             this.angle = angle;
@@ -62,6 +75,8 @@ public class MoverSubsystem extends SubsystemBase{
     public MoverSubsystem(){
         rotationMotor = MotorUtil.createSparkMax(ROTATION_MOTOR_PORT);
         rotationMotor.setIdleMode(IdleMode.kBrake);
+        rotationMotorFollower = MotorUtil.createSparkMax(ROTATION_FOLLOWER_MOTOR_PORT);
+        rotationMotorFollower.follow(rotationMotor);
 
         rotationEncoder = rotationMotor.getEncoder();
         rotationEncoder.setPositionConversionFactor(ROTATION_ROT_TO_RAD);
@@ -97,7 +112,14 @@ public class MoverSubsystem extends SubsystemBase{
 
     @Override
     public void periodic(){
-        goTo(currentState.angle + angleOffset, currentState.extension + extensionOffset);
+        if(!TESTING){
+            goTo(currentState.angle + angleOffset, currentState.extension + extensionOffset);
+        }
+
+        currentAngleEntry.setDouble(Units.radiansToDegrees(rotationEncoder.getPosition()));
+        currentExtensionEntry.setDouble(Units.metersToInches(extensionEncoder.getPosition()));
+        targetAngleEntry.setDouble(Units.radiansToDegrees(currentState.angle + angleOffset));
+        targetExtensionEntry.setDouble(Units.metersToInches(currentState.extension + extensionOffset));
     }
 
 
@@ -122,9 +144,22 @@ public class MoverSubsystem extends SubsystemBase{
         return distance - Units.inchesToMeters(25);
     }
 
+    public void setPowers(double xPower, double yPower){
+        if(TESTING){
+            setMotorPowers(xPower, yPower);
+        } else {
+            setOffsetPowers(xPower, yPower);
+        }
+    }
     public void setOffsetPowers(double xPower, double yPower){
+        
         angleOffset += xPower * ANGLE_OFFSET_SPEED;
         extensionOffset += yPower * EXTENSION_OFFSET_SPEED;
+    }
+
+    public void setMotorPowers(double xPower, double yPower){
+        rotationMotor.set(xPower * .2);
+        extensionMotor.set(yPower * .2);
     }
 
 }
