@@ -5,12 +5,11 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 /**
  * A shell swerve subsystem to run a single swerve module on the missile.
  */
-public class MissileShellSwerveSubsystem extends SubsystemBase {
+public class MissileShellSwerveSubsystem extends BaseDrivetrain {
     private final SwerveModule module;
     private final SwerveDriveKinematics kinematics;
 
@@ -43,7 +42,7 @@ public class MissileShellSwerveSubsystem extends SubsystemBase {
      * @param angularPower The angular (rotational) power [-1.0, 1.0].
      * @param relative Whether to use relative powers instead of field-oriented control. This parameter has no effect.
      */
-    public void setSwerveDrivePowers(double xPower, double yPower, double angularPower, boolean relative) {
+    public void setDrivePowers(double xPower, double yPower, double angularPower, boolean relative) {
         // If drivers are sending no input, stop all modules but hold their current angle.
         if (xPower == 0.0 && yPower == 0.0 && angularPower == 0.0) {
             this.states[0] = new SwerveModuleState(0.0, this.states[0].angle);
@@ -63,5 +62,16 @@ public class MissileShellSwerveSubsystem extends SubsystemBase {
 
         // Calculate swerve module states from desired chassis speeds.
         this.states = kinematics.toSwerveModuleStates(speeds);
+    }
+
+    /**
+     * Sets the swerve module states of this subsystem from provided field-centric
+     * swerve drive powers.
+     * 
+     * @param xPower The power [-1.0, 1.0] in the x (forward) direction.
+     */
+    @Override
+    public void setDrivePowers(double xPower) {
+        setDrivePowers(xPower, 0.0, 0.0, false);
     }
 }

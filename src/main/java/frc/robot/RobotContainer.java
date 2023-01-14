@@ -17,6 +17,7 @@ import frc.robot.commands.BalancerCommand;
 import frc.robot.jetson.JetsonConnection;
 import frc.robot.subsystems.drivetrain.TankSubsystem;
 import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
+import frc.robot.subsystems.drivetrain.SwerveSubsystem2020;
 import frc.robot.subsystems.drivetrain.BaseDrivetrain;
 
 /**
@@ -72,7 +73,7 @@ public class RobotContainer {
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
     public RobotContainer() {
-        driveSubsystem = new TankSubsystem();
+        driveSubsystem = new SwerveSubsystem2020();
         balancerCommand = new BalancerCommand(driveSubsystem);
 
         // jetsonConnection = new JetsonConnection();
