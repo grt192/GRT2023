@@ -59,12 +59,11 @@ public final class Constants {
     public static final class JointedArmConstants {
         
         public static final int ELEVATOR_MOTOR_PORT = 4;
-        public static final int ELEVATOR_GEAR_RATIO = 0; // TODO
 
         public static final int SHOULDER_PFFT_PORT = 3; // PCM
 
         public static final int ELBOW_MOTOR_PORT = 17;
         public static final int ELBOW_FOLLOWER_MOTOR_PORT = 18;
-        public static final int ELBOW_GEAR_RATIO = 0; // TODO
+        public static final double ELBOW_GEAR_RATIO = 14.0 / 16.0; 
     }
 }
