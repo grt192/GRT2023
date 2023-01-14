@@ -109,9 +109,6 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
             bottomLeftModule.setDesiredState(new SwerveModuleState(0.0, new Rotation2d(-Math.PI / 4.0)));
             bottomRightModule.setDesiredState(new SwerveModuleState(0.0, new Rotation2d(Math.PI / 4.0)));
         } else {
-            // Desaturate speeds to ensure all velocities are under MAX_VEL after kinematics.
-            SwerveDriveKinematics.desaturateWheelSpeeds(states, MAX_VEL);
-
             topLeftModule.setDesiredState(states[0]);
             topRightModule.setDesiredState(states[1]);
             bottomLeftModule.setDesiredState(states[2]);
@@ -147,8 +144,13 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
             relative ? new Rotation2d() : getFieldHeading()
         );
 
-        // Calculate swerve module states from desired chassis speeds
+        // Calculate swerve module states from desired chassis speeds, desaturating
+        // them to ensure all velocities are under MAX_VEL after kinematics.
         this.states = kinematics.toSwerveModuleStates(speeds);
+        SwerveDriveKinematics.desaturateWheelSpeeds(
+            this.states, speeds, 
+            MAX_VEL, MAX_VEL, MAX_OMEGA
+        );
     }
 
     /**
