@@ -19,6 +19,8 @@ import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
 import frc.robot.subsystems.drivetrain.SwerveSubsystem2020;
 import frc.robot.subsystems.drivetrain.BaseDrivetrain;
 import frc.robot.subsystems.GripperSubsytem;
+import frc.robot.subsystems.RollerSubsystem;
+
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -34,6 +36,8 @@ public class RobotContainer {
     //private final JetsonConnection jetsonConnection;
 
     private final GripperSubsytem gripper;
+
+    private final RollerSubsystem roller;
 
     // Controllers and buttons
     // private final Joystick joystick = new Joystick(2);
@@ -83,6 +87,8 @@ public class RobotContainer {
 
         gripper = new GripperSubsytem();
 
+        roller = new RollerSubsystem();
+
         // Configure the button bindings
         configureButtonBindings();
 
@@ -125,6 +131,7 @@ public class RobotContainer {
         }
         
         mechAButton.onTrue(new InstantCommand(gripper::GripToggle, gripper));
+        mechBButton.onTrue(new InstantCommand(roller::RollToggle, roller));
     }
 
     /**

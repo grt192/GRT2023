@@ -93,4 +93,9 @@ public final class Constants {
             Units.inchesToMeters(-10.3865)
         );
     }
+
+    public static final class RollerConstants {
+        public static final int LEFTID = 0;
+        public static final int RIGHTID = 1;
+    }
 }
