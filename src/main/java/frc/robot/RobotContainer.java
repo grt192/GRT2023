@@ -97,19 +97,27 @@ public class RobotContainer {
     private void configureButtonBindings() {
         driveRBumper.whileTrue(balancerCommand);
 
-        if (driveSubsystem instanceof BaseSwerveSubsystem) {   
-            driveAButton.onTrue(new InstantCommand(((BaseSwerveSubsystem) driveSubsystem)::resetFieldAngle, driveSubsystem));
-        }
+        if (driveSubsystem instanceof BaseSwerveSubsystem) {
+            final BaseSwerveSubsystem swerveSubsystem = (BaseSwerveSubsystem) driveSubsystem;
 
-        driveSubsystem.setDefaultCommand(new RunCommand(() -> {
-            if (driveSubsystem instanceof TankSubsystem) {
-                driveSubsystem.setDrivePowers(-0.75 * driveController.getLeftY(), 0.75 * driveController.getRightX(), 0);
-                //System.out.println("calling driver");
-            }  
-            if (driveSubsystem instanceof BaseSwerveSubsystem) {
-                driveSubsystem.setDrivePowers(-driveController.getLeftY(), -driveController.getLeftX(), -driveController.getRightX());   
-            }
-        }, driveSubsystem));
+            swerveSubsystem.setDefaultCommand(new RunCommand(() -> {
+                double xPower = -driveController.getLeftY();
+                double yPower = -driveController.getLeftX();
+                double angularPower = -driveController.getRightX();
+                boolean relative = driveController.getRightTriggerAxis() > 0.75;
+                swerveSubsystem.setDrivePowers(xPower, yPower, angularPower, relative);
+            }, swerveSubsystem));
+
+            driveAButton.onTrue(new InstantCommand(swerveSubsystem::resetFieldAngle, swerveSubsystem));
+        } else if (driveSubsystem instanceof TankSubsystem) {
+            final TankSubsystem tankSubsystem = (TankSubsystem) driveSubsystem;
+
+            tankSubsystem.setDefaultCommand(new RunCommand(() -> {
+                double forwardPower = -0.75 * driveController.getLeftY();
+                double turnPower = 0.75 * driveController.getRightX();
+                tankSubsystem.setDrivePowers(forwardPower, turnPower);
+            }, tankSubsystem));
+        }
     }
 
     /**

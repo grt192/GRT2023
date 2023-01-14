@@ -34,13 +34,26 @@ public class TankSubsystem extends BaseDrivetrain {
         rightFollow.setInverted(InvertType.FollowMaster);
     }
 
-    @Override
-    public void setDrivePowers(double forwardComponent, double sideComponent, double angularPower) {
+    /**
+     * Drives the tank subsystem with the given forward and turn powers.
+     * @param forwardPower The power [-1.0, 1.0] in the forward direction.
+     * @param turnPower The power [-1.0, 1.0] in the angular direction.
+     */
+    public void setDrivePowers(double forwardPower, double turnPower) {
         // POSSIBLE/CONCEPT -- double theta = Math.atan(yPower/xPower); // if the robot needs to move some amount laterally, it can rotate to this angle and move in that direction
 
         // System.out.println("Calculating DT power");
-        leftDrive = forwardComponent + sideComponent;
-        rightDrive = forwardComponent - sideComponent;
+        leftDrive = forwardPower + turnPower;
+        rightDrive = forwardPower - turnPower;
+    }
+
+    /**
+     * Drives the tank subsystem with the given forward power.
+     * @param forwardPower The power [-1.0, 1.0] in the forward direction.
+     */
+    @Override
+    public void setDrivePowers(double fowardPower) {
+        setDrivePowers(fowardPower, 0.0);
     }
 
     @Override

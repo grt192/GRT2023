@@ -157,11 +157,10 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
      * swerve drive powers.
      * 
      * @param xPower The power [-1.0, 1.0] in the x (forward) direction.
-     * @param yPower The power [-1.0, 1.0] in the y (left) direction.
-     * @param angularPower The angular (rotational) power [-1.0, 1.0].
      */
-    public void setDrivePowers(double xPower, double yPower, double angularPower) {
-        setDrivePowers(xPower, yPower, angularPower, false);
+    @Override
+    public void setDrivePowers(double xPower) {
+        setDrivePowers(xPower, 0.0, 0.0, false);
     }
 
     /**

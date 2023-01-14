@@ -92,7 +92,8 @@ public class BalancerCommand extends CommandBase {
             default:
                 break;
         }
-        driveSubsystem.setDrivePowers(returnPower,0.0, 0.0);
+
+        driveSubsystem.setDrivePowers(returnPower);
     }
 
     // Called once the command ends or is interrupted.
