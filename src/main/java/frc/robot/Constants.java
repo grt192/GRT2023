@@ -19,10 +19,10 @@ import edu.wpi.first.math.util.Units;
  */
 public final class Constants {
     public static final class TankConstants {
-        public static final int LEFT_MAIN = 12;
-        public static final int LEFT_FOLLOW = 13;
-        public static final int RIGHT_MAIN = 14;
-        public static final int RIGHT_FOLLOW = 15;
+        public static final int LEFT_MAIN = 3;
+        public static final int LEFT_FOLLOW = 2;
+        public static final int RIGHT_MAIN = 0;
+        public static final int RIGHT_FOLLOW = 1;
     }
 
     public static final class SwerveConstants {
