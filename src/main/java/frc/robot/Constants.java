@@ -94,8 +94,14 @@ public final class Constants {
         );
     }
 
+    public static final class GripperConstants {
+        public static final int FORCHAN = 0;
+        public static final int REVCHAN = 1;
+    }
+
     public static final class RollerConstants {
-        public static final int LEFTID = 0;
-        public static final int RIGHTID = 1;
+        public static final int LEFTID = 15;
+        public static final int RIGHTID = 16;
+        public static final int OUT_DELAY = 2000;
     }
 }

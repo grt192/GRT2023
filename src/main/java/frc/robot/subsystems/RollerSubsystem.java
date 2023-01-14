@@ -19,39 +19,50 @@ public class RollerSubsystem extends SubsystemBase{
     private final DigitalInput crimitswitch = new DigitalInput(0);
     //timer
     public Timer timere = new Timer();
+
     //roller state 
-    public String rollstate;
+    //public String rollstate;
+
+    public enum Rollstate {
+        stop, in , out
+    }
+
+    public Rollstate rollstate;
 
     //constructor
     public RollerSubsystem(){
-        rollstate = "stop";
+        rollstate = Rollstate.stop;
         rightbeak.follow(leftbeak);
     }
 
     //toggles roll state when B button is pressed
-    public void RollToggle(){
-        if (rollstate == "in"){
-            rollstate = "out";
+    public void rollToggle(){
+        if (rollstate == Rollstate.in){
+            rollstate = Rollstate.out;
         }
         else{
-            rollstate = "in";
+            rollstate = Rollstate.in;
         }
     }
 
     @Override
     public void periodic() {
         //if wheels must intake, and the limit switch is not pressed, turn on motors
-        if (rollstate == "in" && !crimitswitch.get()){
+        if (rollstate == Rollstate.in && !crimitswitch.get()){
             leftbeak.set(.5);
         }
         //if wheels must place, turn on timer then turn on motors for 2 seconds, reset timer
-        else if (rollstate == "out"){
-            timere.start();
-            while (timere.get() < 2000){
+        else if (rollstate == Rollstate.out){
+            if (timere.get() == 0){
+                timere.start();
+            }
+            if (timere.get() < OUT_DELAY){
                 leftbeak.set(-.5);
             }
-            rollstate = "stop";
+            else{
+            rollstate = Rollstate.stop;
             timere.reset();
+            }
         }
         //if limit switch is hit, or place has placed, keep motor off
         else{

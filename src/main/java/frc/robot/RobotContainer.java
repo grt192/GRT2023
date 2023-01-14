@@ -130,8 +130,8 @@ public class RobotContainer {
             }, tankSubsystem));
         }
         
-        mechAButton.onTrue(new InstantCommand(gripper::GripToggle, gripper));
-        mechBButton.onTrue(new InstantCommand(roller::RollToggle, roller));
+        mechAButton.onTrue(new InstantCommand(gripper::gripToggle, gripper));
+        mechBButton.onTrue(new InstantCommand(roller::rollToggle, roller));
     }
 
     /**
