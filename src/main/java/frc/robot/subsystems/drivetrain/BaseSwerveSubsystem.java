@@ -54,6 +54,7 @@ public abstract class BaseSwerveSubsystem extends Drivetrain {
         double maxVel, double maxAccel, double maxOmega,
         SwerveDriveKinematics kinematics
     ) {
+        super();
         MAX_VEL = maxVel;
         MAX_ACCEL = maxAccel;
         MAX_OMEGA = maxOmega;

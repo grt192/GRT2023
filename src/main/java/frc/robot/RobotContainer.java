@@ -5,8 +5,7 @@
 package frc.robot;
 
 import com.fasterxml.jackson.databind.JsonSerializable.Base;
-import com.kauailabs.navx.frc.AHRS;
-import edu.wpi.first.wpilibj.SPI;
+
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -40,7 +39,7 @@ public class RobotContainer {
     private final Drivetrain dt; // declare DT of choice 
     
 
-    private final AHRS ahrs;
+    
 
 
     //private final JetsonConnection jetsonConnection;
@@ -85,8 +84,8 @@ public class RobotContainer {
      */
     public RobotContainer() {
         dt = new Tank(); // initialize DT of choice
-        ahrs = new AHRS(SPI.Port.kMXP);
-        balanceCommand = new BalancerCommand(dt,ahrs); // pass DT of choice into balancer
+        
+        balanceCommand = new BalancerCommand(dt,dt.ahrs); // pass DT of choice into balancer
 
         // jetsonConnection = new JetsonConnection();
         // jetsonConnection.start();
@@ -112,9 +111,9 @@ public class RobotContainer {
     private void configureButtonBindings() {
 
         driveRBumper.whileTrue(balanceCommand);
-        // if(dt instanceof BaseSwerveSubsystem){   
-        //     driveAButton.onTrue(new InstantCommand(dt::resetFieldAngle, dt));
-        // }
+         if(dt instanceof BaseSwerveSubsystem){   
+             driveAButton.onTrue(new InstantCommand(((BaseSwerveSubsystem)dt)::resetFieldAngle, dt));
+        }
         
         dt.setDefaultCommand(new RunCommand(() -> {
             if(dt instanceof Tank){
@@ -125,15 +124,6 @@ public class RobotContainer {
             }
             
         }, dt));
-    }
-
-
-    void periodic(){
-        // if(!driveRBumper.getAsBoolean()){
-        //     dt.updateDrivePowers(-0.75 * driveController.getLeftY(),  0.75 * driveController.getRightX(), 0); // currently set up for tank
-        //     System.out.println("passing driver inputs" + -0.75 * driveController.getLeftY());
-        // }
-        
     }
 
 

@@ -23,6 +23,7 @@ public class Tank extends Drivetrain {
     double rightDrive;
 
   public Tank() {
+    super();
 
     left2.follow(left);
     right2.follow(right);
@@ -31,6 +32,8 @@ public class Tank extends Drivetrain {
     right.setNeutralMode(NeutralMode.Brake);
     right.setInverted(true);
     right2.setInverted(true);
+
+    
 
 
   }
