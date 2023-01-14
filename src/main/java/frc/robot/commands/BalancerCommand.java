@@ -5,16 +5,13 @@ import edu.wpi.first.wpilibj.SPI;
 
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.swerve.BaseSwerveSubsystem;
-import frc.robot.subsystems.Tank;
-import frc.robot.subsystems.swerve.SwerveSubsystem;
+import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
+import frc.robot.subsystems.drivetrain.DriveTrain;
+import frc.robot.subsystems.drivetrain.Tank;
 
 /** An example command that uses an example subsystem. */
 public class BalancerCommand extends CommandBase {
 
-  private final BaseSwerveSubsystem swerveSubsystem;
-
-  private Tank tank;
   private DriveTrain driveTrain;
   String dtType;
 

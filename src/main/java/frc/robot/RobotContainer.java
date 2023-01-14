@@ -35,7 +35,6 @@ import frc.robot.subsystems.drivetrain.DriveTrain;
  */
 public class RobotContainer {
     // Subsystems
-    private final BaseSwerveSubsystem swerveSubsystem;
     
     private final DriveTrain dt; // declare DT of choice 
     
@@ -88,8 +87,8 @@ public class RobotContainer {
         ahrs = new AHRS(SPI.Port.kMXP);
         balanceCommand = new BalancerCommand(dt,ahrs); // pass DT of choice into balancer
 
-        jetsonConnection = new JetsonConnection();
-        jetsonConnection.start();
+        // jetsonConnection = new JetsonConnection();
+        // jetsonConnection.start();
 
         // Configure the button bindings
         configureButtonBindings();
@@ -112,13 +111,13 @@ public class RobotContainer {
     private void configureButtonBindings() {
 
         driveRBumper.whileTrue(balanceCommand);
-        driveAButton.onTrue(new InstantCommand(swerveSubsystem::resetFieldAngle, swerveSubsystem));
+        // driveAButton.onTrue(new InstantCommand(dt::resetFieldAngle, dt));
         
         dt.setDefaultCommand(new RunCommand(() -> {
             if(dt instanceof Tank){
                 dt.updateDrivePowers(-0.75 * driveController.getLeftY(), 0.75 * driveController.getRightX(),0);
             }  
-            if(dt instanceof SwerveSubsystem){
+            if(dt instanceof BaseSwerveSubsystem){
                 dt.updateDrivePowers(-driveController.getLeftY(), -driveController.getLeftX(),-driveController.getRightX());   
             }
             

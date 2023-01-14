@@ -13,13 +13,9 @@ import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.constraint.SwerveDriveKinematicsConstraint;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
-<<<<<<< HEAD
 
-import frc.robot.subsystems.swerve.BaseSwerveSubsystem;
-import frc.robot.subsystems.swerve.SwerveSubsystem;
-=======
+import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
 import frc.robot.subsystems.drivetrain.SwerveSubsystem;
->>>>>>> 743ea1f (consolidated DT to DriveTrain class)
 
 public class FollowPathCommand extends SwerveControllerCommand {
     // TODO: tune / measure
