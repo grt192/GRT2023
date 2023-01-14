@@ -34,7 +34,6 @@ public class RobotContainer {
     //private final JetsonConnection jetsonConnection;
 
     // Controllers and buttons
-    // private final Joystick joystick = new Joystick(2);
     private final GenericHID switchboard = new GenericHID(3);
     private final JoystickButton
         tlSwitch = new JoystickButton(switchboard, 3),
