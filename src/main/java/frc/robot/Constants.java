@@ -18,13 +18,11 @@ import edu.wpi.first.math.util.Units;
  * wherever the constants are needed, to reduce verbosity.
  */
 public final class Constants {
-    
-    public static final class TankConstants{
+    public static final class TankConstants {
         public static final int LEFT_MAIN = 12;
-        public static final int LEFT_SECONDARY = 13;
+        public static final int LEFT_FOLLOW = 13;
         public static final int RIGHT_MAIN = 14;
-        public static final int RIGHT_SECONDARY = 15;
-
+        public static final int RIGHT_FOLLOW = 15;
     }
 
     public static final class SwerveConstants {

@@ -13,6 +13,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Timer;
+
 /**
  * The superclass for the current `SwerveSubsystem` and `SwerveSubsystem2020` that contains all the
  * logic for managing module states, updating odometry, and taking driver input.
@@ -54,7 +55,6 @@ public abstract class BaseSwerveSubsystem extends Drivetrain {
         double maxVel, double maxAccel, double maxOmega,
         SwerveDriveKinematics kinematics
     ) {
-        super();
         MAX_VEL = maxVel;
         MAX_ACCEL = maxAccel;
         MAX_OMEGA = maxOmega;
@@ -132,7 +132,7 @@ public abstract class BaseSwerveSubsystem extends Drivetrain {
      * @param yPower The power [-1.0, 1.0] in the y (left) direction.
      * @param angularPower The angular (rotational) power [-1.0, 1.0].
      */
-    public void updateDrivePowers(double xPower, double yPower, double angularPower) {
+    public void setDrivePowers(double xPower, double yPower, double angularPower) {
         // If drivers are sending no input, stop all modules but hold their current angle.
         if (xPower == 0.0 && yPower == 0.0 && angularPower == 0.0) {
             this.states[0] = new SwerveModuleState(0.0, this.states[0].angle);

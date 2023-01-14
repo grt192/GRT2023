@@ -4,7 +4,6 @@
 
 package frc.robot;
 
-import com.fasterxml.jackson.databind.JsonSerializable.Base;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.Joystick;
@@ -13,10 +12,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+
 import frc.robot.commands.BalancerCommand;
 import frc.robot.jetson.JetsonConnection;
-
-import frc.robot.subsystems.drivetrain.Tank;
+import frc.robot.subsystems.drivetrain.TankSubsystem;
 import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
 import frc.robot.subsystems.drivetrain.Drivetrain;
 
@@ -29,7 +28,7 @@ import frc.robot.subsystems.drivetrain.Drivetrain;
  */
 public class RobotContainer {
     // Subsystems
-    private final Drivetrain dt; // declare DT of choice 
+    private final Drivetrain driveSubsystem;
 
     //private final JetsonConnection jetsonConnection;
 
@@ -67,13 +66,14 @@ public class RobotContainer {
 
     // Commands
     private final SendableChooser<Command> autonChooser;
-    private final Command balanceCommand;
+    private final BalancerCommand balancerCommand;
+
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
     public RobotContainer() {
-        dt = new Tank(); // initialize DT of choice
-        balanceCommand = new BalancerCommand(dt); // pass DT of choice into balancer
+        driveSubsystem = new TankSubsystem();
+        balancerCommand = new BalancerCommand(driveSubsystem);
 
         // jetsonConnection = new JetsonConnection();
         // jetsonConnection.start();
@@ -95,22 +95,21 @@ public class RobotContainer {
      * passing it to a {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
      */
     private void configureButtonBindings() {
+        driveRBumper.whileTrue(balancerCommand);
 
-        driveRBumper.whileTrue(balanceCommand);
-         if(dt instanceof BaseSwerveSubsystem){   
-             driveAButton.onTrue(new InstantCommand(((BaseSwerveSubsystem)dt)::resetFieldAngle, dt));
+        if (driveSubsystem instanceof BaseSwerveSubsystem) {   
+            driveAButton.onTrue(new InstantCommand(((BaseSwerveSubsystem) driveSubsystem)::resetFieldAngle, driveSubsystem));
         }
-        
-        dt.setDefaultCommand(new RunCommand(() -> {
-            if(dt instanceof Tank){
-                dt.updateDrivePowers(-0.75 * driveController.getLeftY(), 0.75 * driveController.getRightX(),0);
+
+        driveSubsystem.setDefaultCommand(new RunCommand(() -> {
+            if (driveSubsystem instanceof TankSubsystem) {
+                driveSubsystem.setDrivePowers(-0.75 * driveController.getLeftY(), 0.75 * driveController.getRightX(), 0);
                 //System.out.println("calling driver");
             }  
-            if(dt instanceof BaseSwerveSubsystem){
-                dt.updateDrivePowers(-driveController.getLeftY(), -driveController.getLeftX(),-driveController.getRightX());   
+            if (driveSubsystem instanceof BaseSwerveSubsystem) {
+                driveSubsystem.setDrivePowers(-driveController.getLeftY(), -driveController.getLeftX(), -driveController.getRightX());   
             }
-            
-        }, dt));
+        }, driveSubsystem));
     }
 
     /**

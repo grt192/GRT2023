@@ -100,7 +100,7 @@ public class BalancerCommand extends CommandBase {
         default:
             break;
     }
-    driveTrain.updateDrivePowers(returnPower,0.0,initialHeading);
+    driveTrain.setDrivePowers(returnPower,0.0,initialHeading);
 
   }
 

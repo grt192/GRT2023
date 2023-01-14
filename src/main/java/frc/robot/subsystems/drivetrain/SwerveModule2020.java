@@ -45,7 +45,6 @@ public class SwerveModule2020 implements BaseSwerveModule {
     private static final double steerFF = 0;
 
     public SwerveModule2020(int drivePort, int steerPort, double offsetRads) {
-        
         driveMotor = MotorUtil.createSparkMax(drivePort);
         driveMotor.setIdleMode(IdleMode.kBrake);
 
