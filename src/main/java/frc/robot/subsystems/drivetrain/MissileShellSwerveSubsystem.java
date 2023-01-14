@@ -41,8 +41,9 @@ public class MissileShellSwerveSubsystem extends SubsystemBase {
      * @param xPower The power [-1.0, 1.0] in the x (forward) direction.
      * @param yPower The power [-1.0, 1.0] in the y (left) direction.
      * @param angularPower The angular (rotational) power [-1.0, 1.0].
+     * @param relative Whether to use relative powers instead of field-oriented control. This parameter has no effect.
      */
-    public void setSwerveDrivePowers(double xPower, double yPower, double angularPower) {
+    public void setSwerveDrivePowers(double xPower, double yPower, double angularPower, boolean relative) {
         // If drivers are sending no input, stop all modules but hold their current angle.
         if (xPower == 0.0 && yPower == 0.0 && angularPower == 0.0) {
             this.states[0] = new SwerveModuleState(0.0, this.states[0].angle);
