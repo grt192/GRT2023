@@ -34,7 +34,15 @@ public class RobotContainer {
     //private final JetsonConnection jetsonConnection;
 
     // Controllers and buttons
-    // private final Joystick joystick = new Joystick(2);
+    private final Joystick leftJoystick = new Joystick(2);
+    private final JoystickButton
+        leftTrigger = new JoystickButton(leftJoystick, 0),
+        leftMButton = new JoystickButton(leftJoystick, 1);
+
+    private final Joystick rightJoystick = new Joystick(3);
+    private final JoystickButton
+        rightTrigger = new JoystickButton(rightJoystick, 0);
+
     private final GenericHID switchboard = new GenericHID(3);
     private final JoystickButton
         tlSwitch = new JoystickButton(switchboard, 3),
@@ -46,24 +54,6 @@ public class RobotContainer {
         blSwitch = new JoystickButton(switchboard, 9),
         bmSwitch = new JoystickButton(switchboard, 8),
         brSwitch = new JoystickButton(switchboard, 7);
-
-    private final XboxController driveController = new XboxController(0);
-    private final JoystickButton 
-        driveAButton = new JoystickButton(driveController, XboxController.Button.kA.value),
-        driveBButton = new JoystickButton(driveController, XboxController.Button.kB.value),
-        driveXButton = new JoystickButton(driveController, XboxController.Button.kX.value),
-        driveYButton = new JoystickButton(driveController, XboxController.Button.kY.value),
-        driveLBumper = new JoystickButton(driveController, XboxController.Button.kLeftBumper.value),
-        driveRBumper = new JoystickButton(driveController, XboxController.Button.kRightBumper.value);
-
-    private final XboxController mechController = new XboxController(1);
-    private final JoystickButton 
-        mechAButton = new JoystickButton(mechController, XboxController.Button.kA.value),
-        mechBButton = new JoystickButton(mechController, XboxController.Button.kB.value),
-        mechXButton = new JoystickButton(mechController, XboxController.Button.kX.value),
-        mechYButton = new JoystickButton(mechController, XboxController.Button.kY.value),
-        mechLBumper = new JoystickButton(mechController, XboxController.Button.kLeftBumper.value),
-        mechRBumper = new JoystickButton(mechController, XboxController.Button.kRightBumper.value);
 
     // Commands
     private final SendableChooser<Command> autonChooser;
@@ -96,26 +86,26 @@ public class RobotContainer {
      * passing it to a {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
      */
     private void configureButtonBindings() {
-        driveRBumper.whileTrue(balancerCommand);
+        leftTrigger.whileTrue(balancerCommand);
 
         if (driveSubsystem instanceof BaseSwerveSubsystem) {
             final BaseSwerveSubsystem swerveSubsystem = (BaseSwerveSubsystem) driveSubsystem;
 
             swerveSubsystem.setDefaultCommand(new RunCommand(() -> {
-                double xPower = -driveController.getLeftY();
-                double yPower = -driveController.getLeftX();
-                double angularPower = -driveController.getRightX();
-                boolean relative = driveController.getRightTriggerAxis() > 0.75;
+                double xPower = -leftJoystick.getY();
+                double yPower = -leftJoystick.getX();
+                double angularPower = -rightJoystick.getX();
+                boolean relative = rightJoystick.getTrigger();
                 swerveSubsystem.setDrivePowers(xPower, yPower, angularPower, relative);
             }, swerveSubsystem));
 
-            driveAButton.onTrue(new InstantCommand(swerveSubsystem::resetFieldAngle, swerveSubsystem));
+            leftMButton.onTrue(new InstantCommand(swerveSubsystem::resetFieldAngle, swerveSubsystem));
         } else if (driveSubsystem instanceof TankSubsystem) {
             final TankSubsystem tankSubsystem = (TankSubsystem) driveSubsystem;
 
             tankSubsystem.setDefaultCommand(new RunCommand(() -> {
-                double forwardPower = -0.75 * driveController.getLeftY();
-                double turnPower = 0.75 * driveController.getRightX();
+                double forwardPower = -0.75 * leftJoystick.getY();
+                double turnPower = 0.75 * rightJoystick.getX();
                 tankSubsystem.setDrivePowers(forwardPower, turnPower);
             }, tankSubsystem));
         }
