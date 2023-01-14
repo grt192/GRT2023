@@ -19,6 +19,8 @@ import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
 import frc.robot.subsystems.drivetrain.MissileShellSwerveSubsystem;
 import frc.robot.subsystems.drivetrain.SwerveSubsystem2020;
 import frc.robot.subsystems.drivetrain.BaseDrivetrain;
+import frc.robot.subsystems.MoverSubsystem;
+import frc.robot.subsystems.MoverSubsystem.MoverPosition;
 import frc.robot.subsystems.GripperSubsytem;
 import frc.robot.subsystems.RollerSubsystem;
 
@@ -35,7 +37,9 @@ public class RobotContainer {
     private final GripperSubsytem gripperSubsystem;
     private final RollerSubsystem rollerSubsystem;
 
-    // private final JetsonConnection jetsonConnection;
+    //private final JetsonConnection jetsonConnection;
+
+    private final MoverSubsystem moverSubsystem;
 
     // Controllers and buttons
     private final GenericHID switchboard = new GenericHID(3);
@@ -84,6 +88,8 @@ public class RobotContainer {
 
         // jetsonConnection = new JetsonConnection();
         // jetsonConnection.start();
+        
+        moverSubsystem = new MoverSubsystem();
 
         // Configure the button bindings
         configureButtonBindings();
@@ -133,6 +139,34 @@ public class RobotContainer {
                 swerveSubsystem.setDrivePowers(xPower, yPower);
             }, swerveSubsystem));
         }
+        moverSubsystem.setDefaultCommand(new RunCommand(() -> {
+            double xPower = -mechController.getLeftX();
+            double yPower = -mechController.getRightY();
+        }, moverSubsystem));
+
+        mechYButton.onTrue(new InstantCommand(() ->{
+            if(moverSubsystem.getState() == MoverPosition.GROUND){
+                moverSubsystem.setState(MoverPosition.SUBSTATION);
+            } else {
+                moverSubsystem.setState(MoverPosition.GROUND);
+            }
+        }, moverSubsystem));
+
+        mechRBumper.onTrue(new InstantCommand(() ->{
+            if(moverSubsystem.getState() == MoverPosition.CUBEHIGH){
+                moverSubsystem.setState(MoverPosition.CUBEMID);
+            } else {
+                moverSubsystem.setState(MoverPosition.CUBEHIGH);
+            }
+        }, moverSubsystem));
+
+        mechLBumper.onTrue(new InstantCommand(() ->{
+            if(moverSubsystem.getState() == MoverPosition.CONEHIGH){
+                moverSubsystem.setState(MoverPosition.CONEMID);
+            } else {
+                moverSubsystem.setState(MoverPosition.CONEHIGH);
+            }
+        }, moverSubsystem));
 
         rollerSubsystem.setDefaultCommand(new RunCommand(() -> {
             double rollPower = mechController.getRightTriggerAxis() - mechController.getLeftTriggerAxis();
