@@ -15,8 +15,14 @@ public abstract class BaseDrivetrain extends SubsystemBase {
         ahrs = new AHRS(SPI.Port.kMXP);
     }
 
-    // TODO: account for tank drive 2-power setup
-    public abstract void setDrivePowers(double forwardPower, double sidePower, double angularPower);
+    /**
+     * Sets the forward power of this drive system. Subclasses should have separate methods for
+     * more advanced control (ie. tank setting forward and turn powers, swerve setting x, y, and turn 
+     * powers, etc.) and this method should call those with default parameters.
+     * 
+     * @param forwardPower The power [-1.0, 1.0] in the forward direction.
+     */
+    public abstract void setDrivePowers(double forwardPower);
 
     /**
      * Gets the NavX AHRS on this drivetrain.

@@ -9,7 +9,6 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Timer;
 
 /**
@@ -127,8 +126,9 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
      * @param xPower The power [-1.0, 1.0] in the x (forward) direction.
      * @param yPower The power [-1.0, 1.0] in the y (left) direction.
      * @param angularPower The angular (rotational) power [-1.0, 1.0].
+     * @param relative Whether to use relative powers instead of field-oriented control.
      */
-    public void setDrivePowers(double xPower, double yPower, double angularPower) {
+    public void setDrivePowers(double xPower, double yPower, double angularPower, boolean relative) {
         // If drivers are sending no input, stop all modules but hold their current angle.
         if (xPower == 0.0 && yPower == 0.0 && angularPower == 0.0) {
             this.states[0] = new SwerveModuleState(0.0, this.states[0].angle);
@@ -144,11 +144,22 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
             xPower * MAX_VEL,
             yPower * MAX_VEL,
             angularPower * MAX_OMEGA,
-            getFieldHeading()
+            relative ? new Rotation2d() : getFieldHeading()
         );
 
         // Calculate swerve module states from desired chassis speeds
         this.states = kinematics.toSwerveModuleStates(speeds);
+    }
+
+    /**
+     * Sets the swerve module states of this subsystem from provided field-centric
+     * swerve drive powers.
+     * 
+     * @param xPower The power [-1.0, 1.0] in the x (forward) direction.
+     */
+    @Override
+    public void setDrivePowers(double xPower) {
+        setDrivePowers(xPower, 0.0, 0.0, false);
     }
 
     /**

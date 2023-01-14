@@ -119,9 +119,10 @@ public class SwerveModule implements BaseSwerveModule {
      */
     public SwerveModulePosition getState() {
         return new SwerveModulePosition(
-                // driveMotor.getSelectedSensorPosition() * DRIVE_TICKS_TO_METERS,
-                driveEncoder.getPosition(),
-                getAngle());
+            // driveMotor.getSelectedSensorPosition() * DRIVE_TICKS_TO_METERS,
+            driveEncoder.getPosition(),
+            getAngle()
+        );
     }
 
     /**
@@ -130,8 +131,7 @@ public class SwerveModule implements BaseSwerveModule {
      */
     public void setDesiredState(SwerveModuleState state) {
         SwerveModuleState optimized = SwerveModuleState.optimize(state, getAngle());
-        // driveMotor.set(ControlMode.Velocity, optimized.getFirst() /
-        // (DRIVE_TICKS_TO_METERS * 10.0));
+        // driveMotor.set(ControlMode.Velocity, optimized.getFirst() / (DRIVE_TICKS_TO_METERS * 10.0));
         driveMotor.set(optimized.speedMetersPerSecond); // Only while the module is in percent output
         steerPidController.setReference(optimized.angle.getRadians() - offsetRads, ControlType.kPosition);
     }
