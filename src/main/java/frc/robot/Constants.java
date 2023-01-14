@@ -103,4 +103,19 @@ public final class Constants {
         public static final int LEFT_ID = 15;
         public static final int RIGHT_ID = 16;
     }
+
+    public static final class ShuffleboardConstants {
+        public static final double UPDATE_TIME = 0.5; // seconds between each update
+    }
+
+    public static final class MoverConstants {
+        public static final int ROTATION_MOTOR_PORT = -1; //STUB
+        public static final int EXTENSION_MOTOR_PORT = -1; //STUB
+
+        public static final double ROTATION_GEAR_RATIO = 102.67;
+        public static final double EXTENSION_GEAR_RATIO = 27;
+
+        public static final double ANGLE_OFFSET_SPEED = 0.00001;
+        public static final double EXTENSION_OFFSET_SPEED = 0.0001;
+    }
 }
