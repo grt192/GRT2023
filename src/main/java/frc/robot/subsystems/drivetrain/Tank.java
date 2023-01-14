@@ -21,6 +21,9 @@ public class Tank extends Drivetrain {
   
     double leftDrive;
     double rightDrive;
+    double xPower;
+    double yPower;
+    double angularPower;
 
   public Tank() {
     super();
