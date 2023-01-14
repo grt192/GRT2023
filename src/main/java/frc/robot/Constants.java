@@ -57,11 +57,16 @@ public final class Constants {
 
     // TODO
     public static final class VisionConstants {
-        public static final String cameraName = "...";
+        public static final String LIFECAM_NAME = "Microsoft_LifeCam_HD-3000";
         public static final Transform3d cameraPos = new Transform3d(
-            new Translation3d(0, 0, 0),
+            new Translation3d(0, 0, 48),
             new Rotation3d()
         );
+
+        public static final String COPROCESSOR_IP = "10.1.92.12";
+        public static final int[] COPROCESSOR_IP_PORTS = {
+            1182
+        };
     }
 
     public static final class ShuffleboardConstants {

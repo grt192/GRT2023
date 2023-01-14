@@ -23,9 +23,16 @@ public class MissileShellVisionSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         var res = vision.getRobotPose(pose);
-        this.pose = res.getFirst();
-
+        Pose2d pose = res.getFirst();
+        if (pose == null) {
+            System.out.println("null");
+            return;
+        }
         xEntry.setDouble(pose.getX());
         yEntry.setDouble(pose.getY());
+        
+        System.out.println("pose X" + pose.getX());
+
+        this.pose = pose;
     }
 }
