@@ -1,7 +1,5 @@
 package frc.robot.subsystems.drivetrain;
 
-import com.kauailabs.navx.frc.AHRS;
-
 import edu.wpi.first.math.MatBuilder;
 import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
@@ -18,7 +16,7 @@ import edu.wpi.first.wpilibj.Timer;
  * The superclass for the current `SwerveSubsystem` and `SwerveSubsystem2020` that contains all the
  * logic for managing module states, updating odometry, and taking driver input.
  */
-public abstract class BaseSwerveSubsystem extends Drivetrain {
+public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
     private final BaseSwerveModule topLeftModule;
     private final BaseSwerveModule topRightModule;
     private final BaseSwerveModule bottomLeftModule;
@@ -27,9 +25,6 @@ public abstract class BaseSwerveSubsystem extends Drivetrain {
     private final SwerveDrivePoseEstimator poseEstimator;
     private final SwerveDriveKinematics kinematics;
 
-    private final AHRS ahrs;
-    private double angleOffset = 0;
-
     public final double MAX_VEL; // Max robot tangential velocity, in m/s
     public final double MAX_ACCEL; // Max robot tangential acceleration, in m/s^2
     public final double MAX_OMEGA; // Max robot angular velocity, in rads/s
@@ -37,6 +32,8 @@ public abstract class BaseSwerveSubsystem extends Drivetrain {
     private final Timer lockTimer;
     private static final double LOCK_TIMEOUT_SECONDS = 1.0; // The elapsed idle time to wait before locking
     private static final boolean LOCKING_ENABLE = true;
+
+    private double angleOffset = 0;
 
     // The driver or auton commanded `SwerveModuleState` setpoints for each module;
     // states are given in a tuple of [top left, top right, bottom left, bottom right].
@@ -66,8 +63,7 @@ public abstract class BaseSwerveSubsystem extends Drivetrain {
 
         this.kinematics = kinematics;
 
-        // Initialize NaxX and pose estimator
-        ahrs = new AHRS(SPI.Port.kMXP);
+        // Initialize pose estimator
         poseEstimator = new SwerveDrivePoseEstimator(
             kinematics,
             getGyroHeading(),

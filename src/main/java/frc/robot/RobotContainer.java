@@ -17,7 +17,7 @@ import frc.robot.commands.BalancerCommand;
 import frc.robot.jetson.JetsonConnection;
 import frc.robot.subsystems.drivetrain.TankSubsystem;
 import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
-import frc.robot.subsystems.drivetrain.Drivetrain;
+import frc.robot.subsystems.drivetrain.BaseDrivetrain;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -28,7 +28,7 @@ import frc.robot.subsystems.drivetrain.Drivetrain;
  */
 public class RobotContainer {
     // Subsystems
-    private final Drivetrain driveSubsystem;
+    private final BaseDrivetrain driveSubsystem;
 
     //private final JetsonConnection jetsonConnection;
 

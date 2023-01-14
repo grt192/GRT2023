@@ -8,7 +8,7 @@ import frc.robot.motorcontrol.MotorUtil;
 
 import static frc.robot.Constants.TankConstants.*;
 
-public class TankSubsystem extends Drivetrain {
+public class TankSubsystem extends BaseDrivetrain {
     private final WPI_TalonSRX leftMain;
     private final WPI_TalonSRX leftFollow;
 
