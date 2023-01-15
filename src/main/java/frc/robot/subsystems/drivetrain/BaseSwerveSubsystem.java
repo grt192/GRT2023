@@ -232,18 +232,24 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
 
     /**
      * Gets the gyro angle given by the NavX AHRS, inverted to be counterclockwise positive.
-     * @return The robot heading as a Rotation2d.
+     * @return The robot's global heading as a Rotation2d.
      */
     private Rotation2d getGyroHeading() {
         return Rotation2d.fromDegrees(-ahrs.getAngle());
     }
 
     /**
-     * Gets the angle of the robot relative to the field, for field-relative control.
-     * This is equivalent to `getGyroHeading()` but with an offset applied.
-     * @return The robot heading (with offset) as a Rotation2d.
+     * Gets the angle of the robot relative to the field-relative control system.
+     * This is equivalent to the robot's global angle with an offset applied.
+     * 
+     * @return The robot's field-centric heading as a Rotation2d.
      */
     private Rotation2d getFieldHeading() {
-        return getGyroHeading().plus(Rotation2d.fromDegrees(angleOffset));
+        // Primarily use AHRS reading, falling back on the pose estimator if the AHRS disconnects.
+        Rotation2d robotHeading = ahrs.isConnected()
+            ? getGyroHeading()
+            : getRobotPosition().getRotation();
+
+        return robotHeading.plus(Rotation2d.fromDegrees(angleOffset));
     }
 }
