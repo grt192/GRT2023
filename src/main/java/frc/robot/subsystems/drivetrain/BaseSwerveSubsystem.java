@@ -224,9 +224,17 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
 
     /**
      * Zeros *only the angle* of the robot's field-relative control system.
-     * This this has *no effect* on odometry.
+     * This also resets localization to match the rotated field.
      */
     public void resetFieldAngle() {
+        Pose2d currPos = getRobotPosition();
+
+        // Reset localization angle but keep current (x, y) to preserve the origin.
+        resetPosition(new Pose2d(
+            currPos.getTranslation(),
+            new Rotation2d()
+        ));
+
         angleOffset = ahrs.getAngle();
     }
 
@@ -246,10 +254,8 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
      */
     private Rotation2d getFieldHeading() {
         // Primarily use AHRS reading, falling back on the pose estimator if the AHRS disconnects.
-        Rotation2d robotHeading = ahrs.isConnected()
-            ? getGyroHeading()
+        return ahrs.isConnected()
+            ? getGyroHeading().plus(Rotation2d.fromDegrees(angleOffset))
             : getRobotPosition().getRotation();
-
-        return robotHeading.plus(Rotation2d.fromDegrees(angleOffset));
     }
 }
