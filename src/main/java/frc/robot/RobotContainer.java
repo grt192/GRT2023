@@ -130,12 +130,12 @@ public class RobotContainer {
         }
 
         roller.setDefaultCommand(new RunCommand(() -> {
-            if (mechController.getLeftTriggerAxis() > .2){
-                roller.rollstate = mechController.getLeftTriggerAxis();
+            if (mechController.getRightTriggerAxis() > .2){
+                roller.rollstate = mechController.getRightTriggerAxis();
                 System.out.println("b");
             }
-            else if (mechController.getRightTriggerAxis() > .2){
-                roller.rollstate = -(mechController.getRightTriggerAxis());
+            else if (mechController.getLeftTriggerAxis() > .2){
+                roller.rollstate = -(mechController.getLeftTriggerAxis());
             }
             else{
                 roller.rollstate = 0.0;

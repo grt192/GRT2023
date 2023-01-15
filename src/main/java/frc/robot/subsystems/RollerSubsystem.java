@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
@@ -28,6 +29,8 @@ public class RollerSubsystem extends SubsystemBase{
         rollstate = 0.;
         rightbeak.follow(leftbeak);
         leftbeak.setInverted(true);
+        leftbeak.setNeutralMode(NeutralMode.Brake);
+        rightbeak.setNeutralMode(NeutralMode.Brake);
         //rightbeak.setInverted(true);
 
     }
@@ -52,7 +55,13 @@ public class RollerSubsystem extends SubsystemBase{
         //if wheels must place, turn on timer then turn on motors for 2 seconds, reset timer
         //if limit switch is hit, or place has placed, keep motor off
         else{
-            leftbeak.set(0);
+            if(rollstate <= 0.0){
+                leftbeak.set(rollstate);
+            }
+            else{
+                leftbeak.set(0);
+            }
+            
         }
         
     }
