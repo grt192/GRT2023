@@ -59,7 +59,7 @@ public final class Constants {
     public static final class VisionConstants {
         public static final String LIFECAM_NAME = "Microsoft_LifeCam_HD-3000";
         public static final Transform3d cameraPos = new Transform3d(
-            new Translation3d(0, 0, 48),
+            new Translation3d(0, 0, 0),
             new Rotation3d()
         );
 

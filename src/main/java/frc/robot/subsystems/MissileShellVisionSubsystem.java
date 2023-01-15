@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -28,8 +29,8 @@ public class MissileShellVisionSubsystem extends SubsystemBase {
             System.out.println("null");
             return;
         }
-        xEntry.setDouble(pose.getX());
-        yEntry.setDouble(pose.getY());
+        xEntry.setDouble(Units.metersToInches(pose.getX()));
+        yEntry.setDouble(Units.metersToInches(pose.getY()));
         
         System.out.println("pose X" + pose.getX());
 

@@ -17,6 +17,7 @@ import edu.wpi.first.cscore.MjpegServer;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -57,15 +58,12 @@ public class PhotonVision {
 
         ArrayList<AprilTag> testTags = new ArrayList<>();
         testTags.add(new AprilTag(
-            4, 
-            new Pose3d(
-                new Translation3d(
-                    Units.inchesToMeters(96), 
-                    Units.inchesToMeters(32), 
-                    Units.inchesToMeters(44.5)
-                ),
-                new Rotation3d(Math.PI, 0, 0)
-            )
+            6, 
+            new Pose3d(new Pose2d(0.0, 0.0, new Rotation2d(Units.degreesToRadians(180))))
+        ));  
+        testTags.add(new AprilTag(
+            1, 
+            new Pose3d(new Pose2d(0.0, Units.inchesToMeters(66.0), new Rotation2d(Units.degreesToRadians(180))))
         ));  
                     
         visionPoseEstimator = new RobotPoseEstimator(
@@ -74,7 +72,7 @@ public class PhotonVision {
                 Units.inchesToMeters(651.25),
                 Units.inchesToMeters(315.5) 
             ),
-            PoseStrategy.CLOSEST_TO_CAMERA_HEIGHT, 
+            PoseStrategy.CLOSEST_TO_REFERENCE_POSE, 
             camList
         );
     }
@@ -87,7 +85,7 @@ public class PhotonVision {
      * @return A tuple representing [estimated pose, timestamp].
      */
     public Pair<Pose2d, Double> getRobotPose(Pose2d prevEstimatedRobotPose) {
-        // visionPoseEstimator.setReferencePose(prevEstimatedRobotPose);
+        visionPoseEstimator.setReferencePose(prevEstimatedRobotPose); //put in odometry pose
 
         double currentTime = Timer.getFPGATimestamp();
         Optional<Pair<Pose3d, Double>> result = visionPoseEstimator.update();
