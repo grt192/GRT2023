@@ -33,4 +33,4 @@ public class GripperSubsytem extends SubsystemBase{
         pfft.set(state);
         System.out.println(state);
     }
-}
+     }

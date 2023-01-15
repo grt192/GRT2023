@@ -35,7 +35,7 @@ public class RobotContainer {
 
     //private final JetsonConnection jetsonConnection;
 
-    private final GripperSubsytem gripper;
+    //private final GripperSubsytem gripper;
 
     private final RollerSubsystem roller;
 
@@ -70,7 +70,6 @@ public class RobotContainer {
         mechYButton = new JoystickButton(mechController, XboxController.Button.kY.value),
         mechLBumper = new JoystickButton(mechController, XboxController.Button.kLeftBumper.value),
         mechRBumper = new JoystickButton(mechController, XboxController.Button.kRightBumper.value);
-
     // Commands
     private final SendableChooser<Command> autonChooser;
     private final BalancerCommand balancerCommand;
@@ -79,13 +78,13 @@ public class RobotContainer {
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
     public RobotContainer() {
-        driveSubsystem = new SwerveSubsystem2020();
+        driveSubsystem = new TankSubsystem();
         balancerCommand = new BalancerCommand(driveSubsystem);
 
         // jetsonConnection = new JetsonConnection();
         // jetsonConnection.start();
 
-        gripper = new GripperSubsytem();
+        //gripper = new GripperSubsytem();
 
         roller = new RollerSubsystem();
 
@@ -129,9 +128,22 @@ public class RobotContainer {
                 tankSubsystem.setDrivePowers(forwardPower, turnPower);
             }, tankSubsystem));
         }
+
+        roller.setDefaultCommand(new RunCommand(() -> {
+            if (mechController.getLeftTriggerAxis() > .2){
+                roller.rollstate = mechController.getLeftTriggerAxis();
+                System.out.println("b");
+            }
+            else if (mechController.getRightTriggerAxis() > .2){
+                roller.rollstate = -(mechController.getRightTriggerAxis());
+            }
+            else{
+                roller.rollstate = 0.0;
+            }
+        }, roller));
         
-        mechAButton.onTrue(new InstantCommand(gripper::gripToggle, gripper));
-        mechBButton.onTrue(new InstantCommand(roller::rollToggle, roller));
+        //mechAButton.onTrue(new InstantCommand(gripper::gripToggle, gripper));
+        //mechBButton.onTrue(new InstantCommand(roller::rollToggle, roller));
     }
 
     /**
