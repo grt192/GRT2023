@@ -331,6 +331,10 @@ public class RobotContainer {
 
         mechAButton.onTrue(new InstantCommand(gripperSubsystem::gripToggle, gripperSubsystem));
         */
+
+        mechXButton.onTrue(new InstantCommand(() ->{
+            moverSubsystem.setState(MoverPosition.VERTICAL);
+        }));
     }
 
     /**
