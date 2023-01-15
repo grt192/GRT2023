@@ -26,29 +26,37 @@ public class MoverSubsystem extends SubsystemBase{
     private final RelativeEncoder extensionEncoder;
     private final SparkMaxPIDController extensionPidController;
 
-    private final double ROTATION_P = 0.125;
-    private final double ROTATION_I = 0;
-    private final double ROTATION_D = 0;
+    private double rotationP = 0.125;
+    private double rotationI = 0;
+    private double rotationD = 0;
     private final double ROTATION_ROT_TO_RAD = ROTATION_GEAR_RATIO * 2 * Math.PI;
 
-    private final double EXTENSION_P = 0.125;
-    private final double EXTENSION_I = 0;
-    private final double EXTENSION_D = 0;
+    private double extensionP = 0.125;
+    private double extensionI = 0;
+    private double extensionD = 0;
     private final double EXTENSION_ROT_TO_M = Units.inchesToMeters(0.5615); 
 
     private final boolean RESET_OFFSET_ON_STAGE_SWITCH = true;
     private double angleOffset = 0; //radians
     private double extensionOffset = 0; //meters
 
-    private MoverPosition currentState = MoverPosition.GROUND;
+    private MoverPosition currentState = MoverPosition.VERTICAL;
 
-    private final boolean TESTING = true;
+    private final boolean TESTING = false;
 
     private final ShuffleboardTab shuffleboardTab = Shuffleboard.getTab("Mover Subsystem");
     private final GenericEntry currentAngleEntry = shuffleboardTab.add("current angle",  0.0).getEntry();
     private final GenericEntry currentExtensionEntry = shuffleboardTab.add("current extension", 0.0).getEntry();
     private final GenericEntry targetAngleEntry = shuffleboardTab.add("target angle", 0.0).getEntry();
     private final GenericEntry targetExtensionEntry = shuffleboardTab.add("target extension", 0.0).getEntry();
+
+    private final GenericEntry rotationPEntry = shuffleboardTab.add("Rotation P", rotationP).getEntry();
+    private final GenericEntry rotationIEntry = shuffleboardTab.add("Rotation I", rotationI).getEntry();
+    private final GenericEntry rotationDEntry = shuffleboardTab.add("Rotation D", rotationD).getEntry();
+
+    private final GenericEntry extensionPEntry = shuffleboardTab.add("Extension P", extensionP).getEntry();
+    private final GenericEntry extensionIEntry = shuffleboardTab.add("Extension I", extensionI).getEntry();
+    private final GenericEntry extensionDEntry = shuffleboardTab.add("Extension D", extensionD).getEntry();
 
 
     public enum GamePiece {
@@ -57,7 +65,7 @@ public class MoverSubsystem extends SubsystemBase{
     
     public enum MoverPosition {
         VERTICAL(0,0),
-        GROUND(Units.degreesToRadians(90), distanceToExtension(25)),
+        GROUND(Units.degreesToRadians(90), distanceToExtension(Units.inchesToMeters(25))),
         SUBSTATION(0,0),
         CUBEMID(0,0), CUBEHIGH(0,0), 
         CONEMID(0,0), CONEHIGH(0,0)
@@ -87,9 +95,9 @@ public class MoverSubsystem extends SubsystemBase{
         rotationMotor.setSoftLimit(SoftLimitDirection.kReverse, (float) Units.degreesToRadians(-90));
 
         rotationPidController = rotationMotor.getPIDController();
-        rotationPidController.setP(ROTATION_P);
-        rotationPidController.setI(ROTATION_I);
-        rotationPidController.setD(ROTATION_D);
+        rotationPidController.setP(rotationP);
+        rotationPidController.setI(rotationI);
+        rotationPidController.setD(rotationD);
 
 
         extensionMotor = MotorUtil.createSparkMax(EXTENSION_MOTOR_PORT);
@@ -104,9 +112,9 @@ public class MoverSubsystem extends SubsystemBase{
         extensionMotor.setSoftLimit(SoftLimitDirection.kReverse, (float) Units.inchesToMeters(0));
 
         extensionPidController = extensionMotor.getPIDController();
-        extensionPidController.setP(EXTENSION_P);
-        extensionPidController.setI(EXTENSION_I);
-        extensionPidController.setD(EXTENSION_D);
+        extensionPidController.setP(extensionP);
+        extensionPidController.setI(extensionI);
+        extensionPidController.setD(extensionD);
 
     }
 
@@ -120,6 +128,35 @@ public class MoverSubsystem extends SubsystemBase{
         currentExtensionEntry.setDouble(Units.metersToInches(extensionEncoder.getPosition()));
         targetAngleEntry.setDouble(Units.radiansToDegrees(currentState.angle + angleOffset));
         targetExtensionEntry.setDouble(Units.metersToInches(currentState.extension + extensionOffset));
+        
+        double rotp = rotationPEntry.getDouble(rotationP);
+        double roti = rotationIEntry.getDouble(rotationI);
+        double rotd = rotationDEntry.getDouble(rotationD);
+
+        double extp = extensionPEntry.getDouble(extensionP);
+        double exti = extensionIEntry.getDouble(extensionI);
+        double extd = extensionDEntry.getDouble(extensionD);
+
+
+        if(rotp != rotationP){
+            rotationP = rotp;
+        }
+        if(roti != rotationI){
+            rotationI = roti;
+        }
+        if(rotd != rotationD){
+            rotationD = rotd;
+        }
+        if(extp != extensionP){
+            extensionP = extp;
+        }
+        if(exti != extensionI){
+            extensionI = exti;
+        }
+        if(extd != extensionD){
+            extensionD = extd;
+        }
+
     }
 
 
