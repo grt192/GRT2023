@@ -17,6 +17,7 @@ import frc.robot.commands.BalancerCommand;
 import frc.robot.jetson.JetsonConnection;
 import frc.robot.subsystems.drivetrain.TankSubsystem;
 import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
+import frc.robot.subsystems.drivetrain.MissileShellSwerveSubsystem;
 import frc.robot.subsystems.drivetrain.SwerveSubsystem2020;
 import frc.robot.subsystems.drivetrain.BaseDrivetrain;
 
@@ -72,7 +73,7 @@ public class RobotContainer {
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
     public RobotContainer() {
-        driveSubsystem = new SwerveSubsystem2020();
+        driveSubsystem = new MissileShellSwerveSubsystem();
         balancerCommand = new BalancerCommand(driveSubsystem);
 
         // jetsonConnection = new JetsonConnection();
@@ -117,6 +118,14 @@ public class RobotContainer {
                 double turnPower = 0.75 * driveController.getRightX();
                 tankSubsystem.setDrivePowers(forwardPower, turnPower);
             }, tankSubsystem));
+        } else if (driveSubsystem instanceof MissileShellSwerveSubsystem) {
+            final MissileShellSwerveSubsystem swerveSubsystem = (MissileShellSwerveSubsystem) driveSubsystem;
+
+            swerveSubsystem.setDefaultCommand(new RunCommand(() -> {
+                double xPower = -driveController.getLeftY();
+                double yPower = -driveController.getLeftX();
+                swerveSubsystem.setDrivePowers(xPower, yPower);
+            }, swerveSubsystem));
         }
     }
 
