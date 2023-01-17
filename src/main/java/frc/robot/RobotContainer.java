@@ -31,40 +31,42 @@ import frc.robot.subsystems.RollerSubsystem;
 public class RobotContainer {
     // Subsystems
     private final BaseDrivetrain driveSubsystem;
+    private final GripperSubsytem gripperSubsystem;
+    private final RollerSubsystem rollerSubsystem;
 
     // private final JetsonConnection jetsonConnection;
 
-    private final GripperSubsytem gripper;
-
-    private final RollerSubsystem roller;
-
     // Controllers and buttons
     private final GenericHID switchboard = new GenericHID(3);
-    private final JoystickButton tlSwitch = new JoystickButton(switchboard, 3),
-            tmSwitch = new JoystickButton(switchboard, 2),
-            trSwitch = new JoystickButton(switchboard, 1),
-            mlSwitch = new JoystickButton(switchboard, 6),
-            mmSwitch = new JoystickButton(switchboard, 5),
-            mrSwitch = new JoystickButton(switchboard, 4),
-            blSwitch = new JoystickButton(switchboard, 9),
-            bmSwitch = new JoystickButton(switchboard, 8),
-            brSwitch = new JoystickButton(switchboard, 7);
+    private final JoystickButton 
+        tlSwitch = new JoystickButton(switchboard, 3),
+        tmSwitch = new JoystickButton(switchboard, 2),
+        trSwitch = new JoystickButton(switchboard, 1),
+        mlSwitch = new JoystickButton(switchboard, 6),
+        mmSwitch = new JoystickButton(switchboard, 5),
+        mrSwitch = new JoystickButton(switchboard, 4),
+        blSwitch = new JoystickButton(switchboard, 9),
+        bmSwitch = new JoystickButton(switchboard, 8),
+        brSwitch = new JoystickButton(switchboard, 7);
 
     private final XboxController driveController = new XboxController(0);
-    private final JoystickButton driveAButton = new JoystickButton(driveController, XboxController.Button.kA.value),
-            driveBButton = new JoystickButton(driveController, XboxController.Button.kB.value),
-            driveXButton = new JoystickButton(driveController, XboxController.Button.kX.value),
-            driveYButton = new JoystickButton(driveController, XboxController.Button.kY.value),
-            driveLBumper = new JoystickButton(driveController, XboxController.Button.kLeftBumper.value),
-            driveRBumper = new JoystickButton(driveController, XboxController.Button.kRightBumper.value);
+    private final JoystickButton 
+        driveAButton = new JoystickButton(driveController, XboxController.Button.kA.value),
+        driveBButton = new JoystickButton(driveController, XboxController.Button.kB.value),
+        driveXButton = new JoystickButton(driveController, XboxController.Button.kX.value),
+        driveYButton = new JoystickButton(driveController, XboxController.Button.kY.value),
+        driveLBumper = new JoystickButton(driveController, XboxController.Button.kLeftBumper.value),
+        driveRBumper = new JoystickButton(driveController, XboxController.Button.kRightBumper.value);
 
     private final XboxController mechController = new XboxController(1);
-    private final JoystickButton mechAButton = new JoystickButton(mechController, XboxController.Button.kA.value),
-            mechBButton = new JoystickButton(mechController, XboxController.Button.kB.value),
-            mechXButton = new JoystickButton(mechController, XboxController.Button.kX.value),
-            mechYButton = new JoystickButton(mechController, XboxController.Button.kY.value),
-            mechLBumper = new JoystickButton(mechController, XboxController.Button.kLeftBumper.value),
-            mechRBumper = new JoystickButton(mechController, XboxController.Button.kRightBumper.value);
+    private final JoystickButton 
+        mechAButton = new JoystickButton(mechController, XboxController.Button.kA.value),
+        mechBButton = new JoystickButton(mechController, XboxController.Button.kB.value),
+        mechXButton = new JoystickButton(mechController, XboxController.Button.kX.value),
+        mechYButton = new JoystickButton(mechController, XboxController.Button.kY.value),
+        mechLBumper = new JoystickButton(mechController, XboxController.Button.kLeftBumper.value),
+        mechRBumper = new JoystickButton(mechController, XboxController.Button.kRightBumper.value);
+
     // Commands
     private final SendableChooser<Command> autonChooser;
     private final BalancerCommand balancerCommand;
@@ -74,14 +76,13 @@ public class RobotContainer {
      */
     public RobotContainer() {
         driveSubsystem = new TankSubsystem();
+        gripperSubsystem = new GripperSubsytem();
+        rollerSubsystem = new RollerSubsystem();
+
         balancerCommand = new BalancerCommand(driveSubsystem);
 
         // jetsonConnection = new JetsonConnection();
         // jetsonConnection.start();
-
-        gripper = new GripperSubsytem();
-
-        roller = new RollerSubsystem();
 
         // Configure the button bindings
         configureButtonBindings();
@@ -124,20 +125,19 @@ public class RobotContainer {
             }, tankSubsystem));
         }
 
-        roller.setDefaultCommand(new RunCommand(() -> {
-            roller.rollstate = mechController.getRightTriggerAxis() - (mechController.getLeftTriggerAxis());
-        }, roller));
+        rollerSubsystem.setDefaultCommand(new RunCommand(() -> {
+            double rollPower = mechController.getRightTriggerAxis() - mechController.getLeftTriggerAxis();
+            rollerSubsystem.setRollPower(rollPower);
+        }, rollerSubsystem));
 
-        mechAButton.onTrue(new InstantCommand(gripper::gripToggle, gripper));
+        mechAButton.onTrue(new InstantCommand(gripperSubsystem::gripToggle, gripperSubsystem));
     }
 
     /**
      * Use this to pass the autonomous command to the main {@link Robot} class.
-     * 
      * @return the command to run in autonomous
      */
     public Command getAutonomousCommand() {
         return autonChooser.getSelected();
     }
-
 }

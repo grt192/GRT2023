@@ -8,28 +8,27 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import static frc.robot.Constants.GripperConstants.*;
 
 public class GripperSubsytem extends SubsystemBase {
-
-    public Value state;
-
-    DoubleSolenoid pfft = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, FORCHAN, REVCHAN);
+    private final DoubleSolenoid pfft;
+    private Value state;
 
     public GripperSubsytem() {
+        pfft = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, PFFT_FORWARD_ID, PFFT_REVERSE_ID);
+
         // first set to forward
         state = Value.kForward;
     }
 
-    // instant command method
+    /**
+     * Toggle the state of the gripper.
+     */
     public void gripToggle() {
-        if (state == Value.kForward) {
-            state = Value.kReverse;
-        } else {
-            state = Value.kForward;
-        }
+        state = state == Value.kForward
+            ? Value.kReverse
+            : Value.kForward;
     }
 
     @Override
     public void periodic() {
         pfft.set(state);
-        System.out.println(state);
     }
 }

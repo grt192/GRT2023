@@ -11,41 +11,38 @@ import frc.robot.motorcontrol.MotorUtil;
 import static frc.robot.Constants.RollerConstants.*;
 
 public class RollerSubsystem extends SubsystemBase {
+    private final WPI_TalonSRX leftBeak;
+    private final WPI_TalonSRX rightBeak;
 
-    private final WPI_TalonSRX leftbeak = MotorUtil.createTalonSRX(LEFTID);
-    private final WPI_TalonSRX rightbeak = MotorUtil.createTalonSRX(RIGHTID);
+    private final DigitalInput limitSwitch = new DigitalInput(0);
 
-    // limit switch
-    private final DigitalInput crimitswitch = new DigitalInput(0);
+    private double rollPower = 0.0;
 
-    // roller state
-    public double rollstate;
-
-    // constructor
     public RollerSubsystem() {
-        rollstate = 0.;
-        rightbeak.follow(leftbeak);
-        leftbeak.setInverted(true);
-        leftbeak.setNeutralMode(NeutralMode.Brake);
-        rightbeak.setNeutralMode(NeutralMode.Brake);
-    }
+        leftBeak = MotorUtil.createTalonSRX(LEFT_ID);
+        leftBeak.setInverted(true);
+        leftBeak.setNeutralMode(NeutralMode.Brake);
 
+        rightBeak = MotorUtil.createTalonSRX(RIGHT_ID);
+        rightBeak.follow(leftBeak);
+        rightBeak.setNeutralMode(NeutralMode.Brake);
+    }
 
     @Override
     public void periodic() {
         // if wheels must intake, and the limit switch is not pressed, turn on motors
-        if (crimitswitch.get()) {
-            leftbeak.set(rollstate);
+        if (limitSwitch.get()) {
+            leftBeak.set(rollPower);
+        } else {
+            leftBeak.set(Math.min(rollPower, 0.0));
         }
-        else {
-            if (rollstate <= 0.0) {
-                leftbeak.set(rollstate);
-            } else {
-                leftbeak.set(0);
-            }
-
-        }
-
     }
 
+    /**
+     * Set the roller power of this subsystem.
+     * @param power The power to set.
+     */
+    public void setRollPower(double power) {
+        this.rollPower = power;
+    }
 }
