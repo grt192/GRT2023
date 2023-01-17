@@ -66,15 +66,20 @@ public class PhotonVision {
             new Pose3d(new Pose2d(0.0, Units.inchesToMeters(66.0), new Rotation2d(Units.degreesToRadians(180))))
         ));  
                     
-        visionPoseEstimator = new RobotPoseEstimator(
-            new AprilTagFieldLayout(
-                testTags,
-                Units.inchesToMeters(651.25),
-                Units.inchesToMeters(315.5) 
-            ),
-            PoseStrategy.CLOSEST_TO_REFERENCE_POSE, 
-            camList
-        );
+        try {
+            visionPoseEstimator = new RobotPoseEstimator(
+                new AprilTagFieldLayout(AprilTagFields.k2023ChargedUp.m_resourceFile),
+                // new AprilTagFieldLayout(
+                //     testTags,
+                //     Units.inchesToMeters(651.25),
+                //     Units.inchesToMeters(315.5) 
+                // ),
+                PoseStrategy.CLOSEST_TO_REFERENCE_POSE, 
+                camList
+            );
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
