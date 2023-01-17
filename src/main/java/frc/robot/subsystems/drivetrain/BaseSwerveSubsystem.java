@@ -126,15 +126,6 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
      * @param relative Whether to use relative powers instead of field-oriented control.
      */
     public void setDrivePowers(double xPower, double yPower, double angularPower, boolean relative) {
-        // If drivers are sending no input, stop all modules but hold their current angle.
-        if (xPower == 0.0 && yPower == 0.0 && angularPower == 0.0) {
-            this.states[0] = new SwerveModuleState(0.0, this.states[0].angle);
-            this.states[1] = new SwerveModuleState(0.0, this.states[1].angle);
-            this.states[2] = new SwerveModuleState(0.0, this.states[2].angle);
-            this.states[3] = new SwerveModuleState(0.0, this.states[3].angle);
-            return;
-        }
-
         // Scale [-1.0, 1.0] powers to desired velocity, turning field-relative powers
         // into robot relative chassis speeds.
         ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(
