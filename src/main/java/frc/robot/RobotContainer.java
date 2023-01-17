@@ -16,6 +16,7 @@ import frc.robot.commands.BalancerCommand;
 import frc.robot.jetson.JetsonConnection;
 import frc.robot.subsystems.drivetrain.TankSubsystem;
 import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
+import frc.robot.subsystems.drivetrain.MissileShellSwerveSubsystem;
 import frc.robot.subsystems.drivetrain.SwerveSubsystem2020;
 import frc.robot.subsystems.drivetrain.BaseDrivetrain;
 import frc.robot.subsystems.GripperSubsytem;
@@ -123,6 +124,14 @@ public class RobotContainer {
                 double turnPower = 0.75 * driveController.getRightX();
                 tankSubsystem.setDrivePowers(forwardPower, turnPower);
             }, tankSubsystem));
+        } else if (driveSubsystem instanceof MissileShellSwerveSubsystem) {
+            final MissileShellSwerveSubsystem swerveSubsystem = (MissileShellSwerveSubsystem) driveSubsystem;
+
+            swerveSubsystem.setDefaultCommand(new RunCommand(() -> {
+                double xPower = -driveController.getLeftY();
+                double yPower = -driveController.getLeftX();
+                swerveSubsystem.setDrivePowers(xPower, yPower);
+            }, swerveSubsystem));
         }
 
         rollerSubsystem.setDefaultCommand(new RunCommand(() -> {

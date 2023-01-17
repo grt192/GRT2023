@@ -20,7 +20,7 @@ public class MissileShellSwerveSubsystem extends BaseDrivetrain {
     };
 
     public MissileShellSwerveSubsystem() {
-        module = new SwerveModule(2, 1, -1.1350287199020386 + Math.PI);
+        module = new SwerveModule(2, 1, 0.352540004249);
 
         // One module at the center of the robot
         kinematics = new SwerveDriveKinematics(
@@ -36,23 +36,14 @@ public class MissileShellSwerveSubsystem extends BaseDrivetrain {
     }
 
     /**
-     * Set the field-centric swerve drive powers of the subsystem.
+     * Set the "robot"-relative swerve drive powers of the subsystem.
      * @param xPower The power [-1.0, 1.0] in the x (forward) direction.
      * @param yPower The power [-1.0, 1.0] in the y (left) direction.
-     * @param angularPower The angular (rotational) power [-1.0, 1.0].
-     * @param relative Whether to use relative powers instead of field-oriented control. This parameter has no effect.
      */
-    public void setDrivePowers(double xPower, double yPower, double angularPower, boolean relative) {
-        // If drivers are sending no input, stop all modules but hold their current angle.
-        if (xPower == 0.0 && yPower == 0.0 && angularPower == 0.0) {
-            this.states[0] = new SwerveModuleState(0.0, this.states[0].angle);
-            return;
-        }
-
-        // Scale [-1.0, 1.0] powers to desired velocity, turning field-relative powers
-        // into robot relative chassis speeds.
-        // For the missile's single-module setup, we assume that angular power is always 0 and
-        // the "robot" is always facing forward.
+    public void setDrivePowers(double xPower, double yPower) {
+        // Scale [-1.0, 1.0] powers to desired velocity, turning field-relative powers into 
+        // robot relative chassis speeds. For the missile's single-module setup, we assume that 
+        // angular power is always 0 and the "robot" is always facing forward.
         ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(
             xPower * MAX_VEL, 
             yPower * MAX_VEL, 
@@ -72,6 +63,6 @@ public class MissileShellSwerveSubsystem extends BaseDrivetrain {
      */
     @Override
     public void setDrivePowers(double xPower) {
-        setDrivePowers(xPower, 0.0, 0.0, false);
+        setDrivePowers(xPower, 0.0);
     }
 }
