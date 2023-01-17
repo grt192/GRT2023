@@ -7,23 +7,22 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import static frc.robot.Constants.GripperConstants.*;
 
-public class GripperSubsytem extends SubsystemBase{
+public class GripperSubsytem extends SubsystemBase {
 
     public Value state;
 
     DoubleSolenoid pfft = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, FORCHAN, REVCHAN);
 
-    public GripperSubsytem(){
-        //first set to forward
+    public GripperSubsytem() {
+        // first set to forward
         state = Value.kForward;
     }
 
-    //instant command method
-    public void gripToggle(){
-        if (state == Value.kForward){
+    // instant command method
+    public void gripToggle() {
+        if (state == Value.kForward) {
             state = Value.kReverse;
-        }
-        else {
+        } else {
             state = Value.kForward;
         }
     }
@@ -33,4 +32,4 @@ public class GripperSubsytem extends SubsystemBase{
         pfft.set(state);
         System.out.println(state);
     }
-     }
+}
