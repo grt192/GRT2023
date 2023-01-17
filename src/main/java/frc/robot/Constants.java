@@ -18,11 +18,13 @@ import edu.wpi.first.math.util.Units;
  * wherever the constants are needed, to reduce verbosity.
  */
 public final class Constants {
-    public static final class TankConstants {
-        public static final int LEFT_MAIN = 3;
-        public static final int LEFT_FOLLOW = 2;
+    
+    public static final class TankConstants{
+        public static final int LEFT_MAIN = 2;
+        public static final int LEFT_FOLLOW = 3;
         public static final int RIGHT_MAIN = 0;
         public static final int RIGHT_FOLLOW = 1;
+
     }
 
     public static final class SwerveConstants {
@@ -92,5 +94,16 @@ public final class Constants {
             Units.inchesToMeters(-13.1365),
             Units.inchesToMeters(-10.3865)
         );
+    }
+
+    public static final class GripperConstants {
+        public static final int FORCHAN = 0;
+        public static final int REVCHAN = 1;
+    }
+
+    public static final class RollerConstants {
+        public static final int LEFTID = 15;
+        public static final int RIGHTID = 16;
+        public static final int OUT_DELAY = 2000;
     }
 }
