@@ -130,7 +130,6 @@ public class RobotContainer {
         }, roller));
 
         mechAButton.onTrue(new InstantCommand(gripper::gripToggle, gripper));
-        // mechBButton.onTrue(new InstantCommand(roller::rollToggle, roller));
     }
 
     /**
