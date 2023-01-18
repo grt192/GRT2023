@@ -32,8 +32,8 @@ import frc.robot.subsystems.RollerSubsystem;
 public class RobotContainer {
     // Subsystems
     private final BaseDrivetrain driveSubsystem;
-    private final GripperSubsytem gripperSubsystem;
-    private final RollerSubsystem rollerSubsystem;
+    // private final GripperSubsytem gripperSubsystem;
+    // private final RollerSubsystem rollerSubsystem;
 
     // private final JetsonConnection jetsonConnection;
 
@@ -76,9 +76,9 @@ public class RobotContainer {
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
     public RobotContainer() {
-        driveSubsystem = new TankSubsystem();
-        gripperSubsystem = new GripperSubsytem();
-        rollerSubsystem = new RollerSubsystem();
+        driveSubsystem = new MissileShellSwerveSubsystem();
+        // gripperSubsystem = new GripperSubsytem();
+        // rollerSubsystem = new RollerSubsystem();
 
         balancerCommand = new BalancerCommand(driveSubsystem);
 
@@ -134,12 +134,14 @@ public class RobotContainer {
             }, swerveSubsystem));
         }
 
+        /*
         rollerSubsystem.setDefaultCommand(new RunCommand(() -> {
             double rollPower = mechController.getRightTriggerAxis() - mechController.getLeftTriggerAxis();
             rollerSubsystem.setRollPower(rollPower);
         }, rollerSubsystem));
 
         mechAButton.onTrue(new InstantCommand(gripperSubsystem::gripToggle, gripperSubsystem));
+        */
     }
 
     /**
