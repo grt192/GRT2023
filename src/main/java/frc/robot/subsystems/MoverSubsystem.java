@@ -66,9 +66,9 @@ public class MoverSubsystem extends SubsystemBase{
     public enum MoverPosition {
         VERTICAL(0,0),
         GROUND(Units.degreesToRadians(90), distanceToExtension(Units.inchesToMeters(25))),
-        SUBSTATION(0,0),
-        CUBEMID(0,0), CUBEHIGH(0,0), 
-        CONEMID(0,0), CONEHIGH(0,0)
+        SUBSTATION(Units.degreesToRadians(65), distanceToExtension(Units.inchesToMeters(44))),
+        CUBEMID(Units.degreesToRadians(72), distanceToExtension(Units.inchesToMeters(34))), CUBEHIGH(Units.degreesToRadians(66),distanceToExtension(Units.inchesToMeters(44))), 
+        CONEMID(Units.degreesToRadians(62),distanceToExtension(Units.inchesToMeters(34))), CONEHIGH(Units.degreesToRadians(66),distanceToExtension(Units.inchesToMeters(44)))
         ;
 
         public double angle; //radians, 0 is vertical
