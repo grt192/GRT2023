@@ -12,10 +12,14 @@ import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 
 import frc.robot.motorcontrol.MotorUtil;
 
@@ -46,6 +50,9 @@ public class SwerveModule implements BaseSwerveModule {
     private static final double steerI = 0;
     private static final double steerD = 0;
     private static final double steerFF = 0;
+
+    private final ShuffleboardTab shuffleboardTab;
+    private final GenericEntry targetEntry, currentEntry, errorEntry;
 
     /**
      * Constructs a SwerveModule from a drive and steer motor CAN ID and an angle offset.
@@ -99,6 +106,11 @@ public class SwerveModule implements BaseSwerveModule {
         steerPidController.setPositionPIDWrappingMinInput(0.0);
         steerPidController.setPositionPIDWrappingMaxInput(2 * Math.PI);
 
+        shuffleboardTab = Shuffleboard.getTab("Swerve " + drivePort + " " + steerPort);
+        targetEntry = shuffleboardTab.add("Target", 0.0).getEntry();
+        currentEntry = shuffleboardTab.add("Current", 0.0).getEntry();
+        errorEntry = shuffleboardTab.add("Error", 0.0).getEntry();
+
         this.offsetRads = offsetRads;
     }
 
@@ -130,20 +142,29 @@ public class SwerveModule implements BaseSwerveModule {
      * @param state The desired state of the module as a `SwerveModuleState`.
      */
     public void setDesiredState(SwerveModuleState state) {
-        SwerveModuleState optimized = SwerveModuleState.optimize(state, getAngle());
+        Rotation2d currentAngle = getAngle();
+        SwerveModuleState optimized = SwerveModuleState.optimize(state, currentAngle);
+
+        double target = optimized.angle.getRadians() - offsetRads;
+
+        targetEntry.setDouble(MathUtil.angleModulus(target));
+        currentEntry.setDouble(currentAngle.getRadians());
+        errorEntry.setDouble(MathUtil.angleModulus(target - currentAngle.getRadians()));
+
         // driveMotor.set(ControlMode.Velocity, optimized.getFirst() / (DRIVE_TICKS_TO_METERS * 10.0));
         driveMotor.set(optimized.speedMetersPerSecond); // Only while the module is in percent output
-        steerPidController.setReference(optimized.angle.getRadians() - offsetRads, ControlType.kPosition);
+        steerPidController.setReference(target, ControlType.kPosition);
     }
 
     /**
-     * Returns the current angle of the module. This differs from the raw encoder reading
+     * Returns the current (wrapped) angle of the module. This differs from the raw encoder reading
      * because this applies `offsetRads` to zero the module at a desired angle.
      * 
-     * @return The current angle of the module, as a `Rotation2d`.
+     * @return The current [-pi, pi] angle of the module, as a `Rotation2d`.
      */
     private Rotation2d getAngle() {
-        return new Rotation2d(steerAbsoluteEncoder.getPosition() + offsetRads);
+        double wrappedAngleRads = MathUtil.angleModulus(steerAbsoluteEncoder.getPosition() + offsetRads);
+        return new Rotation2d(wrappedAngleRads);
     }
 
     /**

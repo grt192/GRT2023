@@ -6,6 +6,8 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 
+import frc.robot.Constants.SwerveConstants;
+
 /**
  * A shell swerve subsystem to run a single swerve module on the missile.
  */
@@ -20,7 +22,7 @@ public class MissileShellSwerveSubsystem extends BaseDrivetrain {
     };
 
     public MissileShellSwerveSubsystem() {
-        module = new SwerveModule(2, 1, 0.352540004249);
+        module = new SwerveModule.TopLeft(SwerveConstants.tlDrive, SwerveConstants.tlSteer, SwerveConstants.tlOffsetRads);
 
         // One module at the center of the robot
         kinematics = new SwerveDriveKinematics(
