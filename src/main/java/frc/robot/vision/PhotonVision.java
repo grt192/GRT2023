@@ -56,24 +56,9 @@ public class PhotonVision {
         var camList = new ArrayList<Pair<PhotonCamera, Transform3d>>();
         camList.add(new Pair<PhotonCamera, Transform3d>(camera, cameraPos));
 
-        ArrayList<AprilTag> testTags = new ArrayList<>();
-        testTags.add(new AprilTag(
-            6, 
-            new Pose3d(new Pose2d(0.0, 0.0, new Rotation2d(Units.degreesToRadians(180))))
-        ));  
-        testTags.add(new AprilTag(
-            1, 
-            new Pose3d(new Pose2d(0.0, Units.inchesToMeters(66.0), new Rotation2d(Units.degreesToRadians(180))))
-        ));  
-                    
         try {
             visionPoseEstimator = new RobotPoseEstimator(
                 new AprilTagFieldLayout(AprilTagFields.k2023ChargedUp.m_resourceFile),
-                // new AprilTagFieldLayout(
-                //     testTags,
-                //     Units.inchesToMeters(651.25),
-                //     Units.inchesToMeters(315.5) 
-                // ),
                 PoseStrategy.CLOSEST_TO_REFERENCE_POSE, 
                 camList
             );
