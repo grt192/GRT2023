@@ -44,7 +44,7 @@ public class SwerveModule implements BaseSwerveModule {
     private static final double driveP = 0;
     private static final double driveI = 0;
     private static final double driveD = 0;
-    private static final double driveFF = 0;
+    private static final double driveFF = 0.173518335354;
 
     private static final double steerP = 0.4;
     private static final double steerI = 0;
@@ -147,12 +147,13 @@ public class SwerveModule implements BaseSwerveModule {
 
         double target = optimized.angle.getRadians() - offsetRads;
 
-        targetEntry.setDouble(MathUtil.angleModulus(target));
-        currentEntry.setDouble(currentAngle.getRadians());
-        errorEntry.setDouble(MathUtil.angleModulus(target - currentAngle.getRadians()));
+        targetEntry.setDouble(optimized.speedMetersPerSecond);
+        currentEntry.setDouble(driveEncoder.getVelocity());
+        errorEntry.setDouble(optimized.speedMetersPerSecond - driveEncoder.getVelocity());
 
         // driveMotor.set(ControlMode.Velocity, optimized.getFirst() / (DRIVE_TICKS_TO_METERS * 10.0));
-        driveMotor.set(optimized.speedMetersPerSecond); // Only while the module is in percent output
+        drivePidController.setReference(optimized.speedMetersPerSecond, ControlType.kVelocity);
+        // driveMotor.set(optimized.speedMetersPerSecond);
         steerPidController.setReference(target, ControlType.kPosition);
     }
 
@@ -163,6 +164,10 @@ public class SwerveModule implements BaseSwerveModule {
      * @return The current [-pi, pi] angle of the module, as a `Rotation2d`.
      */
     private Rotation2d getAngle() {
+        // System.out.println(Units.feetToMeters(16.10) * 0.3);
+        // System.out.println(driveEncoder.getVelocity());
+        // System.out.println(steerAbsoluteEncoder.getPosition());
+
         double wrappedAngleRads = MathUtil.angleModulus(steerAbsoluteEncoder.getPosition() + offsetRads);
         return new Rotation2d(wrappedAngleRads);
     }
