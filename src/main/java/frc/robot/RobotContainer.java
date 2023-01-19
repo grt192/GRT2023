@@ -140,7 +140,7 @@ public class RobotContainer {
             }, swerveSubsystem));
         }
         moverSubsystem.setDefaultCommand(new RunCommand(() -> {
-            double xPower = 0; //mechController.getLeftX();
+            double xPower = mechController.getLeftX();
             double yPower = -mechController.getRightY();
             moverSubsystem.setPowers(xPower, yPower);
         }, moverSubsystem));
