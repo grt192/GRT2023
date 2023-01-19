@@ -42,7 +42,7 @@ public class MoverSubsystem extends SubsystemBase{
 
     private MoverPosition currentState = MoverPosition.VERTICAL;
 
-    private final boolean TESTING = true;
+    private final boolean TESTING = false;
 
     private final ShuffleboardTab shuffleboardTab = Shuffleboard.getTab("Mover Subsystem");
     private final GenericEntry currentAngleEntry = shuffleboardTab.add("current angle",  0.0).getEntry();
