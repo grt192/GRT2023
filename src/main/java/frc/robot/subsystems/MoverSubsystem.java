@@ -42,7 +42,7 @@ public class MoverSubsystem extends SubsystemBase{
 
     private MoverPosition currentState = MoverPosition.VERTICAL;
 
-    private final boolean TESTING = false;
+    private final boolean TESTING = true;
 
     private final ShuffleboardTab shuffleboardTab = Shuffleboard.getTab("Mover Subsystem");
     private final GenericEntry currentAngleEntry = shuffleboardTab.add("current angle",  0.0).getEntry();
@@ -83,12 +83,13 @@ public class MoverSubsystem extends SubsystemBase{
     public MoverSubsystem(){
         rotationMotor = MotorUtil.createSparkMax(ROTATION_MOTOR_PORT);
         rotationMotor.setIdleMode(IdleMode.kBrake);
+        rotationMotor.setInverted(true);
         rotationMotorFollower = MotorUtil.createSparkMax(ROTATION_FOLLOWER_MOTOR_PORT);
         rotationMotorFollower.follow(rotationMotor);
 
         rotationEncoder = rotationMotor.getEncoder();
         rotationEncoder.setPositionConversionFactor(ROTATION_ROT_TO_RAD);
-        rotationEncoder.setInverted(true);
+        rotationEncoder.setPosition(0);
         
         rotationMotor.enableSoftLimit(SoftLimitDirection.kForward, true);
         rotationMotor.enableSoftLimit(SoftLimitDirection.kReverse, true);
@@ -106,10 +107,11 @@ public class MoverSubsystem extends SubsystemBase{
 
         extensionEncoder = extensionMotor.getEncoder();
         extensionEncoder.setPositionConversionFactor(EXTENSION_ROT_TO_M);
+        extensionEncoder.setPosition(0);
         
         extensionMotor.enableSoftLimit(SoftLimitDirection.kForward, true);
         extensionMotor.enableSoftLimit(SoftLimitDirection.kReverse, true);
-        extensionMotor.setSoftLimit(SoftLimitDirection.kForward, (float) Units.inchesToMeters(29));
+        extensionMotor.setSoftLimit(SoftLimitDirection.kForward, (float) Units.inchesToMeters(24));
         extensionMotor.setSoftLimit(SoftLimitDirection.kReverse, (float) Units.inchesToMeters(0));
 
         extensionPidController = extensionMotor.getPIDController();
