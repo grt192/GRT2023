@@ -114,7 +114,7 @@ public final class Constants {
         public static final int EXTENSION_MOTOR_PORT = 19;
 
         public static final double ROTATION_GEAR_RATIO = 1/102.67;
-        public static final double EXTENSION_GEAR_RATIO = 27;
+        public static final double EXTENSION_GEAR_RATIO = 1/27;
 
         public static final double ANGLE_OFFSET_SPEED = 0.001;
         public static final double EXTENSION_OFFSET_SPEED = 0.001;
