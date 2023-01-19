@@ -88,6 +88,7 @@ public class MoverSubsystem extends SubsystemBase{
 
         rotationEncoder = rotationMotor.getEncoder();
         rotationEncoder.setPositionConversionFactor(ROTATION_ROT_TO_RAD);
+        rotationEncoder.setInverted(true);
         
         rotationMotor.enableSoftLimit(SoftLimitDirection.kForward, true);
         rotationMotor.enableSoftLimit(SoftLimitDirection.kReverse, true);
