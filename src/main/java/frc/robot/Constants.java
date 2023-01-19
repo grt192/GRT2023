@@ -28,7 +28,7 @@ public final class Constants {
     public static final class SwerveConstants {
         public static final int tlDrive = 2;
         public static final int tlSteer = 1;
-        public static final double tlOffsetRads = 1.8511727492;
+        public static final double tlOffsetRads = -1.29041990439;
         public static final Translation2d tlPos = new Translation2d(
             Units.inchesToMeters(12.0),
             Units.inchesToMeters(8.75)
@@ -36,7 +36,7 @@ public final class Constants {
 
         public static final int trDrive = 4;
         public static final int trSteer = 3;
-        public static final double trOffsetRads = 0.352540004249;
+        public static final double trOffsetRads = -0.796551716332;
         public static final Translation2d trPos = new Translation2d(
             Units.inchesToMeters(12.0),
             Units.inchesToMeters(-8.75)
@@ -45,7 +45,7 @@ public final class Constants {
         // TODO: reflash sparkmaxes to fix this
         public static final int blDrive = 8;
         public static final int blSteer = 7;
-        public static final double blOffsetRads = -2.39908667008;
+        public static final double blOffsetRads = -0.836441051964;
         public static final Translation2d blPos = new Translation2d(
             Units.inchesToMeters(-12.0),
             Units.inchesToMeters(8.75)
@@ -53,7 +53,7 @@ public final class Constants {
 
         public static final int brDrive = 6;
         public static final int brSteer = 5;
-        public static final double brOffsetRads = 0; // TODO
+        public static final double brOffsetRads = 2.6627025485;
         public static final Translation2d brPos = new Translation2d(
             Units.inchesToMeters(-12.0),
             Units.inchesToMeters(-8.75)
