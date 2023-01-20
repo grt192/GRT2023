@@ -95,8 +95,10 @@ public final class Constants {
     }
 
     public static final class GripperConstants {
-        public static final int PFFT_FORWARD_ID = 0;
-        public static final int PFFT_REVERSE_ID = 1;
+        public static final int PFFT_FORWARD_IDL = 0;
+        public static final int PFFT_REVERSE_IDL = 1;
+        public static final int PFFT_FORWARD_IDR = 2;
+        public static final int PFFT_REVERSE_IDR = 3;
     }
 
     public static final class RollerConstants {
