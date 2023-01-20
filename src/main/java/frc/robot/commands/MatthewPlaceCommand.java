@@ -4,12 +4,12 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.GripperSubsytem;
 
-public class DropCommand extends CommandBase{
+public class MatthewPlaceCommand extends CommandBase{
     private final GripperSubsytem gripperSubsystem;
     private final Value state;
     private boolean done;
 
-    public DropCommand (GripperSubsytem gripper){
+    public MatthewPlaceCommand (GripperSubsytem gripper){
         this.gripperSubsystem = gripper;
         this.state = gripperSubsystem.getState();
         done = false;
