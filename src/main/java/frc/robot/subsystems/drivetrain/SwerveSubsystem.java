@@ -19,7 +19,7 @@ public class SwerveSubsystem extends BaseSwerveSubsystem {
             new SwerveModule.BottomLeft(blDrive, blSteer, blOffsetRads),
             new SwerveModule.BottomRight(brDrive, brSteer, brOffsetRads),
             MAX_VEL, MAX_ACCEL, MAX_OMEGA, MAX_ALPHA,
-            new SwerveDriveKinematics(tlPos, trPos, blPos, brPos)
+            new SwerveDriveKinematics(tlPos, trPos, blPos, brPos),
             photonWrapper
         );
     }
