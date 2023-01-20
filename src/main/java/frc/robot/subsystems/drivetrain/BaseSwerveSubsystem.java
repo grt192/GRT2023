@@ -1,6 +1,6 @@
 package frc.robot.subsystems.drivetrain;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import org.photonvision.EstimatedRobotPose;
 
@@ -14,6 +14,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.Timer;
+
 import frc.robot.vision.PhotonWrapper;
 
 /**
@@ -98,11 +99,13 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
         );
 
         // Add vision pose estimate to pose estimator
-        ArrayList<EstimatedRobotPose> visionPoses = photonWrapper.getRobotPose(estimate);
-        for (EstimatedRobotPose visionPose : visionPoses) {
-            poseEstimator.addVisionMeasurement(visionPose.estimatedPose.toPose2d(), visionPose.timestampSeconds);
-        }
-        
+        photonWrapper.getRobotPose(estimate).forEach((visionPose) -> {
+            poseEstimator.addVisionMeasurement(
+                visionPose.estimatedPose.toPose2d(),
+                visionPose.timestampSeconds
+            );
+        });
+
         // If all commanded velocities are 0, the system is idle (drivers / commands are
         // not supplying input).
         boolean isIdle = states[0].speedMetersPerSecond == 0.0
