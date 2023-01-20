@@ -1,5 +1,9 @@
 package frc.robot.subsystems.drivetrain;
 
+import java.util.ArrayList;
+
+import org.photonvision.EstimatedRobotPose;
+
 import edu.wpi.first.math.MatBuilder;
 import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
@@ -10,6 +14,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.Timer;
+import frc.robot.vision.PhotonWrapper;
 
 /**
  * The superclass for the current `SwerveSubsystem` and `SwerveSubsystem2020` that contains all the
@@ -23,6 +28,8 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
 
     private final SwerveDrivePoseEstimator poseEstimator;
     private final SwerveDriveKinematics kinematics;
+
+    private final PhotonWrapper photonWrapper;
 
     public final double MAX_VEL; // Max robot tangential velocity, in m/s
     public final double MAX_ACCEL; // Max robot tangential acceleration, in m/s^2
@@ -50,7 +57,8 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
         BaseSwerveModule bottomLeftModule,
         BaseSwerveModule bottomRightModule,
         double maxVel, double maxAccel, double maxOmega, double maxAlpha,
-        SwerveDriveKinematics kinematics
+        SwerveDriveKinematics kinematics,
+        PhotonWrapper photonWrapper
     ) {
         MAX_VEL = maxVel;
         MAX_ACCEL = maxAccel;
@@ -63,6 +71,7 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
         this.bottomRightModule = bottomRightModule;
 
         this.kinematics = kinematics;
+        this.photonWrapper = photonWrapper;
 
         // Initialize pose estimator
         poseEstimator = new SwerveDrivePoseEstimator(
@@ -76,6 +85,7 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
             new MatBuilder<>(Nat.N3(), Nat.N1()).fill(0.1, 0.1, 0.01)
         );
 
+
         lockTimer = new Timer();
     }
 
@@ -83,11 +93,18 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
     public void periodic() {
         // Update pose estimator from swerve module states
         Rotation2d gyroAngle = getGyroHeading();
-        poseEstimator.update(
+        
+        Pose2d estimate = poseEstimator.update(
             gyroAngle,
             getModuleStates()
         );
 
+        // Add vision pose estimate to pose estimator
+        ArrayList<EstimatedRobotPose> visionPoses = photonWrapper.getRobotPose(estimate);
+        for (EstimatedRobotPose visionPose : visionPoses) {
+            poseEstimator.addVisionMeasurement(visionPose.estimatedPose.toPose2d(), visionPose.timestampSeconds);
+        }
+        
         // If all commanded velocities are 0, the system is idle (drivers / commands are
         // not supplying input).
         boolean isIdle = states[0].speedMetersPerSecond == 0.0

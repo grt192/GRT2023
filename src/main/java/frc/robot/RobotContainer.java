@@ -27,8 +27,8 @@ import frc.robot.controllers.BaseDriveController;
 import frc.robot.controllers.DualJoystickDriveController;
 import frc.robot.controllers.TwistJoystickDriveController;
 import frc.robot.controllers.XboxDriveController;
-import frc.robot.jetson.JetsonConnection;
 import frc.robot.subsystems.drivetrain.TankSubsystem;
+import frc.robot.vision.PhotonWrapper;
 import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
 import frc.robot.subsystems.drivetrain.MissileShellSwerveSubsystem;
 import frc.robot.subsystems.drivetrain.MissileShellSwerveSweeperSubsystem;
@@ -55,9 +55,8 @@ public class RobotContainer {
     private final BaseDrivetrain driveSubsystem;
     private final RollerSubsystem rollerSubsystem;
     private final TiltedElevatorSubsystem tiltedElevatorSubsystem;
-    private final RollerToTiltedSubsystem rollerToTiltedSubsystem;
-
-    //private final JetsonConnection jetsonConnection;
+    
+    private final PhotonWrapper photonWrapper;
 
     // Controllers and buttons
     private final BaseDriveController driveController;
@@ -94,11 +93,12 @@ public class RobotContainer {
     public RobotContainer() {
         driveController = new DualJoystickDriveController();
 
-        driveSubsystem = new SwerveSubsystem();
+        photonWrapper = new PhotonWrapper();
+
+        driveSubsystem = new SwerveSubsystem(photonWrapper);
         rollerSubsystem = new RollerSubsystem();
         tiltedElevatorSubsystem = new TiltedElevatorSubsystem();
-        rollerToTiltedSubsystem = new RollerToTiltedSubsystem(rollerSubsystem, tiltedElevatorSubsystem);
-
+        
         balancerCommand = new BalancerCommand(driveSubsystem);
 
         // Configure the button bindings
