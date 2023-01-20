@@ -5,6 +5,15 @@
 package frc.robot;
 
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.Pair;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
+
+import java.util.Arrays;
+import java.util.List;
+
+import org.photonvision.PhotonCamera;
 import edu.wpi.first.math.util.Units;
 
 /**
@@ -92,6 +101,21 @@ public final class Constants {
             Units.inchesToMeters(-13.1365),
             Units.inchesToMeters(-10.3865)
         );
+    }
+
+    public static final class VisionConstants {
+        public static List<Pair<PhotonCamera, Transform3d>> CAMERA_LIST = 
+            Arrays.asList(
+                new Pair<PhotonCamera, Transform3d>(
+                    new PhotonCamera("Microsoft Lifecam"), 
+                    new Transform3d(
+                        new Translation3d(0, 0, 0),
+                        new Rotation3d()
+                    )
+                )
+            );
+    
+        public static final String COPROCESSOR_IP = "10.1.92.12";
     }
 
     public static final class GripperConstants {

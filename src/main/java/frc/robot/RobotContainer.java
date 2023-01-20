@@ -13,8 +13,8 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 import frc.robot.commands.BalancerCommand;
-import frc.robot.jetson.JetsonConnection;
 import frc.robot.subsystems.drivetrain.TankSubsystem;
+import frc.robot.vision.PhotonWrapper;
 import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
 import frc.robot.subsystems.drivetrain.MissileShellSwerveSubsystem;
 import frc.robot.subsystems.drivetrain.SwerveSubsystem;
@@ -36,7 +36,7 @@ public class RobotContainer {
     // private final GripperSubsytem gripperSubsystem;
     // private final RollerSubsystem rollerSubsystem;
 
-    // private final JetsonConnection jetsonConnection;
+    private final PhotonWrapper photonWrapper;
 
     // Controllers and buttons
     private final GenericHID switchboard = new GenericHID(3);
@@ -77,14 +77,14 @@ public class RobotContainer {
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
     public RobotContainer() {
-        driveSubsystem = new SwerveSubsystem();
+
+        photonWrapper = new PhotonWrapper();
+
+        driveSubsystem = new SwerveSubsystem(photonWrapper);
         // gripperSubsystem = new GripperSubsytem();
         // rollerSubsystem = new RollerSubsystem();
 
         balancerCommand = new BalancerCommand(driveSubsystem);
-
-        // jetsonConnection = new JetsonConnection();
-        // jetsonConnection.start();
 
         // Configure the button bindings
         configureButtonBindings();
