@@ -53,7 +53,7 @@ public final class Constants {
 
         public static final int brDrive = 6;
         public static final int brSteer = 5;
-        public static final double brOffsetRads = 2.6627025485;
+        public static final double brOffsetRads = 0.568307446107;
         public static final Translation2d brPos = new Translation2d(
             Units.inchesToMeters(-12.0),
             Units.inchesToMeters(-8.75)
