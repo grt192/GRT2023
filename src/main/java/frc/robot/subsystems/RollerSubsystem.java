@@ -28,6 +28,10 @@ public class RollerSubsystem extends SubsystemBase {
         rightBeak.setNeutralMode(NeutralMode.Brake);
     }
 
+    public boolean isLimit(){
+        return limitSwitch.get();
+    }
+
     @Override
     public void periodic() {
         // if wheels must intake, and the limit switch is not pressed, turn on motors

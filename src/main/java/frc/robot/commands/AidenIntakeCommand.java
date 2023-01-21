@@ -1,42 +1,39 @@
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.RollerSubsystem;
 
-public class AidenPlaceCommand extends CommandBase {
+public class AidenIntakeCommand extends CommandBase {
     private final RollerSubsystem rollerSubsystem;
-    private Timer timer;
+    private boolean limitswitchUp;
     private double power;
 
-    public AidenPlaceCommand(RollerSubsystem rollerSubsystem){
-        timer = new Timer();
+    public AidenIntakeCommand(RollerSubsystem rollerSubsystem){
         power = 0.0;
         this.rollerSubsystem = rollerSubsystem;
+        limitswitchUp = rollerSubsystem.isLimit();
+        addRequirements(rollerSubsystem);
     }
 
     @Override
     public void initialize() {
-        System.out.println("Roller to place");
-        timer.start();
-        addRequirements(rollerSubsystem);
+        System.out.println("Roller to intake");
     } 
     
     @Override
     public void execute() {
-        if (timer.advanceIfElapsed(2)){
-            power = 0;
+        if (limitswitchUp){
+            power = 0.3;
         }
-        else{
-            power = -.2;
+        else {
+            power = 0;
         }
         rollerSubsystem.setRollPower(power);
     }
 
     @Override
     public void end(boolean interrupted) {
-        System.out.println("Placing done");
-        timer.reset();
+        System.out.println("Intake done");
     }
     
     @Override
