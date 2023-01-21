@@ -32,7 +32,7 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
     private static final double LOCK_TIMEOUT_SECONDS = 1.0; // The elapsed idle time to wait before locking
     private static final boolean LOCKING_ENABLE = true;
 
-    private double angleOffset = 0;
+    private Rotation2d angleOffset = new Rotation2d(0);
 
     // The driver or auton commanded `SwerveModuleState` setpoints for each module;
     // states are given in a tuple of [top left, top right, bottom left, bottom right].
@@ -203,39 +203,43 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
 
     /**
      * Reset the robot's position to a given Pose2d.
-     * @param position The position to reset the pose estimator to.
+     * @param currentPose The position to reset the pose estimator to.
      */
-    public void resetPosition(Pose2d position) {
+    public void resetPose(Pose2d currentPose) {
         Rotation2d gyroAngle = getGyroHeading();
         poseEstimator.resetPosition(
             gyroAngle,
             getModuleStates(),
-            position
+            currentPose
         );
+
+        angleOffset = getGyroHeading().minus(currentPose.getRotation());
     }
 
     /**
      * Zeros the robot's position.
      * This method zeros both the robot's translation *and* rotation.
      */
-    public void resetPosition() {
-        resetPosition(new Pose2d());
+    public void resetPose() {
+        resetPose(new Pose2d());
     }
 
     /**
      * Zeros *only the angle* of the robot's field-relative control system.
      * This also resets localization to match the rotated field.
      */
-    public void resetFieldAngle() {
+    public void resetFieldAngle(Rotation2d currentRotation) {
         Pose2d currPos = getRobotPosition();
 
         // Reset localization angle but keep current (x, y) to preserve the origin.
-        resetPosition(new Pose2d(
+        resetPose(new Pose2d(
             currPos.getTranslation(),
-            new Rotation2d()
+            currentRotation
         ));
+    }
 
-        angleOffset = ahrs.getAngle();
+    public void resetFieldAngle() {
+        resetFieldAngle(new Rotation2d(0));
     }
 
     /**
@@ -255,7 +259,7 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
     private Rotation2d getFieldHeading() {
         // Primarily use AHRS reading, falling back on the pose estimator if the AHRS disconnects.
         return ahrs.isConnected()
-            ? getGyroHeading().plus(Rotation2d.fromDegrees(angleOffset))
+            ? getGyroHeading().minus(angleOffset)
             : getRobotPosition().getRotation();
     }
 }
