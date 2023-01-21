@@ -182,8 +182,14 @@ public class RobotContainer {
         }));
     }
 
-    public SwerveSubsystem getSwerveSubsystem(){
-        //return SwerveSubsystem
+    public BaseSwerveSubsystem getSwerveSubsystem(){
+        if (driveSubsystem instanceof BaseSwerveSubsystem){
+            return (BaseSwerveSubsystem) driveSubsystem;
+        }
+
+        else{
+            return null;
+        }
     }
 
     public GripperSubsytem getGripperSubsytem(){
