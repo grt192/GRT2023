@@ -4,7 +4,12 @@
 
 package frc.robot;
 
+import java.util.List;
+
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
@@ -15,8 +20,10 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 import frc.robot.commands.BalancerCommand;
+import frc.robot.commands.swerve.FollowPathCommand;
 import frc.robot.controllers.BaseDriveController;
 import frc.robot.controllers.DualJoystickDriveController;
+import frc.robot.controllers.TwistJoystickDriveController;
 import frc.robot.jetson.JetsonConnection;
 import frc.robot.subsystems.drivetrain.TankSubsystem;
 import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
@@ -68,6 +75,7 @@ public class RobotContainer {
 
     // Commands
     private final SendableChooser<Command> autonChooser;
+    private final Command autonCommand;
     private final BalancerCommand balancerCommand;
 
     /**
@@ -90,6 +98,13 @@ public class RobotContainer {
 
         // Add auton sequences to the chooser and add the chooser to shuffleboard
         // TODO: shuffleboard
+
+        autonCommand = new FollowPathCommand(
+            (BaseSwerveSubsystem) driveSubsystem, 
+            new Pose2d(), 
+            List.of(new Translation2d(1, 1)),
+            new Pose2d(2, -1, new Rotation2d())
+        );
 
         autonChooser = new SendableChooser<>();
         autonChooser.setDefaultOption("Skip auton", new InstantCommand());
@@ -149,6 +164,6 @@ public class RobotContainer {
      * @return the command to run in autonomous
      */
     public Command getAutonomousCommand() {
-        return autonChooser.getSelected();
+        return autonCommand;
     }
 }
