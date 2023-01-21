@@ -305,6 +305,10 @@ public class RobotContainer {
             tiltedElevatorSubsystem.toggleState(ElevatorState.GROUND, ElevatorState.SUBSTATION);
         }, tiltedElevatorSubsystem));
 
+        mechXButton.onTrue(new InstantCommand(() ->{
+            tiltedElevatorSubsystem.resetOffset();
+        }, tiltedElevatorSubsystem));
+
         mechRBumper.onTrue(new InstantCommand(() ->{
             tiltedElevatorSubsystem.toggleState(ElevatorState.CUBEMID, ElevatorState.CUBEHIGH);
         }, tiltedElevatorSubsystem));
