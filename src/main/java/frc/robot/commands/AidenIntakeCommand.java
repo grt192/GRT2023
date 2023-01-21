@@ -28,7 +28,7 @@ public class AidenIntakeCommand extends CommandBase {
     public void execute() {
         //let rollers turn intil a game piece is in(has pressed onto limit switch)
         if (limitswitchUp){
-            power = -0.3;
+            power = 0.3;
         }
         else {
             power = 0;

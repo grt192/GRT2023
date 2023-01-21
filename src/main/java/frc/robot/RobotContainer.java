@@ -17,6 +17,7 @@ import frc.robot.jetson.JetsonConnection;
 import frc.robot.subsystems.drivetrain.TankSubsystem;
 import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
 import frc.robot.subsystems.drivetrain.MissileShellSwerveSubsystem;
+import frc.robot.subsystems.drivetrain.SwerveSubsystem;
 import frc.robot.subsystems.drivetrain.SwerveSubsystem2020;
 import frc.robot.subsystems.drivetrain.BaseDrivetrain;
 import frc.robot.subsystems.MoverSubsystem;
@@ -179,6 +180,18 @@ public class RobotContainer {
         mechXButton.onTrue(new InstantCommand(() ->{
             moverSubsystem.setState(MoverPosition.VERTICAL);
         }));
+    }
+
+    public SwerveSubsystem getSwerveSubsystem(){
+        //return SwerveSubsystem
+    }
+
+    public GripperSubsytem getGripperSubsytem(){
+        return gripperSubsystem;
+    }
+
+    public MoverSubsystem getMoverSubsystem(){
+        return moverSubsystem;
     }
 
     /**
