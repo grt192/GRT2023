@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-
+import frc.robot.Constants.TiltedElevatorConstants;
 import frc.robot.commands.BalancerCommand;
 import frc.robot.jetson.JetsonConnection;
 import frc.robot.subsystems.drivetrain.TankSubsystem;
@@ -21,6 +21,8 @@ import frc.robot.subsystems.drivetrain.SwerveSubsystem2020;
 import frc.robot.subsystems.drivetrain.BaseDrivetrain;
 import frc.robot.subsystems.GripperSubsytem;
 import frc.robot.subsystems.RollerSubsystem;
+import frc.robot.subsystems.TiltedElevatorSubsystem;
+import frc.robot.subsystems.TiltedElevatorSubsystem.ElevatorState;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -34,6 +36,7 @@ public class RobotContainer {
     private final BaseDrivetrain driveSubsystem;
     private final GripperSubsytem gripperSubsystem;
     private final RollerSubsystem rollerSubsystem;
+    private final TiltedElevatorSubsystem tiltedElevatorSubsystem;
 
     // private final JetsonConnection jetsonConnection;
 
@@ -79,6 +82,7 @@ public class RobotContainer {
         driveSubsystem = new TankSubsystem();
         gripperSubsystem = new GripperSubsytem();
         rollerSubsystem = new RollerSubsystem();
+        tiltedElevatorSubsystem = new TiltedElevatorSubsystem();
 
         balancerCommand = new BalancerCommand(driveSubsystem);
 
@@ -140,6 +144,18 @@ public class RobotContainer {
         }, rollerSubsystem));
 
         mechAButton.onTrue(new InstantCommand(gripperSubsystem::gripToggle, gripperSubsystem));
+
+        mechYButton.onTrue(new InstantCommand(() ->{
+            tiltedElevatorSubsystem.toggleState(ElevatorState.GROUND, ElevatorState.SUBSTATION);
+        }, tiltedElevatorSubsystem));
+
+        mechRBumper.onTrue(new InstantCommand(() ->{
+            tiltedElevatorSubsystem.toggleState(ElevatorState.CUBEMID, ElevatorState.CUBEHIGH);
+        }, tiltedElevatorSubsystem));
+
+        mechLBumper.onTrue(new InstantCommand(() ->{
+            tiltedElevatorSubsystem.toggleState(ElevatorState.CONEMID, ElevatorState.CONEHIGH);
+        }, tiltedElevatorSubsystem));
     }
 
     /**
