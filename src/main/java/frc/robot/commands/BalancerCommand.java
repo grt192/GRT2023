@@ -33,7 +33,7 @@ public class BalancerCommand extends CommandBase {
             if(ahrs.getPitch() >= 4.0) reachedStation = true;
         }
         else{
-            returnPower  = 0.01142857143 * ahrs.getPitch(); // MAX_ERR * Kp = MAX_PWR   35 * Kp = 0.4    
+            returnPower  = 0.01142857143 * ahrs.getPitch(); // MAX_ERR * Kp = MAX_PWR   35 * Kp = 0.4  Kp = 0.4 / 35
         }
 
         driveSubsystem.setDrivePowers(returnPower);
