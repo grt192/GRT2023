@@ -97,6 +97,7 @@ public final class Constants {
     public static final class TiltedElevatorConstants {
         public static final int EXTENSION_ID = 19;
         public static final float EXTENSION_LIMIT = 20; // in inches, TODO
+        
         public static final double EXT_GR = 14.0 / 64.0;
         public static final double EXT_CIRCUM = Math.PI * 0.500; // approx circumference of winch
         public static final double EXTENSION_ROT_TO_M = EXT_GR * EXT_CIRCUM; // rotations to meters

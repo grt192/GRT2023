@@ -28,6 +28,9 @@ public class TiltedElevatorSubsystem  extends SubsystemBase {
 
     private ElevatorState currentState = ElevatorState.GROUND;
 
+    public final static double OFFSET_FACTOR = 0.00001; // meters
+    private double offsetDist = 0;
+
     // Shuffleboard
     private final ShuffleboardTab shuffleboardTab = Shuffleboard.getTab("Tilted Elevator");
     private final GenericEntry extensionPEntry = shuffleboardTab.add("Extension P", extensionP).getEntry();
@@ -96,23 +99,29 @@ public class TiltedElevatorSubsystem  extends SubsystemBase {
     @Override
     public void periodic() {
 
-        extensionPidController.setReference(currentState.extendDistance, ControlType.kPosition);
+        // Verify extension distance
+        double finalExtendDist = currentState.extendDistance + offsetDist;
+        if (finalExtendDist >= 0 && finalExtendDist <= EXTENSION_LIMIT) {
+            extensionPidController.setReference(finalExtendDist, ControlType.kPosition);
+        }
 
         // Shuffleboard
         extensionP = extensionPEntry.getDouble(extensionP);
         extensionI = extensionIEntry.getDouble(extensionI);
         extensionD = extensionDEntry.getDouble(extensionD);
 
-        currentExtensionEntry.setDouble(Units.metersToInches(extensionEncoder.getPosition()));
+        currentExtensionEntry.setDouble(Units.metersToInches(extensionEncoder.getPosition() + offsetDist));
         currentStateEntry.setString(currentState.toString());
     }
 
     /**
-     * Toggles between the two specified ElevatorStates. Assign to state1 by default.
+     * Toggles between the two specified ElevatorStates and resets offset. Assign to state1 by default.
      * @param state1 state 1
      * @param state2 state 2
      */
     public void toggleState(ElevatorState state1, ElevatorState state2) { 
+        resetOffset();
+
         if (currentState == state1) {
             currentState = state2; // toggle
         } else if (currentState == state2) {
@@ -120,6 +129,21 @@ public class TiltedElevatorSubsystem  extends SubsystemBase {
         } else {
             currentState = state1; // assign state1 by default
         }
+    }
+
+    /**
+     * Resets offset to 0.
+     */
+    public void resetOffset() {
+        this.offsetDist = 0;
+    }
+
+    /**
+     * Set offset distance based on power.
+     * @param power Xbox-controlled power
+     */
+    public void setOffsetPowers(double power) {
+        this.offsetDist += OFFSET_FACTOR * power;
     }
     
 }
