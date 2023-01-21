@@ -4,6 +4,10 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.GripperSubsytem;
 
+/**
+ * Places 1 gamepiece with Pfft Gripper Mech. This command is to be used during autonamous.
+ */
+
 public class MatthewPlaceCommand extends CommandBase{
     private final GripperSubsytem gripperSubsystem;
     private final Value state;
@@ -23,6 +27,7 @@ public class MatthewPlaceCommand extends CommandBase{
 
     @Override
     public void execute() {
+        //check if gripper is open, else open gripper
         if (state == Value.kForward){
             System.out.println("Gripper is already open :(");
         }

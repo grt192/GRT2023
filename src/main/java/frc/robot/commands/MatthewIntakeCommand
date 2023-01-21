@@ -4,6 +4,10 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.GripperSubsytem;
 
+/**
+ * Intakes 1 gamepiece with Pfft Gripper Mech. This command is to be used during autonamous.
+ */
+
 public class MatthewIntakeCommand extends CommandBase{
     private final GripperSubsytem gripperSubsystem;
     private final Value state;
@@ -23,8 +27,9 @@ public class MatthewIntakeCommand extends CommandBase{
 
     @Override
     public void execute() {
+        //check if gripper is closed, else close gripper
         if (state == Value.kReverse){
-            System.out.println("Gripper is already close :(");
+            System.out.println("Gripper is already closed :(");
         }
         else{
             gripperSubsystem.gripToggle();

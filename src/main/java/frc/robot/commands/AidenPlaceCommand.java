@@ -4,6 +4,10 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.RollerSubsystem;
 
+/**
+ * Places 1 gamepiece with Roller Mech. This command is to be used during autonamous.
+ */
+
 public class AidenPlaceCommand extends CommandBase {
     private final RollerSubsystem rollerSubsystem;
     private Timer timer;
@@ -24,6 +28,7 @@ public class AidenPlaceCommand extends CommandBase {
     
     @Override
     public void execute() {
+        //let rollers roll for 2 seconds to place gamepiece
         if (timer.advanceIfElapsed(2)){
             power = 0;
         }
