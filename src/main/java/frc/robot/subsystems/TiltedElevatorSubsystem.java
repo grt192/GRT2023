@@ -110,6 +110,10 @@ public class TiltedElevatorSubsystem  extends SubsystemBase {
         extensionI = extensionIEntry.getDouble(extensionI);
         extensionD = extensionDEntry.getDouble(extensionD);
 
+        extensionPidController.setP(extensionP);
+        extensionPidController.setI(extensionI);
+        extensionPidController.setD(extensionD);
+
         currentExtensionEntry.setDouble(Units.metersToInches(extensionEncoder.getPosition() + offsetDist));
         currentStateEntry.setString(currentState.toString());
     }
