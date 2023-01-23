@@ -3,6 +3,8 @@ package frc.robot.commands.sequences;
 import com.fasterxml.jackson.databind.JsonSerializable.Base;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.RobotContainer;
@@ -23,11 +25,102 @@ import frc.robot.subsystems.drivetrain.SwerveSubsystem;
  * 
  */
 
-public class AutonAutonSequence extends SequentialCommandGroup{
+public abstract class AutonAutonSequence extends SequentialCommandGroup{
     private final RobotContainer robotContainer;
     private final BaseSwerveSubsystem swerveSubsystem;
     private final GripperSubsytem gripperSubsytem;
     private final MoverSubsystem moverSubsystem;
+
+    //positions for placing gamepieces
+    public enum PlacePos{
+        X1( new Pose2d(
+            Units.inchesToMeters(0),
+            Units.inchesToMeters(0),
+            Rotation2d.fromDegrees(0)
+        )
+        ),
+        X2( new Pose2d(
+            Units.inchesToMeters(0),
+            Units.inchesToMeters(0),
+            Rotation2d.fromDegrees(0)
+        )
+        ),
+        X3( new Pose2d(
+            Units.inchesToMeters(0),
+            Units.inchesToMeters(0),
+            Rotation2d.fromDegrees(0)
+        )
+        ),
+        X4( new Pose2d(
+            Units.inchesToMeters(0),
+            Units.inchesToMeters(0),
+            Rotation2d.fromDegrees(0)
+        )),
+        X5( new Pose2d(
+            Units.inchesToMeters(0),
+            Units.inchesToMeters(0),
+            Rotation2d.fromDegrees(0)
+        )),
+        X6( new Pose2d(
+            Units.inchesToMeters(0),
+            Units.inchesToMeters(0),
+            Rotation2d.fromDegrees(0)
+        )),
+        X7( new Pose2d(
+            Units.inchesToMeters(0),
+            Units.inchesToMeters(0),
+            Rotation2d.fromDegrees(0)
+        )),
+        X8( new Pose2d(
+            Units.inchesToMeters(0),
+            Units.inchesToMeters(0),
+            Rotation2d.fromDegrees(0)
+        )),
+        X9( new Pose2d(
+            Units.inchesToMeters(0),
+            Units.inchesToMeters(0),
+            Rotation2d.fromDegrees(0)
+        ));
+        Pose2d pose;
+
+        PlacePos(Pose2d pose){
+            this.pose = pose;
+        }
+    } 
+
+    //positions for picking up gamepieces
+    public enum PickPos{
+        CUBE1(new Pose2d(
+            Units.inchesToMeters(0),
+            Units.inchesToMeters(0),
+            Rotation2d.fromDegrees(0)
+        )),
+        CONE2(
+            new Pose2d(
+            Units.inchesToMeters(0),
+            Units.inchesToMeters(0),
+            Rotation2d.fromDegrees(0)
+        )
+        ),
+        CONE3(
+            new Pose2d(
+            Units.inchesToMeters(0),
+            Units.inchesToMeters(0),
+            Rotation2d.fromDegrees(0)
+        )
+        ),
+        CUBE4(
+            new Pose2d(
+            Units.inchesToMeters(0),
+            Units.inchesToMeters(0),
+            Rotation2d.fromDegrees(0)
+        )
+        );
+        Pose2d pose;
+        private PickPos(Pose2d pose){
+            this.pose = pose;
+        }
+    }
 
     //non balancing auton sequence
     public AutonAutonSequence(RobotContainer robotContainer, Pose2d initialPose, Pose2d placePose, Pose2d grabPose, Pose2d placePose2, MoverPosition moverPosition, MoverPosition moverPosition2){
