@@ -9,8 +9,10 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.Timer;
-
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import frc.robot.vision.PhotonWrapper;
 
 /**
@@ -38,6 +40,11 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
     private static final boolean LOCKING_ENABLE = true;
 
     private Rotation2d angleOffset = new Rotation2d(0);
+
+    final ShuffleboardTab tab = Shuffleboard.getTab("robot position");
+    private final GenericEntry xEntry = tab.add("xpos", 0).getEntry();
+    private final GenericEntry yEntry = tab.add("ypos", 0).getEntry();
+    private final GenericEntry thetaEntry = tab.add("thetapos", 0).getEntry();
 
     // The driver or auton commanded `SwerveModuleState` setpoints for each module;
     // states are given in a tuple of [top left, top right, bottom left, bottom right].
@@ -88,6 +95,11 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
 
     @Override
     public void periodic() {
+
+        xEntry.setValue(getRobotPosition().getX());
+        yEntry.setValue(getRobotPosition().getY());
+        thetaEntry.setValue(getRobotPosition().getRotation().getDegrees());
+
         // Update pose estimator from swerve module states
         Rotation2d gyroAngle = getGyroHeading();
         
@@ -98,6 +110,11 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
 
         // Add vision pose estimate to pose estimator
         photonWrapper.getRobotPose(estimate).forEach((visionPose) -> {
+            System.out.println(visionPose.timestampSeconds 
+                + ", (" + visionPose.estimatedPose.getX() 
+                + ", " + visionPose.estimatedPose.getY() 
+                + ", " + visionPose.estimatedPose.getZ() + ")");
+                
             poseEstimator.addVisionMeasurement(
                 visionPose.estimatedPose.toPose2d(),
                 visionPose.timestampSeconds
