@@ -31,7 +31,7 @@ public class SwerveModule2020 implements BaseSwerveModule {
 
     private final double offsetRads;
 
-    private static final double DRIVE_ROTATIONS_TO_METERS = 60.0;
+    private static final double DRIVE_ROTATIONS_TO_METERS = 0.04518592;
     private static final double STEER_TICKS_TO_RADIANS = 2 * Math.PI / 1024.0;
 
     private static final double driveP = 0;
@@ -50,6 +50,7 @@ public class SwerveModule2020 implements BaseSwerveModule {
 
         driveEncoder = driveMotor.getEncoder();
         driveEncoder.setVelocityConversionFactor(DRIVE_ROTATIONS_TO_METERS / 60.0); // RPM -> m/s
+        driveEncoder.setPositionConversionFactor(DRIVE_ROTATIONS_TO_METERS);
 
         drivePidController = driveMotor.getPIDController();
         drivePidController.setP(driveP);
