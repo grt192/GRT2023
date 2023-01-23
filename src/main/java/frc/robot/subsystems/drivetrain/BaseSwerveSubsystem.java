@@ -45,6 +45,10 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
     private final GenericEntry xEntry = tab.add("xpos", 0).getEntry();
     private final GenericEntry yEntry = tab.add("ypos", 0).getEntry();
     private final GenericEntry thetaEntry = tab.add("thetapos", 0).getEntry();
+    
+    private final GenericEntry timestampVisionEntry = tab.add("timestamp vision", 0).getEntry();
+    private final GenericEntry xVisionEntry = tab.add("x vision pos", 0).getEntry();
+    private final GenericEntry yVisionEntry = tab.add("y vision pos", 0).getEntry();
 
     // The driver or auton commanded `SwerveModuleState` setpoints for each module;
     // states are given in a tuple of [top left, top right, bottom left, bottom right].
@@ -110,10 +114,10 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
 
         // Add vision pose estimate to pose estimator
         photonWrapper.getRobotPose(estimate).forEach((visionPose) -> {
-            System.out.println(visionPose.timestampSeconds 
-                + ", (" + visionPose.estimatedPose.getX() 
-                + ", " + visionPose.estimatedPose.getY() 
-                + ", " + visionPose.estimatedPose.getZ() + ")");
+
+            xVisionEntry.setValue(visionPose.estimatedPose.getX());
+            yVisionEntry.setValue(visionPose.estimatedPose.getY());
+            timestampVisionEntry.setValue(visionPose.timestampSeconds);
                 
             poseEstimator.addVisionMeasurement(
                 visionPose.estimatedPose.toPose2d(),
