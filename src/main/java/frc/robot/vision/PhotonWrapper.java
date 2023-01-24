@@ -52,7 +52,7 @@ public class PhotonWrapper {
                                 new Rotation3d(new Quaternion(0, 0, 0, 1))))),
                         16.54175,
                         8.0137),
-                    PoseStrategy.LOWEST_AMBIGUITY, 
+                    PoseStrategy.CLOSEST_TO_REFERENCE_POSE, 
                     camera.getFirst(),
                     camera.getSecond()
                 );

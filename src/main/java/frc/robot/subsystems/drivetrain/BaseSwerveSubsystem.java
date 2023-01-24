@@ -9,6 +9,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -100,8 +101,8 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
     @Override
     public void periodic() {
 
-        xEntry.setValue(getRobotPosition().getX());
-        yEntry.setValue(getRobotPosition().getY());
+        xEntry.setValue(Units.metersToInches(getRobotPosition().getX()));
+        yEntry.setValue(Units.metersToInches(getRobotPosition().getY()));
         thetaEntry.setValue(getRobotPosition().getRotation().getDegrees());
 
         // Update pose estimator from swerve module states
@@ -115,8 +116,10 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
         // Add vision pose estimate to pose estimator
         photonWrapper.getRobotPose(estimate).forEach((visionPose) -> {
 
-            xVisionEntry.setValue(visionPose.estimatedPose.getX());
-            yVisionEntry.setValue(visionPose.estimatedPose.getY());
+            // System.out.println("timestamp " + visionPose.timestampSeconds);
+
+            xVisionEntry.setValue(Units.metersToInches(visionPose.estimatedPose.getX()));
+            yVisionEntry.setValue(Units.metersToInches(visionPose.estimatedPose.getY()));
             timestampVisionEntry.setValue(visionPose.timestampSeconds);
                 
             poseEstimator.addVisionMeasurement(
