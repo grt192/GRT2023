@@ -18,6 +18,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 
@@ -52,7 +53,7 @@ public class SwerveModule implements BaseSwerveModule {
     private static final double steerFF = 0;
 
     private final ShuffleboardTab shuffleboardTab;
-    private final GenericEntry targetEntry, currentEntry, errorEntry;
+    private final GenericEntry targetVelEntry, currentVelEntry, velErrorEntry;
 
     /**
      * Constructs a SwerveModule from a drive and steer motor CAN ID and an angle offset.
@@ -107,9 +108,21 @@ public class SwerveModule implements BaseSwerveModule {
         steerPidController.setPositionPIDWrappingMaxInput(2 * Math.PI);
 
         shuffleboardTab = Shuffleboard.getTab("Swerve " + drivePort + " " + steerPort);
-        targetEntry = shuffleboardTab.add("Target", 0.0).getEntry();
-        currentEntry = shuffleboardTab.add("Current", 0.0).getEntry();
-        errorEntry = shuffleboardTab.add("Error", 0.0).getEntry();
+        targetVelEntry = shuffleboardTab.add("Target velocity (m/s)", 0.0)
+            .withPosition(0, 0)
+            .withSize(4, 2)
+            .withWidget(BuiltInWidgets.kGraph)
+            .getEntry();
+        currentVelEntry = shuffleboardTab.add("Current velocity (m/s)", 0.0)
+            .withPosition(4, 0)
+            .withSize(4, 2)
+            .withWidget(BuiltInWidgets.kGraph)
+            .getEntry();
+        velErrorEntry = shuffleboardTab.add("Velocity error (m/s)", 0.0)
+            .withPosition(0, 2)
+            .withSize(4, 2)
+            .withWidget(BuiltInWidgets.kGraph)
+            .getEntry();
 
         this.offsetRads = offsetRads;
     }
@@ -145,16 +158,18 @@ public class SwerveModule implements BaseSwerveModule {
         Rotation2d currentAngle = getAngle();
         SwerveModuleState optimized = SwerveModuleState.optimize(state, currentAngle);
 
-        double target = optimized.angle.getRadians() - offsetRads;
+        double currentVelocity = driveEncoder.getVelocity();
+        double targetAngle = optimized.angle.getRadians() - offsetRads;
 
-        targetEntry.setDouble(optimized.speedMetersPerSecond);
-        currentEntry.setDouble(driveEncoder.getVelocity());
-        errorEntry.setDouble(optimized.speedMetersPerSecond - driveEncoder.getVelocity());
+        // Set shuffleboard debug info
+        targetVelEntry.setDouble(optimized.speedMetersPerSecond);
+        currentVelEntry.setDouble(currentVelocity);
+        velErrorEntry.setDouble(optimized.speedMetersPerSecond - currentVelocity);
 
         // driveMotor.set(ControlMode.Velocity, optimized.getFirst() / (DRIVE_TICKS_TO_METERS * 10.0));
         drivePidController.setReference(optimized.speedMetersPerSecond, ControlType.kVelocity);
         // driveMotor.set(optimized.speedMetersPerSecond);
-        steerPidController.setReference(target, ControlType.kPosition);
+        steerPidController.setReference(targetAngle, ControlType.kPosition);
     }
 
     /**
@@ -164,7 +179,6 @@ public class SwerveModule implements BaseSwerveModule {
      * @return The current [-pi, pi] angle of the module, as a `Rotation2d`.
      */
     private Rotation2d getAngle() {
-        // System.out.println(Units.feetToMeters(16.10) * 0.3);
         // System.out.println(driveEncoder.getVelocity());
         // System.out.println(steerAbsoluteEncoder.getPosition());
 

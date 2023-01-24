@@ -16,7 +16,7 @@ public class XboxDriveController extends BaseDriveController {
         driveYButton = new JoystickButton(driveController, XboxController.Button.kY.value),
         driveLBumper = new JoystickButton(driveController, XboxController.Button.kLeftBumper.value),
         driveRBumper = new JoystickButton(driveController, XboxController.Button.kRightBumper.value);
-    
+
     @Override
     public double getForward() {
         return -driveController.getLeftY();
