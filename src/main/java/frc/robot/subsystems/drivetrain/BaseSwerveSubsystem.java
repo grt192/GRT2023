@@ -32,7 +32,7 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
     private static final double LOCK_TIMEOUT_SECONDS = 1.0; // The elapsed idle time to wait before locking
     private static final boolean LOCKING_ENABLE = true;
 
-    private double angleOffset = 0;
+    private Rotation2d angleOffset = new Rotation2d(0);
 
     // The driver or auton commanded `SwerveModuleState` setpoints for each module;
     // states are given in a tuple of [top left, top right, bottom left, bottom right].
@@ -194,47 +194,63 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
 
     /**
      * Reset the robot's position to a given Pose2d.
-     * @param position The position to reset the pose estimator to.
+     * @param currentPose The position to reset the pose estimator to.
      */
-    public void resetPosition(Pose2d position) {
+    public void resetPose(Pose2d currentPose) {
         Rotation2d gyroAngle = getGyroHeading();
         poseEstimator.resetPosition(
             gyroAngle,
             getModuleStates(),
-            position
+            currentPose
         );
+
+        angleOffset = gyroAngle.minus(currentPose.getRotation());
     }
 
     /**
      * Zeros the robot's position.
      * This method zeros both the robot's translation *and* rotation.
      */
-    public void resetPosition() {
-        resetPosition(new Pose2d());
+    public void resetPose() {
+        resetPose(new Pose2d());
     }
 
     /**
      * Zeros *only the angle* of the robot's field-relative control system.
-     * This this has *no effect* on odometry.
+     * This also resets localization to match the rotated field.
      */
+    public void resetFieldAngle(Rotation2d currentRotation) {
+        Pose2d currPos = getRobotPosition();
+
+        // Reset localization angle but keep current (x, y) to preserve the origin.
+        resetPose(new Pose2d(
+            currPos.getTranslation(),
+            currentRotation
+        ));
+    }
+
     public void resetFieldAngle() {
-        angleOffset = ahrs.getAngle();
+        resetFieldAngle(new Rotation2d());
     }
 
     /**
      * Gets the gyro angle given by the NavX AHRS, inverted to be counterclockwise positive.
-     * @return The robot heading as a Rotation2d.
+     * @return The robot's global heading as a Rotation2d.
      */
     private Rotation2d getGyroHeading() {
         return Rotation2d.fromDegrees(-ahrs.getAngle());
     }
 
     /**
-     * Gets the angle of the robot relative to the field, for field-relative control.
-     * This is equivalent to `getGyroHeading()` but with an offset applied.
-     * @return The robot heading (with offset) as a Rotation2d.
+     * Gets the angle of the robot relative to the field-relative control system.
+     * This is equivalent to the robot's global angle with an offset applied.
+     * 
+     * @return The robot's field-centric heading as a Rotation2d.
      */
     private Rotation2d getFieldHeading() {
-        return getGyroHeading().plus(Rotation2d.fromDegrees(angleOffset));
+        // Primarily use AHRS reading, falling back on the pose estimator if the AHRS disconnects.
+        return ahrs.isConnected()
+            ? getGyroHeading().minus(angleOffset)
+            : getRobotPosition().getRotation();
     }
 }
