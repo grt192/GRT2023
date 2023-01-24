@@ -6,7 +6,6 @@ package frc.robot;
 
 import java.util.List;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -74,7 +73,7 @@ public class RobotContainer {
         mechRBumper = new JoystickButton(mechController, XboxController.Button.kRightBumper.value);
 
     // Commands
-    private final SendableChooser<Command> autonChooser;
+    // private final SendableChooser<Command> autonChooser;
     private final Command autonCommand;
     private final BalancerCommand balancerCommand;
 
@@ -99,15 +98,22 @@ public class RobotContainer {
         // Add auton sequences to the chooser and add the chooser to shuffleboard
         // TODO: shuffleboard
 
-        autonCommand = new FollowPathCommand(
-            (BaseSwerveSubsystem) driveSubsystem, 
-            new Pose2d(), 
-            List.of(new Translation2d(1, 1)),
-            new Pose2d(2, -1, new Rotation2d())
-        );
+        if (driveSubsystem instanceof BaseSwerveSubsystem) {
+            final BaseSwerveSubsystem swerveSubsystem = (BaseSwerveSubsystem) driveSubsystem;
 
-        autonChooser = new SendableChooser<>();
-        autonChooser.setDefaultOption("Skip auton", new InstantCommand());
+            // Test S-curve for swerve auton
+            autonCommand = new FollowPathCommand(
+                swerveSubsystem, 
+                new Pose2d(), 
+                List.of(new Translation2d(1, 1)),
+                new Pose2d(2, -1, new Rotation2d())
+            );
+        } else {
+            autonCommand = new InstantCommand();
+        }
+
+        // autonChooser = new SendableChooser<>();
+        // autonChooser.setDefaultOption("Skip auton", new InstantCommand());
     }
 
     /**
