@@ -213,7 +213,7 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
             currentPose
         );
 
-        angleOffset = getGyroHeading().minus(currentPose.getRotation());
+        angleOffset = gyroAngle.minus(currentPose.getRotation());
     }
 
     /**
@@ -239,7 +239,7 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
     }
 
     public void resetFieldAngle() {
-        resetFieldAngle(new Rotation2d(0));
+        resetFieldAngle(new Rotation2d());
     }
 
     /**
