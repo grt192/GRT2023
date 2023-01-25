@@ -28,6 +28,7 @@ import frc.robot.jetson.JetsonConnection;
 import frc.robot.subsystems.drivetrain.TankSubsystem;
 import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
 import frc.robot.subsystems.drivetrain.MissileShellSwerveSubsystem;
+import frc.robot.subsystems.drivetrain.MissileShellSwerveSweeperSubsystem;
 import frc.robot.subsystems.drivetrain.SwerveSubsystem;
 import frc.robot.subsystems.drivetrain.SwerveSubsystem2020;
 import frc.robot.subsystems.drivetrain.BaseDrivetrain;
@@ -84,7 +85,7 @@ public class RobotContainer {
     public RobotContainer() {
         driveController = new DualJoystickDriveController();
 
-        driveSubsystem = new SwerveSubsystem();
+        driveSubsystem = new MissileShellSwerveSweeperSubsystem();
         // gripperSubsystem = new GripperSubsytem();
         // rollerSubsystem = new RollerSubsystem();
 
