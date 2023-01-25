@@ -6,7 +6,7 @@ import edu.wpi.first.math.util.Units;
 import static frc.robot.Constants.SwerveConstants.*;
 
 public class SwerveSubsystem extends BaseSwerveSubsystem {
-    public static final double MAX_VEL = 1.7289239168167114 /* Units.feetToMeters(16.10) */; // Max robot tangential velocity, in m/s
+    public static final double MAX_VEL = 5.09346342086792 /* Units.feetToMeters(16.10) */; // Max robot tangential velocity, in m/s
     public static final double MAX_ACCEL = 3; // Max robot tangential acceleration, in m/s^2; TODO: measure this
     public static final double MAX_OMEGA = MAX_VEL / tlPos.getNorm(); // Max robot angular velocity, in rads/s (omega = v / r)
 

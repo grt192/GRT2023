@@ -45,7 +45,7 @@ public class SwerveModule implements BaseSwerveModule {
     private static final double driveP = 0;
     private static final double driveI = 0;
     private static final double driveD = 0;
-    private static final double driveFF = 0.173518335354;
+    private static final double driveFF = 0.176697057706;
 
     private static final double steerP = 0.4;
     private static final double steerI = 0;
@@ -108,17 +108,17 @@ public class SwerveModule implements BaseSwerveModule {
         steerPidController.setPositionPIDWrappingMaxInput(2 * Math.PI);
 
         shuffleboardTab = Shuffleboard.getTab("Swerve " + drivePort + " " + steerPort);
-        targetVelEntry = shuffleboardTab.add("Target velocity (m/s)", 0.0)
+        targetVelEntry = shuffleboardTab.add("Target velocity (mps)", 0.0)
             .withPosition(0, 0)
             .withSize(4, 2)
             .withWidget(BuiltInWidgets.kGraph)
             .getEntry();
-        currentVelEntry = shuffleboardTab.add("Current velocity (m/s)", 0.0)
+        currentVelEntry = shuffleboardTab.add("Current velocity (mps)", 0.0)
             .withPosition(4, 0)
             .withSize(4, 2)
             .withWidget(BuiltInWidgets.kGraph)
             .getEntry();
-        velErrorEntry = shuffleboardTab.add("Velocity error (m/s)", 0.0)
+        velErrorEntry = shuffleboardTab.add("Velocity error (mps)", 0.0)
             .withPosition(0, 2)
             .withSize(4, 2)
             .withWidget(BuiltInWidgets.kGraph)
@@ -180,9 +180,9 @@ public class SwerveModule implements BaseSwerveModule {
      */
     private Rotation2d getAngle() {
         // System.out.println(driveEncoder.getVelocity());
-        // System.out.println(steerAbsoluteEncoder.getPosition());
 
         double wrappedAngleRads = MathUtil.angleModulus(steerAbsoluteEncoder.getPosition() + offsetRads);
+        // System.out.println(wrappedAngleRads);
         return new Rotation2d(wrappedAngleRads);
     }
 
