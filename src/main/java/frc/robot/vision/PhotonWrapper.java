@@ -49,6 +49,10 @@ public class PhotonWrapper {
                         new AprilTag(2, 
                             new Pose3d(
                                 new Translation3d(15.513558, 2.748026, 0.462788), 
+                                new Rotation3d(new Quaternion(0, 0, 0, 1)))),
+                        new AprilTag(6, 
+                            new Pose3d(
+                                new Translation3d(0, 0, 0.462788), 
                                 new Rotation3d(new Quaternion(0, 0, 0, 1))))),
                         16.54175,
                         8.0137),
