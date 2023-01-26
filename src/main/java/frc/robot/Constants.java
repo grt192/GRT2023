@@ -125,7 +125,7 @@ public final class Constants {
                     new PhotonCamera("Arducam_OV9281_USB_Camera"), 
                     new Transform3d(
                         new Translation3d(Units.inchesToMeters(-2.25), Units.inchesToMeters(4.5), Units.inchesToMeters(22)),
-                        new Rotation3d(0, 0, 0) // TODO
+                        new Rotation3d(0, 0, Math.PI / 2) // TODO
                     )
                 )
             );

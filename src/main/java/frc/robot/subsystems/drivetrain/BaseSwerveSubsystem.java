@@ -1,5 +1,8 @@
 package frc.robot.subsystems.drivetrain;
 
+import java.util.ArrayList;
+import java.util.OptionalDouble;
+
 import edu.wpi.first.math.MatBuilder;
 import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
@@ -51,6 +54,17 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
     private final GenericEntry xVisionEntry = tab.add("x vision pos", 0).getEntry();
     private final GenericEntry yVisionEntry = tab.add("y vision pos", 0).getEntry();
 
+    // ----------- TESTING ------------
+    private final GenericEntry xStatVisionEntry = tab.add("x vision stats", "").getEntry();
+    private final GenericEntry yStatVisionEntry = tab.add("x vision stats", "").getEntry();
+    
+    private final GenericEntry estimationTimerEntry = tab.add("estimation timer", 0).getEntry();
+    private Timer estimationTimer = new Timer();
+
+    ArrayList<Double> xEntries = new ArrayList<Double>();
+    ArrayList<Double> yEntries = new ArrayList<Double>();
+    // --------------------------------
+
     // The driver or auton commanded `SwerveModuleState` setpoints for each module;
     // states are given in a tuple of [top left, top right, bottom left, bottom right].
     private SwerveModuleState[] states = {
@@ -69,6 +83,7 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
         SwerveDriveKinematics kinematics,
         PhotonWrapper photonWrapper
     ) {
+
         MAX_VEL = maxVel;
         MAX_ACCEL = maxAccel;
         MAX_OMEGA = maxOmega;
@@ -96,10 +111,56 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
 
 
         lockTimer = new Timer();
+
+        estimationTimer.start();
+    }
+
+    /**
+     * Returns average, standard deviation, and range of a list of data.
+     * @param data ArrayList of Doubles
+     * @return array of average, standard deviation, and range
+     */
+    private Double[] analyzeData(ArrayList<Double> data) {
+
+        OptionalDouble optionalAverage = data.stream().mapToDouble(a -> a).average();
+
+        final double average = (optionalAverage.isPresent() ? optionalAverage.getAsDouble() : 0);
+        double stdDev = 0;
+        double range = 0;
+        
+        // Calculate std dev if the double stream is present
+        if (optionalAverage.isPresent()) {
+
+            stdDev = Math.sqrt(data.stream().mapToDouble(a -> {
+                return Math.pow((a - average), 2);
+            }).average().getAsDouble());
+
+            range = data.stream().mapToDouble(a -> a).max().getAsDouble() 
+                    - data.stream().mapToDouble(a -> a).min().getAsDouble();
+        }
+
+        return new Double[]{average, stdDev, range};
     }
 
     @Override
     public void periodic() {
+
+        // ----- TESTING CODE -------
+        estimationTimerEntry.setValue(estimationTimer.get());
+
+        if (estimationTimer.get() > 5.0) {
+            Double[] xStats = analyzeData(xEntries);
+            Double[] yStats = analyzeData(yEntries);
+
+            xStatVisionEntry.setValue(String.format("%.3f %.3f %.3f", xStats[0], xStats[1], xStats[2]));
+            yStatVisionEntry.setValue(String.format("%.3f %.3f %.3f", yStats[0], yStats[1], yStats[2]));
+            
+            xEntries.clear();
+            yEntries.clear();
+            estimationTimer.reset();
+        }
+
+        // --------------------------
 
         xEntry.setValue(Units.metersToInches(getRobotPosition().getX()));
         yEntry.setValue(Units.metersToInches(getRobotPosition().getY()));
@@ -117,6 +178,13 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
         photonWrapper.getRobotPose(estimate).forEach((visionPose) -> {
 
             // System.out.println("timestamp " + visionPose.timestampSeconds);
+
+            // ---- TESTING ---
+            
+            xEntries.add(visionPose.estimatedPose.getX());
+            yEntries.add(visionPose.estimatedPose.getY());
+
+            // ----------------
 
             xVisionEntry.setValue(Units.metersToInches(visionPose.estimatedPose.getX()));
             yVisionEntry.setValue(Units.metersToInches(visionPose.estimatedPose.getY()));
