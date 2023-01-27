@@ -95,8 +95,9 @@ public final class Constants {
     }
 
     public static final class TiltedElevatorConstants {
-        public static final int EXTENSION_ID = 19;
-        public static final float EXTENSION_LIMIT = 20; // in inches, TODO
+        public static final int EXTENSION_ID = 3;
+        public static final int EXTENSION_FOLLOW_ID = 2;
+        public static final float EXTENSION_LIMIT = (float) 26; 
         
         public static final double EXT_GR = 14.0 / 64.0;
         public static final double EXT_CIRCUM = Math.PI * 0.500; // approx circumference of winch
@@ -111,6 +112,9 @@ public final class Constants {
 
     public static final class RollerConstants {
         public static final int LEFT_ID = 15;
-        public static final int RIGHT_ID = 16;
+        public static final int RIGHT_ID = 16; // 83.42696925786537
+        // -2983.786515363558
     }
+
+    // 26.56535530090332
 }

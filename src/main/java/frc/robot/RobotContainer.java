@@ -145,6 +145,11 @@ public class RobotContainer {
 
         mechAButton.onTrue(new InstantCommand(gripperSubsystem::gripToggle, gripperSubsystem));
 
+        tiltedElevatorSubsystem.setDefaultCommand(new RunCommand(() -> {
+            double yPower = -mechController.getLeftY();
+            tiltedElevatorSubsystem.setOffsetPowers(yPower);
+        }, tiltedElevatorSubsystem));
+
         mechYButton.onTrue(new InstantCommand(() ->{
             tiltedElevatorSubsystem.toggleState(ElevatorState.GROUND, ElevatorState.SUBSTATION);
         }, tiltedElevatorSubsystem));

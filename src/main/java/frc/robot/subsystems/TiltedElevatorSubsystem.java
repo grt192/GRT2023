@@ -22,13 +22,15 @@ public class TiltedElevatorSubsystem  extends SubsystemBase {
     private final RelativeEncoder extensionEncoder;
     private final SparkMaxPIDController extensionPidController;
 
+    private final CANSparkMax extensionFollowMotor;
+
     private double extensionP = 0.125;
     private double extensionI = 0;
     private double extensionD = 0;
 
     private ElevatorState currentState = ElevatorState.GROUND;
 
-    public final static double OFFSET_FACTOR = 0.00001; // meters
+    public final static double OFFSET_FACTOR = 0.0001; // meters
     private double offsetDist = 0;
 
     // Shuffleboard
@@ -36,6 +38,8 @@ public class TiltedElevatorSubsystem  extends SubsystemBase {
     private final GenericEntry extensionPEntry = shuffleboardTab.add("Extension P", extensionP).getEntry();
     private final GenericEntry extensionIEntry = shuffleboardTab.add("Extension I", extensionI).getEntry();
     private final GenericEntry extensionDEntry = shuffleboardTab.add("Extension D", extensionD).getEntry();
+
+    private final GenericEntry offsetEntry = shuffleboardTab.add("offset (in)", 0.0).getEntry();
 
     private final GenericEntry currentExtensionEntry = shuffleboardTab.add("Current Extension", 0.0).getEntry();
     private final GenericEntry currentStateEntry = shuffleboardTab.add("Current State", currentState.toString()).getEntry();
@@ -79,11 +83,16 @@ public class TiltedElevatorSubsystem  extends SubsystemBase {
     
     public TiltedElevatorSubsystem() {
         extensionMotor = MotorUtil.createSparkMax(EXTENSION_ID);
-        extensionMotor.enableSoftLimit(SoftLimitDirection.kForward, true);
+        extensionMotor.enableSoftLimit(SoftLimitDirection.kForward, false);
         extensionMotor.setSoftLimit(SoftLimitDirection.kForward, EXTENSION_LIMIT);
-        extensionMotor.enableSoftLimit(SoftLimitDirection.kReverse, true);
-        extensionMotor.setSoftLimit(SoftLimitDirection.kReverse, -1);
+        extensionMotor.enableSoftLimit(SoftLimitDirection.kReverse, false);
+        extensionMotor.setSoftLimit(SoftLimitDirection.kReverse, 0);
         extensionMotor.setIdleMode(IdleMode.kBrake);
+
+        extensionMotor.setInverted(true); // flip
+
+        extensionFollowMotor = MotorUtil.createSparkMax(EXTENSION_FOLLOW_ID);
+        extensionFollowMotor.follow(extensionMotor);
 
         extensionEncoder = extensionMotor.getEncoder();
         extensionEncoder.setPositionConversionFactor(EXTENSION_ROT_TO_M);
@@ -99,11 +108,17 @@ public class TiltedElevatorSubsystem  extends SubsystemBase {
     @Override
     public void periodic() {
 
+        extensionMotor.set(offsetDist);
+
+        // extensionPidController.setReference(offsetDist, ControlType.kPosition);
+
+        /*
         // Verify extension distance
         double finalExtendDist = currentState.extendDistance + offsetDist;
         if (finalExtendDist >= 0 && finalExtendDist <= EXTENSION_LIMIT) {
             extensionPidController.setReference(finalExtendDist, ControlType.kPosition);
         }
+        */
 
         // Shuffleboard
         extensionP = extensionPEntry.getDouble(extensionP);
@@ -114,7 +129,10 @@ public class TiltedElevatorSubsystem  extends SubsystemBase {
         extensionPidController.setI(extensionI);
         extensionPidController.setD(extensionD);
 
-        currentExtensionEntry.setDouble(Units.metersToInches(extensionEncoder.getPosition() + offsetDist));
+        // encoderValueEntry.setDouble(extensionEncoder.getPosition());
+        offsetEntry.setDouble(offsetDist); // Units.metersToInches(offsetDist));
+        System.out.println(extensionEncoder.getPosition());
+        currentExtensionEntry.setDouble(extensionEncoder.getPosition()); // + offsetDist));
         currentStateEntry.setString(currentState.toString());
     }
 
@@ -136,10 +154,11 @@ public class TiltedElevatorSubsystem  extends SubsystemBase {
     }
 
     /**
-     * Resets offset to 0.
+     * Resets offset to 0.29.954896198482967
      */
     public void resetOffset() {
-        this.offsetDist = 0;
+        // this.offsetDist = 0;
+        this.extensionEncoder.setPosition(0);
     }
 
     /**
@@ -147,7 +166,20 @@ public class TiltedElevatorSubsystem  extends SubsystemBase {
      * @param power Xbox-controlled power
      */
     public void setOffsetPowers(double power) {
-        this.offsetDist += OFFSET_FACTOR * power;
+        // this.offsetDist = power;
+
+        if (power > 0.0001) {
+            this.offsetDist = 0.3;
+        }
+        else if (power < -0.0001) {
+            this.offsetDist = -0.3;
+        }
+        else
+        {
+            this.offsetDist = 0;
+        }
+
+        // this.offsetDist += OFFSET_FACTOR * power;
     }
     
 }
