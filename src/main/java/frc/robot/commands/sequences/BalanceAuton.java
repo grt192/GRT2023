@@ -7,13 +7,8 @@ import frc.robot.RobotContainer;
 import frc.robot.subsystems.MoverSubsystem.MoverPosition;
 
 public class BalanceAuton extends AutonAutonSequence {
-    private static final Pose2d initialPose = new Pose2d(
-        Units.inchesToMeters(0),
-        Units.inchesToMeters(0),
-        Rotation2d.fromDegrees(0)
-    );
 
-    public BalanceAuton(RobotContainer robotContainer, Pose2d placePose, Pose2d outsidePose, MoverPosition height){
+    public BalanceAuton(RobotContainer robotContainer, Pose2d initialPose, Pose2d placePose, Pose2d outsidePose, MoverPosition height){
         super(robotContainer, initialPose, placePose, outsidePose, height );
     }
 }
