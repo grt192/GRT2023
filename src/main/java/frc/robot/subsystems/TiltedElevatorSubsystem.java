@@ -9,6 +9,7 @@ import com.revrobotics.CANSparkMax.SoftLimitDirection;
 
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -30,8 +31,11 @@ public class TiltedElevatorSubsystem  extends SubsystemBase {
 
     private ElevatorState currentState = ElevatorState.GROUND;
 
-    public final static double OFFSET_FACTOR = 0.0001; // meters
-    private double offsetDist = 0;
+
+    private boolean IS_MANUAL = false;
+    private double manualPower = 0;
+    
+    private final DigitalInput zeroLimitSwitch = new DigitalInput(ZERO_LIMIT_ID);
 
     // Shuffleboard
     private final ShuffleboardTab shuffleboardTab = Shuffleboard.getTab("Tilted Elevator");
@@ -39,10 +43,13 @@ public class TiltedElevatorSubsystem  extends SubsystemBase {
     private final GenericEntry extensionIEntry = shuffleboardTab.add("Extension I", extensionI).getEntry();
     private final GenericEntry extensionDEntry = shuffleboardTab.add("Extension D", extensionD).getEntry();
 
-    private final GenericEntry offsetEntry = shuffleboardTab.add("offset (in)", 0.0).getEntry();
+    private final GenericEntry manualPowerEntry = shuffleboardTab.add("Manual Power", 0).getEntry();
 
-    private final GenericEntry currentExtensionEntry = shuffleboardTab.add("Current Extension", 0.0).getEntry();
-    private final GenericEntry currentStateEntry = shuffleboardTab.add("Current State", currentState.toString()).getEntry();
+    private final GenericEntry currentExtensionEntry = shuffleboardTab.add("Current Ext (in)", 0.0).getEntry();
+    // private final GenericEntry currentStateEntry = shuffleboardTab.add("Current State", currentState.toString()).getEntry();
+ 
+    private final GenericEntry targetExtensionEntry = shuffleboardTab.add("Target Ext (in)", 0.0).getEntry();
+    private double targetExtension = 0; 
 
     public enum ElevatorState {
         GROUND(0), // retracted
@@ -83,9 +90,9 @@ public class TiltedElevatorSubsystem  extends SubsystemBase {
     
     public TiltedElevatorSubsystem() {
         extensionMotor = MotorUtil.createSparkMax(EXTENSION_ID);
-        extensionMotor.enableSoftLimit(SoftLimitDirection.kForward, false);
+        extensionMotor.enableSoftLimit(SoftLimitDirection.kForward, true);
         extensionMotor.setSoftLimit(SoftLimitDirection.kForward, EXTENSION_LIMIT);
-        extensionMotor.enableSoftLimit(SoftLimitDirection.kReverse, false);
+        extensionMotor.enableSoftLimit(SoftLimitDirection.kReverse, true);
         extensionMotor.setSoftLimit(SoftLimitDirection.kReverse, 0);
         extensionMotor.setIdleMode(IdleMode.kBrake);
 
@@ -110,32 +117,36 @@ public class TiltedElevatorSubsystem  extends SubsystemBase {
     @Override
     public void periodic() {
 
-        extensionMotor.set(offsetDist);
-
-        // extensionPidController.setReference(offsetDist, ControlType.kPosition);
-
-        /*
-        // Verify extension distance
-        double finalExtendDist = currentState.extendDistance + offsetDist;
-        if (finalExtendDist >= 0 && finalExtendDist <= EXTENSION_LIMIT) {
-            extensionPidController.setReference(finalExtendDist, ControlType.kPosition);
+        if (zeroLimitSwitch.get()) {
+            this.extensionEncoder.setPosition(0);
         }
-        */
 
-        // Shuffleboard
-        extensionP = extensionPEntry.getDouble(extensionP);
-        extensionI = extensionIEntry.getDouble(extensionI);
-        extensionD = extensionDEntry.getDouble(extensionD);
+        if (IS_MANUAL) {
+            manualPowerEntry.setDouble(manualPower);
+            extensionMotor.set(manualPower);
+            return;
+        }
+        
+        // Otherwise, use PID
+        double eP = extensionPEntry.getDouble(extensionP);
+        double eI = extensionPEntry.getDouble(extensionI);
+        double eD = extensionPEntry.getDouble(extensionD);
 
-        extensionPidController.setP(extensionP);
-        extensionPidController.setI(extensionI);
-        extensionPidController.setD(extensionD);
+        if (eP != extensionP) extensionPidController.setP(extensionP);
+        if (eI != extensionI) extensionPidController.setI(extensionI);
+        if (eD != extensionD) extensionPidController.setD(extensionD);
 
-        // encoderValueEntry.setDouble(extensionEncoder.getPosition());
-        offsetEntry.setDouble(offsetDist); // Units.metersToInches(offsetDist));
-        System.out.println(extensionEncoder.getPosition());
-        currentExtensionEntry.setDouble(extensionEncoder.getPosition()); // + offsetDist));
-        currentStateEntry.setString(currentState.toString());
+        this.extensionP = eP;
+        this.extensionI = eI;
+        this.extensionD = eD;
+
+        currentExtensionEntry.setDouble(Units.metersToInches(extensionEncoder.getPosition()));
+        this.targetExtension = Units.inchesToMeters(targetExtensionEntry.getDouble(0));
+
+        // Set PID reference
+        extensionPidController.setReference(targetExtension, ControlType.kPosition);
+        
+        // currentStateEntry.setString(currentState.toString());
     }
 
     /**
@@ -164,24 +175,20 @@ public class TiltedElevatorSubsystem  extends SubsystemBase {
     }
 
     /**
-     * Set offset distance based on power.
+     * Set manual power.
      * @param power Xbox-controlled power
      */
-    public void setOffsetPowers(double power) {
-        // this.offsetDist = power;
-
-        if (power > 0.0001) {
-            this.offsetDist = 0.3;
+    public void setManualPower(double manualPower) {
+        
+        if (manualPower > 0.5) {
+            this.manualPower = 0.3;
         }
-        else if (power < -0.0001) {
-            this.offsetDist = -0.3;
+        else if (manualPower < -0.5) {
+            this.manualPower = -0.3;
         }
-        else
-        {
-            this.offsetDist = 0;
+        else {
+            this.manualPower = 0;
         }
-
-        // this.offsetDist += OFFSET_FACTOR * power;
     }
     
 }

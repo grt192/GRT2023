@@ -307,7 +307,7 @@ public class RobotContainer {
 
         tiltedElevatorSubsystem.setDefaultCommand(new RunCommand(() -> {
             double yPower = -mechController.getLeftY();
-            tiltedElevatorSubsystem.setOffsetPowers(yPower);
+            tiltedElevatorSubsystem.setManualPower(yPower);
         }, tiltedElevatorSubsystem));
 
         mechYButton.onTrue(new InstantCommand(() ->{
