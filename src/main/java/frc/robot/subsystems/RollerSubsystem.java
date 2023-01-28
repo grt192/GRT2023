@@ -13,10 +13,12 @@ import static frc.robot.Constants.RollerConstants.*;
 public class RollerSubsystem extends SubsystemBase {
     private final WPI_TalonSRX leftBeak;
     private final WPI_TalonSRX rightBeak;
+    private final WPI_TalonSRX openMotor;
 
     private final DigitalInput limitSwitch = new DigitalInput(0);
 
     private double rollPower = 0.0;
+    private double openPower = 0.0;
 
     public RollerSubsystem() {
         leftBeak = MotorUtil.createTalonSRX(LEFT_ID);
@@ -26,6 +28,9 @@ public class RollerSubsystem extends SubsystemBase {
         rightBeak = MotorUtil.createTalonSRX(RIGHT_ID);
         rightBeak.follow(leftBeak);
         rightBeak.setNeutralMode(NeutralMode.Brake);
+
+        openMotor = MotorUtil.createTalonSRX(OPEN_ID);
+        openMotor.setNeutralMode(NeutralMode.Brake);
     }
 
     @Override
@@ -36,6 +41,8 @@ public class RollerSubsystem extends SubsystemBase {
         } else {
             leftBeak.set(Math.min(rollPower, 0.0));
         }
+
+        openMotor.set(openPower);
     }
 
     /**
@@ -44,5 +51,9 @@ public class RollerSubsystem extends SubsystemBase {
      */
     public void setRollPower(double power) {
         this.rollPower = power;
+    }
+
+    public void setOpenPower(double power) {
+        this.openPower = power;
     }
 }

@@ -89,10 +89,12 @@ public class TiltedElevatorSubsystem  extends SubsystemBase {
         extensionMotor.setSoftLimit(SoftLimitDirection.kReverse, 0);
         extensionMotor.setIdleMode(IdleMode.kBrake);
 
+
         extensionMotor.setInverted(true); // flip
 
         extensionFollowMotor = MotorUtil.createSparkMax(EXTENSION_FOLLOW_ID);
         extensionFollowMotor.follow(extensionMotor);
+        extensionFollowMotor.setIdleMode(IdleMode.kBrake);
 
         extensionEncoder = extensionMotor.getEncoder();
         extensionEncoder.setPositionConversionFactor(EXTENSION_ROT_TO_M);
