@@ -111,10 +111,9 @@ public final class Constants {
     }
 
     public static final class RollerConstants {
+        public static final int OPEN_ID = 16;
         public static final int LEFT_ID = 15;
-        public static final int RIGHT_ID = 16; // 83.42696925786537
-        // -2983.786515363558
+        public static final int RIGHT_ID = 14; 
     }
 
-    // 26.56535530090332
 }

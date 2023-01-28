@@ -141,6 +141,10 @@ public class RobotContainer {
         rollerSubsystem.setDefaultCommand(new RunCommand(() -> {
             double rollPower = mechController.getRightTriggerAxis() - mechController.getLeftTriggerAxis();
             rollerSubsystem.setRollPower(rollPower);
+
+            double openPower = mechController.getRightY();
+            rollerSubsystem.setOpenPower(openPower);
+
         }, rollerSubsystem));
 
         mechAButton.onTrue(new InstantCommand(gripperSubsystem::gripToggle, gripperSubsystem));
