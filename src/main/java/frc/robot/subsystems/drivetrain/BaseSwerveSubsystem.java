@@ -31,8 +31,6 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
     private final BaseSwerveModule bottomLeftModule;
     private final BaseSwerveModule bottomRightModule;
 
-    private final Field2d cfield = new Field2d();
-
     private final SwerveDrivePoseEstimator poseEstimator;
     private final SwerveDriveKinematics kinematics;
 
@@ -49,20 +47,21 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
 
     private Rotation2d angleOffset = new Rotation2d(0);
 
-    final ShuffleboardTab tab = Shuffleboard.getTab("robot position");
-    private final GenericEntry xEntry = tab.add("xpos", 0).getEntry();
-    private final GenericEntry yEntry = tab.add("ypos", 0).getEntry();
-    private final GenericEntry thetaEntry = tab.add("thetapos", 0).getEntry();
-    
-    private final GenericEntry timestampVisionEntry = tab.add("timestamp vision", 0).getEntry();
-    private final GenericEntry xVisionEntry = tab.add("x vision pos", 0).getEntry();
-    private final GenericEntry yVisionEntry = tab.add("y vision pos", 0).getEntry();
+    private final ShuffleboardTab shuffleboardTab = Shuffleboard.getTab("Drivetrain");
+    private final Field2d cfield = new Field2d();
+    private final GenericEntry xEntry = shuffleboardTab.add("xpos", 0).getEntry();
+    private final GenericEntry yEntry = shuffleboardTab.add("ypos", 0).getEntry();
+    private final GenericEntry thetaEntry = shuffleboardTab.add("thetapos", 0).getEntry();
+
+    private final GenericEntry timestampVisionEntry = shuffleboardTab.add("timestamp vision", 0).getEntry();
+    private final GenericEntry xVisionEntry = shuffleboardTab.add("x vision pos", 0).getEntry();
+    private final GenericEntry yVisionEntry = shuffleboardTab.add("y vision pos", 0).getEntry();
 
     // ----------- TESTING ------------
-    private final GenericEntry xStatVisionEntry = tab.add("x vision stats", "").getEntry();
-    private final GenericEntry yStatVisionEntry = tab.add("x vision stats", "").getEntry();
-    
-    private final GenericEntry estimationTimerEntry = tab.add("estimation timer", 0).getEntry();
+    private final GenericEntry xStatVisionEntry = shuffleboardTab.add("x vision stats", "").getEntry();
+    private final GenericEntry yStatVisionEntry = shuffleboardTab.add("x vision stats", "").getEntry();
+
+    private final GenericEntry estimationTimerEntry = shuffleboardTab.add("estimation timer", 0).getEntry();
     private Timer estimationTimer = new Timer();
 
     ArrayList<Double> xEntries = new ArrayList<Double>();
@@ -102,7 +101,6 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
         this.photonWrapper = photonWrapper;
 
         SmartDashboard.putData("Field", cfield);
-    
 
         // Initialize pose estimator
         poseEstimator = new SwerveDrivePoseEstimator(
@@ -116,9 +114,7 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
             new MatBuilder<>(Nat.N3(), Nat.N1()).fill(0.1, 0.1, 0.01)
         );
 
-
         lockTimer = new Timer();
-
         estimationTimer.start();
     }
 
@@ -165,10 +161,6 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
         }
         // --------------------------
 
-        xEntry.setValue(Units.metersToInches(getRobotPosition().getX()));
-        yEntry.setValue(Units.metersToInches(getRobotPosition().getY()));
-        thetaEntry.setValue(getRobotPosition().getRotation().getDegrees());
-
         // Update pose estimator from swerve module states
         Rotation2d gyroAngle = getGyroHeading();
         
@@ -177,6 +169,9 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
             getModuleStates()
         );
 
+        xEntry.setValue(Units.metersToInches(estimate.getX()));
+        yEntry.setValue(Units.metersToInches(estimate.getY()));
+        thetaEntry.setValue(estimate.getRotation().getDegrees());
         cfield.setRobotPose(estimate);
 
         // Add vision pose estimate to pose estimator
