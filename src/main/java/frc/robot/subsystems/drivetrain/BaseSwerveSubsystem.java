@@ -17,6 +17,8 @@ import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.vision.PhotonWrapper;
 
 /**
@@ -28,6 +30,8 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
     private final BaseSwerveModule topRightModule;
     private final BaseSwerveModule bottomLeftModule;
     private final BaseSwerveModule bottomRightModule;
+
+    private final Field2d cfield = new Field2d();
 
     private final SwerveDrivePoseEstimator poseEstimator;
     private final SwerveDriveKinematics kinematics;
@@ -97,6 +101,9 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
         this.kinematics = kinematics;
         this.photonWrapper = photonWrapper;
 
+        SmartDashboard.putData("Field", cfield);
+    
+
         // Initialize pose estimator
         poseEstimator = new SwerveDrivePoseEstimator(
             kinematics,
@@ -144,6 +151,8 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
 
     @Override
     public void periodic() {
+
+        cfield.setRobotPose(getRobotPosition());
 
         // ----- TESTING CODE -------
         estimationTimerEntry.setValue(estimationTimer.get());
