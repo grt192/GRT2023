@@ -27,6 +27,7 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
     public final double MAX_VEL; // Max robot tangential velocity, in m/s
     public final double MAX_ACCEL; // Max robot tangential acceleration, in m/s^2
     public final double MAX_OMEGA; // Max robot angular velocity, in rads/s
+    public final double MAX_ALPHA; // Max robot angular acceleration, in rads/s^2
 
     private final Timer lockTimer;
     private static final double LOCK_TIMEOUT_SECONDS = 1.0; // The elapsed idle time to wait before locking
@@ -48,12 +49,13 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
         BaseSwerveModule topRightModule,
         BaseSwerveModule bottomLeftModule,
         BaseSwerveModule bottomRightModule,
-        double maxVel, double maxAccel, double maxOmega,
+        double maxVel, double maxAccel, double maxOmega, double maxAlpha,
         SwerveDriveKinematics kinematics
     ) {
         MAX_VEL = maxVel;
         MAX_ACCEL = maxAccel;
         MAX_OMEGA = maxOmega;
+        MAX_ALPHA = maxAlpha;
 
         this.topLeftModule = topLeftModule;
         this.topRightModule = topRightModule;

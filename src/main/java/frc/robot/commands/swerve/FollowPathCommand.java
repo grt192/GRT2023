@@ -15,13 +15,19 @@ import edu.wpi.first.math.trajectory.constraint.SwerveDriveKinematicsConstraint;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 
 import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
-import frc.robot.subsystems.drivetrain.SwerveSubsystem;
 
 public class FollowPathCommand extends SwerveControllerCommand {
-    // TODO: tune / measure
-    private static final double Kp = 3.3283;
-    private static final double Ki = 0;
-    private static final double Kd = 0;
+    private static final double xP = 0.4;
+    private static final double xI = 0;
+    private static final double xD = 0;
+
+    private static final double yP = 0.4;
+    private static final double yI = 0;
+    private static final double yD = 0;
+
+    private static final double thetaP = 1.5;
+    private static final double thetaI = 0;
+    private static final double thetaD = 0;
 
     /**
      * Creates a FollowPathCommand from a given trajectory.
@@ -34,13 +40,16 @@ public class FollowPathCommand extends SwerveControllerCommand {
             trajectory,
             swerveSubsystem::getRobotPosition,
             swerveSubsystem.getKinematics(),
-            new PIDController(Kp, Ki, Kd),
-            new PIDController(Kp, Ki, Kd),
+            new PIDController(xP, xI, xD),
+            new PIDController(yP, yI, yD),
             new ProfiledPIDController(
-                Kp, Ki, Kd, 
-                new TrapezoidProfile.Constraints(SwerveSubsystem.MAX_VEL, SwerveSubsystem.MAX_ACCEL)
+                thetaP, thetaI, thetaD, 
+                new TrapezoidProfile.Constraints(
+                    swerveSubsystem.MAX_OMEGA,
+                    swerveSubsystem.MAX_ALPHA
+                )
             ),
-            () -> new Rotation2d(), // TODO: this can control the angle of swerve at every timestep; hub locking?
+            // () -> new Rotation2d(), // TODO: this can control the angle of swerve at every timestep; hub locking?
             swerveSubsystem::setSwerveModuleStates,
             swerveSubsystem
         );
@@ -62,13 +71,13 @@ public class FollowPathCommand extends SwerveControllerCommand {
             // Target trajectory
             TrajectoryGenerator.generateTrajectory(
                 start, waypoints, end, 
-                new TrajectoryConfig(SwerveSubsystem.MAX_VEL, SwerveSubsystem.MAX_ACCEL)
+                new TrajectoryConfig(swerveSubsystem.MAX_VEL, swerveSubsystem.MAX_ACCEL)
                     .setReversed(reversed)
                     .setKinematics(swerveSubsystem.getKinematics())
                     .addConstraint(
                         new SwerveDriveKinematicsConstraint(
                             swerveSubsystem.getKinematics(), 
-                            SwerveSubsystem.MAX_VEL
+                            swerveSubsystem.MAX_VEL
                         )
                     )
             )

@@ -6,6 +6,8 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 
+import frc.robot.Constants.SwerveConstants;
+
 /**
  * A shell swerve subsystem to run a single swerve module on the missile.
  */
@@ -13,14 +15,14 @@ public class MissileShellSwerveSubsystem extends BaseDrivetrain {
     private final SwerveModule module;
     private final SwerveDriveKinematics kinematics;
 
-    public static final double MAX_VEL = 1.0; // Max robot tangential velocity, in percent output
+    public static final double MAX_VEL = 5.09346342086792 /* 2.7552990913391113 */; // Max robot tangential velocity, in percent output
 
     private SwerveModuleState[] states = {
         new SwerveModuleState()
     };
 
     public MissileShellSwerveSubsystem() {
-        module = new SwerveModule(2, 1, 0.352540004249);
+        module = new SwerveModule.TopLeft(SwerveConstants.tlDrive, SwerveConstants.tlSteer, SwerveConstants.tlOffsetRads);
 
         // One module at the center of the robot
         kinematics = new SwerveDriveKinematics(
