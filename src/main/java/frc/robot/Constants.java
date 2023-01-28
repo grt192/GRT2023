@@ -112,15 +112,6 @@ public final class Constants {
     public static final class VisionConstants {
         public static List<Pair<PhotonCamera, Transform3d>> CAMERA_LIST = 
             Arrays.asList(
-                /*
-                new Pair<PhotonCamera, Transform3d>(
-                    new PhotonCamera("Arducam_OV9281_USB_Camera"), 
-                    new Transform3d(
-                        new Translation3d(Units.inchesToMeters(17.25), Units.inchesToMeters(4.5), Units.inchesToMeters(10.25)),
-                        new Rotation3d(0, 0, 0)
-                    )
-                )
-                */
                 new Pair<PhotonCamera, Transform3d>(
                     new PhotonCamera("Arducam_OV9281_USB_Camera"), 
                     new Transform3d(
