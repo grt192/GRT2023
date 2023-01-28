@@ -32,7 +32,7 @@ public abstract class AutonAutonSequence extends SequentialCommandGroup{
     private final MoverSubsystem moverSubsystem;
 
     //positions for placing gamepieces
-    public enum PlacePos{
+    public enum Red{
         X1( new Pose2d(
             Units.inchesToMeters(0),
             Units.inchesToMeters(0),
@@ -80,47 +80,62 @@ public abstract class AutonAutonSequence extends SequentialCommandGroup{
             Units.inchesToMeters(0),
             Units.inchesToMeters(0),
             Rotation2d.fromDegrees(0)
-        ));
-        Pose2d pose;
+        )),
 
-        PlacePos(Pose2d pose){
-            this.pose = pose;
-        }
-    } 
-
-    //positions for picking up gamepieces
-    public enum PickPos{
-        CUBE1(new Pose2d(
+        PIECE1(new Pose2d(
             Units.inchesToMeters(0),
             Units.inchesToMeters(0),
             Rotation2d.fromDegrees(0)
         )),
-        CONE2(
+        PIECE2(
             new Pose2d(
             Units.inchesToMeters(0),
             Units.inchesToMeters(0),
             Rotation2d.fromDegrees(0)
         )
         ),
-        CONE3(
+        PIECE3(
             new Pose2d(
             Units.inchesToMeters(0),
             Units.inchesToMeters(0),
             Rotation2d.fromDegrees(0)
         )
         ),
-        CUBE4(
+        PIECE4(
+            new Pose2d(
+            Units.inchesToMeters(0),
+            Units.inchesToMeters(0),
+            Rotation2d.fromDegrees(0)
+        )
+        ),
+
+        TOPINIT(new Pose2d(
+            Units.inchesToMeters(0),
+            Units.inchesToMeters(0),
+            Rotation2d.fromDegrees(0)
+        )),
+        BALANCEINIT(
+            new Pose2d(
+            Units.inchesToMeters(0),
+            Units.inchesToMeters(0),
+            Rotation2d.fromDegrees(0)
+        )
+        ),
+        BOTTOMINIT(
             new Pose2d(
             Units.inchesToMeters(0),
             Units.inchesToMeters(0),
             Rotation2d.fromDegrees(0)
         )
         );
-        Pose2d pose;
-        private PickPos(Pose2d pose){
-            this.pose = pose;
+
+        Pose2d red;
+
+        Red(Pose2d red){
+            this.red = red;
         }
-    }
+    } 
+
 
     //non balancing auton sequence
     public AutonAutonSequence(RobotContainer robotContainer, Pose2d initialPose, Pose2d placePose, Pose2d grabPose, Pose2d placePose2, MoverPosition moverPosition, MoverPosition moverPosition2){
