@@ -25,6 +25,9 @@ import frc.robot.vision.PhotonWrapper;
  * logic for managing module states, updating odometry, and taking driver input.
  */
 public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
+
+    private final Field2d cfield = new Field2d();
+
     private final BaseSwerveModule topLeftModule;
     private final BaseSwerveModule topRightModule;
     private final BaseSwerveModule bottomLeftModule;
@@ -125,6 +128,9 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
 
     @Override
     public void periodic() {
+
+        cfield.setRobotPose(getRobotPosition());
+
         // Update pose estimator from swerve module states
         Rotation2d gyroAngle = getGyroHeading();
         Pose2d estimate = poseEstimator.update(
