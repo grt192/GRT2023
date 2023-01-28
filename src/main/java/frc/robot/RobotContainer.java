@@ -104,7 +104,121 @@ public class RobotContainer {
         if (driveSubsystem instanceof BaseSwerveSubsystem) {
             final BaseSwerveSubsystem swerveSubsystem = (BaseSwerveSubsystem) driveSubsystem;
 
-            // Test S-curve for swerve auton
+            // "GRT" auton
+            /*
+            autonCommand = new FollowPathCommand(
+                swerveSubsystem, 
+                new Pose2d(),
+                List.of(),
+                new Pose2d(1, 1, new Rotation2d())
+            ).andThen(new FollowPathCommand(
+                swerveSubsystem, 
+                new Pose2d(1, 1, new Rotation2d()),
+                List.of(),
+                new Pose2d(),
+                true
+            )).andThen(new FollowPathCommand(
+                swerveSubsystem, 
+                new Pose2d(),
+                List.of(
+                    new Translation2d(0.5, -1)
+                ),
+                new Pose2d(1, 0, new Rotation2d())
+            )).andThen(new FollowPathCommand(
+                swerveSubsystem, 
+                new Pose2d(1, 0, new Rotation2d()),
+                List.of(),
+                new Pose2d(0.5, 0, new Rotation2d()),
+                true
+            )).andThen(new FollowPathCommand(
+                swerveSubsystem, 
+                new Pose2d(0.5, 0, new Rotation2d()),
+                List.of(),
+                new Pose2d(1.5, -1, new Rotation2d())
+            )).andThen(new FollowPathCommand(
+                swerveSubsystem, 
+                new Pose2d(1.5, -1, new Rotation2d()),
+                List.of(),
+                new Pose2d(1.5, 1, new Rotation2d())
+            )).andThen(new FollowPathCommand(
+                swerveSubsystem, 
+                new Pose2d(1.5, 1, new Rotation2d()),
+                List.of(
+                    new Translation2d(2.5, 0.5)
+                ),
+                new Pose2d(1.5, 0, new Rotation2d())
+            )).andThen(new FollowPathCommand(
+                swerveSubsystem, 
+                new Pose2d(1.5, 0, new Rotation2d()),
+                List.of(),
+                new Pose2d(2.5, -1, new Rotation2d())
+            )).andThen(new FollowPathCommand(
+                swerveSubsystem, 
+                new Pose2d(2.5, -1, new Rotation2d()),
+                List.of(),
+                new Pose2d(4, -1, new Rotation2d())
+            )).andThen(new FollowPathCommand(
+                swerveSubsystem, 
+                new Pose2d(4, -1, new Rotation2d()),
+                List.of(),
+                new Pose2d(4, 1, new Rotation2d())
+            )).andThen(new FollowPathCommand(
+                swerveSubsystem, 
+                new Pose2d(4, 1, new Rotation2d()),
+                List.of(),
+                new Pose2d(4.5, 1, new Rotation2d())
+            )).andThen(new FollowPathCommand(
+                swerveSubsystem, 
+                new Pose2d(4.5, 1, new Rotation2d()),
+                List.of(),
+                new Pose2d(3.5, 1, new Rotation2d()),
+                true
+            ));
+            */
+
+            // Box auton
+            /*
+            autonCommand = new FollowPathCommand(
+                swerveSubsystem, 
+                new Pose2d(),
+                List.of(), 
+                new Pose2d(2, 0, new Rotation2d())
+            ).andThen(new FollowPathCommand(
+                swerveSubsystem, 
+                new Pose2d(2, 0, new Rotation2d()), 
+                List.of(), 
+                new Pose2d(2, -1, new Rotation2d())
+            )).andThen(new FollowPathCommand(
+                swerveSubsystem, 
+                new Pose2d(2, -1, new Rotation2d()), 
+                List.of(), 
+                new Pose2d(3, -1, new Rotation2d())
+            )).andThen(new FollowPathCommand(
+                swerveSubsystem, 
+                new Pose2d(3, -1, new Rotation2d()), 
+                List.of(), 
+                new Pose2d(3, 1, new Rotation2d())
+            )).andThen(new FollowPathCommand(
+                swerveSubsystem, 
+                new Pose2d(3, 1, new Rotation2d()), 
+                List.of(), 
+                new Pose2d(2, 1, new Rotation2d()),
+                true
+            )).andThen(new FollowPathCommand(
+                swerveSubsystem, 
+                new Pose2d(2, 1, new Rotation2d()), 
+                List.of(), 
+                new Pose2d(2, 0, new Rotation2d())
+            )).andThen(new FollowPathCommand(
+                swerveSubsystem, 
+                new Pose2d(2, 0, new Rotation2d()), 
+                List.of(), 
+                new Pose2d(),
+                true
+            ));
+            */
+
+            // S-curve auton
             autonCommand = new FollowPathCommand(
                 swerveSubsystem, 
                 new Pose2d(), 
@@ -112,8 +226,6 @@ public class RobotContainer {
                     new Translation2d(1, 1),
                     new Translation2d(2, -1)
                 ),
-                // new Pose2d(0, Units.feetToMeters(5), new Rotation2d())
-                // new Pose2d(Units.feetToMeters(10), 0, new Rotation2d()) 
                 new Pose2d(3, 0, Rotation2d.fromDegrees(90))
             ).andThen(new FollowPathCommand(
                 swerveSubsystem,
