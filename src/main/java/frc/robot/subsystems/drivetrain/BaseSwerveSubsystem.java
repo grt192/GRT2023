@@ -127,39 +127,34 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
      * @param data ArrayList of Doubles
      * @return array of average, standard deviation, and range
      */
-    private Double[] analyzeData(ArrayList<Double> data) {
-
+    private double[] analyzeData(ArrayList<Double> data) {
         OptionalDouble optionalAverage = data.stream().mapToDouble(a -> a).average();
 
         final double average = (optionalAverage.isPresent() ? optionalAverage.getAsDouble() : 0);
         double stdDev = 0;
         double range = 0;
-        
+
         // Calculate std dev if the double stream is present
         if (optionalAverage.isPresent()) {
-
             stdDev = Math.sqrt(data.stream().mapToDouble(a -> {
                 return Math.pow((a - average), 2);
             }).average().getAsDouble());
 
             range = data.stream().mapToDouble(a -> a).max().getAsDouble() 
-                    - data.stream().mapToDouble(a -> a).min().getAsDouble();
+                - data.stream().mapToDouble(a -> a).min().getAsDouble();
         }
 
-        return new Double[]{average, stdDev, range};
+        return new double[] { average, stdDev, range };
     }
 
     @Override
     public void periodic() {
-
-        cfield.setRobotPose(getRobotPosition());
-
         // ----- TESTING CODE -------
         estimationTimerEntry.setValue(estimationTimer.get());
 
         if (estimationTimer.get() > 5.0) {
-            Double[] xStats = analyzeData(xEntries);
-            Double[] yStats = analyzeData(yEntries);
+            double[] xStats = analyzeData(xEntries);
+            double[] yStats = analyzeData(yEntries);
 
             xStatVisionEntry.setValue(String.format("%.3f %.3f %.3f", xStats[0], xStats[1], xStats[2]));
             yStatVisionEntry.setValue(String.format("%.3f %.3f %.3f", yStats[0], yStats[1], yStats[2]));
@@ -168,7 +163,6 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
             yEntries.clear();
             estimationTimer.reset();
         }
-
         // --------------------------
 
         xEntry.setValue(Units.metersToInches(getRobotPosition().getX()));
@@ -183,22 +177,20 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
             getModuleStates()
         );
 
+        cfield.setRobotPose(estimate);
+
         // Add vision pose estimate to pose estimator
         photonWrapper.getRobotPose(estimate).forEach((visionPose) -> {
 
-            // System.out.println("timestamp " + visionPose.timestampSeconds);
-
-            // ---- TESTING ---
-            
+            // ---- TESTING ---            
             xEntries.add(visionPose.estimatedPose.getX());
             yEntries.add(visionPose.estimatedPose.getY());
-
             // ----------------
 
             xVisionEntry.setValue(Units.metersToInches(visionPose.estimatedPose.getX()));
             yVisionEntry.setValue(Units.metersToInches(visionPose.estimatedPose.getY()));
             timestampVisionEntry.setValue(visionPose.timestampSeconds);
-                
+
             poseEstimator.addVisionMeasurement(
                 visionPose.estimatedPose.toPose2d(),
                 visionPose.timestampSeconds
