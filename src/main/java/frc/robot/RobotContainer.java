@@ -9,6 +9,7 @@ import java.util.List;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
@@ -83,9 +84,9 @@ public class RobotContainer {
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
     public RobotContainer() {
-        driveController = new DualJoystickDriveController();
+        driveController = new XboxDriveController();
 
-        driveSubsystem = new MissileShellSwerveSweeperSubsystem();
+        driveSubsystem = new SwerveSubsystem();
         // gripperSubsystem = new GripperSubsytem();
         // rollerSubsystem = new RollerSubsystem();
 
@@ -107,9 +108,23 @@ public class RobotContainer {
             autonCommand = new FollowPathCommand(
                 swerveSubsystem, 
                 new Pose2d(), 
-                List.of(new Translation2d(1, 1)),
-                new Pose2d(2, -1, new Rotation2d())
-            );
+                List.of(
+                    new Translation2d(1, 1),
+                    new Translation2d(2, -1)
+                ),
+                // new Pose2d(0, Units.feetToMeters(5), new Rotation2d())
+                // new Pose2d(Units.feetToMeters(10), 0, new Rotation2d()) 
+                new Pose2d(3, 0, Rotation2d.fromDegrees(90))
+            ).andThen(new FollowPathCommand(
+                swerveSubsystem,
+                new Pose2d(3, 0, Rotation2d.fromDegrees(90)),
+                List.of(
+                    new Translation2d(2, -1),
+                    new Translation2d(1, 1)
+                ),
+                new Pose2d(),
+                true
+            ));
         } else {
             autonCommand = new InstantCommand();
         }

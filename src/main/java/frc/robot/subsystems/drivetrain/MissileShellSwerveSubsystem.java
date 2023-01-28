@@ -15,7 +15,7 @@ public class MissileShellSwerveSubsystem extends BaseDrivetrain {
     private final SwerveModule module;
     private final SwerveDriveKinematics kinematics;
 
-    public static final double MAX_VEL = 0.9 /* 2.7552990913391113 */; // Max robot tangential velocity, in percent output
+    public static final double MAX_VEL = 5.09346342086792 /* 2.7552990913391113 */; // Max robot tangential velocity, in percent output
 
     private SwerveModuleState[] states = {
         new SwerveModuleState()

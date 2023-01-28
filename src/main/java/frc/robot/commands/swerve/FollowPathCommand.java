@@ -15,19 +15,18 @@ import edu.wpi.first.math.trajectory.constraint.SwerveDriveKinematicsConstraint;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 
 import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
-import frc.robot.subsystems.drivetrain.SwerveSubsystem;
 
 public class FollowPathCommand extends SwerveControllerCommand {
     // TODO: tune / measure
-    private static final double xP = 0;
+    private static final double xP = 0.3;
     private static final double xI = 0;
     private static final double xD = 0;
 
-    private static final double yP = 0;
+    private static final double yP = 0.3;
     private static final double yI = 0;
     private static final double yD = 0;
 
-    private static final double thetaP = 0;
+    private static final double thetaP = 1.5;
     private static final double thetaI = 0;
     private static final double thetaD = 0;
 
@@ -46,9 +45,12 @@ public class FollowPathCommand extends SwerveControllerCommand {
             new PIDController(yP, yI, yD),
             new ProfiledPIDController(
                 thetaP, thetaI, thetaD, 
-                new TrapezoidProfile.Constraints(SwerveSubsystem.MAX_VEL, SwerveSubsystem.MAX_ACCEL)
+                new TrapezoidProfile.Constraints(
+                    swerveSubsystem.MAX_OMEGA,
+                    swerveSubsystem.MAX_ALPHA
+                )
             ),
-            () -> new Rotation2d(), // TODO: this can control the angle of swerve at every timestep; hub locking?
+            // () -> new Rotation2d(), // TODO: this can control the angle of swerve at every timestep; hub locking?
             swerveSubsystem::setSwerveModuleStates,
             swerveSubsystem
         );
@@ -70,13 +72,13 @@ public class FollowPathCommand extends SwerveControllerCommand {
             // Target trajectory
             TrajectoryGenerator.generateTrajectory(
                 start, waypoints, end, 
-                new TrajectoryConfig(SwerveSubsystem.MAX_VEL, SwerveSubsystem.MAX_ACCEL)
+                new TrajectoryConfig(swerveSubsystem.MAX_VEL, swerveSubsystem.MAX_ACCEL)
                     .setReversed(reversed)
                     .setKinematics(swerveSubsystem.getKinematics())
                     .addConstraint(
                         new SwerveDriveKinematicsConstraint(
                             swerveSubsystem.getKinematics(), 
-                            SwerveSubsystem.MAX_VEL
+                            swerveSubsystem.MAX_VEL
                         )
                     )
             )
