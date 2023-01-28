@@ -70,17 +70,17 @@ public class RobotContainer {
 
     // Commands
     private final SendableChooser<Command> autonChooser;
-    private final BalancerCommand balancerCommand;
+    // private final BalancerCommand balancerCommand;
 
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
     public RobotContainer() {
-        driveSubsystem = new TankSubsystem();
+        driveSubsystem = new SwerveSubsystem2020();
         gripperSubsystem = new GripperSubsytem();
         rollerSubsystem = new RollerSubsystem();
 
-        balancerCommand = new BalancerCommand(driveSubsystem);
+        //balancerCommand = new BalancerCommand(driveSubsystem);
 
         // jetsonConnection = new JetsonConnection();
         // jetsonConnection.start();
@@ -102,7 +102,7 @@ public class RobotContainer {
      * passing it to a {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
      */
     private void configureButtonBindings() {
-        driveRBumper.whileTrue(balancerCommand);
+        //driveRBumper.whileTrue(balancerCommand);
 
         if (driveSubsystem instanceof BaseSwerveSubsystem) {
             final BaseSwerveSubsystem swerveSubsystem = (BaseSwerveSubsystem) driveSubsystem;

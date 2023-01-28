@@ -10,12 +10,17 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * The superclass for the current `SwerveSubsystem` and `SwerveSubsystem2020` that contains all the
  * logic for managing module states, updating odometry, and taking driver input.
  */
 public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
+
+    private final Field2d cfield = new Field2d();
+
     private final BaseSwerveModule topLeftModule;
     private final BaseSwerveModule topRightModule;
     private final BaseSwerveModule bottomLeftModule;
@@ -62,6 +67,8 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
 
         this.kinematics = kinematics;
 
+        SmartDashboard.putData("Field", cfield);
+
         // Initialize pose estimator
         poseEstimator = new SwerveDrivePoseEstimator(
             kinematics,
@@ -79,6 +86,9 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
 
     @Override
     public void periodic() {
+
+        cfield.setRobotPose(getRobotPosition());
+
         // Update pose estimator from swerve module states
         Rotation2d gyroAngle = getGyroHeading();
         poseEstimator.update(
