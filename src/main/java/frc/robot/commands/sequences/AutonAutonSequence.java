@@ -32,6 +32,7 @@ public abstract class AutonAutonSequence extends SequentialCommandGroup{
     private final MoverSubsystem moverSubsystem;
 
     //positions for placing gamepieces
+    //all positions from center of robot
     public enum Red{
         X1( new Pose2d(
             Units.inchesToMeters(578.737),
@@ -110,21 +111,21 @@ public abstract class AutonAutonSequence extends SequentialCommandGroup{
         ),
 
         TOPINIT(new Pose2d(
-            Units.inchesToMeters(0),
-            Units.inchesToMeters(0),
+            Units.inchesToMeters(581.072),
+            Units.inchesToMeters(195.55),
             Rotation2d.fromDegrees(0)
         )),
         BALANCEINIT(
             new Pose2d(
-            Units.inchesToMeters(0),
-            Units.inchesToMeters(0),
+            Units.inchesToMeters(581.072),
+            Units.inchesToMeters(107.638),
             Rotation2d.fromDegrees(0)
         )
         ),
         BOTTOMINIT(
             new Pose2d(
-            Units.inchesToMeters(0),
-            Units.inchesToMeters(0),
+            Units.inchesToMeters(581.072),
+            Units.inchesToMeters(12.873),
             Rotation2d.fromDegrees(0)
         )
         );
@@ -215,22 +216,22 @@ public abstract class AutonAutonSequence extends SequentialCommandGroup{
         ),
 
         TOPINIT(new Pose2d(
-            Units.inchesToMeters(0),
-            Units.inchesToMeters(0),
-            Rotation2d.fromDegrees(0)
+            Units.inchesToMeters(70.007),
+            Units.inchesToMeters(195.55),
+            Rotation2d.fromDegrees(180)
         )),
         BALANCEINIT(
             new Pose2d(
-            Units.inchesToMeters(0),
-            Units.inchesToMeters(0),
-            Rotation2d.fromDegrees(0)
+            Units.inchesToMeters(70.007),
+            Units.inchesToMeters(107.638),
+            Rotation2d.fromDegrees(180)
         )
         ),
         BOTTOMINIT(
             new Pose2d(
-            Units.inchesToMeters(0),
-            Units.inchesToMeters(0),
-            Rotation2d.fromDegrees(0)
+            Units.inchesToMeters(70.007),
+            Units.inchesToMeters(12.873),
+            Rotation2d.fromDegrees(180)
         )
         );
 
