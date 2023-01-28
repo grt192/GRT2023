@@ -15,7 +15,6 @@ public class AidenIntakeCommand extends CommandBase {
     public AidenIntakeCommand(RollerSubsystem rollerSubsystem){
         power = 0.0;
         this.rollerSubsystem = rollerSubsystem;
-        limitswitchUp = rollerSubsystem.isLimit();
         addRequirements(rollerSubsystem);
     }
 
@@ -27,7 +26,7 @@ public class AidenIntakeCommand extends CommandBase {
     @Override
     public void execute() {
         //let rollers turn intil a game piece is in(has pressed onto limit switch)
-        if (limitswitchUp){
+        if (rollerSubsystem.isLimit()){
             power = 0.3;
         }
         else {

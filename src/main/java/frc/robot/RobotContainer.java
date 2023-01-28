@@ -188,7 +188,7 @@ public class RobotContainer {
         }
 
         else{
-            return null;
+            throw new RuntimeException("no swerveSubsystem");
         }
     }
 

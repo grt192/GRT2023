@@ -11,12 +11,10 @@ import frc.robot.subsystems.GripperSubsytem;
 public class MatthewIntakeCommand extends CommandBase{
     private final GripperSubsytem gripperSubsystem;
     private final Value state;
-    private boolean done;
 
     public MatthewIntakeCommand (GripperSubsytem gripper){
         this.gripperSubsystem = gripper;
         this.state = gripperSubsystem.getState();
-        done = false;
         addRequirements(gripperSubsystem);
     }
 
@@ -34,7 +32,6 @@ public class MatthewIntakeCommand extends CommandBase{
         else{
             gripperSubsystem.gripToggle();
         }
-        done = true;
     }
     
     @Override
@@ -44,7 +41,7 @@ public class MatthewIntakeCommand extends CommandBase{
 
     @Override
     public boolean isFinished() {
-        return done;
+        return true;
     }
 
 

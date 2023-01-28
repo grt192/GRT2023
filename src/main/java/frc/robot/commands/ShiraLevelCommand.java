@@ -7,10 +7,8 @@ import frc.robot.subsystems.MoverSubsystem.MoverPosition;
 public class ShiraLevelCommand extends CommandBase{
     private final MoverSubsystem moverSubsystem;
     private final MoverPosition level;
-    private boolean done;
 
     public ShiraLevelCommand(MoverSubsystem moverSubsystem, MoverPosition level){
-        done = false;
         this.moverSubsystem = moverSubsystem;
         this.level = level;
     }
@@ -23,7 +21,6 @@ public class ShiraLevelCommand extends CommandBase{
     @Override
     public void execute() {
         moverSubsystem.setState(level);
-        done = true;
     }
 
     @Override
@@ -33,7 +30,7 @@ public class ShiraLevelCommand extends CommandBase{
 
     @Override
     public boolean isFinished() {
-        return done;
+        return true;
     }
     
 }

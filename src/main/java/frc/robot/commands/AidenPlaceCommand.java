@@ -5,7 +5,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.RollerSubsystem;
 
 /**
- * Places 1 gamepiece with Roller Mech. This command is to be used during autonamous.
+ * OUTDATED Places 1 gamepiece with Roller Mech. This command is to be used during autonamous.
  */
 
 public class AidenPlaceCommand extends CommandBase {
@@ -17,13 +17,14 @@ public class AidenPlaceCommand extends CommandBase {
         timer = new Timer();
         power = 0.0;
         this.rollerSubsystem = rollerSubsystem;
+
+        addRequirements(rollerSubsystem);
     }
 
     @Override
     public void initialize() {
         System.out.println("Roller to place");
         timer.start();
-        addRequirements(rollerSubsystem);
     } 
     
     @Override

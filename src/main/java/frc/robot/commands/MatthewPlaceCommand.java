@@ -16,7 +16,6 @@ public class MatthewPlaceCommand extends CommandBase{
     public MatthewPlaceCommand (GripperSubsytem gripper){
         this.gripperSubsystem = gripper;
         this.state = gripperSubsystem.getState();
-        done = false;
         addRequirements(gripperSubsystem);
     }
 
@@ -34,7 +33,6 @@ public class MatthewPlaceCommand extends CommandBase{
         else{
             gripperSubsystem.gripToggle();
         }
-        done = true;
     }
     
     @Override
@@ -44,7 +42,7 @@ public class MatthewPlaceCommand extends CommandBase{
 
     @Override
     public boolean isFinished() {
-        return done;
+        return true;
     }
 
 
