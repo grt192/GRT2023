@@ -139,52 +139,52 @@ public abstract class AutonAutonSequence extends SequentialCommandGroup{
     //positions for placing gamepieces
     public enum Blue{
         X1( new Pose2d(
-            Units.inchesToMeters(0),
-            Units.inchesToMeters(0),
-            Rotation2d.fromDegrees(0)
+            Units.inchesToMeters(72.013),
+            Units.inchesToMeters(195.55),
+            Rotation2d.fromDegrees(180)
         )
         ),
         X2( new Pose2d(
-            Units.inchesToMeters(0),
-            Units.inchesToMeters(0),
-            Rotation2d.fromDegrees(0)
+            Units.inchesToMeters(72.013),
+            Units.inchesToMeters(174.123),
+            Rotation2d.fromDegrees(180)
         )
         ),
         X3( new Pose2d(
-            Units.inchesToMeters(0),
-            Units.inchesToMeters(0),
-            Rotation2d.fromDegrees(0)
+            Units.inchesToMeters(72.013),
+            Units.inchesToMeters(152.123),
+            Rotation2d.fromDegrees(180)
         )
         ),
         X4( new Pose2d(
-            Units.inchesToMeters(0),
-            Units.inchesToMeters(0),
-            Rotation2d.fromDegrees(0)
+            Units.inchesToMeters(72.013),
+            Units.inchesToMeters(129.75),
+            Rotation2d.fromDegrees(180)
         )),
         X5( new Pose2d(
-            Units.inchesToMeters(0),
-            Units.inchesToMeters(0),
-            Rotation2d.fromDegrees(0)
+            Units.inchesToMeters(72.013),
+            Units.inchesToMeters(107.801),
+            Rotation2d.fromDegrees(180)
         )),
         X6( new Pose2d(
-            Units.inchesToMeters(0),
-            Units.inchesToMeters(0),
-            Rotation2d.fromDegrees(0)
+            Units.inchesToMeters(72.013),
+            Units.inchesToMeters(86.149),
+            Rotation2d.fromDegrees(180)
         )),
         X7( new Pose2d(
-            Units.inchesToMeters(0),
-            Units.inchesToMeters(0),
-            Rotation2d.fromDegrees(0)
+            Units.inchesToMeters(72.013),
+            Units.inchesToMeters(64.818),
+            Rotation2d.fromDegrees(180)
         )),
         X8( new Pose2d(
-            Units.inchesToMeters(0),
-            Units.inchesToMeters(0),
-            Rotation2d.fromDegrees(0)
+            Units.inchesToMeters(72.013),
+            Units.inchesToMeters(41.761),
+            Rotation2d.fromDegrees(180)
         )),
         X9( new Pose2d(
-            Units.inchesToMeters(0),
-            Units.inchesToMeters(0),
-            Rotation2d.fromDegrees(0)
+            Units.inchesToMeters(72.013),
+            Units.inchesToMeters(20.016),
+            Rotation2d.fromDegrees(180)
         )),
 
         PIECE1(new Pose2d(
