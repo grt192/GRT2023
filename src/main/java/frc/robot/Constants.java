@@ -98,6 +98,8 @@ public final class Constants {
         public static final int EXTENSION_ID = 3;
         public static final int EXTENSION_FOLLOW_ID = 2;
         public static final float EXTENSION_LIMIT = (float) 26; 
+
+        public static final int ZERO_LIMIT_ID = 1;
         
         public static final double EXT_GR = 14.0 / 64.0;
         public static final double EXT_CIRCUM = Math.PI * 0.500; // approx circumference of winch
