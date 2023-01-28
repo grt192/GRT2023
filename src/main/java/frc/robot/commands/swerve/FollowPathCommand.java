@@ -17,7 +17,6 @@ import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
 
 public class FollowPathCommand extends SwerveControllerCommand {
-    // TODO: tune / measure
     private static final double xP = 0.4;
     private static final double xI = 0;
     private static final double xD = 0;

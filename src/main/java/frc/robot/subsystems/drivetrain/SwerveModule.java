@@ -197,11 +197,7 @@ public class SwerveModule implements BaseSwerveModule {
      * @return The current [-pi, pi] angle of the module, as a `Rotation2d`.
      */
     private Rotation2d getAngle() {
-        // System.out.println(driveEncoder.getVelocity());
-        // System.out.println(steerAbsoluteEncoder.getPosition());
-
         double wrappedAngleRads = MathUtil.angleModulus(steerAbsoluteEncoder.getPosition() + offsetRads);
-        // System.out.println(wrappedAngleRads);
         return new Rotation2d(wrappedAngleRads);
     }
 
