@@ -255,9 +255,9 @@ public class RobotContainer {
             final BaseSwerveSubsystem swerveSubsystem = (BaseSwerveSubsystem) driveSubsystem;
 
             swerveSubsystem.setDefaultCommand(new RunCommand(() -> {
-                double xPower = driveController.getForward();
-                double yPower = driveController.getLeft();
-                double angularPower = driveController.getRotate();
+                double xPower = driveController.getForwardPower();
+                double yPower = driveController.getLeftPower();
+                double angularPower = driveController.getRotatePower();
                 boolean relative = driveController.getSwerveRelative();
                 swerveSubsystem.setDrivePowers(xPower, yPower, angularPower, relative);
             }, swerveSubsystem));
@@ -267,16 +267,16 @@ public class RobotContainer {
             final TankSubsystem tankSubsystem = (TankSubsystem) driveSubsystem;
 
             tankSubsystem.setDefaultCommand(new RunCommand(() -> {
-                double forwardPower = 0.75 * driveController.getForward();
-                double turnPower = 0.75 * driveController.getRotate();
+                double forwardPower = 0.75 * driveController.getForwardPower();
+                double turnPower = 0.75 * driveController.getRotatePower();
                 tankSubsystem.setDrivePowers(forwardPower, turnPower);
             }, tankSubsystem));
         } else if (driveSubsystem instanceof MissileShellSwerveSubsystem) {
             final MissileShellSwerveSubsystem swerveSubsystem = (MissileShellSwerveSubsystem) driveSubsystem;
 
             swerveSubsystem.setDefaultCommand(new RunCommand(() -> {
-                double xPower = driveController.getForward();
-                double yPower = driveController.getLeft();
+                double xPower = driveController.getForwardPower();
+                double yPower = driveController.getLeftPower();
                 swerveSubsystem.setDrivePowers(xPower, yPower);
             }, swerveSubsystem));
         }

@@ -19,17 +19,17 @@ public class TwistJoystickDriveController extends BaseDriveController {
     private final double JOYSTICK_DEADBAND = 0.08;
 
     @Override
-    public double getForward() {
+    public double getForwardPower() {
         return MathUtil.applyDeadband(-joystick.getY(), JOYSTICK_DEADBAND);
     }
 
     @Override
-    public double getLeft() {
+    public double getLeftPower() {
         return MathUtil.applyDeadband(-joystick.getX(), JOYSTICK_DEADBAND);
     }
 
     @Override
-    public double getRotate() {
+    public double getRotatePower() {
         // Z-rotate
         return MathUtil.applyDeadband(-joystick.getRawAxis(3), JOYSTICK_DEADBAND);
     }

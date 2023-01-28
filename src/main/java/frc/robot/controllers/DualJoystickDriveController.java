@@ -21,17 +21,17 @@ public class DualJoystickDriveController extends BaseDriveController {
     private final double JOYSTICK_DEADBAND = 0.08;
 
     @Override
-    public double getForward() {
+    public double getForwardPower() {
         return MathUtil.applyDeadband(-leftJoystick.getY(), JOYSTICK_DEADBAND);
     }
 
     @Override
-    public double getLeft() {
+    public double getLeftPower() {
         return MathUtil.applyDeadband(-leftJoystick.getX(), JOYSTICK_DEADBAND);
     }
 
     @Override
-    public double getRotate() {
+    public double getRotatePower() {
         return MathUtil.applyDeadband(-rightJoystick.getX(), JOYSTICK_DEADBAND);
     }
 
