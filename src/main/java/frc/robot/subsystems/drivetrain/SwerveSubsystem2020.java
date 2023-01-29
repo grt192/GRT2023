@@ -2,7 +2,7 @@ package frc.robot.subsystems.drivetrain;
 
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 
-import static frc.robot.Constants.SwerveConstants2020.*;
+import static frc.robot.Constants.SwerveConstants.*;
 
 public class SwerveSubsystem2020 extends BaseSwerveSubsystem {
     public static final double MAX_VEL = 1.0; // Max robot tangential velocity, in m/s
