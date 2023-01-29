@@ -19,7 +19,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.Constants.TiltedElevatorConstants;
+
 import frc.robot.commands.BalancerCommand;
 import frc.robot.commands.swerve.FollowPathCommand;
 import frc.robot.controllers.BaseDriveController;
@@ -59,16 +59,15 @@ public class RobotContainer {
     private final BaseDriveController driveController;
 
     private final GenericHID switchboard = new GenericHID(3);
-    private final JoystickButton 
-        tlSwitch = new JoystickButton(switchboard, 3),
-        tmSwitch = new JoystickButton(switchboard, 2),
-        trSwitch = new JoystickButton(switchboard, 1),
-        mlSwitch = new JoystickButton(switchboard, 6),
-        mmSwitch = new JoystickButton(switchboard, 5),
-        mrSwitch = new JoystickButton(switchboard, 4),
-        blSwitch = new JoystickButton(switchboard, 9),
-        bmSwitch = new JoystickButton(switchboard, 8),
-        brSwitch = new JoystickButton(switchboard, 7);
+    private final JoystickButton tlSwitch = new JoystickButton(switchboard, 3),
+            tmSwitch = new JoystickButton(switchboard, 2),
+            trSwitch = new JoystickButton(switchboard, 1),
+            mlSwitch = new JoystickButton(switchboard, 6),
+            mmSwitch = new JoystickButton(switchboard, 5),
+            mrSwitch = new JoystickButton(switchboard, 4),
+            blSwitch = new JoystickButton(switchboard, 9),
+            bmSwitch = new JoystickButton(switchboard, 8),
+            brSwitch = new JoystickButton(switchboard, 7);
 
     private final XboxController mechController = new XboxController(5);
     private final JoystickButton 
@@ -298,7 +297,7 @@ public class RobotContainer {
             rollerSubsystem.setRollPower(rollPower);
 
             double openPower = mechController.getRightY();
-            rollerSubsystem.setOpenPower(openPower);
+            rollerSubsystem.setOpenPower(Math.abs(openPower));
 
         }, rollerSubsystem));
 
@@ -308,27 +307,34 @@ public class RobotContainer {
         tiltedElevatorSubsystem.setDefaultCommand(new RunCommand(() -> {
             double yPower = -mechController.getLeftY();
             tiltedElevatorSubsystem.setManualPower(yPower);
+
+            tiltedElevatorSubsystem.setOffsetDist(yPower);
         }, tiltedElevatorSubsystem));
 
-        mechYButton.onTrue(new InstantCommand(() ->{
+        mechYButton.onTrue(new InstantCommand(() -> {
             tiltedElevatorSubsystem.toggleState(ElevatorState.GROUND, ElevatorState.SUBSTATION);
         }, tiltedElevatorSubsystem));
 
-        mechXButton.onTrue(new InstantCommand(() ->{
+        mechBButton.onTrue(new InstantCommand(() -> {
+            tiltedElevatorSubsystem.toggleState(ElevatorState.GROUND, ElevatorState.CHUTE);
+        }, tiltedElevatorSubsystem));
+
+        mechXButton.onTrue(new InstantCommand(() -> {
             tiltedElevatorSubsystem.resetOffset();
         }, tiltedElevatorSubsystem));
 
-        mechRBumper.onTrue(new InstantCommand(() ->{
+        mechRBumper.onTrue(new InstantCommand(() -> {
             tiltedElevatorSubsystem.toggleState(ElevatorState.CUBEMID, ElevatorState.CUBEHIGH);
         }, tiltedElevatorSubsystem));
 
-        mechLBumper.onTrue(new InstantCommand(() ->{
+        mechLBumper.onTrue(new InstantCommand(() -> {
             tiltedElevatorSubsystem.toggleState(ElevatorState.CONEMID, ElevatorState.CONEHIGH);
         }, tiltedElevatorSubsystem));
     }
 
     /**
      * Use this to pass the autonomous command to the main {@link Robot} class.
+     * 
      * @return the command to run in autonomous
      */
     public Command getAutonomousCommand() {
