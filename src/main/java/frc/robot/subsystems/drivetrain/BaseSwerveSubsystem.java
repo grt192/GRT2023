@@ -59,7 +59,7 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
 
     // ----------- TESTING ------------
     private final GenericEntry xStatVisionEntry = shuffleboardTab.add("x vision stats", "").getEntry();
-    private final GenericEntry yStatVisionEntry = shuffleboardTab.add("x vision stats", "").getEntry();
+    private final GenericEntry yStatVisionEntry = shuffleboardTab.add("y vision stats", "").getEntry();
 
     private final GenericEntry estimationTimerEntry = shuffleboardTab.add("estimation timer", 0).getEntry();
     private Timer estimationTimer = new Timer();
