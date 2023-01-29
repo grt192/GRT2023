@@ -18,6 +18,7 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Quaternion;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 
@@ -36,33 +37,17 @@ public class PhotonWrapper {
      */
     public PhotonWrapper() {
         photonPoseEstimators = CAMERA_LIST.stream().map((camera) -> {
-            // try {
+            try {
                 return new PhotonPoseEstimator(
-                    // new AprilTagFieldLayout("/src/main/java/frc/robot/vision/2023-chargedup.json"),
-                    // new AprilTagFieldLayout("/src/main/java/frc/robot/vision/2023-chargedup.json"),
-                    // new AprilTagFieldLayout("https://github.com/wpilibsuite/allwpilib/blob/main/apriltag/src/main/native/resources/edu/wpi/first/apriltag/2023-chargedup.json"),
-                    new AprilTagFieldLayout(Arrays.asList(
-                        new AprilTag(1, 
-                            new Pose3d(
-                                new Translation3d(15.513558, 1.071626, 0.462788), 
-                                new Rotation3d(new Quaternion(0, 0, 0, 1)))),
-                        new AprilTag(2, 
-                            new Pose3d(
-                                new Translation3d(15.513558, 2.748026, 0.462788), 
-                                new Rotation3d(new Quaternion(0, 0, 0, 1)))),
-                        new AprilTag(6, 
-                            new Pose3d(
-                                new Translation3d(0, 0, 0.462788), 
-                                new Rotation3d(new Quaternion(0, 0, 0, 1))))),
-                        16.54175,
-                        8.0137),
-                    PoseStrategy.CLOSEST_TO_REFERENCE_POSE, 
+                    // new AprilTagFieldLayout(AprilTagFields.k2023ChargedUp.m_resourceFile),
+                    new AprilTagFieldLayout(Filesystem.getDeployDirectory() + "/2023-chargedup.json"),
+                    PoseStrategy.CLOSEST_TO_REFERENCE_POSE,
                     camera.getFirst(),
                     camera.getSecond()
                 );
-            // } catch (IOException e) {
-                //throw new RuntimeException(e);
-            // }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }).toList();
     }
 
