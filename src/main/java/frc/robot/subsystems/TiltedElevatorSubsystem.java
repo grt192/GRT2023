@@ -6,6 +6,7 @@ import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMax.SoftLimitDirection;
+import com.revrobotics.SparkMaxPIDController.AccelStrategy;
 
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.GenericEntry;
@@ -25,9 +26,13 @@ public class TiltedElevatorSubsystem  extends SubsystemBase {
 
     private final CANSparkMax extensionFollowMotor;
 
-    private double extensionP = 0.125;
+    private double extensionP = 0; // 4.9;
     private double extensionI = 0;
     private double extensionD = 0;
+    private double extensionFF = 0;
+
+    private double maxVel = 0.10; // m/s
+    private double maxAccel = 0.01; // m/s^2
 
     private ElevatorState currentState = ElevatorState.GROUND;
 
@@ -42,9 +47,15 @@ public class TiltedElevatorSubsystem  extends SubsystemBase {
     private final GenericEntry extensionPEntry = shuffleboardTab.add("Extension P", extensionP).getEntry();
     private final GenericEntry extensionIEntry = shuffleboardTab.add("Extension I", extensionI).getEntry();
     private final GenericEntry extensionDEntry = shuffleboardTab.add("Extension D", extensionD).getEntry();
+    private final GenericEntry extensionFFEntry = shuffleboardTab.add("Extension FF", extensionFF).getEntry();
 
-    private final GenericEntry manualPowerEntry = shuffleboardTab.add("Manual Power", 0).getEntry();
+    private final GenericEntry manualPowerEntry = shuffleboardTab.add("Manual Power", manualPower).getEntry();
 
+    private final GenericEntry maxVelEntry = shuffleboardTab.add("Max Vel", maxVel).getEntry();
+    private final GenericEntry maxAccelEntry = shuffleboardTab.add("Max Accel", maxAccel).getEntry();
+
+    private final GenericEntry currentVelEntry = shuffleboardTab.add("Current Vel (mps)", 0.0).getEntry();
+    
     private final GenericEntry currentExtensionEntry = shuffleboardTab.add("Current Ext (in)", 0.0).getEntry();
     // private final GenericEntry currentStateEntry = shuffleboardTab.add("Current State", currentState.toString()).getEntry();
  
@@ -94,8 +105,8 @@ public class TiltedElevatorSubsystem  extends SubsystemBase {
         extensionMotor.setSoftLimit(SoftLimitDirection.kForward, EXTENSION_LIMIT);
         extensionMotor.enableSoftLimit(SoftLimitDirection.kReverse, true);
         extensionMotor.setSoftLimit(SoftLimitDirection.kReverse, 0);
-        extensionMotor.setIdleMode(IdleMode.kBrake);
 
+        extensionMotor.setIdleMode(IdleMode.kCoast); //TODO BRAKE
 
         extensionMotor.setInverted(true); // flip
 
@@ -105,12 +116,17 @@ public class TiltedElevatorSubsystem  extends SubsystemBase {
 
         extensionEncoder = extensionMotor.getEncoder();
         extensionEncoder.setPositionConversionFactor(EXTENSION_ROT_TO_M);
+        extensionEncoder.setVelocityConversionFactor(EXTENSION_ROT_TO_M / 60.0);
         extensionEncoder.setPosition(0);
 
         extensionPidController = extensionMotor.getPIDController();
         extensionPidController.setP(extensionP);
         extensionPidController.setI(extensionI);
         extensionPidController.setD(extensionD);
+        extensionPidController.setFF(extensionFF);
+        extensionPidController.setSmartMotionMaxVelocity(maxVel, 0);
+        extensionPidController.setSmartMotionMaxAccel(maxAccel, 0);
+        extensionPidController.setSmartMotionAccelStrategy(AccelStrategy.kTrapezoidal, 0);
 
     }
 
@@ -129,22 +145,36 @@ public class TiltedElevatorSubsystem  extends SubsystemBase {
         
         // Otherwise, use PID
         double eP = extensionPEntry.getDouble(extensionP);
-        double eI = extensionPEntry.getDouble(extensionI);
-        double eD = extensionPEntry.getDouble(extensionD);
+        double eI = extensionIEntry.getDouble(extensionI);
+        double eD = extensionDEntry.getDouble(extensionD);
+        double eFF = extensionFFEntry.getDouble(extensionFF);
+        double maxV = maxVelEntry.getDouble(maxVel);
+        double maxA = maxAccelEntry.getDouble(maxAccel);
 
         if (eP != extensionP) extensionPidController.setP(extensionP);
         if (eI != extensionI) extensionPidController.setI(extensionI);
         if (eD != extensionD) extensionPidController.setD(extensionD);
+        if (eFF != extensionFF) extensionPidController.setFF(extensionFF);
+        if (maxV != maxVel) extensionPidController.setSmartMotionMaxVelocity(maxV, 0);
+        if (maxA != maxAccel) extensionPidController.setSmartMotionMaxAccel(maxA, 0);
 
         this.extensionP = eP;
         this.extensionI = eI;
         this.extensionD = eD;
+        this.extensionFF = eFF;
+        this.maxVel = maxV;
+        this.maxAccel = maxA;
+
+
+        // System.out.println(extensionEncoder.getPosition());
+
+        currentVelEntry.setDouble(extensionEncoder.getVelocity());
 
         currentExtensionEntry.setDouble(Units.metersToInches(extensionEncoder.getPosition()));
         this.targetExtension = Units.inchesToMeters(targetExtensionEntry.getDouble(0));
 
         // Set PID reference
-        extensionPidController.setReference(targetExtension, ControlType.kPosition);
+        extensionPidController.setReference(targetExtension, ControlType.kSmartMotion);
         
         // currentStateEntry.setString(currentState.toString());
     }
