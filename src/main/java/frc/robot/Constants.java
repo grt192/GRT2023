@@ -45,7 +45,7 @@ public final class Constants {
         // TODO: reflash sparkmaxes to fix this
         public static final int blDrive = 8;
         public static final int blSteer = 7;
-        public static final double blOffsetRads = -0.735264790062;
+        public static final double blOffsetRads = -0.793255341057;
         public static final Translation2d blPos = new Translation2d(
             Units.inchesToMeters(-12.0),
             Units.inchesToMeters(8.75)
