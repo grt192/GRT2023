@@ -106,6 +106,13 @@ public class RobotContainer {
         if (driveSubsystem instanceof BaseSwerveSubsystem) {
             final BaseSwerveSubsystem swerveSubsystem = (BaseSwerveSubsystem) driveSubsystem;
 
+            autonChooser.addOption("Small straight-line curve", new FollowPathCommand(
+                swerveSubsystem, 
+                new Pose2d(), 
+                List.of(), 
+                new Pose2d(1, 0, Rotation2d.fromDegrees(90))
+            ));
+
             // S-curve auton
             autonChooser.addOption("Rotating S-curve", new FollowPathCommand(
                 swerveSubsystem, 
