@@ -5,12 +5,14 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.motorcontrol.MotorUtil;
 
 import static frc.robot.Constants.RollerConstants.*;
 
 public class RollerSubsystem extends SubsystemBase {
+    private Timer timer;
     private final WPI_TalonSRX leftBeak;
     private final WPI_TalonSRX rightBeak;
     private final WPI_TalonSRX openMotor;
@@ -18,7 +20,7 @@ public class RollerSubsystem extends SubsystemBase {
     private final DigitalInput limitSwitch = new DigitalInput(0);
 
     private double rollPower = 0.0;
-    private double openPower = 0.0;
+    private double openPower = 0.5;
 
     public RollerSubsystem() {
         leftBeak = MotorUtil.createTalonSRX(LEFT_ID);
@@ -33,8 +35,21 @@ public class RollerSubsystem extends SubsystemBase {
         openMotor.setNeutralMode(NeutralMode.Brake);
     }
 
+    public void OpenMotor(){
+        timer.start();
+    }
+
     @Override
     public void periodic() {
+        if (timer.hasElapsed(3)){
+            timer.reset();
+        }
+        else if (timer.get() < 1){
+            openMotor.set(openPower);
+        }
+        else{
+            openMotor.set(0);
+        }
         // if wheels must intake, and the limit switch is not pressed, turn on motors
         if (limitSwitch.get()) {
             leftBeak.set(rollPower);
@@ -53,7 +68,4 @@ public class RollerSubsystem extends SubsystemBase {
         this.rollPower = power;
     }
 
-    public void setOpenPower(double power) {
-        this.openPower = power;
-    }
 }
