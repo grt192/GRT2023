@@ -295,14 +295,12 @@ public class RobotContainer {
         rollerSubsystem.setDefaultCommand(new RunCommand(() -> {
             double rollPower = mechController.getRightTriggerAxis() - mechController.getLeftTriggerAxis();
             rollerSubsystem.setRollPower(rollPower);
-
-            double openPower = mechController.getRightY();
-            rollerSubsystem.setOpenPower(Math.abs(openPower));
-
         }, rollerSubsystem));
 
         mechAButton.onTrue(new InstantCommand(gripperSubsystem::gripToggle, gripperSubsystem));
         */
+
+        mechBButton.onTrue(new InstantCommand(rollerSubsystem::OpenMotor, rollerSubsystem));
 
         tiltedElevatorSubsystem.setDefaultCommand(new RunCommand(() -> {
             double yPower = -mechController.getLeftY();
