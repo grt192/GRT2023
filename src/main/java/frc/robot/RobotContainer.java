@@ -33,6 +33,7 @@ import frc.robot.subsystems.drivetrain.MissileShellSwerveSubsystem;
 import frc.robot.subsystems.drivetrain.MissileShellSwerveSweeperSubsystem;
 import frc.robot.subsystems.drivetrain.SwerveSubsystem;
 import frc.robot.subsystems.drivetrain.SwerveSubsystem2020;
+import frc.robot.subsystems.drivetrain.SwerveSubsystem;
 import frc.robot.subsystems.drivetrain.BaseDrivetrain;
 import frc.robot.subsystems.MoverSubsystem;
 import frc.robot.subsystems.MoverSubsystem.MoverPosition;
@@ -49,8 +50,8 @@ import frc.robot.subsystems.RollerSubsystem;
 public class RobotContainer {
     // Subsystems
     private final BaseDrivetrain driveSubsystem;
-    // private final GripperSubsytem gripperSubsystem;
-    // private final RollerSubsystem rollerSubsystem;
+    private final GripperSubsytem gripperSubsystem;
+    private final RollerSubsystem rollerSubsystem;
 
     //private final JetsonConnection jetsonConnection;
 
@@ -92,8 +93,8 @@ public class RobotContainer {
         driveController = new XboxDriveController();
 
         driveSubsystem = new SwerveSubsystem();
-        // gripperSubsystem = new GripperSubsytem();
-        // rollerSubsystem = new RollerSubsystem();
+        gripperSubsystem = new GripperSubsytem();
+        rollerSubsystem = new RollerSubsystem();
 
         balancerCommand = new BalancerCommand(driveSubsystem);
 
@@ -323,14 +324,12 @@ public class RobotContainer {
             }
         }, moverSubsystem));
 
-        /*
         rollerSubsystem.setDefaultCommand(new RunCommand(() -> {
             double rollPower = mechController.getRightTriggerAxis() - mechController.getLeftTriggerAxis();
             rollerSubsystem.setRollPower(rollPower);
         }, rollerSubsystem));
 
         mechAButton.onTrue(new InstantCommand(gripperSubsystem::gripToggle, gripperSubsystem));
-        */
 
         mechXButton.onTrue(new InstantCommand(() ->{
             moverSubsystem.setState(MoverPosition.VERTICAL);
