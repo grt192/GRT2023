@@ -14,6 +14,8 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.SparkMaxPIDController.AccelStrategy;
 
+import edu.wpi.first.math.MathUsageId;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -114,11 +116,6 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
     public TiltedElevatorSubsystem() {
         extensionMotor = MotorUtil.createSparkMax(EXTENSION_ID);
 
-        extensionMotor.enableSoftLimit(SoftLimitDirection.kForward, true);
-        extensionMotor.setSoftLimit(SoftLimitDirection.kForward, EXTENSION_LIMIT);
-        extensionMotor.enableSoftLimit(SoftLimitDirection.kReverse, true);
-        extensionMotor.setSoftLimit(SoftLimitDirection.kReverse, (float) Units.inchesToMeters(-2));
-
         extensionMotor.setIdleMode(IdleMode.kCoast); // TODO BRAKE
 
         extensionMotor.setInverted(true); // flip
@@ -131,6 +128,11 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
         extensionEncoder.setPositionConversionFactor(EXTENSION_ROT_TO_M);
         extensionEncoder.setVelocityConversionFactor(EXTENSION_ROT_TO_M / 60.0);
         extensionEncoder.setPosition(0);
+
+        extensionMotor.enableSoftLimit(SoftLimitDirection.kForward, true);
+        extensionMotor.setSoftLimit(SoftLimitDirection.kForward, EXTENSION_LIMIT);
+        extensionMotor.enableSoftLimit(SoftLimitDirection.kReverse, true);
+        extensionMotor.setSoftLimit(SoftLimitDirection.kReverse, (float) Units.inchesToMeters(-2));
 
         extensionPidController = extensionMotor.getPIDController();
         extensionPidController.setP(extensionP);
@@ -184,7 +186,7 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
             extensionMotor.set(-0.075);
         } else {
             // Set PID reference
-            extensionPidController.setReference(targetExtension, ControlType.kSmartMotion);
+            extensionPidController.setReference(MathUtil.clamp(targetExtension, 0, EXTENSION_LIMIT), ControlType.kSmartMotion);
         }
 
         currentStateEntry.setString(currentState.toString());
