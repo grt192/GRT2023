@@ -9,6 +9,7 @@ import com.revrobotics.CANSparkMax.SoftLimitDirection;
 
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -16,6 +17,8 @@ import frc.robot.motorcontrol.MotorUtil;
 import static frc.robot.Constants.MoverConstants.*;
 
 public class MoverSubsystem extends SubsystemBase{
+    private final DigitalInput crimitswitch;
+
     private final CANSparkMax rotationMotor;
     private final RelativeEncoder rotationEncoder;
     private final SparkMaxPIDController rotationPidController;
@@ -81,6 +84,8 @@ public class MoverSubsystem extends SubsystemBase{
     }
 
     public MoverSubsystem(){
+        crimitswitch = new DigitalInput(0);
+
         rotationMotor = MotorUtil.createSparkMax(ROTATION_MOTOR_PORT);
         rotationMotor.setIdleMode(IdleMode.kBrake);
         rotationMotor.setInverted(true);
@@ -123,6 +128,10 @@ public class MoverSubsystem extends SubsystemBase{
 
     @Override
     public void periodic(){
+        if (!crimitswitch.get()){
+            extensionEncoder.setPosition(0);
+        }
+        
         if(!TESTING){
             goTo(currentState.angle + angleOffset, currentState.extension + extensionOffset);
         }
