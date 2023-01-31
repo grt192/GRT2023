@@ -116,8 +116,8 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
 
         extensionMotor.enableSoftLimit(SoftLimitDirection.kForward, true);
         extensionMotor.setSoftLimit(SoftLimitDirection.kForward, EXTENSION_LIMIT);
-        // extensionMotor.enableSoftLimit(SoftLimitDirection.kReverse, true);
-        // extensionMotor.setSoftLimit(SoftLimitDirection.kReverse, 0);
+        extensionMotor.enableSoftLimit(SoftLimitDirection.kReverse, true);
+        extensionMotor.setSoftLimit(SoftLimitDirection.kReverse, (float) Units.inchesToMeters(-2));
 
         extensionMotor.setIdleMode(IdleMode.kCoast); // TODO BRAKE
 
