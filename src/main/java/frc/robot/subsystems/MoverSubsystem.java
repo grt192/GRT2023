@@ -130,7 +130,7 @@ public class MoverSubsystem extends SubsystemBase{
             extensionEncoder.setPosition(0);
         }
 
-        if (extensionEncoder.getPosition() <= 0 && crimitswitch.get()){
+        if (extensionEncoder.getPosition() <= 0 && crimitswitch.get() && extensionOffset == 0){
             extensionMotor.set(-.2);
         }
         
