@@ -95,8 +95,8 @@ public final class Constants {
     }
 
     public static final class TiltedElevatorConstants {
-        public static final int EXTENSION_ID = 3;
-        public static final int EXTENSION_FOLLOW_ID = 2;
+        public static final int EXTENSION_ID = 15;
+        public static final int EXTENSION_FOLLOW_ID = 6;
         public static final float EXTENSION_LIMIT = (float) 26; 
 
         public static final int ZERO_LIMIT_ID = 1;
@@ -113,9 +113,9 @@ public final class Constants {
     }
 
     public static final class RollerConstants {
-        public static final int OPEN_ID = 16;
-        public static final int LEFT_ID = 15;
-        public static final int RIGHT_ID = 14; 
+        public static final int OPEN_ID = 14;
+        public static final int LEFT_ID = 13;
+        public static final int RIGHT_ID = 12; 
     }
 
 }
