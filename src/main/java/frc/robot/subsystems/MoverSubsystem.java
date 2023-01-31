@@ -115,9 +115,7 @@ public class MoverSubsystem extends SubsystemBase{
         extensionEncoder.setPosition(0);
         
         extensionMotor.enableSoftLimit(SoftLimitDirection.kForward, true);
-        extensionMotor.enableSoftLimit(SoftLimitDirection.kReverse, true);
         extensionMotor.setSoftLimit(SoftLimitDirection.kForward, (float) Units.inchesToMeters(24));
-        extensionMotor.setSoftLimit(SoftLimitDirection.kReverse, (float) Units.inchesToMeters(0));
 
         extensionPidController = extensionMotor.getPIDController();
         extensionPidController.setP(extensionP);
@@ -130,6 +128,10 @@ public class MoverSubsystem extends SubsystemBase{
     public void periodic(){
         if (!crimitswitch.get()){
             extensionEncoder.setPosition(0);
+        }
+
+        if (extensionEncoder.getPosition() < 0){
+            extensionMotor.set(-.2);
         }
         
         if(!TESTING){
