@@ -22,6 +22,9 @@ public class RollerSubsystem extends SubsystemBase {
     private double rollPower = 0.0;
     private double openPower = 0.5;
 
+    private final int COOLDOWN = 2;
+    private final int OPENTIME = 1;
+
     public RollerSubsystem() {
         leftBeak = MotorUtil.createTalonSRX(LEFT_ID);
         leftBeak.setInverted(true);
@@ -35,16 +38,16 @@ public class RollerSubsystem extends SubsystemBase {
         openMotor.setNeutralMode(NeutralMode.Brake);
     }
 
-    public void OpenMotor(){
+    public void openMotor(){
         timer.start();
     }
 
     @Override
     public void periodic() {
-        if (timer.hasElapsed(3)){
+        if (timer.hasElapsed(COOLDOWN + OPENTIME)){
             timer.reset();
         }
-        else if (timer.get() < 1){
+        else if (timer.get() < OPENTIME){
             openMotor.set(openPower);
         }
         else{

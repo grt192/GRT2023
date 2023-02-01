@@ -116,7 +116,7 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
     public TiltedElevatorSubsystem() {
         extensionMotor = MotorUtil.createSparkMax(EXTENSION_ID);
 
-        extensionMotor.setIdleMode(IdleMode.kCoast); // TODO BRAKE
+        extensionMotor.setIdleMode(IdleMode.kBrake); 
 
         extensionMotor.setInverted(true); // flip
 
@@ -150,10 +150,6 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
 
         if (zeroLimitSwitch.get()) {
             this.extensionEncoder.setPosition(0);
-        }
-        //if at ground state and limit switch has not been hit, get there
-        if (!zeroLimitSwitch.get() && currentState == ElevatorState.GROUND && extensionEncoder.getPosition() <= 0 && offsetDist == 0){
-            extensionMotor.set(-.2);
         }
 
         if (IS_MANUAL) {
