@@ -59,7 +59,8 @@ public class RobotContainer {
     private final BaseDriveController driveController;
 
     private final GenericHID switchboard = new GenericHID(3);
-    private final JoystickButton tlSwitch = new JoystickButton(switchboard, 3),
+    private final JoystickButton
+        tlSwitch = new JoystickButton(switchboard, 3),
         tmSwitch = new JoystickButton(switchboard, 2),
         trSwitch = new JoystickButton(switchboard, 1),
         mlSwitch = new JoystickButton(switchboard, 6),

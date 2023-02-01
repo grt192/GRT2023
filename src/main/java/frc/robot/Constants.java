@@ -100,11 +100,6 @@ public final class Constants {
         public static final float EXTENSION_LIMIT = (float) 26; 
 
         public static final int ZERO_LIMIT_ID = 1;
-        
-        public static final double EXT_GR = 14.0 / 64.0;
-        public static final double EXT_CIRCUM = Units.inchesToMeters(Math.PI * 0.500); // approx circumference of winch
-        public static final double EXTENSION_ROT_TO_M = EXT_GR * EXT_CIRCUM * 2.0 * (15.0 / 13.4); // rotations to meters
-        
     }
 
     public static final class GripperConstants {
@@ -116,6 +111,6 @@ public final class Constants {
         public static final int OPEN_ID = 14;
         public static final int LEFT_ID = 13;
         public static final int RIGHT_ID = 12; 
+        public static final int LIMIT_SWITCH_ID = 0;
     }
-
 }

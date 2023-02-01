@@ -29,6 +29,10 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
 
     private final DigitalInput zeroLimitSwitch = new DigitalInput(ZERO_LIMIT_ID);
 
+    private static final double EXTENSION_GEAR_RATIO = 14.0 / 64.0;
+    private static final double EXTENSION_CIRCUMFERENCE = Units.inchesToMeters(Math.PI * 0.500); // approx circumference of winch
+    private static final double EXTENSION_ROTATIONS_TO_METERS = EXTENSION_GEAR_RATIO * EXTENSION_CIRCUMFERENCE * 2.0 * (15.0 / 13.4);
+
     private double extensionP = 0.25; //.4 // 4.9;
     private double extensionI = 0;
     private double extensionD = 0.65; //.2
@@ -39,7 +43,6 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
     private double targetExtension = 0;
 
     private ElevatorState currentState = ElevatorState.GROUND;
-
     private double manualPower = 0;
     private double offsetDistMeters = 0;
 
@@ -98,8 +101,8 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
         extensionMotor.setSoftLimit(SoftLimitDirection.kReverse, (float) Units.inchesToMeters(-2));
 
         extensionEncoder = extensionMotor.getEncoder();
-        extensionEncoder.setPositionConversionFactor(EXTENSION_ROT_TO_M);
-        extensionEncoder.setVelocityConversionFactor(EXTENSION_ROT_TO_M / 60.0);
+        extensionEncoder.setPositionConversionFactor(EXTENSION_ROTATIONS_TO_METERS);
+        extensionEncoder.setVelocityConversionFactor(EXTENSION_ROTATIONS_TO_METERS / 60.0);
         extensionEncoder.setPosition(0);
 
         extensionPidController = extensionMotor.getPIDController();
