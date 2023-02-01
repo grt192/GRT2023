@@ -182,14 +182,10 @@ public class RobotContainer {
         }));
     }
 
+    // TODO: remove these getters
     public BaseSwerveSubsystem getSwerveSubsystem(){
-        if (driveSubsystem instanceof BaseSwerveSubsystem){
-            return (BaseSwerveSubsystem) driveSubsystem;
-        }
-
-        else{
-            throw new RuntimeException("no swerveSubsystem");
-        }
+        if (!(driveSubsystem instanceof BaseSwerveSubsystem)) throw new RuntimeException("no swerveSubsystem");
+        return (BaseSwerveSubsystem) driveSubsystem;
     }
 
     public GripperSubsytem getGripperSubsytem(){
