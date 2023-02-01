@@ -1,11 +1,5 @@
 package frc.robot.subsystems;
 
-import static frc.robot.Constants.TiltedElevatorConstants.EXTENSION_FOLLOW_ID;
-import static frc.robot.Constants.TiltedElevatorConstants.EXTENSION_ID;
-import static frc.robot.Constants.TiltedElevatorConstants.EXTENSION_LIMIT;
-import static frc.robot.Constants.TiltedElevatorConstants.EXTENSION_ROT_TO_M;
-import static frc.robot.Constants.TiltedElevatorConstants.ZERO_LIMIT_ID;
-
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
@@ -14,7 +8,6 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.SparkMaxPIDController.AccelStrategy;
 
-import edu.wpi.first.math.MathUsageId;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.GenericEntry;
@@ -22,15 +15,19 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
 import frc.robot.motorcontrol.MotorUtil;
 
-public class TiltedElevatorSubsystem extends SubsystemBase {
+import static frc.robot.Constants.TiltedElevatorConstants.*;
 
+public class TiltedElevatorSubsystem extends SubsystemBase {
     private final CANSparkMax extensionMotor;
     private final RelativeEncoder extensionEncoder;
     private final SparkMaxPIDController extensionPidController;
 
-    private final CANSparkMax extensionFollowMotor;
+    private final CANSparkMax extensionFollow;
+
+    private final DigitalInput zeroLimitSwitch = new DigitalInput(ZERO_LIMIT_ID);
 
     private double extensionP = 0.25; //.4 // 4.9;
     private double extensionI = 0;
@@ -39,17 +36,16 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
 
     private double maxVel = 0.5; // m/s
     private double maxAccel = 0.5; // 0.6 // m/s^2
+    private double targetExtension = 0;
 
     private ElevatorState currentState = ElevatorState.GROUND;
 
-    private boolean IS_MANUAL = false;
     private double manualPower = 0;
+    private double offsetDistMeters = 0;
 
-    private double offsetDist = 0; // meters
+    private static final double OFFSET_FACTOR = 0.01; // The factor to multiply driver input by when changing the offset.
+    private static final boolean IS_MANUAL = false;
 
-    private final DigitalInput zeroLimitSwitch = new DigitalInput(ZERO_LIMIT_ID);
-
-    // Shuffleboard
     private final ShuffleboardTab shuffleboardTab = Shuffleboard.getTab("Tilted Elevator");
     private final GenericEntry extensionPEntry = shuffleboardTab.add("Extension P", extensionP).getEntry();
     private final GenericEntry extensionIEntry = shuffleboardTab.add("Extension I", extensionI).getEntry();
@@ -60,79 +56,51 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
 
     private final GenericEntry maxVelEntry = shuffleboardTab.add("Max Vel", maxVel).getEntry();
     private final GenericEntry maxAccelEntry = shuffleboardTab.add("Max Accel", maxAccel).getEntry();
-
     private final GenericEntry currentVelEntry = shuffleboardTab.add("Current Vel (mps)", 0.0).getEntry();
 
-    private final GenericEntry currentExtensionEntry = shuffleboardTab.add("Current Ext (in)", 0.0).getEntry();
-    private final GenericEntry currentStateEntry = shuffleboardTab.add("Current State", currentState.toString())
-            .getEntry();
-
-    private final GenericEntry offsetDistEntry = shuffleboardTab.add("offset (in)", offsetDist).getEntry();
-
     private final GenericEntry targetExtensionEntry = shuffleboardTab.add("Target Ext (in)", 0.0).getEntry();
-    private double targetExtension = 0;
+    private final GenericEntry currentExtensionEntry = shuffleboardTab.add("Current Ext (in)", 0.0).getEntry();
+    private final GenericEntry currentStateEntry = shuffleboardTab.add("Current State", currentState.toString()).getEntry();
+
+    private final GenericEntry offsetDistEntry = shuffleboardTab.add("offset (in)", offsetDistMeters).getEntry();
 
     public enum ElevatorState {
         GROUND(0), // retracted
         CHUTE(Units.inchesToMeters(40)),
         SUBSTATION(Units.inchesToMeters(50)), // absolute height = 37.375 in
-        CUBEMID(Units.inchesToMeters(33)), // absolute height = 14.25 in
-        CUBEHIGH(Units.inchesToMeters(53)), // absolute height = 31.625 in
-        CONEMID(Units.inchesToMeters(50)), // absolute height = 34 in
-        CONEHIGH(Units.inchesToMeters(0)); // absolute height = 46 in
+        CUBE_MID(Units.inchesToMeters(33)), // absolute height = 14.25 in
+        CUBE_HIGH(Units.inchesToMeters(53)), // absolute height = 31.625 in
+        CONE_MID(Units.inchesToMeters(50)), // absolute height = 34 in
+        CONE_HIGH(Units.inchesToMeters(0)); // absolute height = 46 in
 
-        public double extendDistance; // meters, extension distance of winch
-        public double targetXDistance; // meters, x distance from middle of target (peg/shelf) to robot origin
+        public double extendDistanceMeters; // meters, extension distance of winch
 
-        private double CUBE_OFFSET = Units.inchesToMeters(0); // meters, intake jaw to carriage bottom
-        private double CONE_OFFSET = Units.inchesToMeters(0); // meters, intake jaw to carriage bottom
-
-        /**
-         * ElevatorState defined by absolute height of elevator from ground. All values
-         * in meters and radians.
-         * 
-         * @param absoluteHeight ground to bottom of intake/outtake
-         */
-        private ElevatorState(double extendDistance) {
-            this.extendDistance = extendDistance;
-            this.targetXDistance = 0; // TODO
-        }
+        private static final double CUBE_OFFSET = Units.inchesToMeters(0); // meters, intake jaw to carriage bottom
+        private static final double CONE_OFFSET = Units.inchesToMeters(0); // meters, intake jaw to carriage bottom
 
         /**
-         * Converts absolute height to extension distance.
-         * 
-         * @param absH absolute height, in meters
-         * @return extension distance, in meters
+         * ElevatorState defined by extension of elevator from zero. All values in meters and radians.
+         * @param extendDistanceMeters The extension of the subsystem.
          */
-        private static double absHeightToExtendDist(double absHeight) {
-            final double THETA = Math.toRadians(45.0);
-            final double GND_TO_MECH_BOTTOM = Units.inchesToMeters(10.042344); // inches
-
-            return (absHeight - GND_TO_MECH_BOTTOM) / Math.sin(THETA);
+        private ElevatorState(double extendDistanceMeters) {
+            this.extendDistanceMeters = extendDistanceMeters;
         }
-
     }
 
     public TiltedElevatorSubsystem() {
         extensionMotor = MotorUtil.createSparkMax(EXTENSION_ID);
-
         extensionMotor.setIdleMode(IdleMode.kBrake); 
-
-        extensionMotor.setInverted(true); // flip
-
-        extensionFollowMotor = MotorUtil.createSparkMax(EXTENSION_FOLLOW_ID);
-        extensionFollowMotor.follow(extensionMotor);
-        extensionFollowMotor.setIdleMode(IdleMode.kBrake);
-
-        extensionEncoder = extensionMotor.getEncoder();
-        extensionEncoder.setPositionConversionFactor(EXTENSION_ROT_TO_M);
-        extensionEncoder.setVelocityConversionFactor(EXTENSION_ROT_TO_M / 60.0);
-        extensionEncoder.setPosition(0);
+        extensionMotor.setInverted(true);
 
         extensionMotor.enableSoftLimit(SoftLimitDirection.kForward, true);
         extensionMotor.setSoftLimit(SoftLimitDirection.kForward, EXTENSION_LIMIT);
         extensionMotor.enableSoftLimit(SoftLimitDirection.kReverse, true);
         extensionMotor.setSoftLimit(SoftLimitDirection.kReverse, (float) Units.inchesToMeters(-2));
+
+        extensionEncoder = extensionMotor.getEncoder();
+        extensionEncoder.setPositionConversionFactor(EXTENSION_ROT_TO_M);
+        extensionEncoder.setVelocityConversionFactor(EXTENSION_ROT_TO_M / 60.0);
+        extensionEncoder.setPosition(0);
 
         extensionPidController = extensionMotor.getPIDController();
         extensionPidController.setP(extensionP);
@@ -143,14 +111,14 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
         extensionPidController.setSmartMotionMaxAccel(maxAccel, 0);
         extensionPidController.setSmartMotionAccelStrategy(AccelStrategy.kTrapezoidal, 0);
 
+        extensionFollow = MotorUtil.createSparkMax(EXTENSION_FOLLOW_ID);
+        extensionFollow.follow(extensionMotor);
+        extensionFollow.setIdleMode(IdleMode.kBrake);
     }
 
     @Override
     public void periodic() {
-
-        if (zeroLimitSwitch.get()) {
-            this.extensionEncoder.setPosition(0);
-        }
+        if (zeroLimitSwitch.get()) extensionEncoder.setPosition(0);
 
         if (IS_MANUAL) {
             manualPowerEntry.setDouble(manualPower);
@@ -173,10 +141,10 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
 
         currentVelEntry.setDouble(currentVel);
         currentExtensionEntry.setDouble(Units.metersToInches(currentPos));
-        offsetDistEntry.setDouble(Units.metersToInches(offsetDist));
+        offsetDistEntry.setDouble(Units.metersToInches(offsetDistMeters));
 
         // Units.inchesToMeters(targetExtensionEntry.getDouble(0));
-        this.targetExtension = currentState.extendDistance + offsetDist;
+        this.targetExtension = currentState.extendDistanceMeters + offsetDistMeters;
 
         // give up 
         if (this.targetExtension == 0 && currentPos < Units.inchesToMeters(1)) {
@@ -193,42 +161,40 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
     }
 
     /**
-     * Toggles between the two specified ElevatorStates and resets offset. Assign to
-     * state1 by default.
+     * Toggles the state of the subsystem between the two specified `ElevatorState`s, defaulting
+     * to state 1. Also resets the distance offset.
      * 
-     * @param state1 state 1
-     * @param state2 state 2
+     * @param state1 The first state.
+     * @param state2 The second state.
      */
     public void toggleState(ElevatorState state1, ElevatorState state2) {
         resetOffset();
-
         currentState = currentState == state1
-        ? state2
-        : state1;
-        
-    }
-
-    public void setOffsetDist(double power) {
-        final double OFFSET_FACTOR = 0.01;
-        this.offsetDist += OFFSET_FACTOR * power;
+            ? state2
+            : state1;
     }
 
     /**
-     * Resets offset to 0.29.954896198482967
+     * Changes the distance offset from given driver powers.
+     * @param power The power to change the offset by.
+     */
+    public void changeOffsetDistMeters(double power) {
+        this.offsetDistMeters += OFFSET_FACTOR * power;
+    }
+
+    /**
+     * Zeros the distance offset.
      */
     public void resetOffset() {
-        this.offsetDist = 0;
-
+        this.offsetDistMeters = 0;
     }
 
     /**
-     * Set manual power.
-     * 
+     * Sets the manual power of this subsystem.
      * @param power Xbox-controlled power
      */
-    public void setManualPower(double manualPower) {
-
-        if (manualPower > 0.5) {
+    public void setManualPower(double power) {
+        if (power > 0.5) {
             this.manualPower = 0.3;
         } else if (manualPower < -0.5) {
             this.manualPower = -0.3;
@@ -236,5 +202,4 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
             this.manualPower = 0;
         }
     }
-
 }

@@ -60,14 +60,14 @@ public class RobotContainer {
 
     private final GenericHID switchboard = new GenericHID(3);
     private final JoystickButton tlSwitch = new JoystickButton(switchboard, 3),
-            tmSwitch = new JoystickButton(switchboard, 2),
-            trSwitch = new JoystickButton(switchboard, 1),
-            mlSwitch = new JoystickButton(switchboard, 6),
-            mmSwitch = new JoystickButton(switchboard, 5),
-            mrSwitch = new JoystickButton(switchboard, 4),
-            blSwitch = new JoystickButton(switchboard, 9),
-            bmSwitch = new JoystickButton(switchboard, 8),
-            brSwitch = new JoystickButton(switchboard, 7);
+        tmSwitch = new JoystickButton(switchboard, 2),
+        trSwitch = new JoystickButton(switchboard, 1),
+        mlSwitch = new JoystickButton(switchboard, 6),
+        mmSwitch = new JoystickButton(switchboard, 5),
+        mrSwitch = new JoystickButton(switchboard, 4),
+        blSwitch = new JoystickButton(switchboard, 9),
+        bmSwitch = new JoystickButton(switchboard, 8),
+        brSwitch = new JoystickButton(switchboard, 7);
 
     private final XboxController mechController = new XboxController(5);
     private final JoystickButton 
@@ -296,8 +296,6 @@ public class RobotContainer {
             double rollPower = mechController.getRightTriggerAxis() - mechController.getLeftTriggerAxis();
             rollerSubsystem.setRollPower(rollPower);
         }, rollerSubsystem));
-
-        mechAButton.onTrue(new InstantCommand(gripperSubsystem::gripToggle, gripperSubsystem));
         */
 
         mechBButton.onTrue(new InstantCommand(rollerSubsystem::openMotor, rollerSubsystem));
@@ -306,7 +304,7 @@ public class RobotContainer {
             double yPower = -mechController.getLeftY();
             tiltedElevatorSubsystem.setManualPower(yPower);
 
-            tiltedElevatorSubsystem.setOffsetDist(yPower);
+            tiltedElevatorSubsystem.changeOffsetDistMeters(yPower);
         }, tiltedElevatorSubsystem));
 
         mechYButton.onTrue(new InstantCommand(() -> {
@@ -320,17 +318,16 @@ public class RobotContainer {
         mechXButton.onTrue(new InstantCommand(tiltedElevatorSubsystem::resetOffset));
 
         mechRBumper.onTrue(new InstantCommand(() -> {
-            tiltedElevatorSubsystem.toggleState(ElevatorState.CUBEMID, ElevatorState.CUBEHIGH);
+            tiltedElevatorSubsystem.toggleState(ElevatorState.CUBE_MID, ElevatorState.CUBE_HIGH);
         }, tiltedElevatorSubsystem));
 
         mechLBumper.onTrue(new InstantCommand(() -> {
-            tiltedElevatorSubsystem.toggleState(ElevatorState.CONEMID, ElevatorState.CONEHIGH);
+            tiltedElevatorSubsystem.toggleState(ElevatorState.CONE_MID, ElevatorState.CONE_HIGH);
         }, tiltedElevatorSubsystem));
     }
 
     /**
      * Use this to pass the autonomous command to the main {@link Robot} class.
-     * 
      * @return the command to run in autonomous
      */
     public Command getAutonomousCommand() {
