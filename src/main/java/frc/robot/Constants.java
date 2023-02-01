@@ -19,9 +19,9 @@ import edu.wpi.first.math.util.Units;
  */
 public final class Constants {
     public static final class TankConstants{
-        public static final int LEFT_MAIN = 2;
-        public static final int LEFT_FOLLOW = 3;
-        public static final int RIGHT_MAIN = 0;
+        public static final int LEFT_MAIN = 19;
+        public static final int LEFT_FOLLOW = 18;
+        public static final int RIGHT_MAIN = 20;
         public static final int RIGHT_FOLLOW = 1;
     }
 
@@ -94,13 +94,21 @@ public final class Constants {
         );
     }
 
+    public static final class TiltedElevatorConstants {
+        public static final int EXTENSION_ID = 15;
+        public static final int EXTENSION_FOLLOW_ID = 6;
+        public static final int ZERO_LIMIT_ID = 1;
+    }
+
     public static final class GripperConstants {
         public static final int PFFT_FORWARD_ID = 0;
         public static final int PFFT_REVERSE_ID = 1;
     }
 
     public static final class RollerConstants {
-        public static final int LEFT_ID = 15;
-        public static final int RIGHT_ID = 16;
+        public static final int OPEN_ID = 14;
+        public static final int LEFT_ID = 13;
+        public static final int RIGHT_ID = 12; 
+        public static final int LIMIT_SWITCH_ID = 0;
     }
 }

@@ -36,6 +36,8 @@ import frc.robot.subsystems.drivetrain.SwerveSubsystem2020;
 import frc.robot.subsystems.drivetrain.BaseDrivetrain;
 import frc.robot.subsystems.GripperSubsytem;
 import frc.robot.subsystems.RollerSubsystem;
+import frc.robot.subsystems.TiltedElevatorSubsystem;
+import frc.robot.subsystems.TiltedElevatorSubsystem.ElevatorState;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -47,8 +49,9 @@ import frc.robot.subsystems.RollerSubsystem;
 public class RobotContainer {
     // Subsystems
     private final BaseDrivetrain driveSubsystem;
-    // private final GripperSubsytem gripperSubsystem;
-    // private final RollerSubsystem rollerSubsystem;
+    private final GripperSubsytem gripperSubsystem;
+    private final RollerSubsystem rollerSubsystem;
+    private final TiltedElevatorSubsystem tiltedElevatorSubsystem;
 
     // private final JetsonConnection jetsonConnection;
 
@@ -56,7 +59,7 @@ public class RobotContainer {
     private final BaseDriveController driveController;
 
     private final GenericHID switchboard = new GenericHID(3);
-    private final JoystickButton 
+    private final JoystickButton
         tlSwitch = new JoystickButton(switchboard, 3),
         tmSwitch = new JoystickButton(switchboard, 2),
         trSwitch = new JoystickButton(switchboard, 1),
@@ -87,9 +90,10 @@ public class RobotContainer {
     public RobotContainer() {
         driveController = new XboxDriveController();
 
-        driveSubsystem = new SwerveSubsystem();
-        // gripperSubsystem = new GripperSubsytem();
-        // rollerSubsystem = new RollerSubsystem();
+        driveSubsystem = new TankSubsystem();
+        gripperSubsystem = new GripperSubsytem();
+        rollerSubsystem = new RollerSubsystem();
+        tiltedElevatorSubsystem = new TiltedElevatorSubsystem();
 
         balancerCommand = new BalancerCommand(driveSubsystem);
 
@@ -105,6 +109,13 @@ public class RobotContainer {
 
         if (driveSubsystem instanceof BaseSwerveSubsystem) {
             final BaseSwerveSubsystem swerveSubsystem = (BaseSwerveSubsystem) driveSubsystem;
+
+            autonChooser.addOption("Small straight-line curve", new FollowPathCommand(
+                swerveSubsystem, 
+                new Pose2d(), 
+                List.of(), 
+                new Pose2d(1, 0, Rotation2d.fromDegrees(90))
+            ));
 
             // S-curve auton
             autonChooser.addOption("Rotating S-curve", new FollowPathCommand(
@@ -286,9 +297,34 @@ public class RobotContainer {
             double rollPower = mechController.getRightTriggerAxis() - mechController.getLeftTriggerAxis();
             rollerSubsystem.setRollPower(rollPower);
         }, rollerSubsystem));
-
-        mechAButton.onTrue(new InstantCommand(gripperSubsystem::gripToggle, gripperSubsystem));
         */
+
+        mechBButton.onTrue(new InstantCommand(rollerSubsystem::openMotor, rollerSubsystem));
+
+        tiltedElevatorSubsystem.setDefaultCommand(new RunCommand(() -> {
+            double yPower = -mechController.getLeftY();
+            tiltedElevatorSubsystem.setManualPower(yPower);
+
+            tiltedElevatorSubsystem.changeOffsetDistMeters(yPower);
+        }, tiltedElevatorSubsystem));
+
+        mechYButton.onTrue(new InstantCommand(() -> {
+            tiltedElevatorSubsystem.toggleState(ElevatorState.GROUND, ElevatorState.SUBSTATION);
+        }, tiltedElevatorSubsystem));
+
+        mechBButton.onTrue(new InstantCommand(() -> {
+            tiltedElevatorSubsystem.toggleState(ElevatorState.GROUND, ElevatorState.CHUTE);
+        }, tiltedElevatorSubsystem));
+
+        mechXButton.onTrue(new InstantCommand(tiltedElevatorSubsystem::resetOffset));
+
+        mechRBumper.onTrue(new InstantCommand(() -> {
+            tiltedElevatorSubsystem.toggleState(ElevatorState.CUBE_MID, ElevatorState.CUBE_HIGH);
+        }, tiltedElevatorSubsystem));
+
+        mechLBumper.onTrue(new InstantCommand(() -> {
+            tiltedElevatorSubsystem.toggleState(ElevatorState.CONE_MID, ElevatorState.CONE_HIGH);
+        }, tiltedElevatorSubsystem));
     }
 
     /**
