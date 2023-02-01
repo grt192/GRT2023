@@ -49,7 +49,7 @@ import frc.robot.subsystems.TiltedElevatorSubsystem.ElevatorState;
 public class RobotContainer {
     // Subsystems
     private final BaseDrivetrain driveSubsystem;
-    private final GripperSubsytem gripperSubsystem;
+    // private final GripperSubsytem gripperSubsystem;
     private final RollerSubsystem rollerSubsystem;
     private final TiltedElevatorSubsystem tiltedElevatorSubsystem;
 
@@ -70,8 +70,8 @@ public class RobotContainer {
         bmSwitch = new JoystickButton(switchboard, 8),
         brSwitch = new JoystickButton(switchboard, 7);
 
-    private final XboxController mechController = new XboxController(5);
-    private final JoystickButton 
+    private final XboxController mechController = new XboxController(2);
+    private final JoystickButton
         mechAButton = new JoystickButton(mechController, XboxController.Button.kA.value),
         mechBButton = new JoystickButton(mechController, XboxController.Button.kB.value),
         mechXButton = new JoystickButton(mechController, XboxController.Button.kX.value),
@@ -91,7 +91,7 @@ public class RobotContainer {
         driveController = new XboxDriveController();
 
         driveSubsystem = new TankSubsystem();
-        gripperSubsystem = new GripperSubsytem();
+        // gripperSubsystem = new GripperSubsytem();
         rollerSubsystem = new RollerSubsystem();
         tiltedElevatorSubsystem = new TiltedElevatorSubsystem();
 
