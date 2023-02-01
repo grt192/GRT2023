@@ -32,6 +32,7 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
     private static final double EXTENSION_GEAR_RATIO = 14.0 / 64.0;
     private static final double EXTENSION_CIRCUMFERENCE = Units.inchesToMeters(Math.PI * 0.500); // approx circumference of winch
     private static final double EXTENSION_ROTATIONS_TO_METERS = EXTENSION_GEAR_RATIO * EXTENSION_CIRCUMFERENCE * 2.0 * (15.0 / 13.4);
+    private static final float EXTENSION_LIMIT = 26.0f;
 
     private double extensionP = 0.25; //.4 // 4.9;
     private double extensionI = 0;

@@ -97,8 +97,6 @@ public final class Constants {
     public static final class TiltedElevatorConstants {
         public static final int EXTENSION_ID = 15;
         public static final int EXTENSION_FOLLOW_ID = 6;
-        public static final float EXTENSION_LIMIT = (float) 26; 
-
         public static final int ZERO_LIMIT_ID = 1;
     }
 
