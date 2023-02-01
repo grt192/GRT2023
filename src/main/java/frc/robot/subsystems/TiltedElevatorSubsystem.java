@@ -202,13 +202,10 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
     public void toggleState(ElevatorState state1, ElevatorState state2) {
         resetOffset();
 
-        if (currentState == state1) {
-            currentState = state2; // toggle
-        } else if (currentState == state2) {
-            currentState = state1; // toggle
-        } else {
-            currentState = state1; // assign state1 by default
-        }
+        currentState = currentState == state1
+        ? state2
+        : state1;
+        
     }
 
     public void setOffsetDist(double power) {
