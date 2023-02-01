@@ -10,13 +10,12 @@ import static frc.robot.Constants.GripperConstants.*;
 public class GripperSubsytem extends SubsystemBase {
     private final DoubleSolenoid pfftL;
     private final DoubleSolenoid pfftR;
-    private Value state;
+
+    private Value state = Value.kForward;
 
     public GripperSubsytem() {
         pfftL = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, PFFT_FORWARD_IDL, PFFT_REVERSE_IDL);
         pfftR = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, PFFT_FORWARD_IDR, PFFT_REVERSE_IDR);
-        // first set to forward
-        state = Value.kForward;
     }
 
     /**
@@ -28,8 +27,12 @@ public class GripperSubsytem extends SubsystemBase {
             : Value.kForward;
     }
 
-    public Value getState(){
+    public Value getState() {
         return state;
+    }
+
+    public void setState(Value state) {
+        this.state = state;
     }
 
     @Override

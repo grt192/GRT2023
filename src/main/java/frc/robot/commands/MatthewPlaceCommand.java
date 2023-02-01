@@ -1,46 +1,19 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 
 import frc.robot.subsystems.GripperSubsytem;
 
 /**
- * Places 1 gamepiece with Pfft Gripper Mech. This command is to be used during autonamous.
+ * Places 1 game piece with the pfft gripper mech.
  */
-public class MatthewPlaceCommand extends CommandBase {
-    private final GripperSubsytem gripperSubsystem;
-    private final Value state;
-
-    public MatthewPlaceCommand (GripperSubsytem gripper){
-        this.gripperSubsystem = gripper;
-        this.state = gripperSubsystem.getState();
-
-        addRequirements(gripperSubsystem);
-    }
-
-    @Override
-    public void initialize() {
-        System.out.print("Gripper is to open");
-    }
-
-    @Override
-    public void execute() {
-        //check if gripper is open, else open gripper
-        if (state == Value.kForward){
-            System.out.println("Gripper is already open :(");
-        } else {
-            gripperSubsystem.gripToggle();
-        }
-    }
-
-    @Override
-    public void end(boolean interrupted) {
-        System.out.println("Gripper has opened");
-    }
-
-    @Override
-    public boolean isFinished() {
-        return true;
+public class MatthewPlaceCommand extends InstantCommand {
+    public MatthewPlaceCommand(GripperSubsytem gripperSubsystem) {
+        super(() -> {
+            System.out.print("Gripper is to open");
+            gripperSubsystem.setState(Value.kForward);
+            System.out.println("Gripper has opened");
+        }, gripperSubsystem);
     }
 }
