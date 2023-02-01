@@ -72,7 +72,7 @@ public class RobotContainer {
         bmSwitch = new JoystickButton(switchboard, 8),
         brSwitch = new JoystickButton(switchboard, 7);
 
-    private final XboxController mechController = new XboxController(5);
+    private final XboxController mechController = new XboxController(1);
     private final JoystickButton 
         mechAButton = new JoystickButton(mechController, XboxController.Button.kA.value),
         mechBButton = new JoystickButton(mechController, XboxController.Button.kB.value),

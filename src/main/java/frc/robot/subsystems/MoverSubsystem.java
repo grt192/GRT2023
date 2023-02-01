@@ -6,6 +6,7 @@ import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMax.SoftLimitDirection;
+import com.revrobotics.SparkMaxPIDController.AccelStrategy;
 
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.GenericEntry;
@@ -17,7 +18,7 @@ import frc.robot.motorcontrol.MotorUtil;
 import static frc.robot.Constants.MoverConstants.*;
 
 public class MoverSubsystem extends SubsystemBase{
-    private final DigitalInput crimitswitch;
+    // private final DigitalInput crimitswitch;
 
     private final CANSparkMax rotationMotor;
     private final RelativeEncoder rotationEncoder;
@@ -32,11 +33,17 @@ public class MoverSubsystem extends SubsystemBase{
     private double rotationP = 0.125;
     private double rotationI = 0;
     private double rotationD = 0;
+    private double rotationFF = 0;
+    private double rotationMaxAccel = 0;
+    private double rotationMaxVel = 0;
     private final double ROTATION_ROT_TO_RAD = ROTATION_GEAR_RATIO * 2 * Math.PI;
 
     private double extensionP = 0.125;
     private double extensionI = 0;
     private double extensionD = 0;
+    private double extensionFF = 0;
+    private double extensionMaxAccel = 0;
+    private double extensionMaxVel = 0;
     private final double EXTENSION_ROT_TO_M = Units.inchesToMeters(0.5615); 
 
     private final boolean RESET_OFFSET_ON_STAGE_SWITCH = true;
@@ -45,7 +52,7 @@ public class MoverSubsystem extends SubsystemBase{
 
     private MoverPosition currentState = MoverPosition.VERTICAL;
 
-    private final boolean TESTING = true;
+    private final boolean TESTING = false;
 
     private final ShuffleboardTab shuffleboardTab = Shuffleboard.getTab("Mover Subsystem");
     private final GenericEntry currentAngleEntry = shuffleboardTab.add("current angle",  0.0).getEntry();
@@ -56,10 +63,12 @@ public class MoverSubsystem extends SubsystemBase{
     private final GenericEntry rotationPEntry = shuffleboardTab.add("Rotation P", rotationP).getEntry();
     private final GenericEntry rotationIEntry = shuffleboardTab.add("Rotation I", rotationI).getEntry();
     private final GenericEntry rotationDEntry = shuffleboardTab.add("Rotation D", rotationD).getEntry();
+    private final GenericEntry rotationFFEntry = shuffleboardTab.add("Rotation FF", rotationFF).getEntry();
 
     private final GenericEntry extensionPEntry = shuffleboardTab.add("Extension P", extensionP).getEntry();
     private final GenericEntry extensionIEntry = shuffleboardTab.add("Extension I", extensionI).getEntry();
     private final GenericEntry extensionDEntry = shuffleboardTab.add("Extension D", extensionD).getEntry();
+    private final GenericEntry extensionFFEntry = shuffleboardTab.add("Extension FF", extensionFF).getEntry();
 
 
     public enum GamePiece {
@@ -84,16 +93,17 @@ public class MoverSubsystem extends SubsystemBase{
     }
 
     public MoverSubsystem(){
-        crimitswitch = new DigitalInput(0);
+        // crimitswitch = new DigitalInput(0);
 
         rotationMotor = MotorUtil.createSparkMax(ROTATION_MOTOR_PORT);
         rotationMotor.setIdleMode(IdleMode.kBrake);
-        rotationMotor.setInverted(true);
         rotationMotorFollower = MotorUtil.createSparkMax(ROTATION_FOLLOWER_MOTOR_PORT);
         rotationMotorFollower.follow(rotationMotor);
+        rotationMotorFollower.setIdleMode(IdleMode.kBrake);
 
         rotationEncoder = rotationMotor.getEncoder();
         rotationEncoder.setPositionConversionFactor(ROTATION_ROT_TO_RAD);
+        rotationEncoder.setVelocityConversionFactor(ROTATION_ROT_TO_RAD / 60);
         rotationEncoder.setPosition(0);
         
         rotationMotor.enableSoftLimit(SoftLimitDirection.kForward, true);
@@ -105,6 +115,10 @@ public class MoverSubsystem extends SubsystemBase{
         rotationPidController.setP(rotationP);
         rotationPidController.setI(rotationI);
         rotationPidController.setD(rotationD);
+        rotationPidController.setFF(rotationFF);
+        rotationPidController.setSmartMotionMaxVelocity(rotationMaxVel, 0);
+        rotationPidController.setSmartMotionMaxAccel(rotationMaxAccel, 0);
+        rotationPidController.setSmartMotionAccelStrategy(AccelStrategy.kTrapezoidal, 0);
 
 
         extensionMotor = MotorUtil.createSparkMax(EXTENSION_MOTOR_PORT);
@@ -112,27 +126,34 @@ public class MoverSubsystem extends SubsystemBase{
 
         extensionEncoder = extensionMotor.getEncoder();
         extensionEncoder.setPositionConversionFactor(EXTENSION_ROT_TO_M);
+        extensionEncoder.setPositionConversionFactor(EXTENSION_ROT_TO_M / 60);
         extensionEncoder.setPosition(0);
         
         extensionMotor.enableSoftLimit(SoftLimitDirection.kForward, true);
+        extensionMotor.enableSoftLimit(SoftLimitDirection.kReverse, true);
         extensionMotor.setSoftLimit(SoftLimitDirection.kForward, (float) Units.inchesToMeters(24));
+        extensionMotor.setSoftLimit(SoftLimitDirection.kReverse, (float) Units.inchesToMeters(0));
 
         extensionPidController = extensionMotor.getPIDController();
         extensionPidController.setP(extensionP);
         extensionPidController.setI(extensionI);
         extensionPidController.setD(extensionD);
+        extensionPidController.setFF(extensionFF);
+        extensionPidController.setSmartMotionMaxVelocity(extensionMaxVel, 0);
+        extensionPidController.setSmartMotionMaxAccel(extensionMaxAccel, 0);
+        extensionPidController.setSmartMotionAccelStrategy(AccelStrategy.kTrapezoidal, 0);
 
     }
 
     @Override
     public void periodic(){
-        if (!crimitswitch.get()){
-            extensionEncoder.setPosition(0);
-        }
+        // if (!crimitswitch.get()){
+        //     extensionEncoder.setPosition(0);
+        // }
 
-        if (extensionEncoder.getPosition() <= 0 && crimitswitch.get()){
-            extensionMotor.set(-.2);
-        }
+        // if (extensionEncoder.getPosition() <= 0 && crimitswitch.get()){
+        //     extensionMotor.set(-.2);
+        // }
         
         if(!TESTING){
             goTo(currentState.angle + angleOffset, currentState.extension + extensionOffset);
@@ -146,36 +167,53 @@ public class MoverSubsystem extends SubsystemBase{
         double rotp = rotationPEntry.getDouble(rotationP);
         double roti = rotationIEntry.getDouble(rotationI);
         double rotd = rotationDEntry.getDouble(rotationD);
+        double rotff = rotationFFEntry.getDouble(rotationFF);
 
         double extp = extensionPEntry.getDouble(extensionP);
         double exti = extensionIEntry.getDouble(extensionI);
         double extd = extensionDEntry.getDouble(extensionD);
+        double extff = rotationFFEntry.getDouble(rotationFF);
 
 
         if(rotp != rotationP){
             rotationP = rotp;
+            rotationPidController.setP(rotationP);
         }
         if(roti != rotationI){
             rotationI = roti;
+            rotationPidController.setI(rotationI);
         }
         if(rotd != rotationD){
             rotationD = rotd;
+            rotationPidController.setD(rotationD);
         }
+        if(rotff != rotationFF){
+            rotationFF = rotff;
+            rotationPidController.setFF(rotationFF);
+        }
+
         if(extp != extensionP){
             extensionP = extp;
+            extensionPidController.setP(extensionP);
         }
         if(exti != extensionI){
             extensionI = exti;
+            extensionPidController.setI(extensionI);
         }
         if(extd != extensionD){
             extensionD = extd;
+            extensionPidController.setD(extensionD);
+        }
+        if(extff != extensionFF){
+            extensionFF = extff;
+            rotationPidController.setFF(extensionFF);
         }
 
     }
 
 
     private void goTo(double angle, double extension){
-        rotationPidController.setReference(angle, ControlType.kPosition);
+        rotationPidController.setReference(angle, ControlType.kVelocity);
         extensionPidController.setReference(extension, ControlType.kPosition);
     }
 
