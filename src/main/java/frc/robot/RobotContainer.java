@@ -300,7 +300,7 @@ public class RobotContainer {
         mechAButton.onTrue(new InstantCommand(gripperSubsystem::gripToggle, gripperSubsystem));
         */
 
-        mechBButton.onTrue(new InstantCommand(rollerSubsystem::OpenMotor, rollerSubsystem));
+        mechBButton.onTrue(new InstantCommand(rollerSubsystem::openMotor, rollerSubsystem));
 
         tiltedElevatorSubsystem.setDefaultCommand(new RunCommand(() -> {
             double yPower = -mechController.getLeftY();
