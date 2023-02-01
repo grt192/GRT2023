@@ -111,7 +111,7 @@ public final class Constants {
     public static final class MoverConstants {
         public static final int ROTATION_MOTOR_PORT = 9;
         public static final int ROTATION_FOLLOWER_MOTOR_PORT = 10;
-        public static final int EXTENSION_MOTOR_PORT = 19;
+        public static final int EXTENSION_MOTOR_PORT = 15;
 
         public static final double ROTATION_GEAR_RATIO = 1/(145.6 * 80/90);
         public static final double EXTENSION_GEAR_RATIO = 1/27;
