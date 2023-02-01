@@ -14,7 +14,9 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
 import frc.robot.motorcontrol.MotorUtil;
+
 import static frc.robot.Constants.MoverConstants.*;
 
 public class MoverSubsystem extends SubsystemBase{
@@ -36,7 +38,7 @@ public class MoverSubsystem extends SubsystemBase{
     private double rotationFF = 0;
     private double rotationMaxAccel = 0;
     private double rotationMaxVel = 0;
-    private final double ROTATION_ROT_TO_RAD = ROTATION_GEAR_RATIO * 2 * Math.PI;
+    private static final double ROTATION_ROTATIONS_TO_RADIANS = ROTATION_GEAR_RATIO * 2 * Math.PI;
 
     private double extensionP = 0.125;
     private double extensionI = 0;
@@ -44,15 +46,15 @@ public class MoverSubsystem extends SubsystemBase{
     private double extensionFF = 0;
     private double extensionMaxAccel = 0;
     private double extensionMaxVel = 0;
-    private final double EXTENSION_ROT_TO_M = Units.inchesToMeters(0.5615); 
+    private static final double EXTENSION_ROTATIONS_TO_METERS = Units.inchesToMeters(0.5615); 
 
-    private final boolean RESET_OFFSET_ON_STAGE_SWITCH = true;
-    private double angleOffset = 0; //radians
-    private double extensionOffset = 0; //meters
+    private double angleOffsetRads = 0; //radians
+    private double extensionOffsetMeters = 0; //meters
+    private static final boolean RESET_OFFSET_ON_STAGE_SWITCH = true;
 
     private MoverPosition currentState = MoverPosition.VERTICAL;
 
-    private final boolean TESTING = true;
+    private static final boolean TESTING = false;
 
     private final ShuffleboardTab shuffleboardTab = Shuffleboard.getTab("Mover Subsystem");
     private final GenericEntry currentAngleEntry = shuffleboardTab.add("current angle",  0.0).getEntry();
@@ -70,25 +72,43 @@ public class MoverSubsystem extends SubsystemBase{
     private final GenericEntry extensionDEntry = shuffleboardTab.add("Extension D", extensionD).getEntry();
     private final GenericEntry extensionFFEntry = shuffleboardTab.add("Extension FF", extensionFF).getEntry();
 
-
     public enum GamePiece {
         CONE, CUBE;
     }
-    
+
     public enum MoverPosition {
-        VERTICAL(0,0),
-        GROUND(Units.degreesToRadians(90), distanceToExtension(Units.inchesToMeters(25))),
-        SUBSTATION(Units.degreesToRadians(65), distanceToExtension(Units.inchesToMeters(44))),
-        CUBEMID(Units.degreesToRadians(72), distanceToExtension(Units.inchesToMeters(34))), CUBEHIGH(Units.degreesToRadians(66),distanceToExtension(Units.inchesToMeters(44))), 
-        CONEMID(Units.degreesToRadians(62),distanceToExtension(Units.inchesToMeters(34))), CONEHIGH(Units.degreesToRadians(66),distanceToExtension(Units.inchesToMeters(44)))
-        ;
+        VERTICAL(0, 0),
+        GROUND(
+            Units.degreesToRadians(90), 
+            distanceToExtension(Units.inchesToMeters(25))
+        ),
+        SUBSTATION(
+            Units.degreesToRadians(65),
+            distanceToExtension(Units.inchesToMeters(44))
+        ),
+        CUBEMID(
+            Units.degreesToRadians(72),
+            distanceToExtension(Units.inchesToMeters(34))
+        ),
+        CUBEHIGH(
+            Units.degreesToRadians(66),
+            distanceToExtension(Units.inchesToMeters(44))
+        ), 
+        CONEMID(
+            Units.degreesToRadians(62),
+            distanceToExtension(Units.inchesToMeters(34))
+        ),
+        CONEHIGH(
+            Units.degreesToRadians(66),
+            distanceToExtension(Units.inchesToMeters(44))
+        );
 
-        public double angle; //radians, 0 is vertical
-        public double extension; //meters, 0 extension is 25 inches from pivot
+        public double angleRads; // radians, 0 is vertical
+        public double extensionMeters; // meters, 0 extension is 25 inches from pivot
 
-        private MoverPosition(double angle, double extension){
-            this.angle = angle;
-            this.extension = extension;
+        private MoverPosition(double angleRads, double extensionMeters) {
+            this.angleRads = angleRads;
+            this.extensionMeters = extensionMeters;
         }
     }
 
@@ -102,8 +122,8 @@ public class MoverSubsystem extends SubsystemBase{
         rotationMotorFollower.setIdleMode(IdleMode.kBrake);
 
         rotationEncoder = rotationMotor.getEncoder();
-        rotationEncoder.setPositionConversionFactor(ROTATION_ROT_TO_RAD);
-        rotationEncoder.setVelocityConversionFactor(ROTATION_ROT_TO_RAD / 60);
+        rotationEncoder.setPositionConversionFactor(ROTATION_ROTATIONS_TO_RADIANS);
+        rotationEncoder.setVelocityConversionFactor(ROTATION_ROTATIONS_TO_RADIANS / 60);
         rotationEncoder.setPosition(0);
         
         rotationMotor.enableSoftLimit(SoftLimitDirection.kForward, true);
@@ -120,15 +140,14 @@ public class MoverSubsystem extends SubsystemBase{
         rotationPidController.setSmartMotionMaxAccel(rotationMaxAccel, 0);
         rotationPidController.setSmartMotionAccelStrategy(AccelStrategy.kTrapezoidal, 0);
 
-
         extensionMotor = MotorUtil.createSparkMax(EXTENSION_MOTOR_PORT);
         extensionMotor.setIdleMode(IdleMode.kBrake);
 
         extensionEncoder = extensionMotor.getEncoder();
-        extensionEncoder.setPositionConversionFactor(EXTENSION_ROT_TO_M);
-        extensionEncoder.setPositionConversionFactor(EXTENSION_ROT_TO_M / 60);
+        extensionEncoder.setPositionConversionFactor(EXTENSION_ROTATIONS_TO_METERS);
+        extensionEncoder.setPositionConversionFactor(EXTENSION_ROTATIONS_TO_METERS / 60);
         extensionEncoder.setPosition(0);
-        
+
         extensionMotor.enableSoftLimit(SoftLimitDirection.kForward, true);
         extensionMotor.enableSoftLimit(SoftLimitDirection.kReverse, true);
         extensionMotor.setSoftLimit(SoftLimitDirection.kForward, (float) Units.inchesToMeters(24));
@@ -142,7 +161,6 @@ public class MoverSubsystem extends SubsystemBase{
         extensionPidController.setSmartMotionMaxVelocity(extensionMaxVel, 0);
         extensionPidController.setSmartMotionMaxAccel(extensionMaxAccel, 0);
         extensionPidController.setSmartMotionAccelStrategy(AccelStrategy.kTrapezoidal, 0);
-
     }
 
     @Override
@@ -154,16 +172,20 @@ public class MoverSubsystem extends SubsystemBase{
         // if (extensionEncoder.getPosition() <= 0 && crimitswitch.get()){
         //     extensionMotor.set(-.2);
         // }
-        
-        if(!TESTING){
-            goTo(currentState.angle + angleOffset, currentState.extension + extensionOffset);
+
+        if (!TESTING) {
+            double offsetAngleRads = currentState.angleRads + angleOffsetRads;
+            double offsetExtensionMeters = currentState.extensionMeters + extensionOffsetMeters;
+
+            rotationPidController.setReference(offsetAngleRads, ControlType.kSmartMotion);
+            extensionPidController.setReference(offsetExtensionMeters, ControlType.kPosition);
         }
 
         currentAngleEntry.setDouble(Units.radiansToDegrees(rotationEncoder.getPosition()));
         currentExtensionEntry.setDouble(Units.metersToInches(extensionEncoder.getPosition()));
-        targetAngleEntry.setDouble(Units.radiansToDegrees(currentState.angle + angleOffset));
-        targetExtensionEntry.setDouble(Units.metersToInches(currentState.extension + extensionOffset));
-        
+        targetAngleEntry.setDouble(Units.radiansToDegrees(currentState.angleRads + angleOffsetRads));
+        targetExtensionEntry.setDouble(Units.metersToInches(currentState.extensionMeters + extensionOffsetMeters));
+
         double rotp = rotationPEntry.getDouble(rotationP);
         double roti = rotationIEntry.getDouble(rotationI);
         double rotd = rotationDEntry.getDouble(rotationD);
@@ -174,81 +196,80 @@ public class MoverSubsystem extends SubsystemBase{
         double extd = extensionDEntry.getDouble(extensionD);
         double extff = rotationFFEntry.getDouble(rotationFF);
 
-
-        if(rotp != rotationP){
+        if (rotp != rotationP){
             rotationP = rotp;
             rotationPidController.setP(rotationP);
         }
-        if(roti != rotationI){
+        if (roti != rotationI){
             rotationI = roti;
             rotationPidController.setI(rotationI);
         }
-        if(rotd != rotationD){
+        if (rotd != rotationD){
             rotationD = rotd;
             rotationPidController.setD(rotationD);
         }
-        if(rotff != rotationFF){
+        if (rotff != rotationFF){
             rotationFF = rotff;
             rotationPidController.setFF(rotationFF);
         }
 
-        if(extp != extensionP){
+        if (extp != extensionP){
             extensionP = extp;
             extensionPidController.setP(extensionP);
         }
-        if(exti != extensionI){
+        if (exti != extensionI){
             extensionI = exti;
             extensionPidController.setI(extensionI);
         }
-        if(extd != extensionD){
+        if (extd != extensionD){
             extensionD = extd;
             extensionPidController.setD(extensionD);
         }
-        if(extff != extensionFF){
+        if (extff != extensionFF){
             extensionFF = extff;
             rotationPidController.setFF(extensionFF);
         }
-
     }
 
-
-    private void goTo(double angle, double extension){
-        rotationPidController.setReference(angle, ControlType.kVelocity);
-        extensionPidController.setReference(extension, ControlType.kPosition);
-    }
-
-    public void setState(MoverPosition state){
+    /**
+     * Sets the state of the subsystem.
+     * @param state The `MoverPosition` state to set the subsystem to.
+     */
+    public void setState(MoverPosition state) {
         currentState = state;
-        if(RESET_OFFSET_ON_STAGE_SWITCH){
-            angleOffset = 0;
-            extensionOffset = 0;
+        if (RESET_OFFSET_ON_STAGE_SWITCH) {
+            angleOffsetRads = 0;
+            extensionOffsetMeters = 0;
         }
     }
 
-    public MoverPosition getState(){
+    /**
+     * Gets the state of the subsystem.
+     * @return Gets the `MoverPosition` state of the subsystem.
+     */
+    public MoverPosition getState() {
         return currentState;
     }
 
-    private static double distanceToExtension(double distance){
+    private static double distanceToExtension(double distance) {
         return distance - Units.inchesToMeters(25);
     }
 
-    public void setPowers(double xPower, double yPower){
-        if(TESTING){
+    public void setPowers(double xPower, double yPower) {
+        if (TESTING) {
             setMotorPowers(xPower, yPower);
         } else {
             setOffsetPowers(xPower, yPower);
         }
     }
+
     public void setOffsetPowers(double xPower, double yPower){
-        
-        angleOffset += xPower * ANGLE_OFFSET_SPEED;
-        extensionOffset += yPower * EXTENSION_OFFSET_SPEED;
+        angleOffsetRads += xPower * ANGLE_OFFSET_SPEED;
+        extensionOffsetMeters += yPower * EXTENSION_OFFSET_SPEED;
     }
 
     public void setMotorPowers(double xPower, double yPower){
         rotationMotor.set(xPower * .2);
         extensionMotor.set(yPower * .2);
     }
-
 }
