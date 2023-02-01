@@ -2,20 +2,20 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+
 import frc.robot.subsystems.GripperSubsytem;
 
 /**
  * Places 1 gamepiece with Pfft Gripper Mech. This command is to be used during autonamous.
  */
-
-public class MatthewPlaceCommand extends CommandBase{
+public class MatthewPlaceCommand extends CommandBase {
     private final GripperSubsytem gripperSubsystem;
     private final Value state;
-    private boolean done;
 
     public MatthewPlaceCommand (GripperSubsytem gripper){
         this.gripperSubsystem = gripper;
         this.state = gripperSubsystem.getState();
+
         addRequirements(gripperSubsystem);
     }
 
@@ -29,12 +29,11 @@ public class MatthewPlaceCommand extends CommandBase{
         //check if gripper is open, else open gripper
         if (state == Value.kForward){
             System.out.println("Gripper is already open :(");
-        }
-        else{
+        } else {
             gripperSubsystem.gripToggle();
         }
     }
-    
+
     @Override
     public void end(boolean interrupted) {
         System.out.println("Gripper has opened");
@@ -44,7 +43,4 @@ public class MatthewPlaceCommand extends CommandBase{
     public boolean isFinished() {
         return true;
     }
-
-
-
 }

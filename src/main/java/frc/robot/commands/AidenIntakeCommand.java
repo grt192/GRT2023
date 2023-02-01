@@ -1,19 +1,17 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+
 import frc.robot.subsystems.RollerSubsystem;
 
 /**
- * Intakes 1 gamepiece with Roller Mech. This command is to be used during autonamous.
+ * Intakes 1 game piece with the roller mech. This command runs the rollers at a set power
+ * until the limit switch is triggered.
  */
-
 public class AidenIntakeCommand extends CommandBase {
     private final RollerSubsystem rollerSubsystem;
-    private boolean limitswitchUp;
-    private double power;
 
     public AidenIntakeCommand(RollerSubsystem rollerSubsystem){
-        power = 0.0;
         this.rollerSubsystem = rollerSubsystem;
         addRequirements(rollerSubsystem);
     }
@@ -22,26 +20,20 @@ public class AidenIntakeCommand extends CommandBase {
     public void initialize() {
         System.out.println("Roller to intake");
     } 
-    
+
     @Override
     public void execute() {
-        //let rollers turn intil a game piece is in(has pressed onto limit switch)
-        if (rollerSubsystem.isLimit()){
-            power = 0.3;
-        }
-        else {
-            power = 0;
-        }
-        rollerSubsystem.setRollPower(power);
+        rollerSubsystem.setRollPower(0.3);
     }
 
     @Override
     public void end(boolean interrupted) {
         System.out.println("Intake done");
+        rollerSubsystem.setRollPower(0);
     }
-    
+
     @Override
     public boolean isFinished() {
-        return (power == 0);
+        return rollerSubsystem.isLimit();
     }
 }

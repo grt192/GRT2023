@@ -7,6 +7,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+
 import frc.robot.RobotContainer;
 import frc.robot.commands.BalancerCommand;
 import frc.robot.commands.MatthewIntakeCommand;
@@ -20,11 +21,8 @@ import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
 
 /**
  * Auton Command Non-Balancing Sequence. Robot places pre-loaded piece, exits community to grab another, then places that peice
- * 
  */
-
-public abstract class AutonAutonSequence extends SequentialCommandGroup{
-    private final RobotContainer robotContainer;
+public abstract class BaseAutonSequence extends SequentialCommandGroup {
     private final BaseSwerveSubsystem swerveSubsystem;
     private final GripperSubsytem gripperSubsytem;
     private final MoverSubsystem moverSubsystem;
@@ -32,50 +30,48 @@ public abstract class AutonAutonSequence extends SequentialCommandGroup{
     //positions for placing gamepieces
     //all positions from center of robot
     public enum Red{
-        X1( new Pose2d(
+        X1(new Pose2d(
             Units.inchesToMeters(578.737),
             Units.inchesToMeters(195.55),
             Rotation2d.fromDegrees(0)
-        )
-        ),
+        )),
         X2( new Pose2d(
             Units.inchesToMeters(578.737),
             Units.inchesToMeters(174.123),
             Rotation2d.fromDegrees(0)
         )
         ),
-        X3( new Pose2d(
+        X3(new Pose2d(
             Units.inchesToMeters(578.737),
             Units.inchesToMeters(152.123),
             Rotation2d.fromDegrees(0)
-        )
-        ),
-        X4( new Pose2d(
+        )),
+        X4(new Pose2d(
             Units.inchesToMeters(578.737),
             Units.inchesToMeters(129.75),
             Rotation2d.fromDegrees(0)
         )),
-        X5( new Pose2d(
+        X5(new Pose2d(
             Units.inchesToMeters(578.737),
             Units.inchesToMeters(107.801),
             Rotation2d.fromDegrees(0)
         )),
-        X6( new Pose2d(
+        X6(new Pose2d(
             Units.inchesToMeters(578.737),
             Units.inchesToMeters(86.149),
             Rotation2d.fromDegrees(0)
         )),
-        X7( new Pose2d(
+        X7(new Pose2d(
             Units.inchesToMeters(578.737),
             Units.inchesToMeters(64.818),
             Rotation2d.fromDegrees(0)
         )),
-        X8( new Pose2d(
+        X8(new Pose2d(
             Units.inchesToMeters(578.737),
             Units.inchesToMeters(41.761),
             Rotation2d.fromDegrees(0)
         )),
-        X9( new Pose2d(
+        X9(new Pose2d(
             Units.inchesToMeters(578.737),
             Units.inchesToMeters(20.016),
             Rotation2d.fromDegrees(0)
@@ -100,38 +96,33 @@ public abstract class AutonAutonSequence extends SequentialCommandGroup{
             Rotation2d.fromDegrees(0)
         )
         ),
-        PIECE4(
-            new Pose2d(
+        PIECE4(new Pose2d(
             Units.inchesToMeters(0),
             Units.inchesToMeters(0),
             Rotation2d.fromDegrees(0)
-        )
-        ),
+        )),
 
         TOPINIT(new Pose2d(
             Units.inchesToMeters(581.072),
             Units.inchesToMeters(195.55),
             Rotation2d.fromDegrees(0)
         )),
-        BALANCEINIT(
-            new Pose2d(
+        BALANCEINIT(new Pose2d(
             Units.inchesToMeters(581.072),
             Units.inchesToMeters(107.638),
             Rotation2d.fromDegrees(0)
         )
         ),
-        BOTTOMINIT(
-            new Pose2d(
+        BOTTOMINIT(new Pose2d(
             Units.inchesToMeters(581.072),
             Units.inchesToMeters(12.873),
             Rotation2d.fromDegrees(0)
-        )
-        );
+        ));
 
-        public Pose2d red;
+        public Pose2d position;
 
-        private Red(Pose2d red){
-            this.red = red;
+        private Red(Pose2d position){
+            this.position = position;
         }
     } 
 
@@ -242,9 +233,7 @@ public abstract class AutonAutonSequence extends SequentialCommandGroup{
 
 
     //non balancing auton sequence
-    public AutonAutonSequence(RobotContainer robotContainer, Pose2d initialPose, Pose2d placePose, Pose2d grabPose, Pose2d placePose2, MoverPosition moverPosition, MoverPosition moverPosition2){
-        this.robotContainer = robotContainer;
-
+    public BaseAutonSequence(RobotContainer robotContainer, Pose2d initialPose, Pose2d placePose, Pose2d grabPose, Pose2d placePose2, MoverPosition moverPosition, MoverPosition moverPosition2) {
         swerveSubsystem = robotContainer.getSwerveSubsystem();
         gripperSubsytem = robotContainer.getGripperSubsytem();
         moverSubsystem = robotContainer.getMoverSubsystem();
@@ -259,10 +248,9 @@ public abstract class AutonAutonSequence extends SequentialCommandGroup{
         goAndPlace(grabPose, placePose2, moverPosition2);
 
     }
-    // balancing auton sequence
-    public AutonAutonSequence(RobotContainer robotContainer, Pose2d initialPose, Pose2d placePose, Pose2d outsidePose, MoverPosition moverPosition){
-        this.robotContainer = robotContainer;
 
+    // balancing auton sequence
+    public BaseAutonSequence(RobotContainer robotContainer, Pose2d initialPose, Pose2d placePose, Pose2d outsidePose, MoverPosition moverPosition) {
         swerveSubsystem = robotContainer.getSwerveSubsystem();
         gripperSubsytem = robotContainer.getGripperSubsytem();
         moverSubsystem = robotContainer.getMoverSubsystem();
@@ -282,8 +270,7 @@ public abstract class AutonAutonSequence extends SequentialCommandGroup{
     }
 
     //make followpath and Shiralevel parallel commands?
-
-    public void goAndGrab(Pose2d initialPose, Pose2d finalPose){
+    public void goAndGrab(Pose2d initialPose, Pose2d finalPose) {
         addCommands(        
             //get to gamepiece
             new FollowPathCommand(swerveSubsystem, initialPose, List.of(), finalPose),
@@ -294,14 +281,14 @@ public abstract class AutonAutonSequence extends SequentialCommandGroup{
         );
     }
 
-    public void goAndPlace(Pose2d intialPose, Pose2d finalPose, MoverPosition moverPosition){
+    public void goAndPlace(Pose2d intialPose, Pose2d finalPose, MoverPosition moverPosition) {
         addCommands(
-        //get to place location
-        new FollowPathCommand(swerveSubsystem, intialPose, List.of(), finalPose),
-        //get mover to right height
-        new ShiraLevelCommand(moverSubsystem, moverPosition),
-        //place gamepiece
-        new MatthewPlaceCommand(gripperSubsytem)
+            //get to place location
+            new FollowPathCommand(swerveSubsystem, intialPose, List.of(), finalPose),
+            //get mover to right height
+            new ShiraLevelCommand(moverSubsystem, moverPosition),
+            //place gamepiece
+            new MatthewPlaceCommand(gripperSubsytem)
         );
     }
 }
