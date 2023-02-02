@@ -27,52 +27,58 @@ public abstract class BaseAutonSequence extends SequentialCommandGroup {
     private final GripperSubsytem gripperSubsytem;
     private final MoverSubsystem moverSubsystem;
 
+    private static double RED_PLACEX = 578.737;
+    private static double RED_INITX = 581.072;
+
+    private static double BLUE_PLACEX = 72.013;
+    private static double BLUE_INITX = 70.007;
+
     //positions for placing gamepieces
     //all positions from center of robot
     // ^^^ from center of robot? aren't these field coordinates?
     public enum RedPositions {
         X1(new Pose2d(
-            Units.inchesToMeters(578.737),
+            Units.inchesToMeters(RED_PLACEX),
             Units.inchesToMeters(195.55),
             Rotation2d.fromDegrees(0)
         )),
         X2(new Pose2d(
-            Units.inchesToMeters(578.737),
+            Units.inchesToMeters(RED_PLACEX),
             Units.inchesToMeters(174.123),
             Rotation2d.fromDegrees(0)
         )),
         X3(new Pose2d(
-            Units.inchesToMeters(578.737),
+            Units.inchesToMeters(RED_PLACEX),
             Units.inchesToMeters(152.123),
             Rotation2d.fromDegrees(0)
         )),
         X4(new Pose2d(
-            Units.inchesToMeters(578.737),
+            Units.inchesToMeters(RED_PLACEX),
             Units.inchesToMeters(129.75),
             Rotation2d.fromDegrees(0)
         )),
         X5(new Pose2d(
-            Units.inchesToMeters(578.737),
+            Units.inchesToMeters(RED_PLACEX),
             Units.inchesToMeters(107.801),
             Rotation2d.fromDegrees(0)
         )),
         X6(new Pose2d(
-            Units.inchesToMeters(578.737),
+            Units.inchesToMeters(RED_PLACEX),
             Units.inchesToMeters(86.149),
             Rotation2d.fromDegrees(0)
         )),
         X7(new Pose2d(
-            Units.inchesToMeters(578.737),
+            Units.inchesToMeters(RED_PLACEX),
             Units.inchesToMeters(64.818),
             Rotation2d.fromDegrees(0)
         )),
         X8(new Pose2d(
-            Units.inchesToMeters(578.737),
+            Units.inchesToMeters(RED_PLACEX),
             Units.inchesToMeters(41.761),
             Rotation2d.fromDegrees(0)
         )),
         X9(new Pose2d(
-            Units.inchesToMeters(578.737),
+            Units.inchesToMeters(RED_PLACEX),
             Units.inchesToMeters(20.016),
             Rotation2d.fromDegrees(0)
         )),
@@ -99,17 +105,17 @@ public abstract class BaseAutonSequence extends SequentialCommandGroup {
         )),
 
         TOP_INIT(new Pose2d(
-            Units.inchesToMeters(581.072),
+            Units.inchesToMeters(RED_INITX),
             Units.inchesToMeters(195.55),
             Rotation2d.fromDegrees(0)
         )),
         BALANCE_INIT(new Pose2d(
-            Units.inchesToMeters(581.072),
+            Units.inchesToMeters(RED_INITX),
             Units.inchesToMeters(107.638),
             Rotation2d.fromDegrees(0)
         )),
         BOTTOM_INIT(new Pose2d(
-            Units.inchesToMeters(581.072),
+            Units.inchesToMeters(RED_INITX),
             Units.inchesToMeters(12.873),
             Rotation2d.fromDegrees(0)
         ));
@@ -124,47 +130,47 @@ public abstract class BaseAutonSequence extends SequentialCommandGroup {
     //positions for placing gamepieces
     public enum BluePositions {
         X1(new Pose2d(
-            Units.inchesToMeters(72.013),
+            Units.inchesToMeters(BLUE_PLACEX),
             Units.inchesToMeters(195.55),
             Rotation2d.fromDegrees(180)
         )),
         X2(new Pose2d(
-            Units.inchesToMeters(72.013),
+            Units.inchesToMeters(BLUE_PLACEX),
             Units.inchesToMeters(174.123),
             Rotation2d.fromDegrees(180)
         )),
         X3(new Pose2d(
-            Units.inchesToMeters(72.013),
+            Units.inchesToMeters(BLUE_PLACEX),
             Units.inchesToMeters(152.123),
             Rotation2d.fromDegrees(180)
         )),
         X4(new Pose2d(
-            Units.inchesToMeters(72.013),
+            Units.inchesToMeters(BLUE_PLACEX),
             Units.inchesToMeters(129.75),
             Rotation2d.fromDegrees(180)
         )),
         X5(new Pose2d(
-            Units.inchesToMeters(72.013),
+            Units.inchesToMeters(BLUE_PLACEX),
             Units.inchesToMeters(107.801),
             Rotation2d.fromDegrees(180)
         )),
         X6(new Pose2d(
-            Units.inchesToMeters(72.013),
+            Units.inchesToMeters(BLUE_PLACEX),
             Units.inchesToMeters(86.149),
             Rotation2d.fromDegrees(180)
         )),
         X7(new Pose2d(
-            Units.inchesToMeters(72.013),
+            Units.inchesToMeters(BLUE_PLACEX),
             Units.inchesToMeters(64.818),
             Rotation2d.fromDegrees(180)
         )),
         X8(new Pose2d(
-            Units.inchesToMeters(72.013),
+            Units.inchesToMeters(BLUE_PLACEX),
             Units.inchesToMeters(41.761),
             Rotation2d.fromDegrees(180)
         )),
         X9(new Pose2d(
-            Units.inchesToMeters(72.013),
+            Units.inchesToMeters(BLUE_PLACEX),
             Units.inchesToMeters(20.016),
             Rotation2d.fromDegrees(180)
         )),
@@ -191,17 +197,17 @@ public abstract class BaseAutonSequence extends SequentialCommandGroup {
         )),
 
         TOP_INIT(new Pose2d(
-            Units.inchesToMeters(70.007),
+            Units.inchesToMeters(BLUE_INITX),
             Units.inchesToMeters(195.55),
             Rotation2d.fromDegrees(180)
         )),
         BALANCE_INIT(new Pose2d(
-            Units.inchesToMeters(70.007),
+            Units.inchesToMeters(BLUE_INITX),
             Units.inchesToMeters(107.638),
             Rotation2d.fromDegrees(180)
         )),
         BOTTOM_INIT(new Pose2d(
-            Units.inchesToMeters(70.007),
+            Units.inchesToMeters(BLUE_INITX),
             Units.inchesToMeters(12.873),
             Rotation2d.fromDegrees(180)
         ));
@@ -272,5 +278,11 @@ public abstract class BaseAutonSequence extends SequentialCommandGroup {
         return new FollowPathCommand(swerveSubsystem, intialPose, List.of(), finalPose)
             .andThen(new ShiraLevelCommand(moverSubsystem, moverPosition)) // or .alongWith()?
             .andThen(new MatthewPlaceCommand(gripperSubsytem));
+    }
+
+    private Command nonBgoAndGrab(Pose2d initialPose, Pose2d finalPose) {
+        return new FollowPathCommand(swerveSubsystem, initialPose, List.of(), finalPose)
+            .andThen(new ShiraLevelCommand(moverSubsystem, MoverPosition.GROUND)) // or .alongWith()?
+            .andThen(new MatthewIntakeCommand(gripperSubsytem));
     }
 }

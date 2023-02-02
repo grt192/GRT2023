@@ -11,7 +11,7 @@ import frc.robot.subsystems.MoverSubsystem.MoverPosition;
  * The top and bottom auton sequences, where the robot deposits its preloaded game piece and picks up
  * and places another.
  */
-public class NonBalanceAuton extends BaseAutonSequence {
+public class BlueTopNonBalanceAuton extends BaseAutonSequence {
     /**
      * Constructs an auton sequence from the given parameters.
      * @param robotContainer The robot container.
@@ -22,7 +22,7 @@ public class NonBalanceAuton extends BaseAutonSequence {
      * @param height The height of the mover subsystem when placing the first game piece.
      * @param height2 The height of the mover subsystem when placing the second game piece.
      */
-    public NonBalanceAuton(
+    public BlueTopNonBalanceAuton(
         RobotContainer robotContainer, 
         Pose2d initialPose, 
         Pose2d placePose1, 

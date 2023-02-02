@@ -17,7 +17,7 @@ public class BalanceAuton extends BaseAutonSequence {
      * @param robotContainer The robot container.
      * @param initialPose The initial pose of the robot.
      * @param placePose The robot's pose when placing the preloaded game piece.
-     * @param outsidePose The robot's pose on the charging station.
+     * @param outsidePose The robot's pose outside of the community(for extra points).
      * @param height The height of the mover subsystem when placing the preloaded game piece.
      */
     public BalanceAuton(
