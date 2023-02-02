@@ -231,7 +231,7 @@ public abstract class BaseAutonSequence extends SequentialCommandGroup {
             // Place preloaded game piece
             goAndPlace(initialPose, placePose, moverPosition),
             // Go and grab 2nd piece
-            goAndGrab(placePose, grabPose),
+            goAndGrab(placePose, grabPose), //CHANGE TO NON 
             // Go and place grabbed piece
             goAndPlace(grabPose, placePose2, moverPosition2)
         );
@@ -256,7 +256,7 @@ public abstract class BaseAutonSequence extends SequentialCommandGroup {
     }
 
     /**
-     * Goes to a position and intakes a game piece.
+     * BALANCING SEQUENCE Goes to a position and intakes a game piece.
      * @param intialPose The initial pose of the robot.
      * @param finalPose The destination pose of the robot.
      * @return The `SequentialCommandGroup` representing running the commands in order.
@@ -268,21 +268,51 @@ public abstract class BaseAutonSequence extends SequentialCommandGroup {
     }
 
     /**
-     * Goes to a position and places the currently held game piece.
+     * BALANCING SEQUENCE Goes to a position and places the currently held game piece.
      * @param intialPose The initial pose of the robot.
      * @param finalPose The destination pose of the robot.
      * @param moverPosition The target position of the mover.
      * @return The `SequentialCommandGroup` representing running the commands in order.
      */
-    private Command goAndPlace(Pose2d intialPose, Pose2d finalPose, MoverPosition moverPosition) {
-        return new FollowPathCommand(swerveSubsystem, intialPose, List.of(), finalPose)
+    private Command goAndPlace(Pose2d initialPose, Pose2d finalPose, MoverPosition moverPosition) {
+        return new FollowPathCommand(swerveSubsystem, initialPose, List.of(), finalPose)
             .andThen(new ShiraLevelCommand(moverSubsystem, moverPosition)) // or .alongWith()?
             .andThen(new MatthewPlaceCommand(gripperSubsytem));
     }
+    /**
+     * NON BALANCE SEQUENCE ONLY Goes to a positon to grab gamepiece, avoiding the charging station and only turning 90 degrees
+     * @param initialPose The initial pose of the robot
+     * @param midPose1 Middle pose 1
+     * @param midPose2 Middle pose 2 (usually the pose that turns the robot 90)
+     * @param midPose3 (usually the pose that turns the robot 90)
+     * @param finalPose Desitnation position of robot
+     * @return
+     */
 
-    private Command nonBgoAndGrab(Pose2d initialPose, Pose2d finalPose) {
-        return new FollowPathCommand(swerveSubsystem, initialPose, List.of(), finalPose)
+    private Command NONgoAndGrab(Pose2d initialPose, Pose2d midPose1, Pose2d midPose2, Pose2d midPose3, Pose2d finalPose) {
+        return new FollowPathCommand(swerveSubsystem, initialPose, List.of(), midPose1)
+            .andThen(new FollowPathCommand(swerveSubsystem, midPose1, List.of(), midPose2))
+            .andThen(new FollowPathCommand(swerveSubsystem, midPose2, List.of(), midPose3))
+            .andThen(new FollowPathCommand(swerveSubsystem, midPose3, List.of(), finalPose))
             .andThen(new ShiraLevelCommand(moverSubsystem, MoverPosition.GROUND)) // or .alongWith()?
             .andThen(new MatthewIntakeCommand(gripperSubsytem));
+    }
+
+     /**
+     *  NON BALANCE SEQUENCE ONLY Goes to a positon to place gamepiece, avoiding the charging station and only turning 90 degrees
+     * @param initialPose The initial pose of the robot
+     * @param midPose1 Middle pose 1
+     * @param midPose2 Middle pose 2 
+     * @param midPose3 (usually the pose that turns the robot 90)
+     * @param finalPose Desitnation position of robot
+     * @return
+     */
+    private Command NONgoAndPlace(Pose2d initialPose, Pose2d midPose1, Pose2d midPose2, Pose2d midPose3, Pose2d finalPose, MoverPosition moverPosition) {
+        return new FollowPathCommand(swerveSubsystem, initialPose, List.of(), midPose1)
+            .andThen(new FollowPathCommand(swerveSubsystem, midPose1, List.of(), midPose2))
+            .andThen(new FollowPathCommand(swerveSubsystem, midPose2, List.of(), midPose3))
+            .andThen(new FollowPathCommand(swerveSubsystem, midPose3, List.of(), finalPose))
+            .andThen(new ShiraLevelCommand(moverSubsystem, moverPosition)) // or .alongWith()?
+            .andThen(new MatthewPlaceCommand(gripperSubsytem));
     }
 }
