@@ -13,8 +13,14 @@ import frc.robot.subsystems.MoverSubsystem.MoverPosition;
  */
 public class BlueBottomNonBalanceAuton extends BaseAutonSequence {
     
-    private static Pose2d MIDPOS1 = (new Pose2d(94.373, 28.007,Rotation2d.fromDegrees(180) ));
-    private static Pose2d MIDPOS2 = (new Pose2d());
+    private static Pose2d MIDPOS1 = (new Pose2d(
+        Units.inchesToMeters(94.373),
+        Units.inchesToMeters(28.007),
+        Rotation2d.fromDegrees(180) ));
+    private static Pose2d MIDPOS2 = (new Pose2d(
+        Units.inchesToMeters(179.577),
+        Units.inchesToMeters(28.007), 
+        Rotation2d.fromDegrees(180)));
     private static Pose2d INITPOS = (new Pose2d(
         Units.inchesToMeters(BLUE_INITX),
         Units.inchesToMeters(12.873),
