@@ -23,7 +23,6 @@ public class RollerSubsystem extends SubsystemBase {
     private final double COOLDOWN_SECONDS = 2.0;
 
     private double rollPower = 0.0;
-    private double openPower = 0.5;
 
     public RollerSubsystem() {
         leftBeak = MotorUtil.createTalonSRX(LEFT_ID);
@@ -36,6 +35,7 @@ public class RollerSubsystem extends SubsystemBase {
 
         openMotor = MotorUtil.createTalonSRX(OPEN_ID);
         openMotor.setNeutralMode(NeutralMode.Brake);
+        openMotor.setInverted(true);
 
         limitSwitch = new DigitalInput(LIMIT_SWITCH_ID);
     }
@@ -51,7 +51,7 @@ public class RollerSubsystem extends SubsystemBase {
     public void periodic() {
         // If `OPEN_TIME` hasn't elapsed yet, run the motor.
         boolean opening = openTimer.get() > 0 && !openTimer.hasElapsed(OPEN_TIME_SECONDS);
-        openMotor.set(opening ? openPower : 0);
+        openMotor.set(opening ? 0.3 : 0);
 
         // If the cooldown has passed, stop and reset the timer.
         if (openTimer.hasElapsed(OPEN_TIME_SECONDS + COOLDOWN_SECONDS)) {
@@ -65,8 +65,6 @@ public class RollerSubsystem extends SubsystemBase {
         } else {
             leftBeak.set(Math.min(rollPower, 0.0));
         }
-
-        openMotor.set(openPower);
     }
 
     /**

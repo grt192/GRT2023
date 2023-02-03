@@ -43,8 +43,8 @@ public class TankSubsystem extends BaseDrivetrain {
         // POSSIBLE/CONCEPT -- double theta = Math.atan(yPower/xPower); // if the robot needs to move some amount laterally, it can rotate to this angle and move in that direction
 
         // System.out.println("Calculating DT power");
-        leftDrive = forwardPower + turnPower;
-        rightDrive = forwardPower - turnPower;
+        leftDrive = forwardPower - turnPower;
+        rightDrive = forwardPower + turnPower;
     }
 
     /**

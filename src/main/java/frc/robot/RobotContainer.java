@@ -292,14 +292,12 @@ public class RobotContainer {
             }, swerveSubsystem));
         }
 
-        /*
         rollerSubsystem.setDefaultCommand(new RunCommand(() -> {
             double rollPower = mechController.getRightTriggerAxis() - mechController.getLeftTriggerAxis();
             rollerSubsystem.setRollPower(rollPower);
         }, rollerSubsystem));
-        */
 
-        mechBButton.onTrue(new InstantCommand(rollerSubsystem::openMotor, rollerSubsystem));
+        mechAButton.onTrue(new InstantCommand(rollerSubsystem::openMotor, rollerSubsystem));
 
         tiltedElevatorSubsystem.setDefaultCommand(new RunCommand(() -> {
             double yPower = -mechController.getLeftY();
