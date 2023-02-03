@@ -7,6 +7,7 @@ import com.revrobotics.CANSparkMax.SoftLimitDirection;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.SparkMaxPIDController.AccelStrategy;
+import com.revrobotics.SparkMaxPIDController.ArbFFUnits;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.util.Units;
@@ -36,11 +37,13 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
 
     private double extensionP = 0.25; //.4 // 4.9;
     private double extensionI = 0;
-    private double extensionD = 0.65; //.2
+    private double extensionD = 0.9; //.2
     private double extensionFF = 0.3; //0.1
+    private double extensionTolerance = 0.003;
+    private double arbFeedforward = 0.02;
 
-    private double maxVel = 0.5; // m/s
-    private double maxAccel = 0.5; // 0.6 // m/s^2
+    private double maxVel = 1.1; // m/s
+    private double maxAccel = 1.8; // 0.6 // m/s^2
     private double targetExtension = 0;
 
     private ElevatorState currentState = ElevatorState.GROUND;
@@ -55,6 +58,8 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
     private final GenericEntry extensionIEntry = shuffleboardTab.add("Extension I", extensionI).getEntry();
     private final GenericEntry extensionDEntry = shuffleboardTab.add("Extension D", extensionD).getEntry();
     private final GenericEntry extensionFFEntry = shuffleboardTab.add("Extension FF", extensionFF).getEntry();
+    private final GenericEntry extensionToleranceEntry = shuffleboardTab.add("Extension Tolerance", extensionTolerance).getEntry();
+    private final GenericEntry arbFFEntry = shuffleboardTab.add("Arb FF", arbFeedforward).getEntry();
 
     private final GenericEntry manualPowerEntry = shuffleboardTab.add("Manual Power", manualPower).getEntry();
 
@@ -111,6 +116,7 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
         extensionPidController.setI(extensionI);
         extensionPidController.setD(extensionD);
         extensionPidController.setFF(extensionFF);
+        extensionPidController.setSmartMotionAllowedClosedLoopError(extensionTolerance, 0);
         extensionPidController.setSmartMotionMaxVelocity(maxVel, 0);
         extensionPidController.setSmartMotionMaxAccel(maxAccel, 0);
         extensionPidController.setSmartMotionAccelStrategy(AccelStrategy.kTrapezoidal, 0);
@@ -137,6 +143,9 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
         extensionPidController.setFF(extensionFFEntry.getDouble(extensionFF));
         extensionPidController.setSmartMotionMaxVelocity(maxVelEntry.getDouble(maxVel), 0);
         extensionPidController.setSmartMotionMaxAccel(maxAccelEntry.getDouble(maxAccel), 0);
+        extensionPidController.setSmartMotionAllowedClosedLoopError(extensionToleranceEntry.getDouble(extensionTolerance), 0);
+        arbFeedforward = arbFFEntry.getDouble(arbFeedforward);
+        
 
         // System.out.println(extensionEncoder.getPosition());
 
@@ -158,7 +167,7 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
             extensionMotor.set(-0.075);
         } else {
             // Set PID reference
-            extensionPidController.setReference(MathUtil.clamp(targetExtension, 0, EXTENSION_LIMIT), ControlType.kSmartMotion);
+            extensionPidController.setReference(MathUtil.clamp(targetExtension, 0, EXTENSION_LIMIT), ControlType.kSmartMotion, 0, arbFeedforward, ArbFFUnits.kPercentOut);
         }
 
         currentStateEntry.setString(currentState.toString());
