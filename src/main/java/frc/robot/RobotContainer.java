@@ -51,13 +51,11 @@ import frc.robot.subsystems.TiltedElevatorSubsystem.ElevatorState;
 public class RobotContainer {
     // Subsystems
     private final BaseDrivetrain driveSubsystem;
-    // private final GripperSubsytem gripperSubsystem;
     private final RollerSubsystem rollerSubsystem;
+    private final MoverSubsystem moverSubsystem;
     private final TiltedElevatorSubsystem tiltedElevatorSubsystem;
 
     //private final JetsonConnection jetsonConnection;
-
-    private final MoverSubsystem moverSubsystem;
 
     // Controllers and buttons
     private final BaseDriveController driveController;
@@ -337,8 +335,8 @@ public class RobotContainer {
         return (BaseSwerveSubsystem) driveSubsystem;
     }
 
-    public GripperSubsytem getGripperSubsytem(){
-        return gripperSubsystem;
+    public RollerSubsystem getRollerSubsystem(){
+        return rollerSubsystem;
     }
 
     public MoverSubsystem getMoverSubsystem(){

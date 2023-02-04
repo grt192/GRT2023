@@ -12,10 +12,9 @@ import frc.robot.subsystems.MoverSubsystem.MoverPosition;
  * and places another.
  */
 public class RedBottomNonBalanceAuton extends BaseAutonSequence {
-
-    private static Pose2d MIDPOS1 = (new Pose2d());
-    private static Pose2d MIDPOS2 = (new Pose2d());
-    private static Pose2d INITPOS = (new Pose2d());
+    private static Pose2d INITIAL_POSITION = new Pose2d();
+    private static Pose2d MIDPOS1 = new Pose2d();
+    private static Pose2d MIDPOS2 = new Pose2d();
 
     /**
      * Constructs an auton sequence from the given parameters.
@@ -34,6 +33,6 @@ public class RedBottomNonBalanceAuton extends BaseAutonSequence {
         MoverPosition height, 
         MoverPosition height2
     ) {
-        super(robotContainer, INITPOS, MIDPOS1, MIDPOS2, placePose1, pickPose, placePose2, height, height2);
+        super(robotContainer, INITIAL_POSITION, MIDPOS1, MIDPOS2, placePose1, pickPose, placePose2, height, height2);
     }
 }

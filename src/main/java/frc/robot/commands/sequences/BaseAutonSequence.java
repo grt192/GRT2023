@@ -9,6 +9,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
 import frc.robot.RobotContainer;
+import frc.robot.commands.AidenIntakeCommand;
+import frc.robot.commands.AidenPlaceCommand;
 import frc.robot.commands.BalancerCommand;
 import frc.robot.commands.MatthewIntakeCommand;
 import frc.robot.commands.MatthewPlaceCommand;
@@ -16,6 +18,7 @@ import frc.robot.commands.ShiraLevelCommand;
 import frc.robot.commands.swerve.FollowPathCommand;
 import frc.robot.subsystems.GripperSubsytem;
 import frc.robot.subsystems.MoverSubsystem;
+import frc.robot.subsystems.RollerSubsystem;
 import frc.robot.subsystems.MoverSubsystem.MoverPosition;
 import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
 
@@ -24,7 +27,7 @@ import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
  */
 public abstract class BaseAutonSequence extends SequentialCommandGroup {
     private final BaseSwerveSubsystem swerveSubsystem;
-    private final GripperSubsytem gripperSubsytem;
+    private final RollerSubsystem rollerSubsystem;
     private final MoverSubsystem moverSubsystem;
 
     public static double BLUE_INITX = 70.007;
@@ -223,10 +226,10 @@ public abstract class BaseAutonSequence extends SequentialCommandGroup {
      */
     public BaseAutonSequence(RobotContainer robotContainer, Pose2d initialPose, Pose2d midPose1, Pose2d midPose2, Pose2d midpose3, Pose2d placePose, Pose2d grabPose, Pose2d placePose2, MoverPosition moverPosition, MoverPosition moverPosition2) {
         swerveSubsystem = robotContainer.getSwerveSubsystem();
-        gripperSubsytem = robotContainer.getGripperSubsytem();
+        rollerSubsystem = robotContainer.getRollerSubsystem();
         moverSubsystem = robotContainer.getMoverSubsystem();
- 
-        addRequirements(swerveSubsystem, gripperSubsytem, moverSubsystem);
+
+        addRequirements(swerveSubsystem, rollerSubsystem, moverSubsystem);
 
         addCommands(
             // Place preloaded game piece
@@ -238,7 +241,7 @@ public abstract class BaseAutonSequence extends SequentialCommandGroup {
         );
     }
 
-       /**
+    /**
      * non balancing BOTTOM auton sequence
      * @param robotContainer
      * @param initialPose initPose
@@ -252,10 +255,10 @@ public abstract class BaseAutonSequence extends SequentialCommandGroup {
      */
     public BaseAutonSequence(RobotContainer robotContainer, Pose2d initialPose, Pose2d midPose1, Pose2d midPose2, Pose2d placePose, Pose2d grabPose, Pose2d placePose2, MoverPosition moverPosition, MoverPosition moverPosition2) {
         swerveSubsystem = robotContainer.getSwerveSubsystem();
-        gripperSubsytem = robotContainer.getGripperSubsytem();
+        rollerSubsystem = robotContainer.getRollerSubsystem();
         moverSubsystem = robotContainer.getMoverSubsystem();
-    
-        addRequirements(swerveSubsystem, gripperSubsytem, moverSubsystem);
+
+        addRequirements(swerveSubsystem, rollerSubsystem, moverSubsystem);
 
         addCommands(
             // Place preloaded game piece
@@ -267,7 +270,7 @@ public abstract class BaseAutonSequence extends SequentialCommandGroup {
         );
     }
 
-       /**
+    /**
      * BALANCING auton sequence
      * @param robotContainer
      * @param initialPose initPose
@@ -277,10 +280,10 @@ public abstract class BaseAutonSequence extends SequentialCommandGroup {
      */
     public BaseAutonSequence(RobotContainer robotContainer, Pose2d initialPose, Pose2d placePose, Pose2d outsidePose, MoverPosition moverPosition) {
         swerveSubsystem = robotContainer.getSwerveSubsystem();
-        gripperSubsytem = robotContainer.getGripperSubsytem();
+        rollerSubsystem = robotContainer.getRollerSubsystem();
         moverSubsystem = robotContainer.getMoverSubsystem();
 
-        addRequirements(swerveSubsystem, gripperSubsytem, moverSubsystem);
+        addRequirements(swerveSubsystem, rollerSubsystem, moverSubsystem);
 
         addCommands(
             // Place preloaded game piece
@@ -301,7 +304,7 @@ public abstract class BaseAutonSequence extends SequentialCommandGroup {
     private Command goAndGrab(Pose2d initialPose, Pose2d finalPose) {
         return new FollowPathCommand(swerveSubsystem, initialPose, List.of(), finalPose)
             .andThen(new ShiraLevelCommand(moverSubsystem, MoverPosition.GROUND)) // or .alongWith()?
-            .andThen(new MatthewIntakeCommand(gripperSubsytem));
+            .andThen(new AidenIntakeCommand(rollerSubsystem));
     }
 
     /**
@@ -314,8 +317,9 @@ public abstract class BaseAutonSequence extends SequentialCommandGroup {
     private Command goAndPlace(Pose2d initialPose, Pose2d finalPose, MoverPosition moverPosition) {
         return new FollowPathCommand(swerveSubsystem, initialPose, List.of(), finalPose)
             .andThen(new ShiraLevelCommand(moverSubsystem, moverPosition)) // or .alongWith()?
-            .andThen(new MatthewPlaceCommand(gripperSubsytem));
+            .andThen(new AidenPlaceCommand(rollerSubsystem));
     }
+
     /**
      * TOP NON BALANCE SEQUENCE ONLY Goes to a positon to grab gamepiece, avoiding the charging station and only turning 90 degrees
      * @param initialPose The initial pose of the robot
@@ -325,18 +329,17 @@ public abstract class BaseAutonSequence extends SequentialCommandGroup {
      * @param finalPose Desitnation position of robot
      * @return
      */
-
     private Command TOPgoAndGrab(Pose2d initialPose, Pose2d midPose1, Pose2d midPose2, Pose2d midPose3, Pose2d finalPose) {
         return new FollowPathCommand(swerveSubsystem, initialPose, List.of(), midPose1)
             .andThen(new FollowPathCommand(swerveSubsystem, midPose1, List.of(), midPose2))
             .andThen(new FollowPathCommand(swerveSubsystem, midPose2, List.of(), midPose3))
             .andThen(new FollowPathCommand(swerveSubsystem, midPose3, List.of(), finalPose))
             .andThen(new ShiraLevelCommand(moverSubsystem, MoverPosition.GROUND)) // or .alongWith()?
-            .andThen(new MatthewIntakeCommand(gripperSubsytem));
+            .andThen(new AidenIntakeCommand(rollerSubsystem));
     }
 
-     /**
-     *  TOP NON BALANCE SEQUENCE ONLY Goes to a positon to place gamepiece, avoiding the charging station and only turning 90 degrees
+    /**
+     * TOP NON BALANCE SEQUENCE ONLY Goes to a positon to place gamepiece, avoiding the charging station and only turning 90 degrees
      * @param initialPose The initial pose of the robot
      * @param midPose1 Middle pose 1
      * @param midPose2 Middle pose 2 
@@ -350,11 +353,11 @@ public abstract class BaseAutonSequence extends SequentialCommandGroup {
             .andThen(new FollowPathCommand(swerveSubsystem, midPose2, List.of(), midPose3))
             .andThen(new FollowPathCommand(swerveSubsystem, midPose3, List.of(), finalPose))
             .andThen(new ShiraLevelCommand(moverSubsystem, moverPosition)) // or .alongWith()?
-            .andThen(new MatthewPlaceCommand(gripperSubsytem));
+            .andThen(new AidenPlaceCommand(rollerSubsystem));
     }
 
-         /**
-     *  bottom go and grab Goes to a positon to place gamepiece, avoiding the charging station and only turning 90 degrees
+    /**
+     * bottom go and grab Goes to a positon to place gamepiece, avoiding the charging station and only turning 90 degrees
      * @param initialPose The initial pose of the robot
      * @param midPose1 Middle pose 1
      * @param midPose2 Middle pose 2 
@@ -366,11 +369,11 @@ public abstract class BaseAutonSequence extends SequentialCommandGroup {
             .andThen(new FollowPathCommand(swerveSubsystem, midPose1, List.of(), midPose2))
             .andThen(new FollowPathCommand(swerveSubsystem, midPose2, List.of(), finalPose))
             .andThen(new ShiraLevelCommand(moverSubsystem, MoverPosition.GROUND)) // or .alongWith()?
-            .andThen(new MatthewIntakeCommand(gripperSubsytem));
+            .andThen(new AidenIntakeCommand(rollerSubsystem));
     }
-    
-         /**
-     *  Bottom go and place, Goes to a positon to place gamepiece, avoiding the charging station and only turning 90 degrees
+
+    /**
+     * Bottom go and place, Goes to a positon to place gamepiece, avoiding the charging station and only turning 90 degrees
      * @param initialPose The initial pose of the robot
      * @param midPose1 Middle pose 1
      * @param midPose2 Middle pose 2 
@@ -382,7 +385,6 @@ public abstract class BaseAutonSequence extends SequentialCommandGroup {
             .andThen(new FollowPathCommand(swerveSubsystem, midPose1, List.of(), midPose2))
             .andThen(new FollowPathCommand(swerveSubsystem, midPose2, List.of(), finalPose))
             .andThen(new ShiraLevelCommand(moverSubsystem, moverPosition)) // or .alongWith()?
-            .andThen(new MatthewPlaceCommand(gripperSubsytem));
+            .andThen(new AidenPlaceCommand(rollerSubsystem));
     }
-
 }
