@@ -52,7 +52,6 @@ public class RobotContainer {
     // Subsystems
     private final BaseDrivetrain driveSubsystem;
     private final RollerSubsystem rollerSubsystem;
-    private final MoverSubsystem moverSubsystem;
     private final TiltedElevatorSubsystem tiltedElevatorSubsystem;
 
     //private final JetsonConnection jetsonConnection;
@@ -93,7 +92,6 @@ public class RobotContainer {
         driveController = new XboxDriveController();
 
         driveSubsystem = new TankSubsystem();
-        // gripperSubsystem = new GripperSubsytem();
         rollerSubsystem = new RollerSubsystem();
         tiltedElevatorSubsystem = new TiltedElevatorSubsystem();
 
@@ -101,8 +99,6 @@ public class RobotContainer {
 
         // jetsonConnection = new JetsonConnection();
         // jetsonConnection.start();
-        
-        moverSubsystem = new MoverSubsystem();
 
         // Configure the button bindings
         configureButtonBindings();
@@ -327,20 +323,6 @@ public class RobotContainer {
         mechLBumper.onTrue(new InstantCommand(() -> {
             tiltedElevatorSubsystem.toggleState(ElevatorState.CONE_MID, ElevatorState.CONE_HIGH);
         }, tiltedElevatorSubsystem));
-    }
-
-    // TODO: remove these getters
-    public BaseSwerveSubsystem getSwerveSubsystem(){
-        if (!(driveSubsystem instanceof BaseSwerveSubsystem)) throw new RuntimeException("no swerveSubsystem");
-        return (BaseSwerveSubsystem) driveSubsystem;
-    }
-
-    public RollerSubsystem getRollerSubsystem(){
-        return rollerSubsystem;
-    }
-
-    public MoverSubsystem getMoverSubsystem(){
-        return moverSubsystem;
     }
 
     /**

@@ -4,15 +4,17 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 
-import frc.robot.RobotContainer;
+import frc.robot.subsystems.MoverSubsystem;
+import frc.robot.subsystems.RollerSubsystem;
 import frc.robot.subsystems.MoverSubsystem.MoverPosition;
+import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
 
 /**
  * The top and bottom auton sequences, where the robot deposits its preloaded game piece and picks up
  * and places another.
  */
 public class RedBottomNonBalanceAuton extends BaseAutonSequence {
-    private static Pose2d INITIAL_POSITION = new Pose2d();
+    private static Pose2d INITIAL_POSE = new Pose2d();
     private static Pose2d MIDPOS1 = new Pose2d();
     private static Pose2d MIDPOS2 = new Pose2d();
 
@@ -26,13 +28,20 @@ public class RedBottomNonBalanceAuton extends BaseAutonSequence {
      * @param height2 The height of the mover subsystem when placing the second game piece.
      */
     public RedBottomNonBalanceAuton(
-        RobotContainer robotContainer, 
+        BaseSwerveSubsystem swerveSubsystem,
+        RollerSubsystem rollerSubsystem,
+        MoverSubsystem moverSubsystem,
         Pose2d placePose1, 
         Pose2d pickPose, 
         Pose2d placePose2, 
         MoverPosition height, 
         MoverPosition height2
     ) {
-        super(robotContainer, INITIAL_POSITION, MIDPOS1, MIDPOS2, placePose1, pickPose, placePose2, height, height2);
+        super(
+            swerveSubsystem, rollerSubsystem, moverSubsystem,
+            INITIAL_POSE, MIDPOS1, MIDPOS2,
+            placePose1, pickPose, placePose2,
+            height, height2
+        );
     }
 }

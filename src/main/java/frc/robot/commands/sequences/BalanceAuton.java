@@ -4,8 +4,10 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 
-import frc.robot.RobotContainer;
+import frc.robot.subsystems.MoverSubsystem;
+import frc.robot.subsystems.RollerSubsystem;
 import frc.robot.subsystems.MoverSubsystem.MoverPosition;
+import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
 
 /**
  * The middle auton sequence, where the robot deposits its preloaded game piece and balances
@@ -21,12 +23,18 @@ public class BalanceAuton extends BaseAutonSequence {
      * @param height The height of the mover subsystem when placing the preloaded game piece.
      */
     public BalanceAuton(
-        RobotContainer robotContainer, 
+        BaseSwerveSubsystem swerveSubsystem,
+        RollerSubsystem rollerSubsystem,
+        MoverSubsystem moverSubsystem,
         Pose2d initialPose, 
         Pose2d placePose, 
         Pose2d outsidePose, 
         MoverPosition height
     ) {
-        super(robotContainer, initialPose, placePose, outsidePose, height);
+        super(
+            swerveSubsystem, rollerSubsystem, moverSubsystem,
+            initialPose, placePose, outsidePose,
+            height
+        );
     }
 }

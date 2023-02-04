@@ -224,10 +224,15 @@ public abstract class BaseAutonSequence extends SequentialCommandGroup {
      * @param moverPosition height of 1st game piece
      * @param moverPosition2 height of 2nd game piece
      */
-    public BaseAutonSequence(RobotContainer robotContainer, Pose2d initialPose, Pose2d midPose1, Pose2d midPose2, Pose2d midpose3, Pose2d placePose, Pose2d grabPose, Pose2d placePose2, MoverPosition moverPosition, MoverPosition moverPosition2) {
-        swerveSubsystem = robotContainer.getSwerveSubsystem();
-        rollerSubsystem = robotContainer.getRollerSubsystem();
-        moverSubsystem = robotContainer.getMoverSubsystem();
+    public BaseAutonSequence(
+        BaseSwerveSubsystem swerveSubsystem, RollerSubsystem rollerSubsystem, MoverSubsystem moverSubsystem,
+        Pose2d initialPose, Pose2d midPose1, Pose2d midPose2, Pose2d midpose3, 
+        Pose2d placePose, Pose2d grabPose, Pose2d placePose2, 
+        MoverPosition moverPosition, MoverPosition moverPosition2
+    ) {
+        this.swerveSubsystem = swerveSubsystem;
+        this.rollerSubsystem = rollerSubsystem;
+        this.moverSubsystem = moverSubsystem;
 
         addRequirements(swerveSubsystem, rollerSubsystem, moverSubsystem);
 
@@ -253,10 +258,15 @@ public abstract class BaseAutonSequence extends SequentialCommandGroup {
      * @param moverPosition height of 1st game piece
      * @param moverPosition2 height of 2nd game piece
      */
-    public BaseAutonSequence(RobotContainer robotContainer, Pose2d initialPose, Pose2d midPose1, Pose2d midPose2, Pose2d placePose, Pose2d grabPose, Pose2d placePose2, MoverPosition moverPosition, MoverPosition moverPosition2) {
-        swerveSubsystem = robotContainer.getSwerveSubsystem();
-        rollerSubsystem = robotContainer.getRollerSubsystem();
-        moverSubsystem = robotContainer.getMoverSubsystem();
+    public BaseAutonSequence(
+        BaseSwerveSubsystem swerveSubsystem, RollerSubsystem rollerSubsystem, MoverSubsystem moverSubsystem,
+        Pose2d initialPose, Pose2d midPose1, Pose2d midPose2, 
+        Pose2d placePose, Pose2d grabPose, Pose2d placePose2, 
+        MoverPosition moverPosition, MoverPosition moverPosition2
+    ) {
+        this.swerveSubsystem = swerveSubsystem;
+        this.rollerSubsystem = rollerSubsystem;
+        this.moverSubsystem = moverSubsystem;
 
         addRequirements(swerveSubsystem, rollerSubsystem, moverSubsystem);
 
@@ -278,10 +288,14 @@ public abstract class BaseAutonSequence extends SequentialCommandGroup {
      * @param outsidePose outside pose to gt OUTSIDE of the community (for extra points)
      * @param moverPosition height of 1st game piece
      */
-    public BaseAutonSequence(RobotContainer robotContainer, Pose2d initialPose, Pose2d placePose, Pose2d outsidePose, MoverPosition moverPosition) {
-        swerveSubsystem = robotContainer.getSwerveSubsystem();
-        rollerSubsystem = robotContainer.getRollerSubsystem();
-        moverSubsystem = robotContainer.getMoverSubsystem();
+    public BaseAutonSequence(
+        BaseSwerveSubsystem swerveSubsystem, RollerSubsystem rollerSubsystem, MoverSubsystem moverSubsystem,
+        Pose2d initialPose, Pose2d placePose, Pose2d outsidePose, 
+        MoverPosition moverPosition
+    ) {
+        this.swerveSubsystem = swerveSubsystem;
+        this.rollerSubsystem = rollerSubsystem;
+        this.moverSubsystem = moverSubsystem;
 
         addRequirements(swerveSubsystem, rollerSubsystem, moverSubsystem);
 
