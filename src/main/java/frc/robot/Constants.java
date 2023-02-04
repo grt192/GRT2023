@@ -19,16 +19,16 @@ import edu.wpi.first.math.util.Units;
  */
 public final class Constants {
     public static final class TankConstants{
-        public static final int LEFT_MAIN = 2;
-        public static final int LEFT_FOLLOW = 3;
-        public static final int RIGHT_MAIN = 0;
+        public static final int LEFT_MAIN = 19;
+        public static final int LEFT_FOLLOW = 18;
+        public static final int RIGHT_MAIN = 20;
         public static final int RIGHT_FOLLOW = 1;
     }
 
     public static final class SwerveConstants {
         public static final int tlDrive = 2;
         public static final int tlSteer = 1;
-        public static final double tlOffsetRads = 1.8511727492;
+        public static final double tlOffsetRads = 0.57522836526;
         public static final Translation2d tlPos = new Translation2d(
             Units.inchesToMeters(12.0),
             Units.inchesToMeters(8.75)
@@ -36,7 +36,7 @@ public final class Constants {
 
         public static final int trDrive = 4;
         public static final int trSteer = 3;
-        public static final double trOffsetRads = 0.352540004249;
+        public static final double trOffsetRads = -0.842838776116;
         public static final Translation2d trPos = new Translation2d(
             Units.inchesToMeters(12.0),
             Units.inchesToMeters(-8.75)
@@ -45,7 +45,7 @@ public final class Constants {
         // TODO: reflash sparkmaxes to fix this
         public static final int blDrive = 8;
         public static final int blSteer = 7;
-        public static final double blOffsetRads = -2.39908667008;
+        public static final double blOffsetRads = -0.793255341057;
         public static final Translation2d blPos = new Translation2d(
             Units.inchesToMeters(-12.0),
             Units.inchesToMeters(8.75)
@@ -53,7 +53,7 @@ public final class Constants {
 
         public static final int brDrive = 6;
         public static final int brSteer = 5;
-        public static final double brOffsetRads = 0; // TODO
+        public static final double brOffsetRads = 0.561284053322;
         public static final Translation2d brPos = new Translation2d(
             Units.inchesToMeters(-12.0),
             Units.inchesToMeters(-8.75)
@@ -94,6 +94,12 @@ public final class Constants {
         );
     }
 
+    public static final class TiltedElevatorConstants {
+        public static final int EXTENSION_ID = 15;
+        public static final int EXTENSION_FOLLOW_ID = 6;
+        public static final int ZERO_LIMIT_ID = 1;
+    }
+
     public static final class GripperConstants {
         public static final int PFFT_FORWARD_IDL = 0;
         public static final int PFFT_REVERSE_IDL = 1;
@@ -102,8 +108,10 @@ public final class Constants {
     }
 
     public static final class RollerConstants {
-        public static final int LEFT_ID = 15;
-        public static final int RIGHT_ID = 16;
+        public static final int OPEN_ID = 14;
+        public static final int LEFT_ID = 13;
+        public static final int RIGHT_ID = 12; 
+        public static final int LIMIT_SWITCH_ID = 0;
     }
 
     public static final class ShuffleboardConstants {
