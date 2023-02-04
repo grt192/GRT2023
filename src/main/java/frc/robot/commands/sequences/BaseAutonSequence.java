@@ -8,18 +8,14 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
-import frc.robot.RobotContainer;
-import frc.robot.commands.AidenIntakeCommand;
-import frc.robot.commands.AidenPlaceCommand;
 import frc.robot.commands.BalancerCommand;
-import frc.robot.commands.MatthewIntakeCommand;
-import frc.robot.commands.MatthewPlaceCommand;
-import frc.robot.commands.ShiraLevelCommand;
+import frc.robot.commands.grabber.AidenIntakeCommand;
+import frc.robot.commands.grabber.AidenPlaceCommand;
+import frc.robot.commands.mover.JulianLevelCommand;
 import frc.robot.commands.swerve.FollowPathCommand;
-import frc.robot.subsystems.GripperSubsytem;
-import frc.robot.subsystems.MoverSubsystem;
 import frc.robot.subsystems.RollerSubsystem;
-import frc.robot.subsystems.MoverSubsystem.MoverPosition;
+import frc.robot.subsystems.TiltedElevatorSubsystem;
+import frc.robot.subsystems.TiltedElevatorSubsystem.ElevatorState;
 import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
 
 /**
@@ -28,7 +24,7 @@ import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
 public abstract class BaseAutonSequence extends SequentialCommandGroup {
     private final BaseSwerveSubsystem swerveSubsystem;
     private final RollerSubsystem rollerSubsystem;
-    private final MoverSubsystem moverSubsystem;
+    private final TiltedElevatorSubsystem tiltedElevatorSubsystem;
 
     public static double BLUE_INITX = 70.007;
     public static double RED_INITX = 581.072;
@@ -221,28 +217,28 @@ public abstract class BaseAutonSequence extends SequentialCommandGroup {
      * @param placePose placepose of first gamepeice
      * @param grabPose grabpose of 2nd gamepiece
      * @param placePose2 placepose of 2nd gamepiece
-     * @param moverPosition height of 1st game piece
-     * @param moverPosition2 height of 2nd game piece
+     * @param elevatorPosition The height to place the 1st game piece.
+     * @param elevatorPosition2 The height to place the 2nd game piece.
      */
     public BaseAutonSequence(
-        BaseSwerveSubsystem swerveSubsystem, RollerSubsystem rollerSubsystem, MoverSubsystem moverSubsystem,
+        BaseSwerveSubsystem swerveSubsystem, RollerSubsystem rollerSubsystem, TiltedElevatorSubsystem tiltedElevatorSubsystem,
         Pose2d initialPose, Pose2d midPose1, Pose2d midPose2, Pose2d midpose3, 
         Pose2d placePose, Pose2d grabPose, Pose2d placePose2, 
-        MoverPosition moverPosition, MoverPosition moverPosition2
+        ElevatorState elevatorPosition, ElevatorState elevatorPosition2
     ) {
         this.swerveSubsystem = swerveSubsystem;
         this.rollerSubsystem = rollerSubsystem;
-        this.moverSubsystem = moverSubsystem;
+        this.tiltedElevatorSubsystem = tiltedElevatorSubsystem;
 
-        addRequirements(swerveSubsystem, rollerSubsystem, moverSubsystem);
+        addRequirements(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem);
 
         addCommands(
             // Place preloaded game piece
-            TOPgoAndPlace(initialPose, midPose1, midPose2, midpose3, placePose, moverPosition),
+            TOPgoAndPlace(initialPose, midPose1, midPose2, midpose3, placePose, elevatorPosition),
             // Go and grab 2nd piece
             TOPgoAndGrab(placePose, midPose1, midPose2, midpose3, grabPose), //CHANGE TO NON 
             // Go and place grabbed piece
-            TOPgoAndPlace(grabPose, midPose1, midPose2, midpose3, placePose2, moverPosition2)
+            TOPgoAndPlace(grabPose, midPose1, midPose2, midpose3, placePose2, elevatorPosition2)
         );
     }
 
@@ -255,28 +251,28 @@ public abstract class BaseAutonSequence extends SequentialCommandGroup {
      * @param placePose placepose of first gamepeice
      * @param grabPose grabpose of 2nd gamepiece
      * @param placePose2 placepose of 2nd gamepiece
-     * @param moverPosition height of 1st game piece
-     * @param moverPosition2 height of 2nd game piece
+     * @param elevatorPosition The height to place the 1st game piece.
+     * @param elevatorPosition2 The height to place the 2nd game piece.
      */
     public BaseAutonSequence(
-        BaseSwerveSubsystem swerveSubsystem, RollerSubsystem rollerSubsystem, MoverSubsystem moverSubsystem,
+        BaseSwerveSubsystem swerveSubsystem, RollerSubsystem rollerSubsystem, TiltedElevatorSubsystem tiltedElevatorSubsystem,
         Pose2d initialPose, Pose2d midPose1, Pose2d midPose2, 
         Pose2d placePose, Pose2d grabPose, Pose2d placePose2, 
-        MoverPosition moverPosition, MoverPosition moverPosition2
+        ElevatorState elevatorPosition, ElevatorState elevatorPosition2
     ) {
         this.swerveSubsystem = swerveSubsystem;
         this.rollerSubsystem = rollerSubsystem;
-        this.moverSubsystem = moverSubsystem;
+        this.tiltedElevatorSubsystem = tiltedElevatorSubsystem;
 
-        addRequirements(swerveSubsystem, rollerSubsystem, moverSubsystem);
+        addRequirements(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem);
 
         addCommands(
             // Place preloaded game piece
-            BOTTOMgoAndPlace(initialPose, midPose1, midPose2, placePose, moverPosition),
+            BOTTOMgoAndPlace(initialPose, midPose1, midPose2, placePose, elevatorPosition),
             // Go and grab 2nd piece
             BOTTOMgoAndGrab(placePose, midPose1, midPose2, grabPose),
             // Go and place grabbed piece
-            BOTTOMgoAndPlace(grabPose, midPose1, midPose2, placePose2, moverPosition2)
+            BOTTOMgoAndPlace(grabPose, midPose1, midPose2, placePose2, elevatorPosition2)
         );
     }
 
@@ -286,22 +282,22 @@ public abstract class BaseAutonSequence extends SequentialCommandGroup {
      * @param initialPose initPose
      * @param placePose placepose of first gamepeice
      * @param outsidePose outside pose to gt OUTSIDE of the community (for extra points)
-     * @param moverPosition height of 1st game piece
+     * @param elevatorPosition The height to place the 1st game piece.
      */
     public BaseAutonSequence(
-        BaseSwerveSubsystem swerveSubsystem, RollerSubsystem rollerSubsystem, MoverSubsystem moverSubsystem,
+        BaseSwerveSubsystem swerveSubsystem, RollerSubsystem rollerSubsystem, TiltedElevatorSubsystem tiltedElevatorSubsystem,
         Pose2d initialPose, Pose2d placePose, Pose2d outsidePose, 
-        MoverPosition moverPosition
+        ElevatorState elevatorPosition
     ) {
         this.swerveSubsystem = swerveSubsystem;
         this.rollerSubsystem = rollerSubsystem;
-        this.moverSubsystem = moverSubsystem;
+        this.tiltedElevatorSubsystem = tiltedElevatorSubsystem;
 
-        addRequirements(swerveSubsystem, rollerSubsystem, moverSubsystem);
+        addRequirements(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem);
 
         addCommands(
             // Place preloaded game piece
-            goAndPlace(initialPose, placePose, moverPosition),
+            goAndPlace(initialPose, placePose, elevatorPosition),
             // Go out of community
             new FollowPathCommand(swerveSubsystem, placePose, List.of(), outsidePose),
             // Go and balance on charging station
@@ -317,7 +313,7 @@ public abstract class BaseAutonSequence extends SequentialCommandGroup {
      */
     private Command goAndGrab(Pose2d initialPose, Pose2d finalPose) {
         return new FollowPathCommand(swerveSubsystem, initialPose, List.of(), finalPose)
-            .andThen(new ShiraLevelCommand(moverSubsystem, MoverPosition.GROUND)) // or .alongWith()?
+            .andThen(new JulianLevelCommand(tiltedElevatorSubsystem, ElevatorState.GROUND)) // or .alongWith()?
             .andThen(new AidenIntakeCommand(rollerSubsystem));
     }
 
@@ -325,12 +321,12 @@ public abstract class BaseAutonSequence extends SequentialCommandGroup {
      * BALANCING SEQUENCE Goes to a position and places the currently held game piece.
      * @param intialPose The initial pose of the robot.
      * @param finalPose The destination pose of the robot.
-     * @param moverPosition The target position of the mover.
+     * @param elevatorPosition The target position of the mover.
      * @return The `SequentialCommandGroup` representing running the commands in order.
      */
-    private Command goAndPlace(Pose2d initialPose, Pose2d finalPose, MoverPosition moverPosition) {
+    private Command goAndPlace(Pose2d initialPose, Pose2d finalPose, ElevatorState elevatorPosition) {
         return new FollowPathCommand(swerveSubsystem, initialPose, List.of(), finalPose)
-            .andThen(new ShiraLevelCommand(moverSubsystem, moverPosition)) // or .alongWith()?
+            .andThen(new JulianLevelCommand(tiltedElevatorSubsystem, elevatorPosition)) // or .alongWith()?
             .andThen(new AidenPlaceCommand(rollerSubsystem));
     }
 
@@ -348,7 +344,7 @@ public abstract class BaseAutonSequence extends SequentialCommandGroup {
             .andThen(new FollowPathCommand(swerveSubsystem, midPose1, List.of(), midPose2))
             .andThen(new FollowPathCommand(swerveSubsystem, midPose2, List.of(), midPose3))
             .andThen(new FollowPathCommand(swerveSubsystem, midPose3, List.of(), finalPose))
-            .andThen(new ShiraLevelCommand(moverSubsystem, MoverPosition.GROUND)) // or .alongWith()?
+            .andThen(new JulianLevelCommand(tiltedElevatorSubsystem, ElevatorState.GROUND)) // or .alongWith()?
             .andThen(new AidenIntakeCommand(rollerSubsystem));
     }
 
@@ -361,12 +357,12 @@ public abstract class BaseAutonSequence extends SequentialCommandGroup {
      * @param finalPose Desitnation position of robot
      * @return
      */
-    private Command TOPgoAndPlace(Pose2d initialPose, Pose2d midPose1, Pose2d midPose2, Pose2d midPose3, Pose2d finalPose, MoverPosition moverPosition) {
+    private Command TOPgoAndPlace(Pose2d initialPose, Pose2d midPose1, Pose2d midPose2, Pose2d midPose3, Pose2d finalPose, ElevatorState elevatorPosition) {
         return new FollowPathCommand(swerveSubsystem, initialPose, List.of(), midPose1)
             .andThen(new FollowPathCommand(swerveSubsystem, midPose1, List.of(), midPose2))
             .andThen(new FollowPathCommand(swerveSubsystem, midPose2, List.of(), midPose3))
             .andThen(new FollowPathCommand(swerveSubsystem, midPose3, List.of(), finalPose))
-            .andThen(new ShiraLevelCommand(moverSubsystem, moverPosition)) // or .alongWith()?
+            .andThen(new JulianLevelCommand(tiltedElevatorSubsystem, elevatorPosition)) // or .alongWith()?
             .andThen(new AidenPlaceCommand(rollerSubsystem));
     }
 
@@ -382,7 +378,7 @@ public abstract class BaseAutonSequence extends SequentialCommandGroup {
         return new FollowPathCommand(swerveSubsystem, initialPose, List.of(), midPose1)
             .andThen(new FollowPathCommand(swerveSubsystem, midPose1, List.of(), midPose2))
             .andThen(new FollowPathCommand(swerveSubsystem, midPose2, List.of(), finalPose))
-            .andThen(new ShiraLevelCommand(moverSubsystem, MoverPosition.GROUND)) // or .alongWith()?
+            .andThen(new JulianLevelCommand(tiltedElevatorSubsystem, ElevatorState.GROUND)) // or .alongWith()?
             .andThen(new AidenIntakeCommand(rollerSubsystem));
     }
 
@@ -394,11 +390,11 @@ public abstract class BaseAutonSequence extends SequentialCommandGroup {
      * @param finalPose Desitnation position of robot
      * @return
      */
-    private Command BOTTOMgoAndPlace(Pose2d initialPose, Pose2d midPose1, Pose2d midPose2, Pose2d finalPose, MoverPosition moverPosition) {
+    private Command BOTTOMgoAndPlace(Pose2d initialPose, Pose2d midPose1, Pose2d midPose2, Pose2d finalPose, ElevatorState elevatorPosition) {
         return new FollowPathCommand(swerveSubsystem, initialPose, List.of(), midPose1)
             .andThen(new FollowPathCommand(swerveSubsystem, midPose1, List.of(), midPose2))
             .andThen(new FollowPathCommand(swerveSubsystem, midPose2, List.of(), finalPose))
-            .andThen(new ShiraLevelCommand(moverSubsystem, moverPosition)) // or .alongWith()?
+            .andThen(new JulianLevelCommand(tiltedElevatorSubsystem, elevatorPosition)) // or .alongWith()?
             .andThen(new AidenPlaceCommand(rollerSubsystem));
     }
 }

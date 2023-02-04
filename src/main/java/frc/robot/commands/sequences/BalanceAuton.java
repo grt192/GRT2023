@@ -4,9 +4,9 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 
-import frc.robot.subsystems.MoverSubsystem;
 import frc.robot.subsystems.RollerSubsystem;
-import frc.robot.subsystems.MoverSubsystem.MoverPosition;
+import frc.robot.subsystems.TiltedElevatorSubsystem;
+import frc.robot.subsystems.TiltedElevatorSubsystem.ElevatorState;
 import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
 
 /**
@@ -25,14 +25,14 @@ public class BalanceAuton extends BaseAutonSequence {
     public BalanceAuton(
         BaseSwerveSubsystem swerveSubsystem,
         RollerSubsystem rollerSubsystem,
-        MoverSubsystem moverSubsystem,
+        TiltedElevatorSubsystem tiltedElevatorSubsystem,
         Pose2d initialPose, 
         Pose2d placePose, 
         Pose2d outsidePose, 
-        MoverPosition height
+        ElevatorState height
     ) {
         super(
-            swerveSubsystem, rollerSubsystem, moverSubsystem,
+            swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem,
             initialPose, placePose, outsidePose,
             height
         );

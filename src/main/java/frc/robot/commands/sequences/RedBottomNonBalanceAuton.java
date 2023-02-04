@@ -4,9 +4,9 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 
-import frc.robot.subsystems.MoverSubsystem;
 import frc.robot.subsystems.RollerSubsystem;
-import frc.robot.subsystems.MoverSubsystem.MoverPosition;
+import frc.robot.subsystems.TiltedElevatorSubsystem;
+import frc.robot.subsystems.TiltedElevatorSubsystem.ElevatorState;
 import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
 
 /**
@@ -30,15 +30,15 @@ public class RedBottomNonBalanceAuton extends BaseAutonSequence {
     public RedBottomNonBalanceAuton(
         BaseSwerveSubsystem swerveSubsystem,
         RollerSubsystem rollerSubsystem,
-        MoverSubsystem moverSubsystem,
+        TiltedElevatorSubsystem tiltedElevatorSubsystem,
         Pose2d placePose1, 
         Pose2d pickPose, 
         Pose2d placePose2, 
-        MoverPosition height, 
-        MoverPosition height2
+        ElevatorState height, 
+        ElevatorState height2
     ) {
         super(
-            swerveSubsystem, rollerSubsystem, moverSubsystem,
+            swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem,
             INITIAL_POSE, MIDPOS1, MIDPOS2,
             placePose1, pickPose, placePose2,
             height, height2

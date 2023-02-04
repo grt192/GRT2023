@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.motorcontrol.MotorUtil;
 import static frc.robot.Constants.MoverConstants.*;
 
-public class MoverSubsystem extends SubsystemBase{
+public class PivotElevatorSubsystem extends SubsystemBase{
     private final CANSparkMax rotationMotor;
     private final RelativeEncoder rotationEncoder;
     private final SparkMaxPIDController rotationPidController;
@@ -80,7 +80,7 @@ public class MoverSubsystem extends SubsystemBase{
         }
     }
 
-    public MoverSubsystem(){
+    public PivotElevatorSubsystem(){
         rotationMotor = MotorUtil.createSparkMax(ROTATION_MOTOR_PORT);
         rotationMotor.setIdleMode(IdleMode.kBrake);
         rotationMotor.setInverted(true);

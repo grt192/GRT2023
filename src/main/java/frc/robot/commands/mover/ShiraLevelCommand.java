@@ -1,12 +1,12 @@
-package frc.robot.commands;
+package frc.robot.commands.mover;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 
-import frc.robot.subsystems.MoverSubsystem;
-import frc.robot.subsystems.MoverSubsystem.MoverPosition;
+import frc.robot.subsystems.PivotElevatorSubsystem;
+import frc.robot.subsystems.PivotElevatorSubsystem.MoverPosition;
 
 public class ShiraLevelCommand extends InstantCommand {
-    public ShiraLevelCommand(MoverSubsystem moverSubsystem, MoverPosition level) {
+    public ShiraLevelCommand(PivotElevatorSubsystem moverSubsystem, MoverPosition level) {
         super(() -> {
             System.out.println("Mover to " + level);
             moverSubsystem.setState(level);

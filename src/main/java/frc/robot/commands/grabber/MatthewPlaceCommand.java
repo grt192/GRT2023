@@ -1,4 +1,4 @@
-package frc.robot.commands;
+package frc.robot.commands.grabber;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj2.command.InstantCommand;

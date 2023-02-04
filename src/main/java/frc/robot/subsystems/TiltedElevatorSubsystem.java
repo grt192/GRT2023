@@ -46,7 +46,7 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
     private double maxAccel = 1.8; // 0.6 // m/s^2
     private double targetExtension = 0;
 
-    private ElevatorState currentState = ElevatorState.GROUND;
+    private ElevatorState state = ElevatorState.GROUND;
     private double manualPower = 0;
     private double offsetDistMeters = 0;
 
@@ -69,7 +69,7 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
 
     private final GenericEntry targetExtensionEntry = shuffleboardTab.add("Target Ext (in)", 0.0).getEntry();
     private final GenericEntry currentExtensionEntry = shuffleboardTab.add("Current Ext (in)", 0.0).getEntry();
-    private final GenericEntry currentStateEntry = shuffleboardTab.add("Current State", currentState.toString()).getEntry();
+    private final GenericEntry currentStateEntry = shuffleboardTab.add("Current State", state.toString()).getEntry();
 
     private final GenericEntry offsetDistEntry = shuffleboardTab.add("offset (in)", offsetDistMeters).getEntry();
 
@@ -157,7 +157,7 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
         offsetDistEntry.setDouble(Units.metersToInches(offsetDistMeters));
 
         // Units.inchesToMeters(targetExtensionEntry.getDouble(0));
-        this.targetExtension = currentState.extendDistanceMeters + offsetDistMeters;
+        this.targetExtension = state.extendDistanceMeters + offsetDistMeters;
 
         // give up 
         if (this.targetExtension == 0 && currentPos < Units.inchesToMeters(1)) {
@@ -170,7 +170,15 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
             extensionPidController.setReference(MathUtil.clamp(targetExtension, 0, EXTENSION_LIMIT), ControlType.kSmartMotion, 0, arbFeedforward, ArbFFUnits.kPercentOut);
         }
 
-        currentStateEntry.setString(currentState.toString());
+        currentStateEntry.setString(state.toString());
+    }
+
+    /**
+     * Sets the state of the subsystem.
+     * @param state The state to set it to.
+     */
+    public void setState(ElevatorState state) {
+        this.state = state;
     }
 
     /**
@@ -182,7 +190,7 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
      */
     public void toggleState(ElevatorState state1, ElevatorState state2) {
         resetOffset();
-        currentState = currentState == state1
+        state = state == state1
             ? state2
             : state1;
     }
