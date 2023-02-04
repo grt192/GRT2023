@@ -16,7 +16,7 @@ public class RollerSubsystem extends SubsystemBase {
     private final WPI_TalonSRX rightBeak;
     private final WPI_TalonSRX openMotor;
 
-    private final DigitalInput limitSwitch;
+    public final DigitalInput limitSwitch;
 
     private final Timer openTimer = new Timer();
     private final double OPEN_TIME_SECONDS = 1.0;

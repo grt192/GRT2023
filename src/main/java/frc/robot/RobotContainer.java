@@ -38,6 +38,7 @@ import frc.robot.subsystems.PivotElevatorSubsystem;
 import frc.robot.subsystems.PivotElevatorSubsystem.MoverPosition;
 import frc.robot.subsystems.GripperSubsytem;
 import frc.robot.subsystems.RollerSubsystem;
+import frc.robot.subsystems.RollertoTiltedSubsystem;
 import frc.robot.subsystems.TiltedElevatorSubsystem;
 import frc.robot.subsystems.TiltedElevatorSubsystem.ElevatorState;
 
@@ -53,6 +54,7 @@ public class RobotContainer {
     private final BaseDrivetrain driveSubsystem;
     private final RollerSubsystem rollerSubsystem;
     private final TiltedElevatorSubsystem tiltedElevatorSubsystem;
+    private final RollertoTiltedSubsystem rollertoTiltedSubsystem;
 
     //private final JetsonConnection jetsonConnection;
 
@@ -94,6 +96,7 @@ public class RobotContainer {
         driveSubsystem = new TankSubsystem();
         rollerSubsystem = new RollerSubsystem();
         tiltedElevatorSubsystem = new TiltedElevatorSubsystem();
+        rollertoTiltedSubsystem = new RollertoTiltedSubsystem(rollerSubsystem, tiltedElevatorSubsystem);
 
         balancerCommand = new BalancerCommand(driveSubsystem);
 
