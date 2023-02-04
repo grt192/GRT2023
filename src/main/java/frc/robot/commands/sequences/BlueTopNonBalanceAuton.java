@@ -19,9 +19,21 @@ public class BlueTopNonBalanceAuton extends BaseAutonSequence {
         Units.inchesToMeters(195.55),
         Rotation2d.fromDegrees(180)
     );
-    private static Pose2d MIDPOS1 = (new Pose2d());
-    private static Pose2d MIDPOS2 = (new Pose2d());
-    private static Pose2d MIDPOS3 = (new Pose2d());
+    private static Pose2d MIDPOS1 = new Pose2d(
+        Units.inchesToMeters(94.373),
+        Units.inchesToMeters(187.638),
+        Rotation2d.fromDegrees(180)
+    );
+    private static Pose2d MIDPOS2 = new Pose2d(
+        Units.inchesToMeters(179.577),
+        Units.inchesToMeters(187.638),
+        Rotation2d.fromDegrees(180)
+    );
+    private static Pose2d MIDPOS3 = new Pose2d(
+        Units.inchesToMeters(221.451),
+        Units.inchesToMeters(205.895),
+        Rotation2d.fromDegrees(90)
+    );
 
     /**
      * Constructs an auton sequence from the given parameters.
