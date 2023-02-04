@@ -30,7 +30,7 @@ public class AidenPlaceCommand extends CommandBase {
     public void execute() {
         //open motor to drop
         rollerSubsystem.openMotor();
-        //if limit switch is still pressed (piece is still in)
+        //if limit switch is still pressed (piece is still in) try for 2 seconds
         if (!rollerSubsystem.isLimit()){
             timer.start();
             rollerSubsystem.setRollPower(-0.1);

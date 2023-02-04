@@ -14,7 +14,11 @@ import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
  * and places another.
  */
 public class RedBottomNonBalanceAuton extends BaseAutonSequence {
-    private static Pose2d INITIAL_POSE = new Pose2d();
+    private static Pose2d INITIAL_POSE = (new Pose2d(
+        Units.inchesToMeters(RED_INITX),
+        Units.inchesToMeters(12.873),
+        Rotation2d.fromDegrees(0)
+    ));
     private static Pose2d MIDPOS1 = (new Pose2d(
         Units.inchesToMeters(556.376),
         Units.inchesToMeters(28.007),
@@ -23,11 +27,6 @@ public class RedBottomNonBalanceAuton extends BaseAutonSequence {
     private static Pose2d MIDPOS2 = (new Pose2d(
         Units.inchesToMeters(471.173),
         Units.inchesToMeters(28.007),
-        Rotation2d.fromDegrees(0)
-    ));
-    private static Pose2d INITPOS = (new Pose2d(
-        Units.inchesToMeters(0),
-        Units.inchesToMeters(0),
         Rotation2d.fromDegrees(0)
     ));
 

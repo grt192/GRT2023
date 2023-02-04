@@ -102,20 +102,9 @@ public abstract class BaseAutonSequence extends SequentialCommandGroup {
             Units.inchesToMeters(0),
             Rotation2d.fromDegrees(0)
         )),
-
-        TOP_INIT(new Pose2d(
-            Units.inchesToMeters(RED_INITX),
-            Units.inchesToMeters(195.55),
-            Rotation2d.fromDegrees(0)
-        )),
         BALANCE_INIT(new Pose2d(
             Units.inchesToMeters(RED_INITX),
             Units.inchesToMeters(107.638),
-            Rotation2d.fromDegrees(0)
-        )),
-        BOTTOM_INIT(new Pose2d(
-            Units.inchesToMeters(RED_INITX),
-            Units.inchesToMeters(12.873),
             Rotation2d.fromDegrees(0)
         ));
 
@@ -236,7 +225,7 @@ public abstract class BaseAutonSequence extends SequentialCommandGroup {
             // Place preloaded game piece
             goAndPlaceTop(initialPose, midPose1, midPose2, midpose3, placePose, elevatorPosition),
             // Go and grab 2nd piece
-            goAndGrabTop(placePose, midPose1, midPose2, midpose3, grabPose), //CHANGE TO NON 
+            goAndGrabTop(placePose, midPose1, midPose2, midpose3, grabPose), 
             // Go and place grabbed piece
             goAndPlaceTop(grabPose, midPose1, midPose2, midpose3, placePose2, elevatorPosition2)
         );
