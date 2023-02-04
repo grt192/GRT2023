@@ -47,6 +47,10 @@ public class RollerSubsystem extends SubsystemBase {
         openTimer.start();
     }
 
+    public boolean isLimit(){
+        return limitSwitch.get();
+    }
+
     @Override
     public void periodic() {
         // If `OPEN_TIME` hasn't elapsed yet, run the motor.

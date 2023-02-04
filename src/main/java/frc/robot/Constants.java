@@ -101,8 +101,10 @@ public final class Constants {
     }
 
     public static final class GripperConstants {
-        public static final int PFFT_FORWARD_ID = 0;
-        public static final int PFFT_REVERSE_ID = 1;
+        public static final int PFFT_FORWARD_IDL = 0;
+        public static final int PFFT_REVERSE_IDL = 1;
+        public static final int PFFT_FORWARD_IDR = 2;
+        public static final int PFFT_REVERSE_IDR = 3;
     }
 
     public static final class RollerConstants {
@@ -110,5 +112,21 @@ public final class Constants {
         public static final int LEFT_ID = 13;
         public static final int RIGHT_ID = 12; 
         public static final int LIMIT_SWITCH_ID = 0;
+    }
+
+    public static final class ShuffleboardConstants {
+        public static final double UPDATE_TIME = 0.5; // seconds between each update
+    }
+
+    public static final class MoverConstants {
+        public static final int ROTATION_MOTOR_PORT = 4;
+        public static final int ROTATION_FOLLOWER_MOTOR_PORT = 5;
+        public static final int EXTENSION_MOTOR_PORT = 19;
+
+        public static final double ROTATION_GEAR_RATIO = 1/155.91;
+        public static final double EXTENSION_GEAR_RATIO = 1/27;
+
+        public static final double ANGLE_OFFSET_SPEED = 0.001;
+        public static final double EXTENSION_OFFSET_SPEED = 0.001;
     }
 }

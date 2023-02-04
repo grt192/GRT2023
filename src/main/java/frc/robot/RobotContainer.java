@@ -34,6 +34,8 @@ import frc.robot.subsystems.drivetrain.MissileShellSwerveSweeperSubsystem;
 import frc.robot.subsystems.drivetrain.SwerveSubsystem;
 import frc.robot.subsystems.drivetrain.SwerveSubsystem2020;
 import frc.robot.subsystems.drivetrain.BaseDrivetrain;
+import frc.robot.subsystems.PivotElevatorSubsystem;
+import frc.robot.subsystems.PivotElevatorSubsystem.MoverPosition;
 import frc.robot.subsystems.GripperSubsytem;
 import frc.robot.subsystems.RollerSubsystem;
 import frc.robot.subsystems.TiltedElevatorSubsystem;
@@ -49,11 +51,10 @@ import frc.robot.subsystems.TiltedElevatorSubsystem.ElevatorState;
 public class RobotContainer {
     // Subsystems
     private final BaseDrivetrain driveSubsystem;
-    // private final GripperSubsytem gripperSubsystem;
     private final RollerSubsystem rollerSubsystem;
     private final TiltedElevatorSubsystem tiltedElevatorSubsystem;
 
-    // private final JetsonConnection jetsonConnection;
+    //private final JetsonConnection jetsonConnection;
 
     // Controllers and buttons
     private final BaseDriveController driveController;
@@ -91,7 +92,6 @@ public class RobotContainer {
         driveController = new XboxDriveController();
 
         driveSubsystem = new TankSubsystem();
-        // gripperSubsystem = new GripperSubsytem();
         rollerSubsystem = new RollerSubsystem();
         tiltedElevatorSubsystem = new TiltedElevatorSubsystem();
 
