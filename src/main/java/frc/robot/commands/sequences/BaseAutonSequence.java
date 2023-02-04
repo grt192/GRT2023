@@ -234,11 +234,11 @@ public abstract class BaseAutonSequence extends SequentialCommandGroup {
 
         addCommands(
             // Place preloaded game piece
-            TOPgoAndPlace(initialPose, midPose1, midPose2, midpose3, placePose, elevatorPosition),
+            goAndPlaceTop(initialPose, midPose1, midPose2, midpose3, placePose, elevatorPosition),
             // Go and grab 2nd piece
-            TOPgoAndGrab(placePose, midPose1, midPose2, midpose3, grabPose), //CHANGE TO NON 
+            goAndGrabTop(placePose, midPose1, midPose2, midpose3, grabPose), //CHANGE TO NON 
             // Go and place grabbed piece
-            TOPgoAndPlace(grabPose, midPose1, midPose2, midpose3, placePose2, elevatorPosition2)
+            goAndPlaceTop(grabPose, midPose1, midPose2, midpose3, placePose2, elevatorPosition2)
         );
     }
 
@@ -268,11 +268,11 @@ public abstract class BaseAutonSequence extends SequentialCommandGroup {
 
         addCommands(
             // Place preloaded game piece
-            BOTTOMgoAndPlace(initialPose, midPose1, midPose2, placePose, elevatorPosition),
+            goAndPlaceBottom(initialPose, midPose1, midPose2, placePose, elevatorPosition),
             // Go and grab 2nd piece
-            BOTTOMgoAndGrab(placePose, midPose1, midPose2, grabPose),
+            goAndGrabBottom(placePose, midPose1, midPose2, grabPose),
             // Go and place grabbed piece
-            BOTTOMgoAndPlace(grabPose, midPose1, midPose2, placePose2, elevatorPosition2)
+            goAndPlaceBottom(grabPose, midPose1, midPose2, placePose2, elevatorPosition2)
         );
     }
 
@@ -306,19 +306,19 @@ public abstract class BaseAutonSequence extends SequentialCommandGroup {
     }
 
     /**
-     * BALANCING SEQUENCE Goes to a position and intakes a game piece. Not used rn tho lol
+     * Goes to a position and intakes a game piece. Not used rn tho lol
      * @param intialPose The initial pose of the robot.
      * @param finalPose The destination pose of the robot.
      * @return The `SequentialCommandGroup` representing running the commands in order.
      */
     private Command goAndGrab(Pose2d initialPose, Pose2d finalPose) {
         return new FollowPathCommand(swerveSubsystem, initialPose, List.of(), finalPose)
-            .andThen(new JulianLevelCommand(tiltedElevatorSubsystem, ElevatorState.GROUND)) // or .alongWith()?
-            .andThen(new AidenIntakeCommand(rollerSubsystem));
+            .alongWith(new JulianLevelCommand(tiltedElevatorSubsystem, ElevatorState.GROUND))
+            .alongWith(new AidenIntakeCommand(rollerSubsystem));
     }
 
     /**
-     * BALANCING SEQUENCE Goes to a position and places the currently held game piece.
+     * Goes to a position and places the currently held game piece.
      * @param intialPose The initial pose of the robot.
      * @param finalPose The destination pose of the robot.
      * @param elevatorPosition The target position of the mover.
@@ -326,12 +326,12 @@ public abstract class BaseAutonSequence extends SequentialCommandGroup {
      */
     private Command goAndPlace(Pose2d initialPose, Pose2d finalPose, ElevatorState elevatorPosition) {
         return new FollowPathCommand(swerveSubsystem, initialPose, List.of(), finalPose)
-            .andThen(new JulianLevelCommand(tiltedElevatorSubsystem, elevatorPosition)) // or .alongWith()?
+            .alongWith(new JulianLevelCommand(tiltedElevatorSubsystem, elevatorPosition)) // or .alongWith()?
             .andThen(new AidenPlaceCommand(rollerSubsystem));
     }
 
     /**
-     * TOP NON BALANCE SEQUENCE ONLY Goes to a positon to grab gamepiece, avoiding the charging station and only turning 90 degrees
+     * Goes to a positon to grab gamepiece, avoiding the charging station and only turning 90 degrees.
      * @param initialPose The initial pose of the robot
      * @param midPose1 Middle pose 1
      * @param midPose2 Middle pose 2 (usually the pose that turns the robot 90)
@@ -339,17 +339,15 @@ public abstract class BaseAutonSequence extends SequentialCommandGroup {
      * @param finalPose Desitnation position of robot
      * @return
      */
-    private Command TOPgoAndGrab(Pose2d initialPose, Pose2d midPose1, Pose2d midPose2, Pose2d midPose3, Pose2d finalPose) {
+    private Command goAndGrabTop(Pose2d initialPose, Pose2d midPose1, Pose2d midPose2, Pose2d midPose3, Pose2d finalPose) {
         return new FollowPathCommand(swerveSubsystem, initialPose, List.of(), midPose1)
             .andThen(new FollowPathCommand(swerveSubsystem, midPose1, List.of(), midPose2))
             .andThen(new FollowPathCommand(swerveSubsystem, midPose2, List.of(), midPose3))
-            .andThen(new FollowPathCommand(swerveSubsystem, midPose3, List.of(), finalPose))
-            .andThen(new JulianLevelCommand(tiltedElevatorSubsystem, ElevatorState.GROUND)) // or .alongWith()?
-            .andThen(new AidenIntakeCommand(rollerSubsystem));
+            .andThen(goAndGrab(midPose3, finalPose));
     }
 
     /**
-     * TOP NON BALANCE SEQUENCE ONLY Goes to a positon to place gamepiece, avoiding the charging station and only turning 90 degrees
+     * Goes to a positon to place gamepiece, avoiding the charging station and only turning 90 degrees.
      * @param initialPose The initial pose of the robot
      * @param midPose1 Middle pose 1
      * @param midPose2 Middle pose 2 
@@ -357,44 +355,38 @@ public abstract class BaseAutonSequence extends SequentialCommandGroup {
      * @param finalPose Desitnation position of robot
      * @return
      */
-    private Command TOPgoAndPlace(Pose2d initialPose, Pose2d midPose1, Pose2d midPose2, Pose2d midPose3, Pose2d finalPose, ElevatorState elevatorPosition) {
+    private Command goAndPlaceTop(Pose2d initialPose, Pose2d midPose1, Pose2d midPose2, Pose2d midPose3, Pose2d finalPose, ElevatorState elevatorPosition) {
         return new FollowPathCommand(swerveSubsystem, initialPose, List.of(), midPose1)
             .andThen(new FollowPathCommand(swerveSubsystem, midPose1, List.of(), midPose2))
             .andThen(new FollowPathCommand(swerveSubsystem, midPose2, List.of(), midPose3))
-            .andThen(new FollowPathCommand(swerveSubsystem, midPose3, List.of(), finalPose))
-            .andThen(new JulianLevelCommand(tiltedElevatorSubsystem, elevatorPosition)) // or .alongWith()?
-            .andThen(new AidenPlaceCommand(rollerSubsystem));
+            .andThen(goAndPlace(midPose3, finalPose, elevatorPosition));
     }
 
     /**
-     * bottom go and grab Goes to a positon to place gamepiece, avoiding the charging station and only turning 90 degrees
+     * Goes to a positon to place a game piece, avoiding the charging station and only turning 90 degrees.
      * @param initialPose The initial pose of the robot
      * @param midPose1 Middle pose 1
      * @param midPose2 Middle pose 2 
      * @param finalPose Desitnation position of robot
      * @return
      */
-    private Command BOTTOMgoAndGrab(Pose2d initialPose, Pose2d midPose1, Pose2d midPose2, Pose2d finalPose) {
+    private Command goAndGrabBottom(Pose2d initialPose, Pose2d midPose1, Pose2d midPose2, Pose2d finalPose) {
         return new FollowPathCommand(swerveSubsystem, initialPose, List.of(), midPose1)
             .andThen(new FollowPathCommand(swerveSubsystem, midPose1, List.of(), midPose2))
-            .andThen(new FollowPathCommand(swerveSubsystem, midPose2, List.of(), finalPose))
-            .andThen(new JulianLevelCommand(tiltedElevatorSubsystem, ElevatorState.GROUND)) // or .alongWith()?
-            .andThen(new AidenIntakeCommand(rollerSubsystem));
+            .andThen(goAndGrab(midPose2, finalPose));
     }
 
     /**
-     * Bottom go and place, Goes to a positon to place gamepiece, avoiding the charging station and only turning 90 degrees
+     * Goes to a positon to place a game piece, avoiding the charging station and only turning 90 degrees.
      * @param initialPose The initial pose of the robot
      * @param midPose1 Middle pose 1
      * @param midPose2 Middle pose 2 
      * @param finalPose Desitnation position of robot
      * @return
      */
-    private Command BOTTOMgoAndPlace(Pose2d initialPose, Pose2d midPose1, Pose2d midPose2, Pose2d finalPose, ElevatorState elevatorPosition) {
+    private Command goAndPlaceBottom(Pose2d initialPose, Pose2d midPose1, Pose2d midPose2, Pose2d finalPose, ElevatorState elevatorPosition) {
         return new FollowPathCommand(swerveSubsystem, initialPose, List.of(), midPose1)
             .andThen(new FollowPathCommand(swerveSubsystem, midPose1, List.of(), midPose2))
-            .andThen(new FollowPathCommand(swerveSubsystem, midPose2, List.of(), finalPose))
-            .andThen(new JulianLevelCommand(tiltedElevatorSubsystem, elevatorPosition)) // or .alongWith()?
-            .andThen(new AidenPlaceCommand(rollerSubsystem));
+            .andThen(goAndPlace(midPose2, finalPose, elevatorPosition));
     }
 }
