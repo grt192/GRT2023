@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.subsystems.GripperSubsytem;
 
 /**
- * Intakes 1 game piece with the pfft gripper mech.
+ * [no use] Intakes 1 game piece with the pfft gripper mech.
  */
 public class MatthewIntakeCommand extends InstantCommand {
     public MatthewIntakeCommand(GripperSubsytem gripperSubsystem) {
