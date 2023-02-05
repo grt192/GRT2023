@@ -6,13 +6,12 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.RollerSubsystem;
 
 /**
- * [NOT OUTDATED ANYMORE AYYYY] Places 1 game piece with the roller mech. This command runs the rollers in reverse
- * at a set power for 2 seconds.
+ * Places 1 game piece with the roller mech. This command runs the rollers in reverse
+ * at a set power for 2 seconds or until the limit switch is no longer pressed.
  */
 public class AidenPlaceCommand extends CommandBase {
     private final RollerSubsystem rollerSubsystem;
     private final Timer timer;
-    private boolean done;
 
     public AidenPlaceCommand(RollerSubsystem rollerSubsystem){
         this.rollerSubsystem = rollerSubsystem;
@@ -30,14 +29,7 @@ public class AidenPlaceCommand extends CommandBase {
     public void execute() {
         //open motor to drop
         rollerSubsystem.openMotor();
-        //if limit switch is still pressed (piece is still in) try for 2 seconds
-        if (!rollerSubsystem.isLimit()){
-            timer.start();
-            rollerSubsystem.setRollPower(-0.1);
-        }
-        else{
-            done = true;
-        }
+        rollerSubsystem.setRollPower(-0.1);
     }
 
     @Override
@@ -48,6 +40,6 @@ public class AidenPlaceCommand extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return (timer.hasElapsed(2) || done);
+        return timer.hasElapsed(2) || !rollerSubsystem.hasPiece();
     }
 }
