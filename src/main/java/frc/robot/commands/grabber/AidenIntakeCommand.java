@@ -34,6 +34,6 @@ public class AidenIntakeCommand extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return rollerSubsystem.isLimit();
+        return rollerSubsystem.hasPiece();
     }
 }

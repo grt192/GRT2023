@@ -1,12 +1,12 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
 import frc.robot.motorcontrol.MotorUtil;
 
 import static frc.robot.Constants.RollerConstants.*;
@@ -47,8 +47,20 @@ public class RollerSubsystem extends SubsystemBase {
         openTimer.start();
     }
 
-    public boolean isLimit(){
+    /**
+     * Gets whether there is a piece in the subsystem (whether the limit switch is pressed).
+     * @return Whether the limit switch is pressed.
+     */
+    public boolean hasPiece() {
         return limitSwitch.get();
+    }
+
+    /**
+     * Set the roller power of this subsystem.
+     * @param power The power to set.
+     */
+    public void setRollPower(double power) {
+        this.rollPower = power;
     }
 
     @Override
@@ -69,13 +81,5 @@ public class RollerSubsystem extends SubsystemBase {
         } else {
             leftBeak.set(Math.min(rollPower, 0.0));
         }
-    }
-
-    /**
-     * Set the roller power of this subsystem.
-     * @param power The power to set.
-     */
-    public void setRollPower(double power) {
-        this.rollPower = power;
     }
 }

@@ -145,7 +145,6 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
         extensionPidController.setSmartMotionMaxAccel(maxAccelEntry.getDouble(maxAccel), 0);
         extensionPidController.setSmartMotionAllowedClosedLoopError(extensionToleranceEntry.getDouble(extensionTolerance), 0);
         arbFeedforward = arbFFEntry.getDouble(arbFeedforward);
-        
 
         // System.out.println(extensionEncoder.getPosition());
 
