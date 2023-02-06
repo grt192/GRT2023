@@ -46,12 +46,14 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
     private double maxAccel = 1.8; // 0.6 // m/s^2
     private double targetExtension = 0;
 
-    private ElevatorState currentState = ElevatorState.GROUND;
+    private ElevatorState state = ElevatorState.GROUND;
     private double manualPower = 0;
     private double offsetDistMeters = 0;
 
     private static final double OFFSET_FACTOR = 0.01; // The factor to multiply driver input by when changing the offset.
     private static final boolean IS_MANUAL = false;
+
+    public boolean pieceGrabbed = false;
 
     private final ShuffleboardTab shuffleboardTab = Shuffleboard.getTab("Tilted Elevator");
     private final GenericEntry extensionPEntry = shuffleboardTab.add("Extension P", extensionP).getEntry();
@@ -69,12 +71,21 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
 
     private final GenericEntry targetExtensionEntry = shuffleboardTab.add("Target Ext (in)", 0.0).getEntry();
     private final GenericEntry currentExtensionEntry = shuffleboardTab.add("Current Ext (in)", 0.0).getEntry();
-    private final GenericEntry currentStateEntry = shuffleboardTab.add("Current State", currentState.toString()).getEntry();
+    private final GenericEntry currentStateEntry = shuffleboardTab.add("Current State", state.toString()).getEntry();
 
     private final GenericEntry offsetDistEntry = shuffleboardTab.add("offset (in)", offsetDistMeters).getEntry();
 
     public enum ElevatorState {
-        GROUND(0), // retracted
+        GROUND(0){
+            public double getExtension(boolean piece){
+                if(piece){
+                    return extendDistanceMeters + Units.inchesToMeters(1);
+                }
+                return(extendDistanceMeters);
+                
+            }
+        },
+        GROUNDINCH(Units.inchesToMeters(1)), // height gamepiece should be held at when at GROUND
         CHUTE(Units.inchesToMeters(40)),
         SUBSTATION(Units.inchesToMeters(50)), // absolute height = 37.375 in
         CUBE_MID(Units.inchesToMeters(33)), // absolute height = 14.25 in
@@ -93,6 +104,9 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
          */
         private ElevatorState(double extendDistanceMeters) {
             this.extendDistanceMeters = extendDistanceMeters;
+        }
+        public double getExtension(boolean piece){
+            return this.extendDistanceMeters;
         }
     }
 
@@ -128,7 +142,7 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        if (zeroLimitSwitch.get()) extensionEncoder.setPosition(0);
+        // if (zeroLimitSwitch.get()) extensionEncoder.setPosition(0); 
 
         if (IS_MANUAL) {
             manualPowerEntry.setDouble(manualPower);
@@ -145,7 +159,6 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
         extensionPidController.setSmartMotionMaxAccel(maxAccelEntry.getDouble(maxAccel), 0);
         extensionPidController.setSmartMotionAllowedClosedLoopError(extensionToleranceEntry.getDouble(extensionTolerance), 0);
         arbFeedforward = arbFFEntry.getDouble(arbFeedforward);
-        
 
         // System.out.println(extensionEncoder.getPosition());
 
@@ -157,7 +170,7 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
         offsetDistEntry.setDouble(Units.metersToInches(offsetDistMeters));
 
         // Units.inchesToMeters(targetExtensionEntry.getDouble(0));
-        this.targetExtension = currentState.extendDistanceMeters + offsetDistMeters;
+        this.targetExtension = state.getExtension(pieceGrabbed) + offsetDistMeters;
 
         // give up 
         if (this.targetExtension == 0 && currentPos < Units.inchesToMeters(1)) {
@@ -170,7 +183,15 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
             extensionPidController.setReference(MathUtil.clamp(targetExtension, 0, EXTENSION_LIMIT), ControlType.kSmartMotion, 0, arbFeedforward, ArbFFUnits.kPercentOut);
         }
 
-        currentStateEntry.setString(currentState.toString());
+        currentStateEntry.setString(state.toString());
+    }
+
+    /**
+     * Sets the state of the subsystem.
+     * @param state The state to set it to.
+     */
+    public void setState(ElevatorState state) {
+        this.state = state;
     }
 
     /**
@@ -182,7 +203,8 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
      */
     public void toggleState(ElevatorState state1, ElevatorState state2) {
         resetOffset();
-        currentState = currentState == state1
+
+        state = state == state1
             ? state2
             : state1;
     }
