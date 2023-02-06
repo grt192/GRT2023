@@ -36,41 +36,76 @@ public abstract class BaseAutonSequence extends SequentialCommandGroup {
     //all positions from center of robot
     // ^^^ from center of robot? aren't these field coordinates?
     public enum RedPositions {
-        X1(new Pose2d(
+        C3MID(new Pose2d(
             Units.inchesToMeters(RED_PLACEX),
             Units.inchesToMeters(195.55),
             Rotation2d.fromDegrees(0)
-        )),
-        X2(new Pose2d(
+        ), ElevatorState.CONE_MID),
+        C3HIGH(new Pose2d(
+            Units.inchesToMeters(RED_PLACEX),
+            Units.inchesToMeters(195.55),
+            Rotation2d.fromDegrees(0)
+        ), ElevatorState.CONE_HIGH),
+        C2MID(new Pose2d(
             Units.inchesToMeters(RED_PLACEX),
             Units.inchesToMeters(174.123),
             Rotation2d.fromDegrees(0)
-        )),
-        X3(new Pose2d(
+        ), ElevatorState.CUBE_MID),
+        C2HIGH(new Pose2d(
+            Units.inchesToMeters(RED_PLACEX),
+            Units.inchesToMeters(174.123),
+            Rotation2d.fromDegrees(0)
+        ), ElevatorState.CUBE_HIGH),
+        C1MID(new Pose2d(
             Units.inchesToMeters(RED_PLACEX),
             Units.inchesToMeters(152.123),
             Rotation2d.fromDegrees(0)
-        )),
-        X4(new Pose2d(
+        ), ElevatorState.CONE_MID),
+        C1HIGH(new Pose2d(
+            Units.inchesToMeters(RED_PLACEX),
+            Units.inchesToMeters(152.123),
+            Rotation2d.fromDegrees(0)
+        ), ElevatorState.CONE_HIGH),
+        B3MID(new Pose2d(
             Units.inchesToMeters(RED_PLACEX),
             Units.inchesToMeters(129.75),
             Rotation2d.fromDegrees(0)
-        )),
-        X5(new Pose2d(
+        ), ElevatorState.CONE_MID),
+        B3HIGH(new Pose2d(
+            Units.inchesToMeters(RED_PLACEX),
+            Units.inchesToMeters(129.75),
+            Rotation2d.fromDegrees(0)
+        ), ElevatorState.CONE_HIGH),
+        B2MID(new Pose2d(
             Units.inchesToMeters(RED_PLACEX),
             Units.inchesToMeters(107.801),
             Rotation2d.fromDegrees(0)
-        )),
-        X6(new Pose2d(
+        ), ElevatorState.CUBE_MID),
+        B2HIGH(new Pose2d(
+            Units.inchesToMeters(RED_PLACEX),
+            Units.inchesToMeters(107.801),
+            Rotation2d.fromDegrees(0)
+        ), ElevatorState.CUBE_HIGH),
+        B1MID(new Pose2d(
             Units.inchesToMeters(RED_PLACEX),
             Units.inchesToMeters(86.149),
             Rotation2d.fromDegrees(0)
-        )),
-        X7(new Pose2d(
+        ), ElevatorState.CONE_MID),
+        B1HIGH(new Pose2d(
+            Units.inchesToMeters(RED_PLACEX),
+            Units.inchesToMeters(86.149),
+            Rotation2d.fromDegrees(0)
+        ), ElevatorState.CONE_HIGH),
+        A3MID(new Pose2d(
             Units.inchesToMeters(RED_PLACEX),
             Units.inchesToMeters(64.818),
             Rotation2d.fromDegrees(0)
-        )),
+        ), ElevatorState.CONE_MID),
+        A3HIGH(new Pose2d(
+            Units.inchesToMeters(RED_PLACEX),
+            Units.inchesToMeters(64.818),
+            Rotation2d.fromDegrees(0)
+        ), ElevatorState.CONE_HIGH),
         X8(new Pose2d(
             Units.inchesToMeters(RED_PLACEX),
             Units.inchesToMeters(41.761),
