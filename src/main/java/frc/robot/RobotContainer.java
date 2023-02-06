@@ -86,6 +86,8 @@ public class RobotContainer {
         mechLBumper = new JoystickButton(mechController, XboxController.Button.kLeftBumper.value),
         mechRBumper = new JoystickButton(mechController, XboxController.Button.kRightBumper.value);
 
+        
+
     // Commands
     private final ShuffleboardTab shuffleboardTab = Shuffleboard.getTab("Driver");
     private final SendableChooser<Command> autonChooser;
@@ -186,10 +188,12 @@ public class RobotContainer {
             }, swerveSubsystem));
         }
 
+        /*
         rollerSubsystem.setDefaultCommand(new RunCommand(() -> {
             double rollPower = mechController.getRightTriggerAxis() - mechController.getLeftTriggerAxis();
             rollerSubsystem.setRollPower(rollPower);
         }, rollerSubsystem));
+        */
 
         mechYButton.onTrue(new InstantCommand(() -> {
             rollerSubsystem.openMotor();;
@@ -220,9 +224,9 @@ public class RobotContainer {
             tiltedElevatorSubsystem.setState(ElevatorState.HOME);
         }, tiltedElevatorSubsystem));
 
-        mechRBumper.onTrue(new InstantCommand(() -> {
-            tiltedElevatorSubsystem.toggleState(ElevatorState.CUBE_MID, ElevatorState.CUBE_HIGH);
-        }, tiltedElevatorSubsystem));
+        // mechRBumper.onTrue(new InstantCommand(() -> {
+        //     tiltedElevatorSubsystem.toggleState(ElevatorState.CUBE_MID, ElevatorState.CUBE_HIGH);
+        // }, tiltedElevatorSubsystem));
 
         mechLBumper.onTrue(new InstantCommand(() -> {
             tiltedElevatorSubsystem.toggleState(ElevatorState.CONE_MID, ElevatorState.CONE_HIGH);
