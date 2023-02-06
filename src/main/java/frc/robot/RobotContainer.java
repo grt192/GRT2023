@@ -6,6 +6,7 @@ package frc.robot;
 
 import java.util.List;
 
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -86,22 +87,19 @@ public class RobotContainer {
     private final ShuffleboardTab shuffleboardTab = Shuffleboard.getTab("Auton");
     private final SendableChooser<Command> autonChooser;
     private final BalancerCommand balancerCommand;
-
+    
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
     public RobotContainer() {
-        driveController = new XboxDriveController();
+        driveController = new DualJoystickDriveController();
 
-        driveSubsystem = new TankSubsystem();
+        driveSubsystem = new SwerveSubsystem();
         rollerSubsystem = new RollerSubsystem();
         tiltedElevatorSubsystem = new TiltedElevatorSubsystem();
         rollertoTiltedSubsystem = new RollerToTiltedSubsystem(rollerSubsystem, tiltedElevatorSubsystem);
 
         balancerCommand = new BalancerCommand(driveSubsystem);
-
-        // jetsonConnection = new JetsonConnection();
-        // jetsonConnection.start();
 
         // Configure the button bindings
         configureButtonBindings();
@@ -254,6 +252,8 @@ public class RobotContainer {
         shuffleboardTab.add(autonChooser)
             .withPosition(0, 0)
             .withSize(4, 2);
+
+        CameraServer.startAutomaticCapture();
     }
 
     /**

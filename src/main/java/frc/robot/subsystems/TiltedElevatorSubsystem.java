@@ -142,7 +142,7 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        if (zeroLimitSwitch.get()) extensionEncoder.setPosition(0);
+        // if (zeroLimitSwitch.get()) extensionEncoder.setPosition(0); 
 
         if (IS_MANUAL) {
             manualPowerEntry.setDouble(manualPower);
