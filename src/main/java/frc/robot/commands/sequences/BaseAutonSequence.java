@@ -182,11 +182,6 @@ public abstract class BaseAutonSequence extends SequentialCommandGroup {
             Units.inchesToMeters(0),
             Units.inchesToMeters(0),
             Rotation2d.fromDegrees(0)
-        )),
-        BALANCE_INIT(new Pose2d(
-            Units.inchesToMeters(BLUE_INITX),
-            Units.inchesToMeters(107.638),
-            Rotation2d.fromDegrees(180)
         ));
 
         public Pose2d position;
