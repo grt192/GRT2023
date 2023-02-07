@@ -23,11 +23,11 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 import frc.robot.commands.BalancerCommand;
 import frc.robot.commands.sequences.BlueBalanceAuton;
-import frc.robot.commands.sequences.BlueBottomNonBalanceAuton;
-import frc.robot.commands.sequences.BlueTopNonBalanceAuton;
+import frc.robot.commands.sequences.BlueBottomAuton;
+import frc.robot.commands.sequences.BlueTopAuton;
 import frc.robot.commands.sequences.RedBalanceAuton;
-import frc.robot.commands.sequences.RedBottomNonBalanceAuton;
-import frc.robot.commands.sequences.RedTopNonBalanceAuton;
+import frc.robot.commands.sequences.RedBottomAuton;
+import frc.robot.commands.sequences.RedTopAuton;
 import frc.robot.commands.sequences.test.BoxAutonSequence;
 import frc.robot.commands.sequences.test.GRTAutonSequence;
 import frc.robot.commands.sequences.test.RotatingSCurveAutonSequence;
@@ -133,13 +133,13 @@ public class RobotContainer {
             autonChooser.addOption("Box auton", new BoxAutonSequence(swerveSubsystem));
             autonChooser.addOption("GRT path", new GRTAutonSequence(swerveSubsystem));
 
-            autonChooser.addOption("Red top auton", new RedTopNonBalanceAuton(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem));
+            autonChooser.addOption("Red top auton", new RedTopAuton(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem));
             autonChooser.addOption("Red balance auton", new RedBalanceAuton(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem));
-            autonChooser.addOption("Red bottom auton", new RedBottomNonBalanceAuton(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem));
+            autonChooser.addOption("Red bottom auton", new RedBottomAuton(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem));
 
-            autonChooser.addOption("Blue top auton", new BlueTopNonBalanceAuton(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem));
+            autonChooser.addOption("Blue top auton", new BlueTopAuton(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem));
             autonChooser.addOption("Blue balance auton", new BlueBalanceAuton(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem));
-            autonChooser.addOption("Blue bottom auton", new BlueBottomNonBalanceAuton(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem));
+            autonChooser.addOption("Blue bottom auton", new BlueBottomAuton(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem));
         }
 
         shuffleboardTab.add(autonChooser)
