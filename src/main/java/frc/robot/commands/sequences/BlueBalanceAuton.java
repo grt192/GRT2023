@@ -24,7 +24,7 @@ public class BlueBalanceAuton extends BaseAutonSequence {
         Rotation2d.fromDegrees(0)
     );
 
-    private static final PlacePosition PLACE_STATE = PlacePosition.Blue.PLACEHOLDER;
+    private static final PlacePosition PLACE_STATE = PlacePosition.Blue.B2MID;
 
     public BlueBalanceAuton(
         BaseSwerveSubsystem swerveSubsystem,
