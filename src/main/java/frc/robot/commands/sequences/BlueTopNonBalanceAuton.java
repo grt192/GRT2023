@@ -34,8 +34,8 @@ public class BlueTopNonBalanceAuton extends BaseAutonSequence {
         Rotation2d.fromDegrees(90)
     );
 
-    private static final PlacePosition PLACE_STATE = PlacePosition.Blue.PLACEHOLDER;
-    private static final PlacePosition PLACE_STATE_2 = PlacePosition.Blue.PLACEHOLDER;
+    private static final PlacePosition PLACE_STATE = PlacePosition.Blue.C2MID;
+    private static final PlacePosition PLACE_STATE_2 = PlacePosition.Blue.C3MID;
 
     private static final PiecePosition GRAB_POSE = PiecePosition.Blue.PIECE1;
 

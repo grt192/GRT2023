@@ -23,7 +23,8 @@ public class AidenPlaceCommand extends CommandBase {
     @Override
     public void initialize() {
         System.out.println("Roller to place");
-    } 
+        timer.start();
+    }
 
     @Override
     public void execute() {
