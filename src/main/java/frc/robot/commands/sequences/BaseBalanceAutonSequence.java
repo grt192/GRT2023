@@ -3,15 +3,16 @@ package frc.robot.commands.sequences;
 import java.util.List;
 
 import edu.wpi.first.math.geometry.Pose2d;
+
 import frc.robot.commands.BalancerCommand;
 import frc.robot.commands.swerve.FollowPathCommand;
 import frc.robot.subsystems.RollerSubsystem;
 import frc.robot.subsystems.TiltedElevatorSubsystem;
 import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
 
-public abstract class BalanceAutonSequence extends BaseAutonSequence {
+public abstract class BaseBalanceAutonSequence extends BaseAutonSequence {
     /**
-     * maybe not ready Balancing auton sequence.
+     * Balancing auton sequence.
      * @param swerveSubsystem The swerve subsystem.
      * @param rollerSubsystem The roller subsystem.
      * @param tiltedElevatorSubsystem The tilted elevator subsystem.
@@ -19,7 +20,7 @@ public abstract class BalanceAutonSequence extends BaseAutonSequence {
      * @param placeState The state of the robot when placing the preloaded game piece (pose and elevator state).
      * @param outsidePose The position outside the community to go to for extra points.
      */
-    public BalanceAutonSequence(
+    public BaseBalanceAutonSequence(
         BaseSwerveSubsystem swerveSubsystem, RollerSubsystem rollerSubsystem, TiltedElevatorSubsystem tiltedElevatorSubsystem,
         Pose2d initialPose, PlacePosition placeState, Pose2d outsidePose
     ) {

@@ -12,7 +12,7 @@ import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
  * The middle auton sequence, where the robot deposits its preloaded game piece and balances
  * on the charging station.
  */
-public class BlueBalanceAuton extends BalanceAutonSequence {
+public class BlueBalanceAuton extends BaseBalanceAutonSequence {
     private static final Pose2d INITIAL_POSE = new Pose2d(
         Units.inchesToMeters(PlacePosition.BLUE_INIT_X_IN),
         Units.inchesToMeters(107.638),
