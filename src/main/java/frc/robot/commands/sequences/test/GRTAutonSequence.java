@@ -1,4 +1,4 @@
-package frc.robot.commands.sequences;
+package frc.robot.commands.sequences.test;
 
 import java.util.List;
 
