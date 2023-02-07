@@ -30,9 +30,9 @@ public abstract class BaseAutonSequence extends SequentialCommandGroup {
      * @param rollerSubsystem The roller subsystem.
      * @param tiltedElevatorSubsystem The tilted elevator subsystem.
      * @param initialPose The initial pose of the robot.
-     * @param midPose1 The first midpose of the sequence.
-     * @param midPose2 The second midpose of the sequence.
-     * @param midpose3 The third midpose of the sequence.
+     * @param midPose1 The first midpose of the sequence. Avoids Charging Station.
+     * @param midPose2 The second midpose of the sequence. Keeps robot in same orentiation.
+     * @param midpose3 The third midpose of the sequence. Turns robot 90 degrees to grab game piece from the side (top).
      * @param placeState The state of the robot when placing the first game piece (pose and elevator state).
      * @param grabPose The pose to grab the second game piece at.
      * @param placeState2 The state of the robot when placing the second game piece (pose and elevator state).
@@ -64,8 +64,8 @@ public abstract class BaseAutonSequence extends SequentialCommandGroup {
      * @param rollerSubsystem The roller subsystem.
      * @param tiltedElevatorSubsystem Thetilted elevator subsystem.
      * @param initialPose The initial pose of the robot.
-     * @param midPose1 The first midpose of the sequence.
-     * @param midPose2 The second midpose of the sequence.
+     * @param midPose1 The first midpose of the sequence. Avoids the charging station.
+     * @param midPose2 The second midpose of the sequence. Keeps robot in same orientation to not hit stuff.
      * @param placeState The state of the robot when placing the first game piece (pose and elevator state).
      * @param grabPose The pose to grab the second game piece at.
      * @param placeState2 The state of the robot when placing the second game piece (pose and elevator state).

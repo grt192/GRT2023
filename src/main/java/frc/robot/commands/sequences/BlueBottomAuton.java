@@ -12,7 +12,7 @@ import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
  * The top and bottom auton sequences, where the robot deposits its preloaded game piece and picks up
  * and places another.
  */
-public class BlueBottomNonBalanceAuton extends BaseAutonSequence {
+public class BlueBottomAuton extends BaseAutonSequence {
     private static final Pose2d INITIAL_POSE = new Pose2d(
         Units.inchesToMeters(PlacePosition.BLUE_INIT_X_IN),
         Units.inchesToMeters(12.873),
@@ -34,7 +34,7 @@ public class BlueBottomNonBalanceAuton extends BaseAutonSequence {
 
     private static final PiecePosition GRAB_POSE = PiecePosition.Blue.PIECE1;
 
-    public BlueBottomNonBalanceAuton(
+    public BlueBottomAuton(
         BaseSwerveSubsystem swerveSubsystem,
         RollerSubsystem rollerSubsystem,
         TiltedElevatorSubsystem tiltedElevatorSubsystem
