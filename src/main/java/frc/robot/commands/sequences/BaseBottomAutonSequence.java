@@ -28,7 +28,7 @@ public abstract class BaseBottomAutonSequence extends BaseAutonSequence {
         Pose2d initialPose, Pose2d midPose1, Pose2d midPose2, 
         PlacePosition placeState, PiecePosition grabPose, PlacePosition placeState2
     ) {
-        super(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem);
+        super(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, initialPose);
 
         addCommands(
             // Place preloaded game piece

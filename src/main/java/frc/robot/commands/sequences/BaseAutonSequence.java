@@ -4,6 +4,7 @@ import java.util.List;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
 import frc.robot.commands.grabber.AidenIntakeCommand;
@@ -20,12 +21,17 @@ public abstract class BaseAutonSequence extends SequentialCommandGroup {
     protected final RollerSubsystem rollerSubsystem;
     protected final TiltedElevatorSubsystem tiltedElevatorSubsystem;
 
-    public BaseAutonSequence(BaseSwerveSubsystem swerveSubsystem, RollerSubsystem rollerSubsystem, TiltedElevatorSubsystem tiltedElevatorSubsystem) {
+    public BaseAutonSequence(
+        BaseSwerveSubsystem swerveSubsystem, RollerSubsystem rollerSubsystem, TiltedElevatorSubsystem tiltedElevatorSubsystem,
+        Pose2d initialPose
+    ) {
         this.swerveSubsystem = swerveSubsystem;
         this.rollerSubsystem = rollerSubsystem;
         this.tiltedElevatorSubsystem = tiltedElevatorSubsystem;
 
         addRequirements(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem);
+
+        addCommands(new InstantCommand(() -> swerveSubsystem.resetPose(initialPose), swerveSubsystem));
     }
 
     /**

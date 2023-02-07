@@ -24,7 +24,7 @@ public abstract class BaseBalanceAutonSequence extends BaseAutonSequence {
         BaseSwerveSubsystem swerveSubsystem, RollerSubsystem rollerSubsystem, TiltedElevatorSubsystem tiltedElevatorSubsystem,
         Pose2d initialPose, PlacePosition placeState, Pose2d outsidePose
     ) {
-        super(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem);
+        super(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, initialPose);
 
         addCommands(
             // Place preloaded game piece
