@@ -3,8 +3,6 @@ package frc.robot.commands.sequences;
 import java.util.List;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
@@ -26,224 +24,23 @@ public abstract class BaseAutonSequence extends SequentialCommandGroup {
     private final RollerSubsystem rollerSubsystem;
     private final TiltedElevatorSubsystem tiltedElevatorSubsystem;
 
-    public static double BLUE_INITX = 70.007;
-    public static double RED_INITX = 581.072;
-
-    private static double RED_PLACEX = 578.737;
-    private static double BLUE_PLACEX = 72.013;
-
-    //positions for placing gamepieces
-    //all positions from center of robot
-    // ^^^ from center of robot? aren't these field coordinates?
-    public enum RedPositions {
-        C3MID(new Pose2d(
-            Units.inchesToMeters(RED_PLACEX),
-            Units.inchesToMeters(195.55),
-            Rotation2d.fromDegrees(0)
-        ), ElevatorState.CONE_MID),
-        C3HIGH(new Pose2d(
-            Units.inchesToMeters(RED_PLACEX),
-            Units.inchesToMeters(195.55),
-            Rotation2d.fromDegrees(0)
-        ), ElevatorState.CONE_HIGH),
-        C2MID(new Pose2d(
-            Units.inchesToMeters(RED_PLACEX),
-            Units.inchesToMeters(174.123),
-            Rotation2d.fromDegrees(0)
-        ), ElevatorState.CUBE_MID),
-        C2HIGH(new Pose2d(
-            Units.inchesToMeters(RED_PLACEX),
-            Units.inchesToMeters(174.123),
-            Rotation2d.fromDegrees(0)
-        ), ElevatorState.CUBE_HIGH),
-        C1MID(new Pose2d(
-            Units.inchesToMeters(RED_PLACEX),
-            Units.inchesToMeters(152.123),
-            Rotation2d.fromDegrees(0)
-        ), ElevatorState.CONE_MID),
-        C1HIGH(new Pose2d(
-            Units.inchesToMeters(RED_PLACEX),
-            Units.inchesToMeters(152.123),
-            Rotation2d.fromDegrees(0)
-        ), ElevatorState.CONE_HIGH),
-        B3MID(new Pose2d(
-            Units.inchesToMeters(RED_PLACEX),
-            Units.inchesToMeters(129.75),
-            Rotation2d.fromDegrees(0)
-        ), ElevatorState.CONE_MID),
-        B3HIGH(new Pose2d(
-            Units.inchesToMeters(RED_PLACEX),
-            Units.inchesToMeters(129.75),
-            Rotation2d.fromDegrees(0)
-        ), ElevatorState.CONE_HIGH),
-        B2MID(new Pose2d(
-            Units.inchesToMeters(RED_PLACEX),
-            Units.inchesToMeters(107.801),
-            Rotation2d.fromDegrees(0)
-        ), ElevatorState.CUBE_MID),
-        B2HIGH(new Pose2d(
-            Units.inchesToMeters(RED_PLACEX),
-            Units.inchesToMeters(107.801),
-            Rotation2d.fromDegrees(0)
-        ), ElevatorState.CUBE_HIGH),
-        B1MID(new Pose2d(
-            Units.inchesToMeters(RED_PLACEX),
-            Units.inchesToMeters(86.149),
-            Rotation2d.fromDegrees(0)
-        ), ElevatorState.CONE_MID),
-        B1HIGH(new Pose2d(
-            Units.inchesToMeters(RED_PLACEX),
-            Units.inchesToMeters(86.149),
-            Rotation2d.fromDegrees(0)
-        ), ElevatorState.CONE_HIGH),
-        A3MID(new Pose2d(
-            Units.inchesToMeters(RED_PLACEX),
-            Units.inchesToMeters(64.818),
-            Rotation2d.fromDegrees(0)
-        ), ElevatorState.CONE_MID),
-        A3HIGH(new Pose2d(
-            Units.inchesToMeters(RED_PLACEX),
-            Units.inchesToMeters(64.818),
-            Rotation2d.fromDegrees(0)
-        ), ElevatorState.CONE_HIGH),
-        X8(new Pose2d(
-            Units.inchesToMeters(RED_PLACEX),
-            Units.inchesToMeters(41.761),
-            Rotation2d.fromDegrees(0)
-        )),
-        X9(new Pose2d(
-            Units.inchesToMeters(RED_PLACEX),
-            Units.inchesToMeters(20.016),
-            Rotation2d.fromDegrees(0)
-        )),
-
-        PIECE1(new Pose2d(
-            Units.inchesToMeters(0),
-            Units.inchesToMeters(0),
-            Rotation2d.fromDegrees(0)
-        )),
-        PIECE2(new Pose2d(
-            Units.inchesToMeters(0),
-            Units.inchesToMeters(0),
-            Rotation2d.fromDegrees(0)
-        )),
-        PIECE3(new Pose2d(
-            Units.inchesToMeters(0),
-            Units.inchesToMeters(0),
-            Rotation2d.fromDegrees(0)
-        )),
-        PIECE4(new Pose2d(
-            Units.inchesToMeters(0),
-            Units.inchesToMeters(0),
-            Rotation2d.fromDegrees(0)
-        )),
-        BALANCE_INIT(new Pose2d(
-            Units.inchesToMeters(RED_INITX),
-            Units.inchesToMeters(107.638),
-            Rotation2d.fromDegrees(0)
-        ));
-
-        public Pose2d position;
-
-        private RedPositions(Pose2d position){
-            this.position = position;
-        }
-    } 
-
-    //positions for placing gamepieces
-    public enum BluePositions {
-        X1(new Pose2d(
-            Units.inchesToMeters(BLUE_PLACEX),
-            Units.inchesToMeters(195.55),
-            Rotation2d.fromDegrees(180)
-        )),
-        X2(new Pose2d(
-            Units.inchesToMeters(BLUE_PLACEX),
-            Units.inchesToMeters(174.123),
-            Rotation2d.fromDegrees(180)
-        )),
-        X3(new Pose2d(
-            Units.inchesToMeters(BLUE_PLACEX),
-            Units.inchesToMeters(152.123),
-            Rotation2d.fromDegrees(180)
-        )),
-        X4(new Pose2d(
-            Units.inchesToMeters(BLUE_PLACEX),
-            Units.inchesToMeters(129.75),
-            Rotation2d.fromDegrees(180)
-        )),
-        X5(new Pose2d(
-            Units.inchesToMeters(BLUE_PLACEX),
-            Units.inchesToMeters(107.801),
-            Rotation2d.fromDegrees(180)
-        )),
-        X6(new Pose2d(
-            Units.inchesToMeters(BLUE_PLACEX),
-            Units.inchesToMeters(86.149),
-            Rotation2d.fromDegrees(180)
-        )),
-        X7(new Pose2d(
-            Units.inchesToMeters(BLUE_PLACEX),
-            Units.inchesToMeters(64.818),
-            Rotation2d.fromDegrees(180)
-        )),
-        X8(new Pose2d(
-            Units.inchesToMeters(BLUE_PLACEX),
-            Units.inchesToMeters(41.761),
-            Rotation2d.fromDegrees(180)
-        )),
-        X9(new Pose2d(
-            Units.inchesToMeters(BLUE_PLACEX),
-            Units.inchesToMeters(20.016),
-            Rotation2d.fromDegrees(180)
-        )),
-
-        PIECE1(new Pose2d(
-            Units.inchesToMeters(0),
-            Units.inchesToMeters(0),
-            Rotation2d.fromDegrees(0)
-        )),
-        PIECE2(new Pose2d(
-            Units.inchesToMeters(0),
-            Units.inchesToMeters(0),
-            Rotation2d.fromDegrees(0)
-        )),
-        PIECE3(new Pose2d(
-            Units.inchesToMeters(0),
-            Units.inchesToMeters(0),
-            Rotation2d.fromDegrees(0)
-        )),
-        PIECE4(new Pose2d(
-            Units.inchesToMeters(0),
-            Units.inchesToMeters(0),
-            Rotation2d.fromDegrees(0)
-        ));
-
-        public Pose2d position;
-
-        private BluePositions(Pose2d position){
-            this.position = position;
-        }
-    }
-
     /**
-     * non balancing TOP auton sequence
-     * @param robotContainer
-     * @param initialPose initPose
-     * @param midPose1 midPose1
-     * @param midPose2 midPose2
-     * @param midpose3 misPose3
-     * @param placePose placepose of first gamepeice
-     * @param grabPose grabpose of 2nd gamepiece
-     * @param placePose2 placepose of 2nd gamepiece
-     * @param elevatorPosition The height to place the 1st game piece.
-     * @param elevatorPosition2 The height to place the 2nd game piece.
+     * Non-balancing top auton sequence.
+     * @param swerveSubsystem The swerve subsystem.
+     * @param rollerSubsystem The roller subsystem.
+     * @param tiltedElevatorSubsystem The tilted elevator subsystem.
+     * @param initialPose The initial pose of the robot.
+     * @param midPose1 The first midpose of the sequence.
+     * @param midPose2 The second midpose of the sequence.
+     * @param midpose3 The third midpose of the sequence.
+     * @param placeState The state of the robot when placing the first game piece (pose and elevator state).
+     * @param grabPose The pose to grab the second game piece at.
+     * @param placeState2 The state of the robot when placing the second game piece (pose and elevator state).
      */
     public BaseAutonSequence(
         BaseSwerveSubsystem swerveSubsystem, RollerSubsystem rollerSubsystem, TiltedElevatorSubsystem tiltedElevatorSubsystem,
         Pose2d initialPose, Pose2d midPose1, Pose2d midPose2, Pose2d midpose3, 
-        Pose2d placePose, Pose2d grabPose, Pose2d placePose2, 
-        ElevatorState elevatorPosition, ElevatorState elevatorPosition2
+        PlacePosition placeState, PiecePosition grabPose, PlacePosition placeState2
     ) {
         this.swerveSubsystem = swerveSubsystem;
         this.rollerSubsystem = rollerSubsystem;
@@ -253,31 +50,30 @@ public abstract class BaseAutonSequence extends SequentialCommandGroup {
 
         addCommands(
             // Place preloaded game piece
-            goAndPlaceTop(initialPose, midPose1, midPose2, midpose3, placePose, elevatorPosition),
+            goAndPlaceTop(initialPose, midPose1, midPose2, midpose3, placeState),
             // Go and grab 2nd piece
-            goAndGrabTop(placePose, midPose1, midPose2, midpose3, grabPose), 
+            goAndGrabTop(placeState.getPose(), midPose1, midPose2, midpose3, grabPose), 
             // Go and place grabbed piece
-            goAndPlaceTop(grabPose, midPose1, midPose2, midpose3, placePose2, elevatorPosition2)
+            goAndPlaceTop(grabPose.getPose(), midPose1, midPose2, midpose3, placeState2)
         );
     }
 
     /**
-     * non balancing BOTTOM auton sequence
-     * @param robotContainer
-     * @param initialPose initPose
-     * @param midPose1 midPose1
-     * @param midPose2 midPose2
-     * @param placePose placepose of first gamepeice
-     * @param grabPose grabpose of 2nd gamepiece
-     * @param placePose2 placepose of 2nd gamepiece
-     * @param elevatorPosition The height to place the 1st game piece.
-     * @param elevatorPosition2 The height to place the 2nd game piece.
+     * Non-balancing bottom auton sequence.
+     * @param swerveSubsystem The swerve subsystem.
+     * @param rollerSubsystem The roller subsystem.
+     * @param tiltedElevatorSubsystem Thetilted elevator subsystem.
+     * @param initialPose The initial pose of the robot.
+     * @param midPose1 The first midpose of the sequence.
+     * @param midPose2 The second midpose of the sequence.
+     * @param placeState The state of the robot when placing the first game piece (pose and elevator state).
+     * @param grabPose The pose to grab the second game piece at.
+     * @param placeState2 The state of the robot when placing the second game piece (pose and elevator state).
      */
     public BaseAutonSequence(
         BaseSwerveSubsystem swerveSubsystem, RollerSubsystem rollerSubsystem, TiltedElevatorSubsystem tiltedElevatorSubsystem,
         Pose2d initialPose, Pose2d midPose1, Pose2d midPose2, 
-        Pose2d placePose, Pose2d grabPose, Pose2d placePose2, 
-        ElevatorState elevatorPosition, ElevatorState elevatorPosition2
+        PlacePosition placeState, PiecePosition grabPose, PlacePosition placeState2
     ) {
         this.swerveSubsystem = swerveSubsystem;
         this.rollerSubsystem = rollerSubsystem;
@@ -287,26 +83,26 @@ public abstract class BaseAutonSequence extends SequentialCommandGroup {
 
         addCommands(
             // Place preloaded game piece
-            goAndPlaceBottom(initialPose, midPose1, midPose2, placePose, elevatorPosition),
+            goAndPlaceBottom(initialPose, midPose1, midPose2, placeState),
             // Go and grab 2nd piece
-            goAndGrabBottom(placePose, midPose1, midPose2, grabPose),
+            goAndGrabBottom(placeState.getPose(), midPose1, midPose2, grabPose),
             // Go and place grabbed piece
-            goAndPlaceBottom(grabPose, midPose1, midPose2, placePose2, elevatorPosition2)
+            goAndPlaceBottom(grabPose.getPose(), midPose1, midPose2, placeState2)
         );
     }
 
     /**
-     * BALANCING auton sequence
-     * @param robotContainer
-     * @param initialPose initPose
-     * @param placePose placepose of first gamepeice
-     * @param outsidePose outside pose to gt OUTSIDE of the community (for extra points)
-     * @param elevatorPosition The height to place the 1st game piece.
+     * Balancing auton sequence.
+     * @param swerveSubsystem The swerve subsystem.
+     * @param rollerSubsystem The roller subsystem.
+     * @param tiltedElevatorSubsystem The tilted elevator subsystem.
+     * @param initialPose The initial pose of the robot.
+     * @param placeState The state of the robot when placing the preloaded game piece (pose and elevator state).
+     * @param outsidePose The position outside the community to go to for extra points.
      */
     public BaseAutonSequence(
         BaseSwerveSubsystem swerveSubsystem, RollerSubsystem rollerSubsystem, TiltedElevatorSubsystem tiltedElevatorSubsystem,
-        Pose2d initialPose, Pose2d placePose, Pose2d outsidePose, 
-        ElevatorState elevatorPosition
+        Pose2d initialPose, PlacePosition placeState, Pose2d outsidePose
     ) {
         this.swerveSubsystem = swerveSubsystem;
         this.rollerSubsystem = rollerSubsystem;
@@ -316,9 +112,9 @@ public abstract class BaseAutonSequence extends SequentialCommandGroup {
 
         addCommands(
             // Place preloaded game piece
-            goAndPlace(initialPose, placePose, elevatorPosition),
+            goAndPlace(initialPose, placeState),
             // Go out of community
-            new FollowPathCommand(swerveSubsystem, placePose, List.of(), outsidePose),
+            new FollowPathCommand(swerveSubsystem, placeState.getPose(), List.of(), outsidePose),
             // Go and balance on charging station
             new BalancerCommand(swerveSubsystem)
         );
@@ -330,8 +126,8 @@ public abstract class BaseAutonSequence extends SequentialCommandGroup {
      * @param finalPose The destination pose of the robot.
      * @return The `SequentialCommandGroup` representing running the commands in order.
      */
-    private Command goAndGrab(Pose2d initialPose, Pose2d finalPose) {
-        return new FollowPathCommand(swerveSubsystem, initialPose, List.of(), finalPose)
+    private Command goAndGrab(Pose2d initialPose, PiecePosition finalPose) {
+        return new FollowPathCommand(swerveSubsystem, initialPose, List.of(), finalPose.getPose())
             .alongWith(new JulianLevelCommand(tiltedElevatorSubsystem, ElevatorState.GROUND))
             .alongWith(new AidenIntakeCommand(rollerSubsystem));
     }
@@ -339,13 +135,12 @@ public abstract class BaseAutonSequence extends SequentialCommandGroup {
     /**
      * Goes to a position and places the currently held game piece.
      * @param intialPose The initial pose of the robot.
-     * @param finalPose The destination pose of the robot.
-     * @param elevatorPosition The target position of the mover.
+     * @param finalState The destination pose and elevator state of the robot.
      * @return The `SequentialCommandGroup` representing running the commands in order.
      */
-    private Command goAndPlace(Pose2d initialPose, Pose2d finalPose, ElevatorState elevatorPosition) {
-        return new FollowPathCommand(swerveSubsystem, initialPose, List.of(), finalPose)
-            .alongWith(new JulianLevelCommand(tiltedElevatorSubsystem, elevatorPosition)) // or .alongWith()?
+    private Command goAndPlace(Pose2d initialPose, PlacePosition finalState) {
+        return new FollowPathCommand(swerveSubsystem, initialPose, List.of(), finalState.getPose())
+            .alongWith(new JulianLevelCommand(tiltedElevatorSubsystem, finalState.getElevatorState())) // or .alongWith()?
             .andThen(new AidenPlaceCommand(rollerSubsystem));
     }
 
@@ -355,10 +150,10 @@ public abstract class BaseAutonSequence extends SequentialCommandGroup {
      * @param midPose1 Middle pose 1
      * @param midPose2 Middle pose 2 (usually the pose that turns the robot 90)
      * @param midPose3 (usually the pose that turns the robot 90)
-     * @param finalPose Desitnation position of robot
-     * @return
+     * @param finalPose Destination position of robot
+     * @return The `SequentialCommandGroup` representing running the commands in order.
      */
-    private Command goAndGrabTop(Pose2d initialPose, Pose2d midPose1, Pose2d midPose2, Pose2d midPose3, Pose2d finalPose) {
+    private Command goAndGrabTop(Pose2d initialPose, Pose2d midPose1, Pose2d midPose2, Pose2d midPose3, PiecePosition finalPose) {
         return new FollowPathCommand(swerveSubsystem, initialPose, List.of(), midPose1)
             .andThen(new FollowPathCommand(swerveSubsystem, midPose1, List.of(), midPose2))
             .andThen(new FollowPathCommand(swerveSubsystem, midPose2, List.of(), midPose3))
@@ -371,14 +166,14 @@ public abstract class BaseAutonSequence extends SequentialCommandGroup {
      * @param midPose1 Middle pose 1
      * @param midPose2 Middle pose 2 
      * @param midPose3 (usually the pose that turns the robot 90)
-     * @param finalPose Desitnation position of robot
-     * @return
+     * @param finalState Final state of the robot when placing the game piece.
+     * @return The `SequentialCommandGroup` representing running the commands in order.
      */
-    private Command goAndPlaceTop(Pose2d initialPose, Pose2d midPose1, Pose2d midPose2, Pose2d midPose3, Pose2d finalPose, ElevatorState elevatorPosition) {
+    private Command goAndPlaceTop(Pose2d initialPose, Pose2d midPose1, Pose2d midPose2, Pose2d midPose3, PlacePosition finalState) {
         return new FollowPathCommand(swerveSubsystem, initialPose, List.of(), midPose1)
             .andThen(new FollowPathCommand(swerveSubsystem, midPose1, List.of(), midPose2))
             .andThen(new FollowPathCommand(swerveSubsystem, midPose2, List.of(), midPose3))
-            .andThen(goAndPlace(midPose3, finalPose, elevatorPosition));
+            .andThen(goAndPlace(midPose3, finalState));
     }
 
     /**
@@ -386,10 +181,10 @@ public abstract class BaseAutonSequence extends SequentialCommandGroup {
      * @param initialPose The initial pose of the robot
      * @param midPose1 Middle pose 1
      * @param midPose2 Middle pose 2 
-     * @param finalPose Desitnation position of robot
-     * @return
+     * @param finalPose Destination position of robot
+     * @return The `SequentialCommandGroup` representing running the commands in order.
      */
-    private Command goAndGrabBottom(Pose2d initialPose, Pose2d midPose1, Pose2d midPose2, Pose2d finalPose) {
+    private Command goAndGrabBottom(Pose2d initialPose, Pose2d midPose1, Pose2d midPose2, PiecePosition finalPose) {
         return new FollowPathCommand(swerveSubsystem, initialPose, List.of(), midPose1)
             .andThen(new FollowPathCommand(swerveSubsystem, midPose1, List.of(), midPose2))
             .andThen(goAndGrab(midPose2, finalPose));
@@ -400,12 +195,12 @@ public abstract class BaseAutonSequence extends SequentialCommandGroup {
      * @param initialPose The initial pose of the robot
      * @param midPose1 Middle pose 1
      * @param midPose2 Middle pose 2 
-     * @param finalPose Desitnation position of robot
-     * @return
+     * @param finalState Final state of the robot when placing the game piece.
+     * @return The `SequentialCommandGroup` representing running the commands in order.
      */
-    private Command goAndPlaceBottom(Pose2d initialPose, Pose2d midPose1, Pose2d midPose2, Pose2d finalPose, ElevatorState elevatorPosition) {
+    private Command goAndPlaceBottom(Pose2d initialPose, Pose2d midPose1, Pose2d midPose2, PlacePosition finalState) {
         return new FollowPathCommand(swerveSubsystem, initialPose, List.of(), midPose1)
             .andThen(new FollowPathCommand(swerveSubsystem, midPose1, List.of(), midPose2))
-            .andThen(goAndPlace(midPose2, finalPose, elevatorPosition));
+            .andThen(goAndPlace(midPose2, finalState));
     }
 }
