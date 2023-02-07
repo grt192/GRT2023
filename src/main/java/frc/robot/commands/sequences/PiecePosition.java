@@ -14,7 +14,7 @@ public interface PiecePosition {
         PIECE1(new Pose2d(
             Units.inchesToMeters(blueX),
             Units.inchesToMeters(179.893),
-            Rotation2d.fromDegrees(0)
+            Rotation2d.fromDegrees(-90)
         )),
         PIECE2(new Pose2d(
             Units.inchesToMeters(blueX),
@@ -49,7 +49,7 @@ public interface PiecePosition {
         PIECE1(new Pose2d(
             Units.inchesToMeters(redX),
             Units.inchesToMeters(179.893),
-            Rotation2d.fromDegrees(180)
+            Rotation2d.fromDegrees(-90)
         )),
         PIECE2(new Pose2d(
             Units.inchesToMeters(redX),
