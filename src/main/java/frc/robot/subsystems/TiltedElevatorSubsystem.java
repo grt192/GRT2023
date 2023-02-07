@@ -76,16 +76,15 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
     private final GenericEntry offsetDistEntry = shuffleboardTab.add("offset (in)", offsetDistMeters).getEntry();
 
     public enum ElevatorState {
-        GROUND(0){
-            public double getExtension(boolean piece){
-                if(piece){
-                    return extendDistanceMeters + Units.inchesToMeters(1);
-                }
-                return(extendDistanceMeters);
-                
+        GROUND(0) {
+            @Override
+            public double getExtension(boolean hasPiece) {
+                // If a piece is being held, raise it slightly so that it doesn't drag across the floor.
+                return hasPiece 
+                    ? extendDistanceMeters + Units.inchesToMeters(1)
+                    : extendDistanceMeters;
             }
         },
-        GROUNDINCH(Units.inchesToMeters(1)), // height gamepiece should be held at when at GROUND
         CHUTE(Units.inchesToMeters(40)),
         SUBSTATION(Units.inchesToMeters(50)), // absolute height = 37.375 in
         CUBE_MID(Units.inchesToMeters(33)), // absolute height = 14.25 in
@@ -93,10 +92,7 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
         CONE_MID(Units.inchesToMeters(50)), // absolute height = 34 in
         CONE_HIGH(Units.inchesToMeters(0)); // absolute height = 46 in
 
-        public double extendDistanceMeters; // meters, extension distance of winch
-
-        private static final double CUBE_OFFSET = Units.inchesToMeters(0); // meters, intake jaw to carriage bottom
-        private static final double CONE_OFFSET = Units.inchesToMeters(0); // meters, intake jaw to carriage bottom
+        protected double extendDistanceMeters; // meters, extension distance of winch
 
         /**
          * ElevatorState defined by extension of elevator from zero. All values in meters and radians.
@@ -105,7 +101,13 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
         private ElevatorState(double extendDistanceMeters) {
             this.extendDistanceMeters = extendDistanceMeters;
         }
-        public double getExtension(boolean piece){
+
+        /**
+         * Gets the extension commanded by the elevator state.
+         * @param hasPiece Whether there is a game piece in the subsystem.
+         * @return The distance, in meters, the elevator should extend to.
+         */
+        public double getExtension(boolean hasPiece) {
             return this.extendDistanceMeters;
         }
     }
@@ -172,15 +174,19 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
         // Units.inchesToMeters(targetExtensionEntry.getDouble(0));
         this.targetExtension = state.getExtension(pieceGrabbed) + offsetDistMeters;
 
-        // give up 
+        // If we're trying to get to 0, set the motor to 0 power so the carriage drops with gravity
+        // and hits the hard stop / limit switch.
         if (this.targetExtension == 0 && currentPos < Units.inchesToMeters(1)) {
             extensionMotor.set(0);
         } else if (this.targetExtension == 0 && currentPos < Units.inchesToMeters(5)) {
-            // bring down to lim switch
             extensionMotor.set(-0.075);
         } else {
             // Set PID reference
-            extensionPidController.setReference(MathUtil.clamp(targetExtension, 0, EXTENSION_LIMIT), ControlType.kSmartMotion, 0, arbFeedforward, ArbFFUnits.kPercentOut);
+            extensionPidController.setReference(
+                MathUtil.clamp(targetExtension, 0, EXTENSION_LIMIT),
+                ControlType.kSmartMotion, 0,
+                arbFeedforward, ArbFFUnits.kPercentOut
+            );
         }
 
         currentStateEntry.setString(state.toString());
@@ -203,14 +209,13 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
      */
     public void toggleState(ElevatorState state1, ElevatorState state2) {
         resetOffset();
-
         state = state == state1
             ? state2
             : state1;
     }
 
     /**
-     * Changes the distance offset from given driver powers.
+     * Changes the distance offset from given [-1.0, 1.0] driver powers.
      * @param power The power to change the offset by.
      */
     public void changeOffsetDistMeters(double power) {
@@ -226,7 +231,7 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
 
     /**
      * Sets the manual power of this subsystem.
-     * @param power Xbox-controlled power
+     * @param power The manual [-1.0, 1.0] driver-controlled power.
      */
     public void setManualPower(double power) {
         if (power > 0.5) {

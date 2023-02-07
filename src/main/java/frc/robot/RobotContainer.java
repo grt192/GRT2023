@@ -55,7 +55,7 @@ public class RobotContainer {
     private final BaseDrivetrain driveSubsystem;
     private final RollerSubsystem rollerSubsystem;
     private final TiltedElevatorSubsystem tiltedElevatorSubsystem;
-    private final RollerToTiltedSubsystem rollertoTiltedSubsystem;
+    private final RollerToTiltedSubsystem rollerToTiltedSubsystem;
 
     //private final JetsonConnection jetsonConnection;
 
@@ -97,7 +97,7 @@ public class RobotContainer {
         driveSubsystem = new SwerveSubsystem();
         rollerSubsystem = new RollerSubsystem();
         tiltedElevatorSubsystem = new TiltedElevatorSubsystem();
-        rollertoTiltedSubsystem = new RollerToTiltedSubsystem(rollerSubsystem, tiltedElevatorSubsystem);
+        rollerToTiltedSubsystem = new RollerToTiltedSubsystem(rollerSubsystem, tiltedElevatorSubsystem);
 
         balancerCommand = new BalancerCommand(driveSubsystem);
 
