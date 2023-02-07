@@ -95,6 +95,7 @@ public class RobotContainer {
 
         driveSubsystem = new SwerveSubsystem(photonWrapper);
         rollerSubsystem = new RollerSubsystem();
+        tiltedElevatorSubsystem = new TiltedElevatorSubsystem();
         // gripperSubsystem = new GripperSubsytem();
 
         balancerCommand = new BalancerCommand(driveSubsystem);
