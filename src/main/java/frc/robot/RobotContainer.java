@@ -30,6 +30,7 @@ import frc.robot.commands.sequences.RedBottomAuton;
 import frc.robot.commands.sequences.RedTopAuton;
 import frc.robot.commands.sequences.test.BoxAutonSequence;
 import frc.robot.commands.sequences.test.GRTAutonSequence;
+import frc.robot.commands.sequences.test.HighRotationLinePath;
 import frc.robot.commands.sequences.test.RotatingSCurveAutonSequence;
 import frc.robot.commands.swerve.FollowPathCommand;
 import frc.robot.controllers.BaseDriveController;
@@ -122,13 +123,7 @@ public class RobotContainer {
         if (driveSubsystem instanceof BaseSwerveSubsystem) {
             final BaseSwerveSubsystem swerveSubsystem = (BaseSwerveSubsystem) driveSubsystem;
 
-            autonChooser.addOption("Small straight-line curve", new FollowPathCommand(
-                swerveSubsystem, 
-                new Pose2d(), 
-                List.of(), 
-                new Pose2d(1, 0, Rotation2d.fromDegrees(90))
-            ));
-
+            autonChooser.addOption("Small straight-line curve", new HighRotationLinePath(swerveSubsystem));
             autonChooser.addOption("Rotating S-curve", new RotatingSCurveAutonSequence(swerveSubsystem));
             autonChooser.addOption("Box auton", new BoxAutonSequence(swerveSubsystem));
             autonChooser.addOption("GRT path", new GRTAutonSequence(swerveSubsystem));
