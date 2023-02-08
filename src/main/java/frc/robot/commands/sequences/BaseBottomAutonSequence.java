@@ -32,11 +32,11 @@ public abstract class BaseBottomAutonSequence extends BaseAutonSequence {
 
         addCommands(
             // Place preloaded game piece
-            goAndPlaceBottom(initialPose, midPose1, midPose2, placeState),
+            goAndPlaceBottomPath(initialPose, midPose1, midPose2, placeState),
             // Go and grab 2nd piece
-            goAndGrabBottom(placeState.getPose(), midPose1, midPose2, grabPose),
+            goAndGrabBottomPath(placeState.getPose(), midPose1, midPose2, grabPose),
             // Go and place grabbed piece
-            goAndPlaceBottom(grabPose.getPose(), midPose1, midPose2, placeState2)
+            goAndPlaceBottomPath(grabPose.getPose(), midPose1, midPose2, placeState2)
         );
     }
 
@@ -48,7 +48,7 @@ public abstract class BaseBottomAutonSequence extends BaseAutonSequence {
      * @param finalPose Destination position of robot
      * @return The `SequentialCommandGroup` representing running the commands in order.
      */
-    protected Command goAndGrabBottom(Pose2d initialPose, Pose2d midPose1, Pose2d midPose2, PiecePosition finalPose) {
+    protected Command goAndGrabBottomPath(Pose2d initialPose, Pose2d midPose1, Pose2d midPose2, PiecePosition finalPose) {
         return new FollowPathCommand(swerveSubsystem, initialPose, List.of(), midPose1)
             .andThen(new FollowPathCommand(swerveSubsystem, midPose1, List.of(), midPose2))
             .andThen(goAndGrab(midPose2, finalPose));
@@ -62,7 +62,7 @@ public abstract class BaseBottomAutonSequence extends BaseAutonSequence {
      * @param finalState Final state of the robot when placing the game piece.
      * @return The `SequentialCommandGroup` representing running the commands in order.
      */
-    protected Command goAndPlaceBottom(Pose2d initialPose, Pose2d midPose1, Pose2d midPose2, PlacePosition finalState) {
+    protected Command goAndPlaceBottomPath(Pose2d initialPose, Pose2d midPose1, Pose2d midPose2, PlacePosition finalState) {
         return new FollowPathCommand(swerveSubsystem, initialPose, List.of(), midPose1)
             .andThen(new FollowPathCommand(swerveSubsystem, midPose1, List.of(), midPose2))
             .andThen(goAndPlace(midPose2, finalState));
