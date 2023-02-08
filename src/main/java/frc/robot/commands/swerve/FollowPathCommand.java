@@ -64,35 +64,6 @@ public class FollowPathCommand extends SwerveControllerCommand {
     }
 
     /**
-     * Creates a FollowPathCommand from a given start point, list of waypoints, end point, and boolean representing whether
-     * the path should be reversed (if the robot should drive backwards through the trajectory).
-     * 
-     * @param swerveSubsystem The swerve subsystem.
-     * @param start The start point of the trajectory as a Pose2d.
-     * @param waypoints A list of waypoints the robot must pass through as a List<Translation2d>.
-     * @param end The end point of the trajectory as a Pose2d.
-     * @param reversed Whether the trajectory is reversed.
-     */
-    public FollowPathCommand(BaseSwerveSubsystem swerveSubsystem, Pose2d start, List<Translation2d> waypoints, Pose2d end, boolean reversed) {
-        this(
-            swerveSubsystem,
-            // Target trajectory
-            TrajectoryGenerator.generateTrajectory(
-                start, waypoints, end, 
-                new TrajectoryConfig(swerveSubsystem.MAX_VEL, swerveSubsystem.MAX_ACCEL)
-                    .setReversed(reversed)
-                    .setKinematics(swerveSubsystem.getKinematics())
-                    .addConstraint(
-                        new SwerveDriveKinematicsConstraint(
-                            swerveSubsystem.getKinematics(), 
-                            swerveSubsystem.MAX_VEL
-                        )
-                    )
-            )
-        );
-    }
-
-    /**
      * Creates a FollowPathCommand from a given start point, list of waypoints, and end point.
      * 
      * @param swerveSubsystem The swerve subsystem.
@@ -101,7 +72,49 @@ public class FollowPathCommand extends SwerveControllerCommand {
      * @param end The end point of the trajectory as a Pose2d.
      */
     public FollowPathCommand(BaseSwerveSubsystem swerveSubsystem, Pose2d start, List<Translation2d> waypoints, Pose2d end) {
-        this(swerveSubsystem, start, waypoints, end, false);
+        this(
+            swerveSubsystem,
+            TrajectoryGenerator.generateTrajectory(
+                start, waypoints, end, 
+                generateDefaultConfig(swerveSubsystem)
+            )
+        );
+    }
+
+    /**
+     * Creates a reversed FollowPathCommand from a given start point, list of waypoints, and end point.
+     * The robot will drive this path in reverse (it will drive backwards through the trajectory).
+     * 
+     * @param swerveSubsystem The swerve subsystem.
+     * @param start The start point of the trajectory as a Pose2d.
+     * @param waypoints A list of waypoints the robot must pass through as a List<Translation2d>.
+     * @param end The end point of the trajectory as a Pose2d.
+     * @return The created `FollowPathCommand`.
+     */
+    public static FollowPathCommand fromReversed(BaseSwerveSubsystem swerveSubsystem, Pose2d start, List<Translation2d> waypoints, Pose2d end) {
+        return new FollowPathCommand(
+            swerveSubsystem,
+            TrajectoryGenerator.generateTrajectory(
+                start, waypoints, end, 
+                generateDefaultConfig(swerveSubsystem).setReversed(true)
+            )
+        );
+    }
+
+    /**
+     * Generates a default `TrajectoryConfig` from a `BaseSwerveSubsystem`'s constraints.
+     * @param swerveSubsystem The `BaseSwerveSubsystem` to create a trajectory for.
+     * @return The generated `TrajectoryConfig`.
+     */
+    private static TrajectoryConfig generateDefaultConfig(BaseSwerveSubsystem swerveSubsystem) {
+        return new TrajectoryConfig(swerveSubsystem.MAX_VEL, swerveSubsystem.MAX_ACCEL)
+            .setKinematics(swerveSubsystem.getKinematics())
+            .addConstraint(
+                new SwerveDriveKinematicsConstraint(
+                    swerveSubsystem.getKinematics(), 
+                    swerveSubsystem.MAX_VEL
+                )
+            );
     }
 
     @Override

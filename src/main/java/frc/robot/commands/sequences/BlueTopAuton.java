@@ -32,7 +32,7 @@ public class BlueTopAuton extends BaseTopAutonSequence {
     private static final Pose2d MIDPOS3 = new Pose2d(
         Units.inchesToMeters(221.451),
         Units.inchesToMeters(205.895),
-        Rotation2d.fromDegrees(90)
+        Rotation2d.fromDegrees(-90)
     );
 
     private static final PlacePosition PLACE_STATE = PlacePosition.Blue.C2MID;
