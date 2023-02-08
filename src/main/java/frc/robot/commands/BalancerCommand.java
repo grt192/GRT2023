@@ -6,15 +6,19 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 import frc.robot.subsystems.drivetrain.BaseDrivetrain;
+import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
 import edu.wpi.first.wpilibj.Timer;
 
 public class BalancerCommand extends CommandBase {
     private final BaseDrivetrain driveSubsystem;
     private final AHRS ahrs; 
     private final Timer stoptimer;
+    private double oldAngle;
+    private double currentAngle;
 
     private double returnPower; //power to be returned to DT
-    private boolean reachedStation;
+    public boolean reachedStation;
+    private boolean passedCenter;
     private boolean timerEnabled;
     
     PIDController pid;
@@ -22,8 +26,9 @@ public class BalancerCommand extends CommandBase {
     public BalancerCommand(BaseDrivetrain driveSubsystem) {
         this.driveSubsystem = driveSubsystem;
         this.ahrs = driveSubsystem.getAhrs();
-        pid = new PIDController(0.4/35, 0.05, -0.05);
+        pid = new PIDController(0.35/35, 0.0, 0.0);
         stoptimer = new Timer();
+        reachedStation = false;
         addRequirements(driveSubsystem);
     }
 
@@ -36,28 +41,46 @@ public class BalancerCommand extends CommandBase {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
+        // currentAngle = ahrs.getPitch();
         if(!reachedStation) {
-            returnPower = 0.90;
+            returnPower = 0.80;
             System.out.println(ahrs.getPitch());
             if(ahrs.getPitch() >= 15.0) reachedStation = true;
         }
         else{
-            returnPower = -1 * pid.calculate(ahrs.getPitch(), 0);
-            // returnPower  = 1.8 * 0.01142857143 * ahrs.getPitch(); // MAX_ERR * Kp = MAX_PWR   35 * Kp = 0.4  Kp = 0.4 / 35
-            if(!timerEnabled && Math.abs(ahrs.getPitch()) <= 2.0){
-                stoptimer.stop();
-                stoptimer.reset();
-                timerEnabled = true;
+            if(!passedCenter){
+                returnPower = 0.3;
+                if(ahrs.getPitch() <= -5.0) passedCenter = true;
             }
-            if(Math.abs(ahrs.getPitch()) >= 2.0){
-                stoptimer.stop();
-                stoptimer.reset();
-                timerEnabled = false;
+            else{
+                returnPower = -0.25;
+                if(Math.abs(ahrs.getPitch()) <= 2.0){
+                    returnPower = 0.0;
+                    if(driveSubsystem instanceof BaseSwerveSubsystem) ((BaseSwerveSubsystem) driveSubsystem).lockNow();
+                }
+                
             }
         }
+        // else{
+        //     returnPower = -1 * pid.calculate(ahrs.getPitch(), 0);
+        //     // if((currentAngle - oldAngle) <= -0.5) returnPower = returnPower * ;
 
-        driveSubsystem.setDrivePowers(returnPower);
+        //     if(!timerEnabled && Math.abs(ahrs.getPitch()) <= 2.0){
+        //         stoptimer.stop();
+        //         stoptimer.reset();
+        //         timerEnabled = true;
+        //     }
+        //     if(Math.abs(ahrs.getPitch()) >= 2.0){
+        //         stoptimer.stop();
+        //         stoptimer.reset();
+        //         timerEnabled = false;
+        //     }
+        // }
+
+
         
+        driveSubsystem.setDrivePowers(returnPower);
+        oldAngle = currentAngle;        
     }
 
     // Called once the command ends or is interrupted.
@@ -69,6 +92,6 @@ public class BalancerCommand extends CommandBase {
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return reachedStation && Math.abs(ahrs.getPitch()) <= 2.0 && stoptimer.hasElapsed(2.0);
+        return reachedStation && Math.abs(ahrs.getPitch()) <= 2.0 && stoptimer.hasElapsed(0.20);
     }
 }

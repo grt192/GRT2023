@@ -305,4 +305,11 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
             ? getGyroHeading().minus(angleOffset)
             : getRobotPosition().getRotation();
     }
+
+    public void lockNow(){
+        topLeftModule.setDesiredState(new SwerveModuleState(0.0, new Rotation2d(Math.PI / 4.0)));
+        topRightModule.setDesiredState(new SwerveModuleState(0.0, new Rotation2d(-Math.PI / 4.0)));
+        bottomLeftModule.setDesiredState(new SwerveModuleState(0.0, new Rotation2d(-Math.PI / 4.0)));
+        bottomRightModule.setDesiredState(new SwerveModuleState(0.0, new Rotation2d(Math.PI / 4.0)));
+    }
 }
