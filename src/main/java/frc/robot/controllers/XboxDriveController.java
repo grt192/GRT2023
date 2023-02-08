@@ -46,7 +46,6 @@ public class XboxDriveController extends BaseDriveController {
     public JoystickButton getFieldResetButton() {
         return driveAButton;
     }
-
     @Override
     public JoystickButton getCameraSwitchButton() {
         return driveYButton;

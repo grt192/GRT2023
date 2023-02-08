@@ -97,7 +97,7 @@ public class RobotContainer {
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
     public RobotContainer() {
-        driveController = new DualJoystickDriveController();
+        driveController = new XboxDriveController();
 
         photonWrapper = new PhotonWrapper();
         switchableCamera = new SwitchableCamera();
@@ -164,6 +164,8 @@ public class RobotContainer {
                 double angularPower = driveController.getRotatePower();
                 boolean relative = driveController.getSwerveRelative();
                 swerveSubsystem.setDrivePowers(xPower, yPower, angularPower, relative);
+        
+        
             }, swerveSubsystem));
 
             mechAButton.onTrue(new DropperChooserCommand(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem));
