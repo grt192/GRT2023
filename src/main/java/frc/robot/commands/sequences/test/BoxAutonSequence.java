@@ -37,12 +37,11 @@ public class BoxAutonSequence extends SequentialCommandGroup {
                 List.of(), 
                 new Pose2d(3, 1, new Rotation2d())
             ),
-            new FollowPathCommand(
+            FollowPathCommand.fromReversed(
                 swerveSubsystem, 
                 new Pose2d(3, 1, new Rotation2d()), 
                 List.of(), 
-                new Pose2d(2, 1, new Rotation2d()),
-                true
+                new Pose2d(2, 1, new Rotation2d())
             ),
             new FollowPathCommand(
                 swerveSubsystem, 
@@ -50,12 +49,11 @@ public class BoxAutonSequence extends SequentialCommandGroup {
                 List.of(), 
                 new Pose2d(2, 0, new Rotation2d())
             ),
-            new FollowPathCommand(
+            FollowPathCommand.fromReversed(
                 swerveSubsystem, 
                 new Pose2d(2, 0, new Rotation2d()), 
                 List.of(), 
-                new Pose2d(),
-                true
+                new Pose2d()
             )
         );
     }

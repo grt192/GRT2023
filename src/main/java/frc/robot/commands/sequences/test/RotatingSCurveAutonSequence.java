@@ -23,15 +23,14 @@ public class RotatingSCurveAutonSequence extends SequentialCommandGroup {
                 ),
                 new Pose2d(3, 0, Rotation2d.fromDegrees(90))
             ),
-            new FollowPathCommand(
+            FollowPathCommand.fromReversed(
                 swerveSubsystem,
                 new Pose2d(3, 0, Rotation2d.fromDegrees(90)),
                 List.of(
                     new Translation2d(2, -1),
                     new Translation2d(1, 1)
                 ),
-                new Pose2d(),
-                true
+                new Pose2d()
             )
         );
     }

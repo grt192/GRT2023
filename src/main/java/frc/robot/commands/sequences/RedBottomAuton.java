@@ -14,26 +14,26 @@ import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
  * and places another.
  */
 public class RedBottomAuton extends BaseBottomAutonSequence {
-    private static final Pose2d INITIAL_POSE = (new Pose2d(
+    private static final Pose2d INITIAL_POSE = new Pose2d(
         Units.inchesToMeters(PlacePosition.RED_INIT_X_IN),
         Units.inchesToMeters(12.873),
-        Rotation2d.fromDegrees(0)
-    ));
-    private static final Pose2d MIDPOS1 = (new Pose2d(
+        new Rotation2d()
+    );
+    private static final Pose2d MIDPOS1 = new Pose2d(
         Units.inchesToMeters(556.376),
         Units.inchesToMeters(28.007),
-        Rotation2d.fromDegrees(0)
-    ));
-    private static final Pose2d MIDPOS2 = (new Pose2d(
+        new Rotation2d()
+    );
+    private static final Pose2d MIDPOS2 = new Pose2d(
         Units.inchesToMeters(471.173),
         Units.inchesToMeters(28.007),
-        Rotation2d.fromDegrees(0)
-    ));
+        new Rotation2d()
+    );
 
-    private static final PlacePosition PLACE_STATE = PlacePosition.Red.A3HIGH;
-    private static final PlacePosition PLACE_STATE_2 = PlacePosition.Red.A3MID;
+    private static final PlacePosition PLACE_STATE = PlacePosition.Red.A1HIGH;
+    private static final PlacePosition PLACE_STATE_2 = PlacePosition.Red.A1MID;
 
-    private static final PiecePosition GRAB_POSE = PiecePosition.Blue.PIECE1;
+    private static final PiecePosition GRAB_POSE = PiecePosition.Red.PIECE4;
 
     public RedBottomAuton(
         BaseSwerveSubsystem swerveSubsystem,

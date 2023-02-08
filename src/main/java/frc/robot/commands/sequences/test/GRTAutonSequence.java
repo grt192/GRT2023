@@ -20,12 +20,11 @@ public class GRTAutonSequence extends SequentialCommandGroup {
                 List.of(),
                 new Pose2d(1, 1, new Rotation2d())
             ),
-            new FollowPathCommand(
+            FollowPathCommand.fromReversed(
                 swerveSubsystem, 
                 new Pose2d(1, 1, new Rotation2d()),
                 List.of(),
-                new Pose2d(),
-                true
+                new Pose2d()
             ),
             new FollowPathCommand(
                 swerveSubsystem, 
@@ -35,12 +34,11 @@ public class GRTAutonSequence extends SequentialCommandGroup {
                 ),
                 new Pose2d(1, 0, new Rotation2d())
             ),
-            new FollowPathCommand(
+            FollowPathCommand.fromReversed(
                 swerveSubsystem, 
                 new Pose2d(1, 0, new Rotation2d()),
                 List.of(),
-                new Pose2d(0.5, 0, new Rotation2d()),
-                true
+                new Pose2d(0.5, 0, new Rotation2d())
             ),
             new FollowPathCommand(
                 swerveSubsystem, 
@@ -86,12 +84,11 @@ public class GRTAutonSequence extends SequentialCommandGroup {
                 List.of(),
                 new Pose2d(4.5, 1, new Rotation2d())
             ),
-            new FollowPathCommand(
+            FollowPathCommand.fromReversed(
                 swerveSubsystem, 
                 new Pose2d(4.5, 1, new Rotation2d()),
                 List.of(),
-                new Pose2d(3.5, 1, new Rotation2d()),
-                true
+                new Pose2d(3.5, 1, new Rotation2d())
             )
         );
     }

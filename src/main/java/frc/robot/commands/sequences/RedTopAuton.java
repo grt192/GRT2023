@@ -17,17 +17,17 @@ public class RedTopAuton extends BaseTopAutonSequence {
     private static final Pose2d INITIAL_POSE = new Pose2d(
         Units.inchesToMeters(PlacePosition.RED_INIT_X_IN),
         Units.inchesToMeters(195.55),
-        Rotation2d.fromDegrees(0)
+        new Rotation2d()
     );
     private static final Pose2d MIDPOS1 = new Pose2d(
         Units.inchesToMeters(556.376),
         Units.inchesToMeters(187.638),
-        Rotation2d.fromDegrees(0)
+        new Rotation2d()
     );
     private static final Pose2d MIDPOS2 = new Pose2d(
         Units.inchesToMeters(471.173),
         Units.inchesToMeters(187.638),
-        Rotation2d.fromDegrees(0)
+        new Rotation2d()
     );
     private static final Pose2d MIDPOS3 = new Pose2d(
         Units.inchesToMeters(429.104),
@@ -38,7 +38,7 @@ public class RedTopAuton extends BaseTopAutonSequence {
     private static final PlacePosition PLACE_STATE = PlacePosition.Red.C3HIGH;
     private static final PlacePosition PLACE_STATE_2 = PlacePosition.Red.C3MID;
 
-    private static final PiecePosition GRAB_POSE = PiecePosition.Blue.PIECE1;
+    private static final PiecePosition GRAB_POSE = PiecePosition.Red.PIECE1;
 
     public RedTopAuton(
         BaseSwerveSubsystem swerveSubsystem,

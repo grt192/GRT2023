@@ -53,8 +53,8 @@ public abstract class BaseTopAutonSequence extends BaseAutonSequence {
      * @return The `SequentialCommandGroup` representing running the commands in order.
      */
     private Command goAndGrabTopPath(Pose2d initialPose, Pose2d midPose1, Pose2d midPose2, Pose2d midPose3, PiecePosition finalPose) {
-        return new FollowPathCommand(swerveSubsystem, initialPose, List.of(), midPose1)
-            .andThen(new FollowPathCommand(swerveSubsystem, midPose1, List.of(), midPose2))
+        return FollowPathCommand.fromReversed(swerveSubsystem, initialPose, List.of(), midPose1)
+            .andThen(FollowPathCommand.fromReversed(swerveSubsystem, midPose1, List.of(), midPose2))
             .andThen(new FollowPathCommand(swerveSubsystem, midPose2, List.of(), midPose3))
             .andThen(goAndGrab(midPose3, finalPose));
     }
