@@ -14,7 +14,8 @@ public class TwistJoystickDriveController extends BaseDriveController {
     private final JoystickButton
         leftTrigger = new JoystickButton(joystick, 1),
         leftMButton = new JoystickButton(joystick, 2),
-        leftMRButton = new JoystickButton(joystick, 6);
+        leftMRButton = new JoystickButton(joystick, 6),
+        leftUnknownButton = new JoystickButton(joystick, 3);
 
     private final double JOYSTICK_DEADBAND = 0.08;
 
@@ -47,5 +48,10 @@ public class TwistJoystickDriveController extends BaseDriveController {
     @Override
     public JoystickButton getFieldResetButton() {
         return leftMButton;
+    }
+
+    @Override
+    public JoystickButton getCameraSwitchButton() {
+        return leftUnknownButton;
     }
 }
