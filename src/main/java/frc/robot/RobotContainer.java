@@ -6,6 +6,7 @@ package frc.robot;
 
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.UsbCamera;
+import edu.wpi.first.cscore.VideoSink;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -73,7 +74,8 @@ public class RobotContainer {
     private UsbCamera front;
     private UsbCamera back;
     NetworkTableEntry cameraSelection;
-    private int CameraID;
+    private int CameraID = 0;
+    VideoSink server;
 
     private final GenericHID switchboard = new GenericHID(3);
     private final JoystickButton
@@ -113,6 +115,8 @@ public class RobotContainer {
         front =  CameraServer.startAutomaticCapture(0);
         back =  CameraServer.startAutomaticCapture(1);
         cameraSelection = NetworkTableInstance.getDefault().getTable("").getEntry("CameraSelection");
+        
+        server = CameraServer.getServer();
 
         driveSubsystem = new SwerveSubsystem(photonWrapper);
         rollerSubsystem = new RollerSubsystem();
@@ -161,17 +165,26 @@ public class RobotContainer {
         driveController.getBalancerButton()
             .onTrue(new InstantCommand(() -> {
                 balancerCommand.reachedStation = false;
+                balancerCommand.passedCenter = false;
+
             }))
             .whileTrue(balancerCommand);
 
         driveController.getCameraSwitchButton()
         .onTrue(new InstantCommand(() -> {
-            if(CameraID == 1){
+            if(CameraID == 0){
                 cameraSelection.setString(front.getName());
+                server.setSource(front);
+                CameraID = 1;
+                System.out.println("CAMERA SET TO FRONT ");
             }
             else{
                 cameraSelection.setString(back.getName());
+                server.setSource(back);
+                CameraID = 0;
+                System.out.println("CAMERA SET TO BACK ");
             }
+            
             
         }));
         
