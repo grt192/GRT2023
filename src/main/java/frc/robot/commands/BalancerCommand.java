@@ -18,7 +18,7 @@ public class BalancerCommand extends CommandBase {
 
     private double returnPower; //power to be returned to DT
     public boolean reachedStation;
-    private boolean passedCenter;
+    public boolean passedCenter;
     private boolean timerEnabled;
     
     PIDController pid;
@@ -26,7 +26,7 @@ public class BalancerCommand extends CommandBase {
     public BalancerCommand(BaseSwerveSubsystem driveSubsystem) {
         this.driveSubsystem = driveSubsystem;
         this.ahrs = driveSubsystem.getAhrs();
-        pid = new PIDController(0.35/35, 0.0, 0.0);
+        pid = new PIDController(0.3/35, 0.0, 0.0); // no deriv successful
         stoptimer = new Timer();
         reachedStation = false;
         addRequirements(driveSubsystem);
@@ -49,11 +49,12 @@ public class BalancerCommand extends CommandBase {
         }
         else{
             if(!passedCenter){
-                returnPower = 0.3;
-                if(ahrs.getPitch() <= -5.0) passedCenter = true;
+                returnPower = 0.15; //.15 successful
+                if(ahrs.getPitch() <= -3.0) passedCenter = true;
             }
             else{
-                returnPower = -0.25;
+                returnPower = -1 * pid.calculate(ahrs.getPitch(), 0);
+                System.out.println(returnPower);
                 if(Math.abs(ahrs.getPitch()) <= 2.0){
                     returnPower = 0.0;
                     driveSubsystem.lockNow();
