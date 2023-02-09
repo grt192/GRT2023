@@ -70,7 +70,6 @@ public class RollerSubsystem extends SubsystemBase {
         // entry = tab.add("R", 0).getEntry();
         // gentry = tab.add("G", 0).getEntry();
         // bentry = tab.add("B", 0).getEntry();
-
     }
 
     /**
