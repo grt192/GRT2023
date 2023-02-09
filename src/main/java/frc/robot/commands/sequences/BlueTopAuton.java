@@ -10,7 +10,7 @@ import frc.robot.subsystems.TiltedElevatorSubsystem;
 import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
 
 /**
- * The top and bottom auton sequences, where the robot deposits its preloaded game piece and picks up
+ * The blue top auton sequences, where the robot deposits its preloaded game piece and picks up
  * and places another.
  */
 public class BlueTopAuton extends BaseTopAutonSequence {

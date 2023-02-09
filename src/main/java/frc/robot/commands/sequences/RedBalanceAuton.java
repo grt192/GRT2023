@@ -9,7 +9,7 @@ import frc.robot.subsystems.TiltedElevatorSubsystem;
 import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
 
 /**
- * The middle auton sequence, where the robot deposits its preloaded game piece and balances
+ * The red middle auton sequence, where the robot deposits its preloaded game piece and balances
  * on the charging station.
  */
 public class RedBalanceAuton extends BaseBalanceAutonSequence {
