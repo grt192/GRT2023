@@ -11,12 +11,14 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -73,7 +75,7 @@ public class RobotContainer {
 
     private UsbCamera front;
     private UsbCamera back;
-    NetworkTableEntry cameraSelection;
+    SimpleWidget cameraSelection;
     private int CameraID = 0;
     VideoSink server;
 
@@ -103,7 +105,6 @@ public class RobotContainer {
     // Commands
     private final ShuffleboardTab shuffleboardTab = Shuffleboard.getTab("Drivetrain");
     private final SendableChooser<Command> autonChooser;
-    private BalancerCommand balancerCommand;
 
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -114,7 +115,6 @@ public class RobotContainer {
         photonWrapper = new PhotonWrapper();
         front =  CameraServer.startAutomaticCapture(0);
         back =  CameraServer.startAutomaticCapture(1);
-        cameraSelection = NetworkTableInstance.getDefault().getTable("").getEntry("CameraSelection");
         
         server = CameraServer.getServer();
 
@@ -123,7 +123,7 @@ public class RobotContainer {
         tiltedElevatorSubsystem = new TiltedElevatorSubsystem();
 
         superstructure = new Superstructure(rollerSubsystem, tiltedElevatorSubsystem);
-        balancerCommand = new BalancerCommand(driveSubsystem);
+        cameraSelection = Shuffleboard.getTab("Driver Camera").add("Intake Camera", server);
 
         // Configure the button bindings
         configureButtonBindings();
@@ -162,30 +162,18 @@ public class RobotContainer {
      * passing it to a {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
      */
     private void configureButtonBindings() {
-        driveController.getBalancerButton()
-            .onTrue(new InstantCommand(() -> {
-                balancerCommand.reachedStation = false;
-                balancerCommand.passedCenter = false;
-
-            }))
-            .whileTrue(balancerCommand);
-
         driveController.getCameraSwitchButton()
         .onTrue(new InstantCommand(() -> {
             if(CameraID == 0){
-                cameraSelection.setString(front.getName());
                 server.setSource(front);
                 CameraID = 1;
-                System.out.println("CAMERA SET TO FRONT ");
+                System.out.println("CAMERA SET TO FRONT");
             }
             else{
-                cameraSelection.setString(back.getName());
                 server.setSource(back);
                 CameraID = 0;
-                System.out.println("CAMERA SET TO BACK ");
+                System.out.println("CAMERA SET TO BACK");
             }
-            
-            
         }));
         
         if (driveSubsystem instanceof BaseSwerveSubsystem) {
@@ -201,57 +189,6 @@ public class RobotContainer {
 
             driveController.getFieldResetButton().onTrue(new InstantCommand(swerveSubsystem::resetFieldAngle, swerveSubsystem));
         } 
-        // else if (driveSubsystem instanceof TankSubsystem) {
-        //     final TankSubsystem tankSubsystem = (TankSubsystem) driveSubsystem;
-
-        //     tankSubsystem.setDefaultCommand(new RunCommand(() -> {
-        //         double forwardPower = 0.75 * driveController.getForwardPower();
-        //         double turnPower = 0.75 * driveController.getRotatePower();
-        //         tankSubsystem.setDrivePowers(forwardPower, turnPower);
-        //     }, tankSubsystem));
-        // } else if (driveSubsystem instanceof MissileShellSwerveSubsystem) {
-        //     final MissileShellSwerveSubsystem swerveSubsystem = (MissileShellSwerveSubsystem) driveSubsystem;
-
-        //     swerveSubsystem.setDefaultCommand(new RunCommand(() -> {
-        //         double xPower = driveController.getForwardPower();
-        //         double yPower = driveController.getLeftPower();
-        //         swerveSubsystem.setDrivePowers(xPower, yPower);
-        //     }, swerveSubsystem));
-        // }
-
-        /*
-        rollerSubsystem.setDefaultCommand(new RunCommand(() -> {
-            double rollPower = mechController.getRightTriggerAxis() - mechController.getLeftTriggerAxis();
-            rollerSubsystem.setRollPower(rollPower);
-        }, rollerSubsystem));
-        */
-
-        // mechBButton.onTrue(new InstantCommand(rollerSubsystem::openMotor, rollerSubsystem));
-
-        // tiltedElevatorSubsystem.setDefaultCommand(new RunCommand(() -> {
-        //     double yPower = -mechController.getLeftY();
-        //     tiltedElevatorSubsystem.setManualPower(yPower);
-
-        //     tiltedElevatorSubsystem.changeOffsetDistMeters(yPower);
-        // }, tiltedElevatorSubsystem));
-
-        // mechYButton.onTrue(new InstantCommand(() -> {
-        //     tiltedElevatorSubsystem.toggleState(ElevatorState.GROUND, ElevatorState.SUBSTATION);
-        // }, tiltedElevatorSubsystem));
-
-        // mechBButton.onTrue(new InstantCommand(() -> {
-        //     tiltedElevatorSubsystem.toggleState(ElevatorState.GROUND, ElevatorState.CHUTE);
-        // }, tiltedElevatorSubsystem));
-
-        // mechXButton.onTrue(new InstantCommand(tiltedElevatorSubsystem::resetOffset));
-
-        // mechRBumper.onTrue(new InstantCommand(() -> {
-        //     tiltedElevatorSubsystem.toggleState(ElevatorState.CUBE_MID, ElevatorState.CUBE_HIGH);
-        // }, tiltedElevatorSubsystem));
-
-        // mechLBumper.onTrue(new InstantCommand(() -> {
-        //     tiltedElevatorSubsystem.toggleState(ElevatorState.CONE_MID, ElevatorState.CONE_HIGH);
-        // }, tiltedElevatorSubsystem));
     }
 
     /**
