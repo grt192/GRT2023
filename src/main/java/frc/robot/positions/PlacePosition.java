@@ -10,11 +10,11 @@ public interface PlacePosition {
     Pose2d getPose();
     ElevatorState getElevatorState();
 
-    double BLUE_INIT_X_IN = 70.007;
-    double BLUE_PLACE_X_IN = 72.013;
+    double BLUE_INIT_X_IN = 75.178; //updated
+    double BLUE_PLACE_X_IN = 77.406; //updated
 
-    double RED_INIT_X_IN = 581.072;
-    double RED_PLACE_X_IN = 578.737;
+    double RED_INIT_X_IN = 573.895; //updated
+    double RED_PLACE_X_IN = 578.737; //updated
 
     public enum Red implements PlacePosition {
         C3MID(new Pose2d(

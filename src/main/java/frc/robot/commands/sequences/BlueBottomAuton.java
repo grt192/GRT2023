@@ -16,7 +16,7 @@ import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
 public class BlueBottomAuton extends BaseBottomAutonSequence {
     private static final Pose2d INITIAL_POSE = new Pose2d(
         Units.inchesToMeters(PlacePosition.BLUE_INIT_X_IN),
-        Units.inchesToMeters(12.873),
+        Units.inchesToMeters(17.714), //updated
         Rotation2d.fromDegrees(180)
     );
     private static final Pose2d MIDPOS1 = new Pose2d(
