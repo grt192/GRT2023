@@ -36,7 +36,7 @@ public abstract class BaseTopAutonSequence extends BaseAutonSequence {
 
         addCommands(
             // Place preloaded game piece
-            goAndPlaceTopPath(initialPose, midPose1, midPose2, midpose3, placeState),
+            goAndPlace(initialPose, placeState),
             // Go and grab 2nd piece
             goAndGrabTopPath(placeState.getPose(), midPose1, midPose2, midpose3, grabPose), 
             // Go and place grabbed piece
