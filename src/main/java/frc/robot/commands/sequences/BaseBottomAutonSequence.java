@@ -52,9 +52,10 @@ public abstract class BaseBottomAutonSequence extends BaseAutonSequence {
      * @return The `SequentialCommandGroup` representing running the commands in order.
      */
     protected Command goAndGrabBottomPath(Pose2d initialPose, Pose2d midPose1, Pose2d midPose2, PiecePosition finalPose) {
-        return (new JulianLevelCommand(tiltedElevatorSubsystem, ElevatorState.GROUND))
-            .alongWith(FollowPathCommand.fromReversed(swerveSubsystem, initialPose, List.of(), midPose1))
-            .andThen(FollowPathCommand.fromReversed(swerveSubsystem, midPose1, List.of(), midPose2))
+        return new JulianLevelCommand(tiltedElevatorSubsystem, ElevatorState.GROUND)
+            // TODO: wheel headings!
+            .alongWith(new FollowPathCommand(swerveSubsystem, initialPose, List.of(), midPose1, midPose1.getRotation()))
+            .andThen(new FollowPathCommand(swerveSubsystem, midPose1, List.of(), midPose2, midPose2.getRotation()))
             .andThen(goAndGrab(midPose2, finalPose));
     }
 
@@ -67,9 +68,9 @@ public abstract class BaseBottomAutonSequence extends BaseAutonSequence {
      * @return The `SequentialCommandGroup` representing running the commands in order.
      */
     protected Command goAndPlaceBottomPath(Pose2d initialPose, Pose2d midPose1, Pose2d midPose2, PlacePosition finalState) {
-        return (new JulianLevelCommand(tiltedElevatorSubsystem, ElevatorState.GROUND))
-            .alongWith(new FollowPathCommand(swerveSubsystem, initialPose, List.of(), midPose1))
-            .andThen(new FollowPathCommand(swerveSubsystem, midPose1, List.of(), midPose2))
+        return new JulianLevelCommand(tiltedElevatorSubsystem, ElevatorState.GROUND)
+            .alongWith(new FollowPathCommand(swerveSubsystem, initialPose, List.of(), midPose1, midPose1.getRotation()))
+            .andThen(new FollowPathCommand(swerveSubsystem, midPose1, List.of(), midPose2, midPose2.getRotation()))
             .andThen(goAndPlace(midPose2, finalState));
     }
 }

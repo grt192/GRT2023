@@ -16,41 +16,47 @@ public class GRTAutonSequence extends SequentialCommandGroup {
         addCommands(
             new FollowPathCommand(
                 swerveSubsystem, 
-                new Pose2d(),
+                new Pose2d(0, 0, Rotation2d.fromDegrees(90)),
                 List.of(),
-                new Pose2d(1, 1, new Rotation2d())
-            ),
-            FollowPathCommand.fromReversed(
-                swerveSubsystem, 
                 new Pose2d(1, 1, new Rotation2d()),
-                List.of(),
-                new Pose2d()
+                new Rotation2d()
             ),
             new FollowPathCommand(
                 swerveSubsystem, 
-                new Pose2d(),
+                new Pose2d(1, 1, Rotation2d.fromDegrees(180)),
+                List.of(),
+                new Pose2d(0, 0, Rotation2d.fromDegrees(-90)),
+                new Rotation2d()
+            ),
+            new FollowPathCommand(
+                swerveSubsystem, 
+                new Pose2d(0, 0, Rotation2d.fromDegrees(-90)),
                 List.of(
                     new Translation2d(0.5, -1)
                 ),
-                new Pose2d(1, 0, new Rotation2d())
+                new Pose2d(1, 0, Rotation2d.fromDegrees(90)),
+                new Rotation2d()
             ),
-            FollowPathCommand.fromReversed(
+            new FollowPathCommand(
                 swerveSubsystem, 
-                new Pose2d(1, 0, new Rotation2d()),
+                new Pose2d(1, 0, Rotation2d.fromDegrees(180)),
                 List.of(),
-                new Pose2d(0.5, 0, new Rotation2d())
+                new Pose2d(0.5, 0, Rotation2d.fromDegrees(180)),
+                new Rotation2d()
             ),
             new FollowPathCommand(
                 swerveSubsystem, 
                 new Pose2d(0.5, 0, new Rotation2d()),
                 List.of(),
-                new Pose2d(1.5, -1, new Rotation2d())
+                new Pose2d(1.5, -1, new Rotation2d()),
+                new Rotation2d()
             ),
             new FollowPathCommand(
                 swerveSubsystem, 
-                new Pose2d(1.5, -1, new Rotation2d()),
+                new Pose2d(1.5, -1, Rotation2d.fromDegrees(90)),
                 List.of(),
-                new Pose2d(1.5, 1, new Rotation2d())
+                new Pose2d(1.5, 1, Rotation2d.fromDegrees(90)),
+                new Rotation2d()
             ),
             new FollowPathCommand(
                 swerveSubsystem, 
@@ -58,37 +64,43 @@ public class GRTAutonSequence extends SequentialCommandGroup {
                 List.of(
                     new Translation2d(2.5, 0.5)
                 ),
-                new Pose2d(1.5, 0, new Rotation2d())
+                new Pose2d(1.5, 0, Rotation2d.fromDegrees(180)),
+                new Rotation2d()
             ),
             new FollowPathCommand(
                 swerveSubsystem, 
-                new Pose2d(1.5, 0, new Rotation2d()),
+                new Pose2d(1.5, 0, Rotation2d.fromDegrees(-45)),
                 List.of(),
-                new Pose2d(2.5, -1, new Rotation2d())
+                new Pose2d(2.5, -1, Rotation2d.fromDegrees(-45)),
+                new Rotation2d()
             ),
             new FollowPathCommand(
                 swerveSubsystem, 
                 new Pose2d(2.5, -1, new Rotation2d()),
                 List.of(),
-                new Pose2d(4, -1, new Rotation2d())
+                new Pose2d(4, -1, new Rotation2d()),
+                new Rotation2d()
             ),
             new FollowPathCommand(
                 swerveSubsystem, 
-                new Pose2d(4, -1, new Rotation2d()),
+                new Pose2d(4, -1, Rotation2d.fromDegrees(90)),
                 List.of(),
-                new Pose2d(4, 1, new Rotation2d())
+                new Pose2d(4, 1, Rotation2d.fromDegrees(90)),
+                new Rotation2d()
             ),
             new FollowPathCommand(
                 swerveSubsystem, 
                 new Pose2d(4, 1, new Rotation2d()),
                 List.of(),
-                new Pose2d(4.5, 1, new Rotation2d())
-            ),
-            FollowPathCommand.fromReversed(
-                swerveSubsystem, 
                 new Pose2d(4.5, 1, new Rotation2d()),
+                new Rotation2d()
+            ),
+            new FollowPathCommand(
+                swerveSubsystem, 
+                new Pose2d(4.5, 1, Rotation2d.fromDegrees(180)),
                 List.of(),
-                new Pose2d(3.5, 1, new Rotation2d())
+                new Pose2d(3.5, 1, Rotation2d.fromDegrees(180)),
+                new Rotation2d()
             )
         );
     }

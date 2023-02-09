@@ -4,13 +4,7 @@
 
 package frc.robot;
 
-import java.util.List;
-
 import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -32,7 +26,6 @@ import frc.robot.commands.sequences.test.BoxAutonSequence;
 import frc.robot.commands.sequences.test.GRTAutonSequence;
 import frc.robot.commands.sequences.test.HighRotationLinePath;
 import frc.robot.commands.sequences.test.RotatingSCurveAutonSequence;
-import frc.robot.commands.swerve.FollowPathCommand;
 import frc.robot.controllers.BaseDriveController;
 import frc.robot.controllers.DualJoystickDriveController;
 import frc.robot.controllers.TwistJoystickDriveController;
@@ -45,9 +38,6 @@ import frc.robot.subsystems.drivetrain.MissileShellSwerveSweeperSubsystem;
 import frc.robot.subsystems.drivetrain.SwerveSubsystem;
 import frc.robot.subsystems.drivetrain.SwerveSubsystem2020;
 import frc.robot.subsystems.drivetrain.BaseDrivetrain;
-import frc.robot.subsystems.PivotElevatorSubsystem;
-import frc.robot.subsystems.PivotElevatorSubsystem.MoverPosition;
-import frc.robot.subsystems.GripperSubsytem;
 import frc.robot.subsystems.RollerSubsystem;
 import frc.robot.subsystems.RollerToTiltedSubsystem;
 import frc.robot.subsystems.TiltedElevatorSubsystem;
@@ -102,7 +92,7 @@ public class RobotContainer {
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
     public RobotContainer() {
-        driveController = new DualJoystickDriveController();
+        driveController = new XboxDriveController();
 
         driveSubsystem = new SwerveSubsystem();
         rollerSubsystem = new RollerSubsystem();

@@ -35,12 +35,13 @@ public class FollowPathCommand extends SwerveControllerCommand {
     private static final double ACCEPTABLE_ANGLE_ERROR_RADS = Math.toRadians(3.0);
 
     /**
-     * Creates a FollowPathCommand from a given trajectory.
+     * Creates a FollowPathCommand from a given trajectory and target robot angle.
      * 
      * @param swerveSubsystem The swerve subsystem.
      * @param trajectory The trajectory to follow.
+     * @param targetAngle The target angle of the robot.
      */
-    public FollowPathCommand(BaseSwerveSubsystem swerveSubsystem, Trajectory trajectory) {
+    public FollowPathCommand(BaseSwerveSubsystem swerveSubsystem, Trajectory trajectory, Rotation2d targetAngle) {
         super(
             trajectory,
             swerveSubsystem::getRobotPosition,
@@ -54,50 +55,32 @@ public class FollowPathCommand extends SwerveControllerCommand {
                     swerveSubsystem.MAX_ALPHA
                 )
             ),
-            // () -> new Rotation2d(),
+            () -> targetAngle,
             swerveSubsystem::setSwerveModuleStates,
             swerveSubsystem
         );
 
         this.swerveSubsystem = swerveSubsystem;
-        this.targetAngle = trajectory.getStates().get(trajectory.getStates().size() - 1).poseMeters.getRotation();
+        this.targetAngle = targetAngle;
     }
 
     /**
-     * Creates a FollowPathCommand from a given start point, list of waypoints, and end point.
+     * Creates a FollowPathCommand from a given start point, list of waypoints, end point, and target robot angle.
      * 
      * @param swerveSubsystem The swerve subsystem.
-     * @param start The start point of the trajectory as a Pose2d.
+     * @param start The start point of the trajectory as a Pose2d. The rotation of this pose represents *the heading of the wheels* at the start of the trajectory.
      * @param waypoints A list of waypoints the robot must pass through as a List<Translation2d>.
-     * @param end The end point of the trajectory as a Pose2d.
+     * @param end The end point of the trajectory as a Pose2d. The rotation of this pose represents *the heading of the wheels* at the end of the trajectory.
+     * @param targetAngle The target angle of the robot.
      */
-    public FollowPathCommand(BaseSwerveSubsystem swerveSubsystem, Pose2d start, List<Translation2d> waypoints, Pose2d end) {
+    public FollowPathCommand(BaseSwerveSubsystem swerveSubsystem, Pose2d start, List<Translation2d> waypoints, Pose2d end, Rotation2d targetAngle) {
         this(
             swerveSubsystem,
             TrajectoryGenerator.generateTrajectory(
                 start, waypoints, end, 
                 generateDefaultConfig(swerveSubsystem)
-            )
-        );
-    }
-
-    /**
-     * Creates a reversed FollowPathCommand from a given start point, list of waypoints, and end point.
-     * The robot will drive this path in reverse (it will drive backwards through the trajectory).
-     * 
-     * @param swerveSubsystem The swerve subsystem.
-     * @param start The start point of the trajectory as a Pose2d.
-     * @param waypoints A list of waypoints the robot must pass through as a List<Translation2d>.
-     * @param end The end point of the trajectory as a Pose2d.
-     * @return The created `FollowPathCommand`.
-     */
-    public static FollowPathCommand fromReversed(BaseSwerveSubsystem swerveSubsystem, Pose2d start, List<Translation2d> waypoints, Pose2d end) {
-        return new FollowPathCommand(
-            swerveSubsystem,
-            TrajectoryGenerator.generateTrajectory(
-                start, waypoints, end, 
-                generateDefaultConfig(swerveSubsystem).setReversed(true)
-            )
+            ),
+            targetAngle
         );
     }
 
@@ -117,6 +100,7 @@ public class FollowPathCommand extends SwerveControllerCommand {
             );
     }
 
+    /*
     @Override
     public boolean isFinished() {
         // End the command if the trajectory has finished and we are within tolerance of our final angle.
@@ -126,4 +110,5 @@ public class FollowPathCommand extends SwerveControllerCommand {
         double absAngleError = Math.abs(swerveSubsystem.getRobotPosition().getRotation().minus(targetAngle).getRadians());
         return super.isFinished() && absAngleError <= ACCEPTABLE_ANGLE_ERROR_RADS;
     }
+    */
 }
