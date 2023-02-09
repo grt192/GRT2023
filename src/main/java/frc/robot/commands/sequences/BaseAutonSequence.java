@@ -43,7 +43,8 @@ public abstract class BaseAutonSequence extends SequentialCommandGroup {
      * @return The `SequentialCommandGroup` representing running the commands in order.
      */
     protected Command goAndGrab(Pose2d initialPose, PiecePosition finalPose) {
-        return new FollowPathCommand(swerveSubsystem, initialPose, List.of(), finalPose.getPose())
+        // TODO: wheel headings!
+        return new FollowPathCommand(swerveSubsystem, initialPose, List.of(), finalPose.getPose(), finalPose.getPose().getRotation())
             .alongWith(new JulianLevelCommand(tiltedElevatorSubsystem, ElevatorState.GROUND))
             .alongWith(new AidenIntakeCommand(rollerSubsystem));
     }
@@ -55,7 +56,8 @@ public abstract class BaseAutonSequence extends SequentialCommandGroup {
      * @return The `SequentialCommandGroup` representing running the commands in order.
      */
     protected Command goAndPlace(Pose2d initialPose, PlacePosition finalState) {
-        return new FollowPathCommand(swerveSubsystem, initialPose, List.of(), finalState.getPose())
+        // TODO: wheel headings!
+        return new FollowPathCommand(swerveSubsystem, initialPose, List.of(), finalState.getPose(), finalState.getPose().getRotation())
             .alongWith(new JulianLevelCommand(tiltedElevatorSubsystem, finalState.getElevatorState())) // or .alongWith()?
             .andThen(new AidenPlaceCommand(rollerSubsystem));
     }

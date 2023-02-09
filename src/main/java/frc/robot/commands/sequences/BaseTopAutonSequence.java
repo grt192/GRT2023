@@ -55,9 +55,10 @@ public abstract class BaseTopAutonSequence extends BaseAutonSequence {
      */
     private Command goAndGrabTopPath(Pose2d initialPose, Pose2d midPose1, Pose2d midPose2, Pose2d midPose3, PiecePosition finalPose) {
         return (new JulianLevelCommand(tiltedElevatorSubsystem, ElevatorState.GROUND))
-            .alongWith(FollowPathCommand.fromReversed(swerveSubsystem, initialPose, List.of(), midPose1))
-            .andThen(FollowPathCommand.fromReversed(swerveSubsystem, midPose1, List.of(), midPose2))
-            .andThen(new FollowPathCommand(swerveSubsystem, midPose2, List.of(), midPose3))
+            // TODO: wheel headings!
+            .alongWith(new FollowPathCommand(swerveSubsystem, initialPose, List.of(), midPose1, midPose1.getRotation()))
+            .andThen(new FollowPathCommand(swerveSubsystem, midPose1, List.of(), midPose2, midPose2.getRotation()))
+            .andThen(new FollowPathCommand(swerveSubsystem, midPose2, List.of(), midPose3, midPose3.getRotation()))
             .andThen(goAndGrab(midPose3, finalPose));
     }
 
@@ -72,9 +73,10 @@ public abstract class BaseTopAutonSequence extends BaseAutonSequence {
      */
     private Command goAndPlaceTopPath(Pose2d initialPose, Pose2d midPose1, Pose2d midPose2, Pose2d midPose3, PlacePosition finalState) {
         return (new JulianLevelCommand(tiltedElevatorSubsystem, ElevatorState.GROUND))
-            .alongWith(new FollowPathCommand(swerveSubsystem, initialPose, List.of(), midPose1))
-            .andThen(new FollowPathCommand(swerveSubsystem, midPose1, List.of(), midPose2))
-            .andThen(new FollowPathCommand(swerveSubsystem, midPose2, List.of(), midPose3))
+            // TODO: wheel headings!
+            .alongWith(new FollowPathCommand(swerveSubsystem, initialPose, List.of(), midPose1, midPose1.getRotation()))
+            .andThen(new FollowPathCommand(swerveSubsystem, midPose1, List.of(), midPose2, midPose2.getRotation()))
+            .andThen(new FollowPathCommand(swerveSubsystem, midPose2, List.of(), midPose3, midPose3.getRotation()))
             .andThen(goAndPlace(midPose3, finalState));
     }
 }

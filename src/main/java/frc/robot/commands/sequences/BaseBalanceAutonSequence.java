@@ -31,7 +31,8 @@ public abstract class BaseBalanceAutonSequence extends BaseAutonSequence {
             // Place preloaded game piece
             goAndPlace(initialPose, placeState),
             // Go out of community
-            new FollowPathCommand(swerveSubsystem, placeState.getPose(), List.of(), outsidePose),
+            // TODO: wheel headings!
+            new FollowPathCommand(swerveSubsystem, placeState.getPose(), List.of(), outsidePose, outsidePose.getRotation()),
             // Go and balance on charging station
             new BalancerCommand(swerveSubsystem)
         );
