@@ -48,6 +48,7 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
     private Rotation2d angleOffset = new Rotation2d(0);
 
     private final ShuffleboardTab shuffleboardTab = Shuffleboard.getTab("Drivetrain");
+    private final ShuffleboardTab fieldShuffleboardTab = Shuffleboard.getTab("Field2d");
     private final Field2d cfield = new Field2d();
     private final GenericEntry xEntry = shuffleboardTab.add("xpos", 0).getEntry();
     private final GenericEntry yEntry = shuffleboardTab.add("ypos", 0).getEntry();
@@ -56,17 +57,6 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
     private final GenericEntry timestampVisionEntry = shuffleboardTab.add("timestamp vision", 0).getEntry();
     private final GenericEntry xVisionEntry = shuffleboardTab.add("x vision pos", 0).getEntry();
     private final GenericEntry yVisionEntry = shuffleboardTab.add("y vision pos", 0).getEntry();
-
-    // ----------- TESTING ------------
-    private final GenericEntry xStatVisionEntry = shuffleboardTab.add("x vision stats", "").getEntry();
-    private final GenericEntry yStatVisionEntry = shuffleboardTab.add("y vision stats", "").getEntry();
-
-    private final GenericEntry estimationTimerEntry = shuffleboardTab.add("estimation timer", 0).getEntry();
-    private Timer estimationTimer = new Timer();
-
-    ArrayList<Double> xEntries = new ArrayList<Double>();
-    ArrayList<Double> yEntries = new ArrayList<Double>();
-    // --------------------------------
 
     // The driver or auton commanded `SwerveModuleState` setpoints for each module;
     // states are given in a tuple of [top left, top right, bottom left, bottom right].
@@ -100,7 +90,7 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
         this.kinematics = kinematics;
         this.photonWrapper = photonWrapper;
 
-        SmartDashboard.putData("Field", cfield);
+        fieldShuffleboardTab.add("Field", cfield);
 
         // Initialize pose estimator
         poseEstimator = new SwerveDrivePoseEstimator(
@@ -115,51 +105,10 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
         );
 
         lockTimer = new Timer();
-        estimationTimer.start();
-    }
-
-    /**
-     * Returns average, standard deviation, and range of a list of data.
-     * @param data ArrayList of Doubles
-     * @return array of average, standard deviation, and range
-     */
-    private double[] analyzeData(ArrayList<Double> data) {
-        OptionalDouble optionalAverage = data.stream().mapToDouble(a -> a).average();
-
-        final double average = (optionalAverage.isPresent() ? optionalAverage.getAsDouble() : 0);
-        double stdDev = 0;
-        double range = 0;
-
-        // Calculate std dev if the double stream is present
-        if (optionalAverage.isPresent()) {
-            stdDev = Math.sqrt(data.stream().mapToDouble(a -> {
-                return Math.pow((a - average), 2);
-            }).average().getAsDouble());
-
-            range = data.stream().mapToDouble(a -> a).max().getAsDouble() 
-                - data.stream().mapToDouble(a -> a).min().getAsDouble();
-        }
-
-        return new double[] { average, stdDev, range };
     }
 
     @Override
     public void periodic() {
-        // ----- TESTING CODE -------
-        estimationTimerEntry.setValue(estimationTimer.get());
-
-        if (estimationTimer.get() > 5.0) {
-            double[] xStats = analyzeData(xEntries);
-            double[] yStats = analyzeData(yEntries);
-
-            xStatVisionEntry.setValue(String.format("%.3f %.3f %.3f", xStats[0], xStats[1], xStats[2]));
-            yStatVisionEntry.setValue(String.format("%.3f %.3f %.3f", yStats[0], yStats[1], yStats[2]));
-            
-            xEntries.clear();
-            yEntries.clear();
-            estimationTimer.reset();
-        }
-        // --------------------------
 
         // Update pose estimator from swerve module states
         Rotation2d gyroAngle = getGyroHeading();
@@ -176,11 +125,6 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
 
         // Add vision pose estimate to pose estimator
         photonWrapper.getRobotPose(estimate).forEach((visionPose) -> {
-
-            // ---- TESTING ---            
-            xEntries.add(visionPose.estimatedPose.getX());
-            yEntries.add(visionPose.estimatedPose.getY());
-            // ----------------
 
             xVisionEntry.setValue(Units.metersToInches(visionPose.estimatedPose.getX()));
             yVisionEntry.setValue(Units.metersToInches(visionPose.estimatedPose.getY()));

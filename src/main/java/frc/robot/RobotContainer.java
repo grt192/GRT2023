@@ -55,6 +55,7 @@ public class RobotContainer {
     private final BaseDrivetrain driveSubsystem;
     private final RollerSubsystem rollerSubsystem;
     private final TiltedElevatorSubsystem tiltedElevatorSubsystem;
+    private final RollerToTiltedSubsystem rollerToTiltedSubsystem;
     
     private final PhotonWrapper photonWrapper;
 
@@ -98,6 +99,7 @@ public class RobotContainer {
         driveSubsystem = new SwerveSubsystem(photonWrapper);
         rollerSubsystem = new RollerSubsystem();
         tiltedElevatorSubsystem = new TiltedElevatorSubsystem();
+        rollerToTiltedSubsystem = new RollerToTiltedSubsystem(rollerSubsystem, tiltedElevatorSubsystem);
         
         balancerCommand = new BalancerCommand(driveSubsystem);
 
