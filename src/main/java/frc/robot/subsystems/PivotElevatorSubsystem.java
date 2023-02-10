@@ -17,14 +17,14 @@ import static frc.robot.Constants.MoverConstants.*;
 
 public class PivotElevatorSubsystem extends SubsystemBase{
     private final CANSparkMax rotationMotor;
-    private final RelativeEncoder rotationEncoder;
-    private final SparkMaxPIDController rotationPidController;
+    private RelativeEncoder rotationEncoder;
+    private SparkMaxPIDController rotationPidController;
 
     private final CANSparkMax rotationMotorFollower;
 
     private final CANSparkMax extensionMotor;
-    private final RelativeEncoder extensionEncoder;
-    private final SparkMaxPIDController extensionPidController;
+    private RelativeEncoder extensionEncoder;
+    private SparkMaxPIDController extensionPidController;
 
     private double rotationP = 0.125;
     private double rotationI = 0;
@@ -81,43 +81,46 @@ public class PivotElevatorSubsystem extends SubsystemBase{
     }
 
     public PivotElevatorSubsystem(){
-        rotationMotor = MotorUtil.createSparkMax(ROTATION_MOTOR_PORT);
-        rotationMotor.setIdleMode(IdleMode.kBrake);
-        rotationMotor.setInverted(true);
-        rotationMotorFollower = MotorUtil.createSparkMax(ROTATION_FOLLOWER_MOTOR_PORT);
-        rotationMotorFollower.follow(rotationMotor);
+        rotationMotor = MotorUtil.createSparkMax(ROTATION_MOTOR_PORT, (CANSparkMax sparkMax) -> {
+            sparkMax.setIdleMode(IdleMode.kBrake);
+            sparkMax.setInverted(true);
 
-        rotationEncoder = rotationMotor.getEncoder();
-        rotationEncoder.setPositionConversionFactor(ROTATION_ROT_TO_RAD);
-        rotationEncoder.setPosition(0);
-        
-        rotationMotor.enableSoftLimit(SoftLimitDirection.kForward, true);
-        rotationMotor.enableSoftLimit(SoftLimitDirection.kReverse, true);
-        rotationMotor.setSoftLimit(SoftLimitDirection.kForward, (float) Units.degreesToRadians(90));
-        rotationMotor.setSoftLimit(SoftLimitDirection.kReverse, (float) Units.degreesToRadians(-90));
+            rotationEncoder = sparkMax.getEncoder();
+            rotationEncoder.setPositionConversionFactor(ROTATION_ROT_TO_RAD);
+            rotationEncoder.setPosition(0);
+    
+            rotationPidController = sparkMax.getPIDController();
+            rotationPidController.setP(rotationP);
+            rotationPidController.setI(rotationI);
+            rotationPidController.setD(rotationD);
+            
+            sparkMax.enableSoftLimit(SoftLimitDirection.kForward, true);
+            sparkMax.enableSoftLimit(SoftLimitDirection.kReverse, true);
+            sparkMax.setSoftLimit(SoftLimitDirection.kForward, (float) Units.degreesToRadians(90));
+            sparkMax.setSoftLimit(SoftLimitDirection.kReverse, (float) Units.degreesToRadians(-90));
+        });
+        rotationMotorFollower = MotorUtil.createSparkMax(ROTATION_FOLLOWER_MOTOR_PORT, (CANSparkMax sparkMax) -> {
+            sparkMax.follow(rotationMotor);
+        });
 
-        rotationPidController = rotationMotor.getPIDController();
-        rotationPidController.setP(rotationP);
-        rotationPidController.setI(rotationI);
-        rotationPidController.setD(rotationD);
+        extensionMotor = MotorUtil.createSparkMax(EXTENSION_MOTOR_PORT, (CANSparkMax sparkMax) -> {
+            sparkMax.setIdleMode(IdleMode.kBrake);
+            
 
+            extensionEncoder = sparkMax.getEncoder();
+            extensionEncoder.setPositionConversionFactor(EXTENSION_ROT_TO_M);
+            extensionEncoder.setPosition(0);
+            
+            sparkMax.enableSoftLimit(SoftLimitDirection.kForward, true);
+            sparkMax.enableSoftLimit(SoftLimitDirection.kReverse, true);
+            sparkMax.setSoftLimit(SoftLimitDirection.kForward, (float) Units.inchesToMeters(24));
+            sparkMax.setSoftLimit(SoftLimitDirection.kReverse, (float) Units.inchesToMeters(0));
 
-        extensionMotor = MotorUtil.createSparkMax(EXTENSION_MOTOR_PORT);
-        extensionMotor.setIdleMode(IdleMode.kBrake);
-
-        extensionEncoder = extensionMotor.getEncoder();
-        extensionEncoder.setPositionConversionFactor(EXTENSION_ROT_TO_M);
-        extensionEncoder.setPosition(0);
-        
-        extensionMotor.enableSoftLimit(SoftLimitDirection.kForward, true);
-        extensionMotor.enableSoftLimit(SoftLimitDirection.kReverse, true);
-        extensionMotor.setSoftLimit(SoftLimitDirection.kForward, (float) Units.inchesToMeters(24));
-        extensionMotor.setSoftLimit(SoftLimitDirection.kReverse, (float) Units.inchesToMeters(0));
-
-        extensionPidController = extensionMotor.getPIDController();
-        extensionPidController.setP(extensionP);
-        extensionPidController.setI(extensionI);
-        extensionPidController.setD(extensionD);
+            extensionPidController = sparkMax.getPIDController();
+            extensionPidController.setP(extensionP);
+            extensionPidController.setI(extensionI);
+            extensionPidController.setD(extensionD);
+        });
 
     }
 

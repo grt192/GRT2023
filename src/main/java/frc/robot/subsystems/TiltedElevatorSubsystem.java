@@ -23,8 +23,8 @@ import static frc.robot.Constants.TiltedElevatorConstants.*;
 
 public class TiltedElevatorSubsystem extends SubsystemBase {
     private final CANSparkMax extensionMotor;
-    private final RelativeEncoder extensionEncoder;
-    private final SparkMaxPIDController extensionPidController;
+    private RelativeEncoder extensionEncoder;
+    private SparkMaxPIDController extensionPidController;
 
     private final CANSparkMax extensionFollow;
 
@@ -113,34 +113,35 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
     }
 
     public TiltedElevatorSubsystem() {
-        extensionMotor = MotorUtil.createSparkMax(EXTENSION_ID);
-        extensionMotor.setIdleMode(IdleMode.kBrake); 
-        extensionMotor.setInverted(true);
+        extensionMotor = MotorUtil.createSparkMax(EXTENSION_ID, (CANSparkMax sparkMax) -> {
+            sparkMax.setIdleMode(IdleMode.kBrake); 
+            sparkMax.setInverted(true);
+    
+            extensionEncoder = sparkMax.getEncoder();
+            extensionEncoder.setPositionConversionFactor(EXTENSION_ROTATIONS_TO_METERS);
+            extensionEncoder.setVelocityConversionFactor(EXTENSION_ROTATIONS_TO_METERS / 60.0);
+            extensionEncoder.setPosition(0);
 
-        extensionMotor.enableSoftLimit(SoftLimitDirection.kForward, true);
-        extensionMotor.setSoftLimit(SoftLimitDirection.kForward, EXTENSION_LIMIT);
-        extensionMotor.enableSoftLimit(SoftLimitDirection.kReverse, true);
-        extensionMotor.setSoftLimit(SoftLimitDirection.kReverse, (float) Units.inchesToMeters(-2));
+            sparkMax.enableSoftLimit(SoftLimitDirection.kForward, true);
+            sparkMax.setSoftLimit(SoftLimitDirection.kForward, EXTENSION_LIMIT);
+            sparkMax.enableSoftLimit(SoftLimitDirection.kReverse, true);
+            sparkMax.setSoftLimit(SoftLimitDirection.kReverse, (float) Units.inchesToMeters(-2));
+            
+            extensionPidController = sparkMax.getPIDController();
+            extensionPidController.setP(extensionP);
+            extensionPidController.setI(extensionI);
+            extensionPidController.setD(extensionD);
+            extensionPidController.setFF(extensionFF);
+            extensionPidController.setSmartMotionAllowedClosedLoopError(extensionTolerance, 0);
+            extensionPidController.setSmartMotionMaxVelocity(maxVel, 0);
+            extensionPidController.setSmartMotionMaxAccel(maxAccel, 0);
+            extensionPidController.setSmartMotionAccelStrategy(AccelStrategy.kTrapezoidal, 0);
+        });
 
-        extensionEncoder = extensionMotor.getEncoder();
-        extensionEncoder.setPositionConversionFactor(EXTENSION_ROTATIONS_TO_METERS);
-        extensionEncoder.setVelocityConversionFactor(EXTENSION_ROTATIONS_TO_METERS / 60.0);
-        extensionEncoder.setPosition(0);
-
-        extensionPidController = extensionMotor.getPIDController();
-        extensionPidController.setFeedbackDevice(extensionEncoder);
-        extensionPidController.setP(extensionP);
-        extensionPidController.setI(extensionI);
-        extensionPidController.setD(extensionD);
-        extensionPidController.setFF(extensionFF);
-        extensionPidController.setSmartMotionAllowedClosedLoopError(extensionTolerance, 0);
-        extensionPidController.setSmartMotionMaxVelocity(maxVel, 0);
-        extensionPidController.setSmartMotionMaxAccel(maxAccel, 0);
-        extensionPidController.setSmartMotionAccelStrategy(AccelStrategy.kTrapezoidal, 0);
-
-        extensionFollow = MotorUtil.createSparkMax(EXTENSION_FOLLOW_ID);
-        extensionFollow.follow(extensionMotor);
-        extensionFollow.setIdleMode(IdleMode.kBrake);
+        extensionFollow = MotorUtil.createSparkMax(EXTENSION_FOLLOW_ID, (CANSparkMax sparkMax) -> {
+            sparkMax.follow(extensionMotor);
+            sparkMax.setIdleMode(IdleMode.kBrake);
+        });
     }
 
     @Override

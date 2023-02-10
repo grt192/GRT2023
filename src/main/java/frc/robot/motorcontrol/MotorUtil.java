@@ -1,11 +1,14 @@
 package frc.robot.motorcontrol;
 
+import java.util.function.Consumer;
+
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkMaxPIDController;
 
 public class MotorUtil {
     /**
@@ -42,24 +45,51 @@ public class MotorUtil {
      * Creates a CANSparkMax on a given device ID and motor type, configuring it with global defaults.
      * @param deviceId The CAN ID of the SparkMax.
      * @param motorType The SparkMax's motor type (kBrushed or kBrushless).
+     * @param configureMotor A Consumer<CANSparkMax> to configure the motor further before settings are burned to flash.
      * @return The configured SparkMax.
      */
-    public static CANSparkMax createSparkMax(int deviceId, MotorType motorType) {
+    public static CANSparkMax createSparkMax(int deviceId, MotorType motorType, Consumer<CANSparkMax> configureMotor) {
         CANSparkMax spark = new CANSparkMax(deviceId, motorType);
 
         // Set 60.0 amp current limit
         spark.restoreFactoryDefaults();
         spark.setSmartCurrentLimit(60);
 
+        RelativeEncoder encoder = spark.getEncoder();
+        encoder.setPosition(0);
+
+        SparkMaxPIDController pidController = spark.getPIDController();
+        pidController.setFeedbackDevice(encoder);
+        pidController.setPositionPIDWrappingEnabled(false);
+        pidController.setP(0);
+        pidController.setI(0);
+        pidController.setD(0);
+        pidController.setFF(0);
+
+        // manually configured settings
+        configureMotor.accept(spark);
+
+        spark.burnFlash(); // BURN!
+
         return spark;
     }
 
     /**
-     * Creates a CANSparkMax on a given device ID, configuring it with global defaults.
+     * Creates a brushless CANSparkMax on a given device ID, configuring it with global defaults.
+     * @param deviceId The CAN ID of the SparkMax.
+     * @param configureMotor A Consumer<CANSparkMax> to configure the motor further before settings are burned to flash.
+     * @return The configured SparkMax.
+     */
+    public static CANSparkMax createSparkMax(int deviceId, Consumer<CANSparkMax> configureMotor) {
+        return createSparkMax(deviceId, MotorType.kBrushless, configureMotor);
+    }
+
+    /**
+     * Creates a brushless CANSparkMax on a given device ID, configuring it with global defaults.
      * @param deviceId The CAN ID of the SparkMax.
      * @return The configured SparkMax.
      */
     public static CANSparkMax createSparkMax(int deviceId) {
-        return createSparkMax(deviceId, MotorType.kBrushless);
+        return createSparkMax(deviceId, MotorType.kBrushless, (CANSparkMax sparkMax) -> {});
     }
 }
