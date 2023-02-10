@@ -16,6 +16,7 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.shuffleboard.ComplexWidget;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
@@ -75,9 +76,9 @@ public class RobotContainer {
 
     private UsbCamera front;
     private UsbCamera back;
-    SimpleWidget cameraSelection;
+    ComplexWidget cameraSelection;
     private int CameraID = 0;
-    VideoSink server;
+    private VideoSink server;
 
     private final GenericHID switchboard = new GenericHID(3);
     private final JoystickButton
@@ -123,7 +124,7 @@ public class RobotContainer {
         tiltedElevatorSubsystem = new TiltedElevatorSubsystem();
 
         superstructure = new Superstructure(rollerSubsystem, tiltedElevatorSubsystem);
-        cameraSelection = Shuffleboard.getTab("Driver Camera").add("Intake Camera", server);
+        cameraSelection = Shuffleboard.getTab("Driver Camera").add("Intake Camera", server.getSource());
 
         // Configure the button bindings
         configureButtonBindings();
