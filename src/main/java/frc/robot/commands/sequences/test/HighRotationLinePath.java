@@ -12,12 +12,13 @@ import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
 public class HighRotationLinePath extends SequentialCommandGroup {
     public HighRotationLinePath(BaseSwerveSubsystem swerveSubsystem) {
         addRequirements(swerveSubsystem);
-        addCommands(new FollowPathCommand(
-            swerveSubsystem, 
-            new Pose2d(), 
-            List.of(), 
-            new Pose2d(1, 0, new Rotation2d()),
-            Rotation2d.fromDegrees(90)
-        ));
+        addCommands(
+            FollowPathCommand.from(
+                swerveSubsystem, 
+                new Pose2d(), 
+                List.of(), 
+                new Pose2d(1, 0, Rotation2d.fromDegrees(90))
+            )
+        );
     }
 }

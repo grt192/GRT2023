@@ -65,31 +65,79 @@ public class FollowPathCommand extends SwerveControllerCommand {
     }
 
     /**
-     * Creates a FollowPathCommand from a given start point, list of waypoints, end point, and target robot angle.
+     * Creates a FollowPathCommand from a given start point, list of waypoints, and end point. The wheel headings at the start
+     * and end are automatically generated using a straight-line to the closest waypoint.
      * 
      * @param swerveSubsystem The swerve subsystem.
-     * @param start The start point of the trajectory as a Pose2d. The rotation of this pose represents *the heading of the wheels* at the start of the trajectory.
+     * @param start The start point of the trajectory as a Pose2d.
      * @param waypoints A list of waypoints the robot must pass through as a List<Translation2d>.
-     * @param end The end point of the trajectory as a Pose2d. The rotation of this pose represents *the heading of the wheels* at the end of the trajectory.
-     * @param targetAngle The target angle of the robot.
+     * @param end The end point of the trajectory as a Pose2d.
      */
-    public FollowPathCommand(BaseSwerveSubsystem swerveSubsystem, Pose2d start, List<Translation2d> waypoints, Pose2d end, Rotation2d targetAngle) {
-        this(
+    public static FollowPathCommand from(BaseSwerveSubsystem swerveSubsystem, Pose2d start, List<Translation2d> waypoints, Pose2d end) {
+        Translation2d startWaypoint = waypoints.size() > 0 
+            ? waypoints.get(0) : end.getTranslation();
+        Translation2d endWaypoint = waypoints.size() > 0 
+            ? waypoints.get(waypoints.size() - 1) : start.getTranslation();
+
+        return new FollowPathCommand(
             swerveSubsystem,
             TrajectoryGenerator.generateTrajectory(
-                start, waypoints, end, 
-                generateDefaultConfig(swerveSubsystem)
+                generateWheelHeadingsFromPoints(start.getTranslation(), startWaypoint),
+                waypoints,
+                generateWheelHeadingsFromPoints(endWaypoint, end.getTranslation()), 
+                createDefaultConfig(swerveSubsystem)
             ),
-            targetAngle
+            end.getRotation()
         );
     }
 
     /**
-     * Generates a default `TrajectoryConfig` from a `BaseSwerveSubsystem`'s constraints.
+     * Creates a FollowPathCommand from a given start point, list of waypoints, end point, and wheel headings at
+     * the start and end of the path.
+     * 
+     * @param swerveSubsystem The swerve subsystem.
+     * @param start The start point of the trajectory as a Pose2d.
+     * @param waypoints A list of waypoints the robot must pass through as a List<Translation2d>.
+     * @param end The end point of the trajectory as a Pose2d.
+     * @param startHeading The wheel heading at the start of the path.
+     * @param endHeading The wheel heading at the end of the path.
+     */
+    public static FollowPathCommand fromWheelHeadings(
+        BaseSwerveSubsystem swerveSubsystem, Pose2d start, List<Translation2d> waypoints, Pose2d end,
+        Rotation2d startHeading, Rotation2d endHeading
+    ) {
+        return new FollowPathCommand(
+            swerveSubsystem,
+            TrajectoryGenerator.generateTrajectory(
+                new Pose2d(start.getTranslation(), startHeading),
+                waypoints,
+                new Pose2d(end.getTranslation(), endHeading), 
+                createDefaultConfig(swerveSubsystem)
+            ),
+            end.getRotation()
+        );
+    }
+
+    /**
+     * Generates a wheel-headings pose between two points.
+     * 
+     * @param a The start point of the segment.
+     * @param b The end point of the segment.
+     * @return The `Pose2d` representing the wheel heading pose from a to b.
+     */
+    private static Pose2d generateWheelHeadingsFromPoints(Translation2d a, Translation2d b) {
+        double dx = b.getX() - a.getX();
+        double dy = b.getY() - a.getY();
+
+        return new Pose2d(a, new Rotation2d(dx, dy));
+    }
+
+    /**
+     * Creates a default `TrajectoryConfig` from a `BaseSwerveSubsystem`'s constraints.
      * @param swerveSubsystem The `BaseSwerveSubsystem` to create a trajectory for.
      * @return The generated `TrajectoryConfig`.
      */
-    private static TrajectoryConfig generateDefaultConfig(BaseSwerveSubsystem swerveSubsystem) {
+    private static TrajectoryConfig createDefaultConfig(BaseSwerveSubsystem swerveSubsystem) {
         return new TrajectoryConfig(swerveSubsystem.MAX_VEL, swerveSubsystem.MAX_ACCEL)
             .setKinematics(swerveSubsystem.getKinematics())
             .addConstraint(
