@@ -113,11 +113,20 @@ public final class Constants {
     public static final class VisionConstants {
         public static List<Pair<PhotonCamera, Transform3d>> CAMERA_LIST = 
             Arrays.asList(
+                // front AprilTag camera (position measured from CAD)     
                 new Pair<PhotonCamera, Transform3d>(
                     new PhotonCamera("Arducam_OV9281_USB_Camera"), 
                     new Transform3d(
-                        new Translation3d(Units.inchesToMeters(-2.25), Units.inchesToMeters(4.5), Units.inchesToMeters(22)),
-                        new Rotation3d(0, 0, Math.PI / 2) // TODO
+                        new Translation3d(Units.inchesToMeters((34.750/2)-7.25+0.25), Units.inchesToMeters((28/2)-(2.403+1)), Units.inchesToMeters(22.538375 + 0.201000/2)),
+                        new Rotation3d(0, 0, 0)
+                    )
+                ),
+                // back AprilTag camera
+                new Pair<PhotonCamera, Transform3d>(
+                    new PhotonCamera("HD USB Camera"), 
+                    new Transform3d(
+                        new Translation3d(Units.inchesToMeters((34.750/2)-9.75-0.25), Units.inchesToMeters((28/2)-(2.403+1)), Units.inchesToMeters(22.538375 + 0.201000/2)),
+                        new Rotation3d(0, 0, Math.PI)
                     )
                 )
             );
