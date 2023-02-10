@@ -83,9 +83,9 @@ public class FollowPathCommand extends SwerveControllerCommand {
         return new FollowPathCommand(
             swerveSubsystem,
             TrajectoryGenerator.generateTrajectory(
-                generateWheelHeadingsFromPoints(start.getTranslation(), startWaypoint),
+                new Pose2d(start.getTranslation(), wheelHeadingFromPoints(start.getTranslation(), startWaypoint)),
                 waypoints,
-                generateWheelHeadingsFromPoints(endWaypoint, end.getTranslation()), 
+                new Pose2d(end.getTranslation(), wheelHeadingFromPoints(endWaypoint, end.getTranslation())), 
                 createDefaultConfig(swerveSubsystem)
             ),
             end.getRotation()
@@ -121,17 +121,17 @@ public class FollowPathCommand extends SwerveControllerCommand {
     }
 
     /**
-     * Generates a wheel-headings pose between two points.
+     * Gets the wheel headings between two points as a `Rotation2d`.
      * 
      * @param a The start point of the segment.
      * @param b The end point of the segment.
-     * @return The `Pose2d` representing the wheel heading pose from a to b.
+     * @return The `Rotation2d` representing the wheel headings from a to b.
      */
-    private static Pose2d generateWheelHeadingsFromPoints(Translation2d a, Translation2d b) {
+    private static Rotation2d wheelHeadingFromPoints(Translation2d a, Translation2d b) {
         double dx = b.getX() - a.getX();
         double dy = b.getY() - a.getY();
 
-        return new Pose2d(a, new Rotation2d(dx, dy));
+        return new Rotation2d(dx, dy);
     }
 
     /**
