@@ -72,6 +72,7 @@ public class FollowPathCommand extends SwerveControllerCommand {
      * @param start The start point of the trajectory as a Pose2d.
      * @param waypoints A list of waypoints the robot must pass through as a List<Translation2d>.
      * @param end The end point of the trajectory as a Pose2d.
+     * @return The created `FollowPathCommand`.
      */
     public static FollowPathCommand from(BaseSwerveSubsystem swerveSubsystem, Pose2d start, List<Translation2d> waypoints, Pose2d end) {
         Translation2d startWaypoint = waypoints.size() > 0 
@@ -101,6 +102,7 @@ public class FollowPathCommand extends SwerveControllerCommand {
      * @param end The end point of the trajectory as a Pose2d.
      * @param startHeading The wheel heading at the start of the path.
      * @param endHeading The wheel heading at the end of the path.
+     * @return The created `FollowPathCommand`.
      */
     public static FollowPathCommand fromWheelHeadings(
         BaseSwerveSubsystem swerveSubsystem, Pose2d start, List<Translation2d> waypoints, Pose2d end,

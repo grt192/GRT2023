@@ -24,11 +24,11 @@ public class GRTAutonSequence extends SequentialCommandGroup {
                 swerveSubsystem, 
                 new Pose2d(1, 1, new Rotation2d()),
                 List.of(),
-                new Pose2d(0, 0, new Rotation2d())
+                new Pose2d()
             ),
             FollowPathCommand.from(
                 swerveSubsystem, 
-                new Pose2d(0, 0, new Rotation2d()),
+                new Pose2d(),
                 List.of(
                     new Translation2d(0.5, -1)
                 ),
