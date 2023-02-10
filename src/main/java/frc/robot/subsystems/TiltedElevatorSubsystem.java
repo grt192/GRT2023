@@ -128,6 +128,7 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
         extensionEncoder.setPosition(0);
 
         extensionPidController = extensionMotor.getPIDController();
+        extensionPidController.setFeedbackDevice(extensionEncoder);
         extensionPidController.setP(extensionP);
         extensionPidController.setI(extensionI);
         extensionPidController.setD(extensionD);
