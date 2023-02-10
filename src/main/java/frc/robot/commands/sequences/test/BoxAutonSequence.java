@@ -13,54 +13,47 @@ public class BoxAutonSequence extends SequentialCommandGroup {
     public BoxAutonSequence(BaseSwerveSubsystem swerveSubsystem) {
         addRequirements(swerveSubsystem);
         addCommands(
-            new FollowPathCommand(
+            FollowPathCommand.from(
                 swerveSubsystem, 
                 new Pose2d(),
                 List.of(), 
-                new Pose2d(2, 0, new Rotation2d()),
-                new Rotation2d()
+                new Pose2d(2, 0, new Rotation2d())
             ),
-            new FollowPathCommand(
+            FollowPathCommand.from(
                 swerveSubsystem, 
-                new Pose2d(2, 0, Rotation2d.fromDegrees(90)), 
+                new Pose2d(2, 0, new Rotation2d()), 
                 List.of(), 
-                new Pose2d(2, -1, Rotation2d.fromDegrees(90)),
-                new Rotation2d()
+                new Pose2d(2, -1, new Rotation2d())
             ),
-            new FollowPathCommand(
+            FollowPathCommand.from(
                 swerveSubsystem, 
                 new Pose2d(2, -1, new Rotation2d()), 
                 List.of(), 
-                new Pose2d(3, -1, new Rotation2d()),
-                new Rotation2d()
+                new Pose2d(3, -1, new Rotation2d())
             ),
-            new FollowPathCommand(
+            FollowPathCommand.from(
                 swerveSubsystem, 
-                new Pose2d(3, -1, Rotation2d.fromDegrees(-90)), 
+                new Pose2d(3, -1, new Rotation2d()), 
                 List.of(), 
-                new Pose2d(3, 1, Rotation2d.fromDegrees(-90)),
-                new Rotation2d()
+                new Pose2d(3, 1, new Rotation2d())
             ),
-            new FollowPathCommand(
+            FollowPathCommand.from(
                 swerveSubsystem, 
-                new Pose2d(3, 1, Rotation2d.fromDegrees(180)), 
+                new Pose2d(3, 1, new Rotation2d()), 
                 List.of(), 
-                new Pose2d(2, 1, Rotation2d.fromDegrees(180)),
-                new Rotation2d()
+                new Pose2d(2, 1, new Rotation2d())
             ),
-            new FollowPathCommand(
+            FollowPathCommand.from(
                 swerveSubsystem, 
-                new Pose2d(2, 1, Rotation2d.fromDegrees(90)), 
+                new Pose2d(2, 1, new Rotation2d()), 
                 List.of(), 
-                new Pose2d(2, 0, Rotation2d.fromDegrees(90)),
-                new Rotation2d()
+                new Pose2d(2, 0, new Rotation2d())
             ),
-            new FollowPathCommand(
+            FollowPathCommand.from(
                 swerveSubsystem, 
-                new Pose2d(2, 0, Rotation2d.fromDegrees(180)), 
+                new Pose2d(2, 0, new Rotation2d()), 
                 List.of(), 
-                new Pose2d(0, 0, Rotation2d.fromDegrees(180)),
-                new Rotation2d()
+                new Pose2d(0, 0, new Rotation2d())
             )
         );
     }

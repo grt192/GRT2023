@@ -54,11 +54,10 @@ public abstract class BaseTopAutonSequence extends BaseAutonSequence {
      * @return The `SequentialCommandGroup` representing running the commands in order.
      */
     private Command goAndGrabTopPath(Pose2d initialPose, Pose2d midPose1, Pose2d midPose2, Pose2d midPose3, PiecePosition finalPose) {
-        return (new JulianLevelCommand(tiltedElevatorSubsystem, ElevatorState.GROUND))
-            // TODO: wheel headings!
-            .alongWith(new FollowPathCommand(swerveSubsystem, initialPose, List.of(), midPose1, midPose1.getRotation()))
-            .andThen(new FollowPathCommand(swerveSubsystem, midPose1, List.of(), midPose2, midPose2.getRotation()))
-            .andThen(new FollowPathCommand(swerveSubsystem, midPose2, List.of(), midPose3, midPose3.getRotation()))
+        return new JulianLevelCommand(tiltedElevatorSubsystem, ElevatorState.GROUND)
+            .alongWith(FollowPathCommand.from(swerveSubsystem, initialPose, List.of(), midPose1))
+            .andThen(FollowPathCommand.from(swerveSubsystem, midPose1, List.of(), midPose2))
+            .andThen(FollowPathCommand.from(swerveSubsystem, midPose2, List.of(), midPose3))
             .andThen(goAndGrab(midPose3, finalPose));
     }
 
@@ -72,11 +71,10 @@ public abstract class BaseTopAutonSequence extends BaseAutonSequence {
      * @return The `SequentialCommandGroup` representing running the commands in order.
      */
     private Command goAndPlaceTopPath(Pose2d initialPose, Pose2d midPose1, Pose2d midPose2, Pose2d midPose3, PlacePosition finalState) {
-        return (new JulianLevelCommand(tiltedElevatorSubsystem, ElevatorState.GROUND))
-            // TODO: wheel headings!
-            .alongWith(new FollowPathCommand(swerveSubsystem, initialPose, List.of(), midPose1, midPose1.getRotation()))
-            .andThen(new FollowPathCommand(swerveSubsystem, midPose1, List.of(), midPose2, midPose2.getRotation()))
-            .andThen(new FollowPathCommand(swerveSubsystem, midPose2, List.of(), midPose3, midPose3.getRotation()))
+        return new JulianLevelCommand(tiltedElevatorSubsystem, ElevatorState.GROUND)
+            .alongWith(FollowPathCommand.from(swerveSubsystem, initialPose, List.of(), midPose1))
+            .andThen(FollowPathCommand.from(swerveSubsystem, midPose1, List.of(), midPose2))
+            .andThen(FollowPathCommand.from(swerveSubsystem, midPose2, List.of(), midPose3))
             .andThen(goAndPlace(midPose3, finalState));
     }
 }
