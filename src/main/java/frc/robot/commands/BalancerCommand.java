@@ -1,90 +1,111 @@
 package frc.robot.commands;
 
+import com.fasterxml.jackson.databind.JsonSerializable.Base;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 import frc.robot.subsystems.drivetrain.BaseDrivetrain;
+import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
 import edu.wpi.first.wpilibj.Timer;
 
 public class BalancerCommand extends CommandBase {
     private final BaseDrivetrain driveSubsystem;
     private final AHRS ahrs; 
-    private final Timer stoptimer;
+    
+    private double initialHeading;
     private double oldAngle;
     private double currentAngle;
+    private double angularAcceleration;
 
-    private double returnPower; //power to be returned to DT
+    PIDController drivePID;
+    PIDController turnPID;
+
+    private double returnDrivePower; // drive power to be returned to DT
+    private double returnAngularPower; // angular power to return to DT (for heading correction)
+
     public boolean reachedStation;
     public boolean passedCenter;
-    private boolean timerEnabled;
 
-    private final PIDController pid;
+    private final Timer timer;
 
     public BalancerCommand(BaseDrivetrain driveSubsystem) {
         this.driveSubsystem = driveSubsystem;
         this.ahrs = driveSubsystem.getAhrs();
-        pid = new PIDController(0.3/35, 0.0, 0.0); // no deriv successful
-        stoptimer = new Timer();
-        reachedStation = false;
+
+        drivePID = new PIDController(0.3/35, 0.0, 0.0); // no deriv successful
+        turnPID = new PIDController(0.2/5,0.0, 0.0); // kP = max pwr / max err
+        timer = new Timer();
         addRequirements(driveSubsystem);
     }
 
     @Override
     public void initialize() {
-        System.out.println("---------------------- Balancer initialized ----------------------");
+        System.out.println("------------------- Balancer initialized -------------------");
+        initialHeading = ahrs.getCompassHeading();
+        reachedStation = false;
+
     }
 
     @Override
     public void execute() {
-        // currentAngle = ahrs.getPitch();
-        if (!reachedStation) {
-            returnPower = 0.80;
-            System.out.println(ahrs.getPitch());
+        
+        returnAngularPower = turnPID.calculate((initialHeading - ahrs.getCompassHeading()), 0); // correct angle of approach
+        
+        if(!reachedStation) {
+            returnDrivePower = 0.80;
             if(ahrs.getPitch() >= 15.0) reachedStation = true;
         }
         else{
+            currentAngle = ahrs.getPitch();
+            angularAcceleration = Math.abs(currentAngle - oldAngle) / timer.get(); // calc magnitude of angular acceleration based on delta angle over time
+            timer.reset();
+
             if(!passedCenter){
-                returnPower = 0.15; //.15 successful
-                if(ahrs.getPitch() <= -3.0) passedCenter = true;
+                returnDrivePower = 0.15; //.15 successful
+                if(ahrs.getPitch() <= 0.0){
+                    passedCenter = true; // <= 1.0 worked 
+                    if(driveSubsystem instanceof BaseSwerveSubsystem) ((BaseSwerveSubsystem) driveSubsystem).lockNow();
+                    // lock the moment the CG passes the center to minimize overshoot
+                }
             }
             else{
-                returnPower = -1 * pid.calculate(ahrs.getPitch(), 0);
-                System.out.println(returnPower);
                 if(Math.abs(ahrs.getPitch()) <= 2.0){
-                    returnPower = 0.0;
-                    // if(driveSubsystem instanceof BaseSwerveSubsystem) ((BaseSwerveSubsystem) driveSubsystem).lockNow();
+                    returnDrivePower = 0.0;
+                    if(driveSubsystem instanceof BaseSwerveSubsystem) ((BaseSwerveSubsystem) driveSubsystem).lockNow();
+                    // lock as soon as level is detected
+                }
+                else{
+                    if(angularAcceleration <= 0.3){ // threshold value (deg / sec) TBD
+                        returnDrivePower = -1 * drivePID.calculate(ahrs.getPitch(), 0);
+                        // if acceleration is low, platform is relatively stable, so try leveling
+                    }
+                    else{
+                        returnDrivePower = 0.0;
+                        if(driveSubsystem instanceof BaseSwerveSubsystem) ((BaseSwerveSubsystem) driveSubsystem).lockNow();
+                        // if platform is rocking, lock wheels to preserve stability
+                    }
                 }
             }
         }
-        // else{
-        //     returnPower = -1 * pid.calculate(ahrs.getPitch(), 0);
-        //     // if((currentAngle - oldAngle) <= -0.5) returnPower = returnPower * ;
 
-        //     if(!timerEnabled && Math.abs(ahrs.getPitch()) <= 2.0){
-        //         stoptimer.stop();
-        //         stoptimer.reset();
-        //         timerEnabled = true;
-        //     }
-        //     if(Math.abs(ahrs.getPitch()) >= 2.0){
-        //         stoptimer.stop();
-        //         stoptimer.reset();
-        //         timerEnabled = false;
-        //     }
-        // }
+        if(driveSubsystem instanceof BaseSwerveSubsystem){
+            ((BaseSwerveSubsystem) driveSubsystem).setDrivePowers(returnDrivePower, returnAngularPower);
+        }
+        else driveSubsystem.setDrivePowers(returnDrivePower);
 
-        driveSubsystem.setDrivePowers(returnPower);
-        oldAngle = currentAngle;        
+        oldAngle = currentAngle; // set the current angle to old angle so it is accessible for next cycle     
     }
 
     @Override
     public void end(boolean interrupted) {
-        System.out.println("------------------ Balancing process finished ---------------------");
+        System.out.println("------------------- Balancing process finished -------------------");
     }
 
     @Override
     public boolean isFinished() {
-        return reachedStation && Math.abs(ahrs.getPitch()) <= 2.0 && stoptimer.hasElapsed(0.20);
+        return reachedStation && Math.abs(ahrs.getPitch()) <= 2.0;
+        // return reachedStation && Math.abs(ahrs.getPitch()) <= 2.0 && stoptimer.hasElapsed(0.20);
     }
 }

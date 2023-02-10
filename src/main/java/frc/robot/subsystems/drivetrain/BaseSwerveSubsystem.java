@@ -232,6 +232,15 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
     }
 
     /**
+     * Sets the swerve module states of this subsystem from provided relative drive powers.
+     * @param xPower The power [-1.0, 1.0] in the x (forward) direction, relative to the robot.
+     * @param angularPower The power [-1.0, 1.0] representing the rotational power.
+     */
+    public void setDrivePowers(double xPower, double angularPower) {
+        setDrivePowers(xPower, 0.0, angularPower, true);
+    }
+
+    /**
      * Sets the swerve module states of this subsystem. Module states are assumed to
      * be passed in a tuple of [top left, top right, bottom left, bottom right].
      * 
