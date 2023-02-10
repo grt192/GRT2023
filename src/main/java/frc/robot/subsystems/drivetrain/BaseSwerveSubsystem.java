@@ -47,16 +47,15 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
 
     private Rotation2d angleOffset = new Rotation2d(0);
 
-    private final ShuffleboardTab shuffleboardTab = Shuffleboard.getTab("Drivetrain");
+    private boolean SHUFFLEBOARD_ON = true;
+
     private final ShuffleboardTab fieldShuffleboardTab = Shuffleboard.getTab("Field2d");
     private final Field2d cfield = new Field2d();
-    private final GenericEntry xEntry = shuffleboardTab.add("xpos", 0).getEntry();
-    private final GenericEntry yEntry = shuffleboardTab.add("ypos", 0).getEntry();
-    private final GenericEntry thetaEntry = shuffleboardTab.add("thetapos", 0).getEntry();
-
-    private final GenericEntry timestampVisionEntry = shuffleboardTab.add("timestamp vision", 0).getEntry();
-    private final GenericEntry xVisionEntry = shuffleboardTab.add("x vision pos", 0).getEntry();
-    private final GenericEntry yVisionEntry = shuffleboardTab.add("y vision pos", 0).getEntry();
+    
+    private final ShuffleboardTab shuffleboardTab = Shuffleboard.getTab("Drivetrain");
+    private final GenericEntry xEntry = shuffleboardTab.add("x pos", 0).withPosition(0, 0).getEntry();
+    private final GenericEntry yEntry = shuffleboardTab.add("y pos", 0).withPosition(1, 0).getEntry();
+    private final GenericEntry thetaEntry = shuffleboardTab.add("theta pos", 0).withPosition(2, 0).getEntry();
 
     // The driver or auton commanded `SwerveModuleState` setpoints for each module;
     // states are given in a tuple of [top left, top right, bottom left, bottom right].
@@ -118,18 +117,16 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
             getModuleStates()
         );
 
-        xEntry.setValue(Units.metersToInches(estimate.getX()));
-        yEntry.setValue(Units.metersToInches(estimate.getY()));
-        thetaEntry.setValue(estimate.getRotation().getDegrees());
-        cfield.setRobotPose(estimate);
+        // Update Shuffleboard
+        if (SHUFFLEBOARD_ON) {
+            xEntry.setValue(Units.metersToInches(estimate.getX()));
+            yEntry.setValue(Units.metersToInches(estimate.getY()));
+            thetaEntry.setValue(estimate.getRotation().getDegrees());
+            cfield.setRobotPose(estimate);
+        }
 
         // Add vision pose estimate to pose estimator
-        photonWrapper.getRobotPose(estimate).forEach((visionPose) -> {
-
-            xVisionEntry.setValue(Units.metersToInches(visionPose.estimatedPose.getX()));
-            yVisionEntry.setValue(Units.metersToInches(visionPose.estimatedPose.getY()));
-            timestampVisionEntry.setValue(visionPose.timestampSeconds);
-
+        photonWrapper.getRobotPoses(estimate).forEach((visionPose) -> {
             poseEstimator.addVisionMeasurement(
                 visionPose.estimatedPose.toPose2d(),
                 visionPose.timestampSeconds
