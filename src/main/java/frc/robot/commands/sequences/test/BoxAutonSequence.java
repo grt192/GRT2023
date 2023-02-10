@@ -53,7 +53,7 @@ public class BoxAutonSequence extends SequentialCommandGroup {
                 swerveSubsystem, 
                 new Pose2d(2, 0, new Rotation2d()), 
                 List.of(), 
-                new Pose2d(0, 0, new Rotation2d())
+                new Pose2d()
             )
         );
     }
