@@ -2,12 +2,15 @@ package frc.robot.motorcontrol;
 
 import java.util.function.Consumer;
 
+import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.REVLibError;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
+import edu.wpi.first.wpilibj.DriverStation;
 
 public class MotorUtil {
     /**
@@ -19,8 +22,8 @@ public class MotorUtil {
         WPI_TalonSRX talon = new WPI_TalonSRX(deviceId);
 
         // Set 60.0 amp current limit to kick in after 0.2 seconds
-        talon.configFactoryDefault();
-        talon.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 60.0, 60.0, 0.2));
+        checkError(deviceId, talon.configFactoryDefault(), "factory reset");
+        checkError(deviceId, talon.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 60.0, 60.0, 0.2)), "current limit");
 
         return talon;
     }
@@ -34,8 +37,8 @@ public class MotorUtil {
         WPI_TalonFX talon = new WPI_TalonFX(deviceId);
 
         // Set 60.0 amp current limit to kick in after 0.2 seconds
-        talon.configFactoryDefault();
-        talon.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 60.0, 60.0, 0.2));
+        checkError(deviceId, talon.configFactoryDefault(), "factory reset");
+        checkError(deviceId, talon.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 60.0, 60.0, 0.2)), "current limit");
 
         return talon;
     }
@@ -51,12 +54,12 @@ public class MotorUtil {
         CANSparkMax spark = new CANSparkMax(deviceId, motorType);
 
         // Set 60.0 amp current limit
-        spark.restoreFactoryDefaults();
-        spark.setSmartCurrentLimit(60);
+        checkError(deviceId, spark.restoreFactoryDefaults(), "factory reset");
+        checkError(deviceId, spark.setSmartCurrentLimit(60), "current limit");
 
         // Apply manually configured settings
         configureMotor.accept(spark);
-        spark.burnFlash();
+        checkError(deviceId, spark.burnFlash(), "burn flash");
 
         return spark;
     }
@@ -78,5 +81,27 @@ public class MotorUtil {
      */
     public static CANSparkMax createSparkMax(int deviceId) {
         return createSparkMax(deviceId, MotorType.kBrushless, (sparkMax) -> {});
+    }
+
+    /**
+     * Checks a CANSparkMax configuration call for an error, reporting it if it exists.
+     * @param id The CAN ID of the SparkMax.
+     * @param error The error returned by the configuration.
+     * @param field The field being configured.
+     */
+    private static void checkError(int id, REVLibError error, String field) {
+        if (error == REVLibError.kOk) return;
+        DriverStation.reportError("Error configuring [" + field + "] on SparkMax " + id + ": " + error.name(), false);
+    }
+
+    /**
+     * Checks a TalonSRX/FX configuration call for an error, reporting it if it exists.
+     * @param id The CAN ID of the Talon.
+     * @param error The error returned by the configuration.
+     * @param field The field being configured.
+     */
+    private static void checkError(int id, ErrorCode error, String field) {
+        if (error == ErrorCode.OK) return;
+        DriverStation.reportError("Error configuring [" + field + "] on Talon " + id + ": " + error.name(), false);
     }
 }
