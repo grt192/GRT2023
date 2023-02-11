@@ -7,18 +7,25 @@ public class HallEffectSensor {
     private HallEffectMagnet[] magnets;
 
     // Different values means between two magnets, same values means at a magnet.
-    private int lowerPos = -1; // -1 min, (array length - 1) max
-    private int upperPos = 0; // 0 min, array length max
+    private int lowerPos; // -1 min, (array length - 1) max
+    private int upperPos; // 0 min, array length max
 
     private boolean prevDetected;
     private double prevMechPos;
 
-    public HallEffectSensor(int id, HallEffectMagnet[] magnets, double initialPos) {
+    public HallEffectSensor(int id, HallEffectMagnet[] magnets, double initialMechPos) {
+        this(id, magnets, initialMechPos, -1, 0);
+    }
+    
+    public HallEffectSensor(int id, HallEffectMagnet[] magnets, double initialMechPos, int lowerPos, int upperPos) {
         this.sensor = new DigitalInput(id);
         this.magnets = magnets;
 
         this.prevDetected = !sensor.get();
-        this.prevMechPos = initialPos;
+        this.prevMechPos = initialMechPos;
+
+        this.lowerPos = lowerPos;
+        this.upperPos = upperPos;
     }
 
     /**

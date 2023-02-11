@@ -9,6 +9,8 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.util.Units;
+import frc.robot.motorcontrol.HallEffectMagnet;
+import frc.robot.subsystems.TiltedElevatorSubsystem.ElevatorState;
 
 import org.photonvision.PhotonCamera;
 
@@ -125,6 +127,10 @@ public final class Constants {
         public static final int EXTENSION_FOLLOW_ID = 8;
         public static final int EXTENSION_FOLLOW_B_ID = 9;
         public static final int ZERO_LIMIT_ID = 1;
+        
+        // DIO ports for hall effect sensors
+        public static final int RIGHT_HALL_ID = 1; // TODO
+        public static final int LEFT_HALL_ID = 2; // TODO
     }
 
     public static final class VisionConstants {

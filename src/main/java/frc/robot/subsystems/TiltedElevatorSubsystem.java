@@ -20,6 +20,9 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.util.MotorUtil;
 import frc.robot.util.ShuffleboardUtil;
+import frc.robot.motorcontrol.HallEffectMagnet;
+import frc.robot.motorcontrol.HallEffectSensor;
+import frc.robot.motorcontrol.MotorUtil;
 
 import static frc.robot.Constants.TiltedElevatorConstants.*;
 
@@ -53,9 +56,6 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
     private static final double OFFSET_FACTOR = 0.01; // The factor to multiply driver input by when changing the offset.
     private double offsetDistMeters = 0;
 
-    private DigitalInput hallEffectSensor = new DigitalInput(4);
-    private MagnetPosition hallEffectState = MagnetPosition.LOWEST;
-
     public boolean pieceGrabbed = false;
 
     private final ShuffleboardTab shuffleboardTab;
@@ -64,6 +64,17 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
         extensionToleranceEntry, arbFFEntry, rampEntry;
     private final GenericEntry manualPowerEntry, targetExtensionEntry;
     private final GenericEntry currentExtensionEntry, currentVelEntry, currentStateEntry, offsetDistEntry;
+    // Hall effect sensor things
+    private HallEffectSensor rightHallSensor;
+    private HallEffectSensor leftHallSensor;
+    private final HallEffectMagnet[] RIGHT_MAGNETS = {
+        new HallEffectMagnet(Units.inchesToMeters(5)),
+        new HallEffectMagnet(Units.inchesToMeters(30), ElevatorState.CHUTE)
+    };
+    private final HallEffectMagnet[] LEFT_MAGNETS = {
+        new HallEffectMagnet(Units.inchesToMeters(20))
+    };
+
 
     public enum ElevatorState {
         GROUND(0) {
@@ -99,33 +110,6 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
          */
         public double getExtension(boolean hasPiece) {
             return this.extendDistanceMeters;
-        }
-    }
-
-    public enum MagnetPosition {
-        LOWEST(),
-        MAGNET_A(Units.inchesToMeters(5)), // bottom magnet
-        BETWEEN_MAGNET_A_B(),
-        MAGNET_B(Units.inchesToMeters(20)),
-        BETWEEN_MAGNET_B_C(),
-        MAGNET_C(Units.inchesToMeters(26)); // upper soft stop
-
-        protected double positionMeters; // magnet position, extension distance in meters
-
-        private MagnetPosition(double positionMeters) {
-            this.positionMeters = positionMeters;
-        }
-        
-        private MagnetPosition() {
-            this.positionMeters = -1;
-        }
-
-        public MagnetPosition prev() {
-            return values()[ordinal() - 1];
-        }
-
-        public MagnetPosition next() {
-            return values()[ordinal() + 1];
         }
     }
 
@@ -182,6 +166,9 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
         currentExtensionEntry = shuffleboardTab.add("Current Ext (in)", 0.0).getEntry();
         currentVelEntry = shuffleboardTab.add("Current Vel (mps)", 0.0).getEntry();
         offsetDistEntry = shuffleboardTab.add("Offset (in)", offsetDistMeters).getEntry();
+
+        rightHallSensor = new HallEffectSensor(RIGHT_HALL_ID, RIGHT_MAGNETS, extensionEncoder.getPosition());
+        leftHallSensor = new HallEffectSensor(LEFT_HALL_ID, LEFT_MAGNETS, extensionEncoder.getPosition());
     }
 
     
@@ -189,22 +176,18 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
     public void periodic() {
         if (!zeroLimitSwitch.get()) extensionEncoder.setPosition(0); 
 
-        // Update elevator encoder using absolute magnet position
-        if (!hallEffectSensor.get()) {
-            // Use direction of elevator motion to set state of hall effect sensor
-            if (extensionEncoder.getPosition() > targetExtension) { // elevator moving down
-                hallEffectState = hallEffectState.prev();
-            }
-            else { // Elevator moving up
-                hallEffectState = hallEffectState.next();
-            }
-            // Update encoder value
-            extensionEncoder.setPosition(hallEffectState.positionMeters);
-        }
+        // Temporarily store mechanism state during single periodic loop
+        double currentPos = extensionEncoder.getPosition();
+        double currentVel = extensionEncoder.getVelocity();
 
-        // Reset upper soft limit
-        if (hallEffectState == MagnetPosition.MAGNET_C) {
-            EXTENSION_LIMIT = (float) extensionEncoder.getPosition();
+        // Reset encoder using hall effect sensor
+        HallEffectMagnet rightHallState = rightHallSensor.getHallEffectState(currentPos);
+        HallEffectMagnet leftHallState = leftHallSensor.getHallEffectState(currentPos);
+        if (rightHallState != null) {
+            extensionEncoder.setPosition(rightHallState.getExtendDistanceMeters());
+        }
+        if (leftHallState != null) {
+            extensionEncoder.setPosition(leftHallState.getExtendDistanceMeters());
         }
         
         // If we're in manual power mode, use percent out power supplied by driver joystick.
@@ -221,11 +204,9 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
         ShuffleboardUtil.pollShuffleboardDouble(rampEntry, (value) -> extensionMotor.setClosedLoopRampRate(value));
         arbFeedforward = arbFFEntry.getDouble(arbFeedforward);
 
-        double currentPos = extensionEncoder.getPosition();
-        double currentVel = extensionEncoder.getVelocity();
-        double targetExtension = state.getExtension(pieceGrabbed) + offsetDistMeters;
+        // System.out.println(extensionEncoder.getPosition());
 
-
+        currentVelEntry.setDouble(currentVel);
         currentExtensionEntry.setDouble(Units.metersToInches(currentPos));
         currentVelEntry.setDouble(currentVel);
         offsetDistEntry.setDouble(Units.metersToInches(offsetDistMeters));
