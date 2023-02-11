@@ -30,7 +30,7 @@ public class BlueBottomAuton extends BaseBottomAutonSequence {
         Rotation2d.fromDegrees(180)
     );
 
-    private static final PlacePosition PLACE_STATE = PlacePosition.Blue.A1MID;
+    private static final PlacePosition PLACE_STATE = PlacePosition.Blue.A2HIGH;
     private static final PlacePosition PLACE_STATE_2 = PlacePosition.Blue.A2MID;
 
     private static final PiecePosition GRAB_POSE = PiecePosition.Blue.PIECE1;
