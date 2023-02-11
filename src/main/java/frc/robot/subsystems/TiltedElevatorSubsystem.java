@@ -242,8 +242,7 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
             extensionMotor.set(0);
         } else if (this.targetExtension == 0 && currentPos < Units.inchesToMeters(5)) {
             extensionMotor.set(-0.075);
-        }
-        else {
+        } else {
             // Set PID reference
             extensionPidController.setReference(
                 MathUtil.clamp(targetExtension, 0, EXTENSION_LIMIT),
