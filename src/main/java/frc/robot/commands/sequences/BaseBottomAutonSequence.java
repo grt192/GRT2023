@@ -4,6 +4,7 @@ import java.util.List;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import frc.robot.commands.mover.JulianLevelCommand;
 import frc.robot.commands.swerve.FollowPathCommand;
 import frc.robot.positions.PiecePosition;
@@ -54,7 +55,9 @@ public abstract class BaseBottomAutonSequence extends BaseAutonSequence {
     protected Command goAndGrabBottomPath(Pose2d initialPose, Pose2d midPose1, Pose2d midPose2, PiecePosition finalPose) {
         return new JulianLevelCommand(tiltedElevatorSubsystem, ElevatorState.GROUND)
             .alongWith(FollowPathCommand.from(swerveSubsystem, initialPose, List.of(), midPose1))
+            .andThen(new PrintCommand("hit MidPose1"))
             .andThen(FollowPathCommand.from(swerveSubsystem, midPose1, List.of(), midPose2))
+            .andThen(new PrintCommand("hit MidPose2"))
             .andThen(goAndGrab(midPose2, finalPose));
     }
 
@@ -69,7 +72,9 @@ public abstract class BaseBottomAutonSequence extends BaseAutonSequence {
     protected Command goAndPlaceBottomPath(Pose2d initialPose, Pose2d midPose1, Pose2d midPose2, PlacePosition finalState) {
         return new JulianLevelCommand(tiltedElevatorSubsystem, ElevatorState.GROUND)
             .alongWith(FollowPathCommand.from(swerveSubsystem, initialPose, List.of(), midPose1))
+            .andThen(new PrintCommand("hit MidPose1"))
             .andThen(FollowPathCommand.from(swerveSubsystem, midPose1, List.of(), midPose2))
+            .andThen(new PrintCommand("hit MidPose2"))
             .andThen(goAndPlace(midPose2, finalState));
     }
 }
