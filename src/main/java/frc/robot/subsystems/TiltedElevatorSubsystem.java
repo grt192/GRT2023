@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.EncoderType;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMax.SoftLimitDirection;
@@ -35,7 +36,7 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
     private static final double EXTENSION_GEAR_RATIO = 14.0 / 64.0;
     private static final double EXTENSION_CIRCUMFERENCE = Units.inchesToMeters(Math.PI * 0.500); // approx circumference of winch
     private static final double EXTENSION_ROTATIONS_TO_METERS = EXTENSION_GEAR_RATIO * EXTENSION_CIRCUMFERENCE * 2.0 * (15.0 / 13.4);
-    private static final float EXTENSION_LIMIT = 26.0f;
+    private static float EXTENSION_LIMIT = 26.0f;
 
     private static final double extensionP = 2.3;
     private static final double extensionI = 0;
@@ -51,6 +52,9 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
 
     private static final double OFFSET_FACTOR = 0.01; // The factor to multiply driver input by when changing the offset.
     private double offsetDistMeters = 0;
+
+    private DigitalInput hallEffectSensor = new DigitalInput(4);
+    private MagnetPosition hallEffectState = MagnetPosition.LOWEST;
 
     public boolean pieceGrabbed = false;
 
@@ -95,6 +99,33 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
          */
         public double getExtension(boolean hasPiece) {
             return this.extendDistanceMeters;
+        }
+    }
+
+    public enum MagnetPosition {
+        LOWEST(),
+        MAGNET_A(Units.inchesToMeters(5)), // bottom magnet
+        BETWEEN_MAGNET_A_B(),
+        MAGNET_B(Units.inchesToMeters(20)),
+        BETWEEN_MAGNET_B_C(),
+        MAGNET_C(Units.inchesToMeters(26)); // upper soft stop
+
+        protected double positionMeters; // magnet position, extension distance in meters
+
+        private MagnetPosition(double positionMeters) {
+            this.positionMeters = positionMeters;
+        }
+        
+        private MagnetPosition() {
+            this.positionMeters = -1;
+        }
+
+        public MagnetPosition prev() {
+            return values()[ordinal() - 1];
+        }
+
+        public MagnetPosition next() {
+            return values()[ordinal() + 1];
         }
     }
 
@@ -153,10 +184,29 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
         offsetDistEntry = shuffleboardTab.add("Offset (in)", offsetDistMeters).getEntry();
     }
 
+    
     @Override
     public void periodic() {
         if (!zeroLimitSwitch.get()) extensionEncoder.setPosition(0); 
 
+        // Update elevator encoder using absolute magnet position
+        if (!hallEffectSensor.get()) {
+            // Use direction of elevator motion to set state of hall effect sensor
+            if (extensionEncoder.getPosition() > targetExtension) { // elevator moving down
+                hallEffectState = hallEffectState.prev();
+            }
+            else { // Elevator moving up
+                hallEffectState = hallEffectState.next();
+            }
+            // Update encoder value
+            extensionEncoder.setPosition(hallEffectState.positionMeters);
+        }
+
+        // Reset upper soft limit
+        if (hallEffectState == MagnetPosition.MAGNET_C) {
+            EXTENSION_LIMIT = (float) extensionEncoder.getPosition();
+        }
+        
         // If we're in manual power mode, use percent out power supplied by driver joystick.
         if (IS_MANUAL) {
             manualPowerEntry.setDouble(manualPower);
@@ -175,16 +225,30 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
         double currentVel = extensionEncoder.getVelocity();
         double targetExtension = state.getExtension(pieceGrabbed) + offsetDistMeters;
 
-        
-        // Set PID reference
-        extensionPidController.setReference(
-            MathUtil.clamp(targetExtension, 0, EXTENSION_LIMIT),
-            ControlType.kPosition, 0,
-            arbFeedforward, ArbFFUnits.kPercentOut
-        );
 
         currentExtensionEntry.setDouble(Units.metersToInches(currentPos));
         currentVelEntry.setDouble(currentVel);
+        offsetDistEntry.setDouble(Units.metersToInches(offsetDistMeters));
+
+        // Units.inchesToMeters(targetExtensionEntry.getDouble(0));
+        this.targetExtension = state.getExtension(pieceGrabbed) + offsetDistMeters;
+
+        // If we're trying to get to 0, set the motor to 0 power so the carriage drops with gravity
+        // and hits the hard stop / limit switch.
+        if (this.targetExtension == 0 && currentPos < Units.inchesToMeters(1)) {
+            extensionMotor.set(0);
+        } else if (this.targetExtension == 0 && currentPos < Units.inchesToMeters(5)) {
+            extensionMotor.set(-0.075);
+        }
+        else {
+            // Set PID reference
+            extensionPidController.setReference(
+                MathUtil.clamp(targetExtension, 0, EXTENSION_LIMIT),
+                ControlType.kSmartMotion, 0,
+                arbFeedforward, ArbFFUnits.kPercentOut
+            );
+        }
+
         currentStateEntry.setString(state.toString());
         targetExtensionEntry.setDouble(Units.metersToInches(targetExtension));
         offsetDistEntry.setDouble(Units.metersToInches(offsetDistMeters));
