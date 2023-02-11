@@ -47,7 +47,7 @@ public class MotorUtil {
      * Creates a CANSparkMax on a given device ID and motor type, configuring it with global defaults.
      * @param deviceId The CAN ID of the SparkMax.
      * @param motorType The SparkMax's motor type (kBrushed or kBrushless).
-     * @param configureMotor A Consumer<CANSparkMax> to configure the motor further before settings are burned to flash.
+     * @param configureMotor A callback to configure the motor further before settings are burned to flash.
      * @return The configured SparkMax.
      */
     public static CANSparkMax createSparkMax(int deviceId, MotorType motorType, Consumer<CANSparkMax> configureMotor) {
@@ -67,7 +67,7 @@ public class MotorUtil {
     /**
      * Creates a brushless CANSparkMax on a given device ID, configuring it with global defaults.
      * @param deviceId The CAN ID of the SparkMax.
-     * @param configureMotor A Consumer<CANSparkMax> to configure the motor further before settings are burned to flash.
+     * @param configureMotor A callback to configure the motor further before settings are burned to flash.
      * @return The configured SparkMax.
      */
     public static CANSparkMax createSparkMax(int deviceId, Consumer<CANSparkMax> configureMotor) {
@@ -81,6 +81,35 @@ public class MotorUtil {
      */
     public static CANSparkMax createSparkMax(int deviceId) {
         return createSparkMax(deviceId, MotorType.kBrushless, (sparkMax) -> {});
+    }
+
+    /**
+     * Creates a brushless CANSparkMax for a NEO 550 on a given device ID, configuring it with global defaults.
+     * @param deviceId The CAN ID of the SparkMax.
+     * @param configureMotor A callback to configure the motor further before settings are burned to flash.
+     * @return The configured SparkMax.
+     */
+    public static CANSparkMax createSparkMax550(int deviceId, Consumer<CANSparkMax> configureMotor) {
+        CANSparkMax spark = new CANSparkMax(deviceId, MotorType.kBrushless);
+
+        // Set 20.0 amp current limit
+        checkError(deviceId, spark.restoreFactoryDefaults(), "factory reset");
+        checkError(deviceId, spark.setSmartCurrentLimit(20), "current limit");
+
+        // Apply manually configured settings
+        configureMotor.accept(spark);
+        checkError(deviceId, spark.burnFlash(), "burn flash");
+
+        return spark;
+    }
+
+    /**
+     * Creates a brushless CANSparkMax for a NEO 550 on a given device ID, configuring it with global defaults.
+     * @param deviceId The CAN ID of the SparkMax.
+     * @return The configured SparkMax.
+     */
+    public static CANSparkMax createSparkMax550(int deviceId) {
+        return createSparkMax550(deviceId, (sparkMax) -> {});
     }
 
     /**

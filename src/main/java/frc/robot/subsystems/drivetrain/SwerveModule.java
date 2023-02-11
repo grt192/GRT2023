@@ -93,7 +93,7 @@ public class SwerveModule implements BaseSwerveModule {
             drivePidController.setFF(driveFF);
         });
 
-        steerMotor = MotorUtil.createSparkMax(steerPort, (sparkMax) -> {
+        steerMotor = MotorUtil.createSparkMax550(steerPort, (sparkMax) -> {
             sparkMax.setIdleMode(IdleMode.kBrake);
 
             steerAbsoluteEncoder = sparkMax.getAnalog(SparkMaxAnalogSensor.Mode.kAbsolute);
