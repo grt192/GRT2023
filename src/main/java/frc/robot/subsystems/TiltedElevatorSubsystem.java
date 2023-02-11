@@ -113,10 +113,10 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
     }
 
     public TiltedElevatorSubsystem() {
-        extensionMotor = MotorUtil.createSparkMax(EXTENSION_ID, (CANSparkMax sparkMax) -> {
+        extensionMotor = MotorUtil.createSparkMax(EXTENSION_ID, (sparkMax) -> {
             sparkMax.setIdleMode(IdleMode.kBrake); 
             sparkMax.setInverted(true);
-    
+
             extensionEncoder = sparkMax.getEncoder();
             extensionEncoder.setPositionConversionFactor(EXTENSION_ROTATIONS_TO_METERS);
             extensionEncoder.setVelocityConversionFactor(EXTENSION_ROTATIONS_TO_METERS / 60.0);
@@ -126,7 +126,7 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
             sparkMax.setSoftLimit(SoftLimitDirection.kForward, EXTENSION_LIMIT);
             sparkMax.enableSoftLimit(SoftLimitDirection.kReverse, true);
             sparkMax.setSoftLimit(SoftLimitDirection.kReverse, (float) Units.inchesToMeters(-2));
-            
+
             extensionPidController = sparkMax.getPIDController();
             extensionPidController.setP(extensionP);
             extensionPidController.setI(extensionI);
@@ -138,7 +138,7 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
             extensionPidController.setSmartMotionAccelStrategy(AccelStrategy.kTrapezoidal, 0);
         });
 
-        extensionFollow = MotorUtil.createSparkMax(EXTENSION_FOLLOW_ID, (CANSparkMax sparkMax) -> {
+        extensionFollow = MotorUtil.createSparkMax(EXTENSION_FOLLOW_ID, (sparkMax) -> {
             sparkMax.follow(extensionMotor);
             sparkMax.setIdleMode(IdleMode.kBrake);
         });

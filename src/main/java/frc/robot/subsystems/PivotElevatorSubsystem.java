@@ -12,7 +12,9 @@ import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
 import frc.robot.motorcontrol.MotorUtil;
+
 import static frc.robot.Constants.MoverConstants.*;
 
 public class PivotElevatorSubsystem extends SubsystemBase{
@@ -58,18 +60,36 @@ public class PivotElevatorSubsystem extends SubsystemBase{
     private final GenericEntry extensionIEntry = shuffleboardTab.add("Extension I", extensionI).getEntry();
     private final GenericEntry extensionDEntry = shuffleboardTab.add("Extension D", extensionD).getEntry();
 
-
     public enum GamePiece {
         CONE, CUBE;
     }
-    
+
     public enum MoverPosition {
-        VERTICAL(0,0),
-        GROUND(Units.degreesToRadians(90), distanceToExtension(Units.inchesToMeters(25))),
-        SUBSTATION(Units.degreesToRadians(65), distanceToExtension(Units.inchesToMeters(44))),
-        CUBEMID(Units.degreesToRadians(72), distanceToExtension(Units.inchesToMeters(34))), CUBEHIGH(Units.degreesToRadians(66),distanceToExtension(Units.inchesToMeters(44))), 
-        CONEMID(Units.degreesToRadians(62),distanceToExtension(Units.inchesToMeters(34))), CONEHIGH(Units.degreesToRadians(66),distanceToExtension(Units.inchesToMeters(44)))
-        ;
+        VERTICAL(0, 0),
+        GROUND(
+            Units.degreesToRadians(90),
+            distanceToExtension(Units.inchesToMeters(25))
+        ),
+        SUBSTATION(
+            Units.degreesToRadians(65),
+            distanceToExtension(Units.inchesToMeters(44))
+        ),
+        CUBEMID(
+            Units.degreesToRadians(72),
+            distanceToExtension(Units.inchesToMeters(34))
+        ),
+        CUBEHIGH(
+            Units.degreesToRadians(66),
+            distanceToExtension(Units.inchesToMeters(44))
+        ), 
+        CONEMID(
+            Units.degreesToRadians(62),
+            distanceToExtension(Units.inchesToMeters(34))
+        ),
+        CONEHIGH(
+            Units.degreesToRadians(66),
+            distanceToExtension(Units.inchesToMeters(44))
+        );
 
         public double angle; //radians, 0 is vertical
         public double extension; //meters, 0 extension is 25 inches from pivot
@@ -88,7 +108,7 @@ public class PivotElevatorSubsystem extends SubsystemBase{
             rotationEncoder = sparkMax.getEncoder();
             rotationEncoder.setPositionConversionFactor(ROTATION_ROT_TO_RAD);
             rotationEncoder.setPosition(0);
-    
+
             rotationPidController = sparkMax.getPIDController();
             rotationPidController.setP(rotationP);
             rotationPidController.setI(rotationI);
@@ -99,18 +119,18 @@ public class PivotElevatorSubsystem extends SubsystemBase{
             sparkMax.setSoftLimit(SoftLimitDirection.kForward, (float) Units.degreesToRadians(90));
             sparkMax.setSoftLimit(SoftLimitDirection.kReverse, (float) Units.degreesToRadians(-90));
         });
+
         rotationMotorFollower = MotorUtil.createSparkMax(ROTATION_FOLLOWER_MOTOR_PORT, (CANSparkMax sparkMax) -> {
             sparkMax.follow(rotationMotor);
         });
 
         extensionMotor = MotorUtil.createSparkMax(EXTENSION_MOTOR_PORT, (CANSparkMax sparkMax) -> {
             sparkMax.setIdleMode(IdleMode.kBrake);
-            
 
             extensionEncoder = sparkMax.getEncoder();
             extensionEncoder.setPositionConversionFactor(EXTENSION_ROT_TO_M);
             extensionEncoder.setPosition(0);
-            
+
             sparkMax.enableSoftLimit(SoftLimitDirection.kForward, true);
             sparkMax.enableSoftLimit(SoftLimitDirection.kReverse, true);
             sparkMax.setSoftLimit(SoftLimitDirection.kForward, (float) Units.inchesToMeters(24));
@@ -143,7 +163,6 @@ public class PivotElevatorSubsystem extends SubsystemBase{
         double exti = extensionIEntry.getDouble(extensionI);
         double extd = extensionDEntry.getDouble(extensionD);
 
-
         if(rotp != rotationP){
             rotationP = rotp;
         }
@@ -162,9 +181,7 @@ public class PivotElevatorSubsystem extends SubsystemBase{
         if(extd != extensionD){
             extensionD = extd;
         }
-
     }
-
 
     private void goTo(double angle, double extension){
         rotationPidController.setReference(angle, ControlType.kPosition);
@@ -204,5 +221,4 @@ public class PivotElevatorSubsystem extends SubsystemBase{
         rotationMotor.set(xPower * .2);
         extensionMotor.set(yPower * .2);
     }
-
 }

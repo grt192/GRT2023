@@ -45,13 +45,13 @@ public class SwerveModule2020 implements BaseSwerveModule {
     private static final double steerFF = 0;
 
     public SwerveModule2020(int drivePort, int steerPort, double offsetRads) {
-        driveMotor = MotorUtil.createSparkMax(drivePort, (CANSparkMax sparkMax) -> {
+        driveMotor = MotorUtil.createSparkMax(drivePort, (sparkMax) -> {
             sparkMax.setIdleMode(IdleMode.kBrake);
 
             driveEncoder = sparkMax.getEncoder();
             driveEncoder.setPositionConversionFactor(DRIVE_ROTATIONS_TO_METERS);
             driveEncoder.setVelocityConversionFactor(DRIVE_ROTATIONS_TO_METERS / 60.0); // RPM -> m/s
-    
+
             drivePidController = sparkMax.getPIDController();
             drivePidController.setP(driveP);
             drivePidController.setI(driveI);

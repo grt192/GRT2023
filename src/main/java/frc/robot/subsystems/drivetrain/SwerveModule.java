@@ -79,8 +79,7 @@ public class SwerveModule implements BaseSwerveModule {
          * driveMotor.config_kF(0, driveFF);
          */
 
-        driveMotor = MotorUtil.createSparkMax(drivePort, (CANSparkMax sparkMax) -> {
-
+        driveMotor = MotorUtil.createSparkMax(drivePort, (sparkMax) -> {
             sparkMax.setIdleMode(IdleMode.kBrake);
 
             driveEncoder = sparkMax.getEncoder();
@@ -94,7 +93,7 @@ public class SwerveModule implements BaseSwerveModule {
             drivePidController.setFF(driveFF);
         });
 
-        steerMotor = MotorUtil.createSparkMax(steerPort, (CANSparkMax sparkMax) -> {
+        steerMotor = MotorUtil.createSparkMax(steerPort, (sparkMax) -> {
             sparkMax.setIdleMode(IdleMode.kBrake);
 
             steerAbsoluteEncoder = sparkMax.getAnalog(SparkMaxAnalogSensor.Mode.kAbsolute);
@@ -111,7 +110,6 @@ public class SwerveModule implements BaseSwerveModule {
             steerPidController.setPositionPIDWrappingMinInput(0.0);
             steerPidController.setPositionPIDWrappingMaxInput(2 * Math.PI);
         });
-
 
         shuffleboardTab = Shuffleboard.getTab("Swerve " + drivePort + " " + steerPort);
         targetVelEntry = shuffleboardTab.add("Target velocity (mps)", 0.0)

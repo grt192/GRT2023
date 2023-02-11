@@ -6,9 +6,8 @@ import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.REVLibError;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkMaxPIDController;
 
 public class MotorUtil {
     /**
@@ -55,21 +54,9 @@ public class MotorUtil {
         spark.restoreFactoryDefaults();
         spark.setSmartCurrentLimit(60);
 
-        RelativeEncoder encoder = spark.getEncoder();
-        encoder.setPosition(0);
-
-        SparkMaxPIDController pidController = spark.getPIDController();
-        pidController.setFeedbackDevice(encoder);
-        pidController.setPositionPIDWrappingEnabled(false);
-        pidController.setP(0);
-        pidController.setI(0);
-        pidController.setD(0);
-        pidController.setFF(0);
-
-        // manually configured settings
+        // Apply manually configured settings
         configureMotor.accept(spark);
-
-        spark.burnFlash(); // BURN!
+        spark.burnFlash();
 
         return spark;
     }
@@ -90,6 +77,6 @@ public class MotorUtil {
      * @return The configured SparkMax.
      */
     public static CANSparkMax createSparkMax(int deviceId) {
-        return createSparkMax(deviceId, MotorType.kBrushless, (CANSparkMax sparkMax) -> {});
+        return createSparkMax(deviceId, MotorType.kBrushless, (sparkMax) -> {});
     }
 }
