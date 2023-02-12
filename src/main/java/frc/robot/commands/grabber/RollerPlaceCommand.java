@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 import frc.robot.subsystems.RollerSubsystem;
+import frc.robot.subsystems.RollerSubsystem.HeldPiece;
 
 /**
  * Places 1 game piece with the roller mech. This command runs the rollers in reverse
@@ -43,9 +44,8 @@ public class RollerPlaceCommand extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        boolean done = runTimer.hasElapsed(2) || !rollerSubsystem.hasPiece();
+        boolean done = runTimer.hasElapsed(2) || rollerSubsystem.getPiece() == HeldPiece.EMPTY;
         if (done) endTimer.start();
         return endTimer.hasElapsed(2);
     }
 }
-

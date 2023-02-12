@@ -40,7 +40,7 @@ import frc.robot.subsystems.drivetrain.SwerveSubsystem;
 import frc.robot.subsystems.drivetrain.SwerveSubsystem2020;
 import frc.robot.subsystems.drivetrain.BaseDrivetrain;
 import frc.robot.subsystems.RollerSubsystem;
-import frc.robot.subsystems.RollerToTiltedSubsystem;
+import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.TiltedElevatorSubsystem;
 import frc.robot.subsystems.TiltedElevatorSubsystem.ElevatorState;
 
@@ -56,8 +56,8 @@ public class RobotContainer {
     private final BaseDrivetrain driveSubsystem;
     private final RollerSubsystem rollerSubsystem;
     private final TiltedElevatorSubsystem tiltedElevatorSubsystem;
-    private final RollerToTiltedSubsystem rollerToTiltedSubsystem;
 
+    private final Superstructure superstructure;
     private final PhotonWrapper photonWrapper;
 
     // Controllers and buttons
@@ -100,8 +100,8 @@ public class RobotContainer {
         driveSubsystem = new SwerveSubsystem(photonWrapper);
         rollerSubsystem = new RollerSubsystem();
         tiltedElevatorSubsystem = new TiltedElevatorSubsystem();
-        rollerToTiltedSubsystem = new RollerToTiltedSubsystem(rollerSubsystem, tiltedElevatorSubsystem);
 
+        superstructure = new Superstructure(rollerSubsystem, tiltedElevatorSubsystem);
         balancerCommand = new BalancerCommand(driveSubsystem);
 
         // Configure the button bindings
