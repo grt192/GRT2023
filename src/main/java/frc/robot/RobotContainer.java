@@ -26,6 +26,7 @@ import frc.robot.commands.sequences.test.BoxAutonSequence;
 import frc.robot.commands.sequences.test.GRTAutonSequence;
 import frc.robot.commands.sequences.test.HighRotationLinePath;
 import frc.robot.commands.sequences.test.RotatingSCurveAutonSequence;
+import frc.robot.commands.sequences.test.StraightLinePath;
 import frc.robot.controllers.BaseDriveController;
 import frc.robot.controllers.DualJoystickDriveController;
 import frc.robot.controllers.TwistJoystickDriveController;
@@ -113,7 +114,8 @@ public class RobotContainer {
         if (driveSubsystem instanceof BaseSwerveSubsystem) {
             final BaseSwerveSubsystem swerveSubsystem = (BaseSwerveSubsystem) driveSubsystem;
 
-            autonChooser.addOption("Small straight-line curve", new HighRotationLinePath(swerveSubsystem));
+            autonChooser.addOption("Straight-line path", new StraightLinePath(swerveSubsystem));
+            autonChooser.addOption("High rotation straight-line path", new HighRotationLinePath(swerveSubsystem));
             autonChooser.addOption("Rotating S-curve", new RotatingSCurveAutonSequence(swerveSubsystem));
             autonChooser.addOption("Box auton", new BoxAutonSequence(swerveSubsystem));
             autonChooser.addOption("GRT path", new GRTAutonSequence(swerveSubsystem));
