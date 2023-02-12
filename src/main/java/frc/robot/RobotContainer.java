@@ -4,13 +4,7 @@
 
 package frc.robot;
 
-import java.util.List;
-
 import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -22,7 +16,17 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 import frc.robot.commands.BalancerCommand;
-import frc.robot.commands.swerve.FollowPathCommand;
+import frc.robot.commands.sequences.BlueBalanceAuton;
+import frc.robot.commands.sequences.BlueBottomAuton;
+import frc.robot.commands.sequences.BlueTopAuton;
+import frc.robot.commands.sequences.RedBalanceAuton;
+import frc.robot.commands.sequences.RedBottomAuton;
+import frc.robot.commands.sequences.RedTopAuton;
+import frc.robot.commands.sequences.test.BoxAutonSequence;
+import frc.robot.commands.sequences.test.GRTAutonSequence;
+import frc.robot.commands.sequences.test.HighRotationLinePath;
+import frc.robot.commands.sequences.test.RotatingSCurveAutonSequence;
+import frc.robot.commands.sequences.test.StraightLinePath;
 import frc.robot.controllers.BaseDriveController;
 import frc.robot.controllers.DualJoystickDriveController;
 import frc.robot.controllers.TwistJoystickDriveController;
@@ -35,9 +39,6 @@ import frc.robot.subsystems.drivetrain.MissileShellSwerveSweeperSubsystem;
 import frc.robot.subsystems.drivetrain.SwerveSubsystem;
 import frc.robot.subsystems.drivetrain.SwerveSubsystem2020;
 import frc.robot.subsystems.drivetrain.BaseDrivetrain;
-import frc.robot.subsystems.PivotElevatorSubsystem;
-import frc.robot.subsystems.PivotElevatorSubsystem.MoverPosition;
-import frc.robot.subsystems.GripperSubsytem;
 import frc.robot.subsystems.RollerSubsystem;
 import frc.robot.subsystems.RollerToTiltedSubsystem;
 import frc.robot.subsystems.TiltedElevatorSubsystem;
@@ -92,7 +93,7 @@ public class RobotContainer {
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
     public RobotContainer() {
-        driveController = new DualJoystickDriveController();
+        driveController = new XboxDriveController();
 
         photonWrapper = new PhotonWrapper();
 
@@ -113,142 +114,19 @@ public class RobotContainer {
         if (driveSubsystem instanceof BaseSwerveSubsystem) {
             final BaseSwerveSubsystem swerveSubsystem = (BaseSwerveSubsystem) driveSubsystem;
 
-            autonChooser.addOption("Small straight-line curve", new FollowPathCommand(
-                swerveSubsystem, 
-                new Pose2d(), 
-                List.of(), 
-                new Pose2d(1, 0, Rotation2d.fromDegrees(90))
-            ));
+            autonChooser.addOption("Straight-line path", new StraightLinePath(swerveSubsystem));
+            autonChooser.addOption("High rotation straight-line path", new HighRotationLinePath(swerveSubsystem));
+            autonChooser.addOption("Rotating S-curve", new RotatingSCurveAutonSequence(swerveSubsystem));
+            autonChooser.addOption("Box auton", new BoxAutonSequence(swerveSubsystem));
+            autonChooser.addOption("GRT path", new GRTAutonSequence(swerveSubsystem));
 
-            // S-curve auton
-            autonChooser.addOption("Rotating S-curve", new FollowPathCommand(
-                swerveSubsystem, 
-                new Pose2d(), 
-                List.of(
-                    new Translation2d(1, 1),
-                    new Translation2d(2, -1)
-                ),
-                new Pose2d(3, 0, Rotation2d.fromDegrees(90))
-            ).andThen(new FollowPathCommand(
-                swerveSubsystem,
-                new Pose2d(3, 0, Rotation2d.fromDegrees(90)),
-                List.of(
-                    new Translation2d(2, -1),
-                    new Translation2d(1, 1)
-                ),
-                new Pose2d(),
-                true
-            )));
+            autonChooser.addOption("Red top auton", new RedTopAuton(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem));
+            autonChooser.addOption("Red balance auton", new RedBalanceAuton(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem));
+            autonChooser.addOption("Red bottom auton", new RedBottomAuton(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem));
 
-            // Box auton
-            autonChooser.addOption("Box auton", new FollowPathCommand(
-                swerveSubsystem, 
-                new Pose2d(),
-                List.of(), 
-                new Pose2d(2, 0, new Rotation2d())
-            ).andThen(new FollowPathCommand(
-                swerveSubsystem, 
-                new Pose2d(2, 0, new Rotation2d()), 
-                List.of(), 
-                new Pose2d(2, -1, new Rotation2d())
-            )).andThen(new FollowPathCommand(
-                swerveSubsystem, 
-                new Pose2d(2, -1, new Rotation2d()), 
-                List.of(), 
-                new Pose2d(3, -1, new Rotation2d())
-            )).andThen(new FollowPathCommand(
-                swerveSubsystem, 
-                new Pose2d(3, -1, new Rotation2d()), 
-                List.of(), 
-                new Pose2d(3, 1, new Rotation2d())
-            )).andThen(new FollowPathCommand(
-                swerveSubsystem, 
-                new Pose2d(3, 1, new Rotation2d()), 
-                List.of(), 
-                new Pose2d(2, 1, new Rotation2d()),
-                true
-            )).andThen(new FollowPathCommand(
-                swerveSubsystem, 
-                new Pose2d(2, 1, new Rotation2d()), 
-                List.of(), 
-                new Pose2d(2, 0, new Rotation2d())
-            )).andThen(new FollowPathCommand(
-                swerveSubsystem, 
-                new Pose2d(2, 0, new Rotation2d()), 
-                List.of(), 
-                new Pose2d(),
-                true
-            )));
-
-            // "GRT" auton
-            autonChooser.addOption("GRT path", new FollowPathCommand(
-                swerveSubsystem, 
-                new Pose2d(),
-                List.of(),
-                new Pose2d(1, 1, new Rotation2d())
-            ).andThen(new FollowPathCommand(
-                swerveSubsystem, 
-                new Pose2d(1, 1, new Rotation2d()),
-                List.of(),
-                new Pose2d(),
-                true
-            )).andThen(new FollowPathCommand(
-                swerveSubsystem, 
-                new Pose2d(),
-                List.of(
-                    new Translation2d(0.5, -1)
-                ),
-                new Pose2d(1, 0, new Rotation2d())
-            )).andThen(new FollowPathCommand(
-                swerveSubsystem, 
-                new Pose2d(1, 0, new Rotation2d()),
-                List.of(),
-                new Pose2d(0.5, 0, new Rotation2d()),
-                true
-            )).andThen(new FollowPathCommand(
-                swerveSubsystem, 
-                new Pose2d(0.5, 0, new Rotation2d()),
-                List.of(),
-                new Pose2d(1.5, -1, new Rotation2d())
-            )).andThen(new FollowPathCommand(
-                swerveSubsystem, 
-                new Pose2d(1.5, -1, new Rotation2d()),
-                List.of(),
-                new Pose2d(1.5, 1, new Rotation2d())
-            )).andThen(new FollowPathCommand(
-                swerveSubsystem, 
-                new Pose2d(1.5, 1, new Rotation2d()),
-                List.of(
-                    new Translation2d(2.5, 0.5)
-                ),
-                new Pose2d(1.5, 0, new Rotation2d())
-            )).andThen(new FollowPathCommand(
-                swerveSubsystem, 
-                new Pose2d(1.5, 0, new Rotation2d()),
-                List.of(),
-                new Pose2d(2.5, -1, new Rotation2d())
-            )).andThen(new FollowPathCommand(
-                swerveSubsystem, 
-                new Pose2d(2.5, -1, new Rotation2d()),
-                List.of(),
-                new Pose2d(4, -1, new Rotation2d())
-            )).andThen(new FollowPathCommand(
-                swerveSubsystem, 
-                new Pose2d(4, -1, new Rotation2d()),
-                List.of(),
-                new Pose2d(4, 1, new Rotation2d())
-            )).andThen(new FollowPathCommand(
-                swerveSubsystem, 
-                new Pose2d(4, 1, new Rotation2d()),
-                List.of(),
-                new Pose2d(4.5, 1, new Rotation2d())
-            )).andThen(new FollowPathCommand(
-                swerveSubsystem, 
-                new Pose2d(4.5, 1, new Rotation2d()),
-                List.of(),
-                new Pose2d(3.5, 1, new Rotation2d()),
-                true
-            )));
+            autonChooser.addOption("Blue top auton", new BlueTopAuton(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem));
+            // autonChooser.addOption("Blue balance auton", new BlueBalanceAuton(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem));
+            autonChooser.addOption("Blue bottom auton", new BlueBottomAuton(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem));
         }
 
         shuffleboardTab.add(autonChooser)

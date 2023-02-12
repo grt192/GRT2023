@@ -7,15 +7,17 @@ import frc.robot.subsystems.RollerSubsystem;
 
 /**
  * Places 1 game piece with the roller mech. This command runs the rollers in reverse
- * at a set power for 2 seconds or until the limit switch is no longer pressed.
+ * at a set power for 2 seconds or until 2 seconds after the limit switch is no longer pressed.
  */
 public class AidenPlaceCommand extends CommandBase {
     private final RollerSubsystem rollerSubsystem;
-    private final Timer timer;
+    private final Timer runTimer;
+    private final Timer endTimer;
 
     public AidenPlaceCommand(RollerSubsystem rollerSubsystem){
         this.rollerSubsystem = rollerSubsystem;
-        this.timer = new Timer();
+        this.runTimer = new Timer();
+        this.endTimer = new Timer();
 
         addRequirements(rollerSubsystem);
     }
@@ -23,7 +25,8 @@ public class AidenPlaceCommand extends CommandBase {
     @Override
     public void initialize() {
         System.out.println("Roller to place");
-    } 
+        runTimer.start();
+    }
 
     @Override
     public void execute() {
@@ -40,6 +43,9 @@ public class AidenPlaceCommand extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return timer.hasElapsed(2) || !rollerSubsystem.hasPiece();
+        boolean done = runTimer.hasElapsed(2) || !rollerSubsystem.hasPiece();
+        if (done) endTimer.start();
+        return endTimer.hasElapsed(2);
     }
 }
+
