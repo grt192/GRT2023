@@ -9,7 +9,14 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+
+import frc.robot.vision.PhotonWrapper;
 
 /**
  * The superclass for the current `SwerveSubsystem` and `SwerveSubsystem2020` that contains all the
@@ -24,6 +31,8 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
     private final SwerveDrivePoseEstimator poseEstimator;
     private final SwerveDriveKinematics kinematics;
 
+    private final PhotonWrapper photonWrapper;
+
     public final double MAX_VEL; // Max robot tangential velocity, in m/s
     public final double MAX_ACCEL; // Max robot tangential acceleration, in m/s^2
     public final double MAX_OMEGA; // Max robot angular velocity, in rads/s
@@ -34,6 +43,13 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
     private static final boolean LOCKING_ENABLE = true;
 
     private Rotation2d angleOffset = new Rotation2d(0);
+
+    private final ShuffleboardTab shuffleboardTab;
+    private final GenericEntry xEntry, yEntry, thetaEntry;
+    private final Field2d fieldWidget = new Field2d();
+
+    private static final boolean SHUFFLEBOARD_ENABLE = true;
+    private static final boolean VISION_ENABLE = true;
 
     // The driver or auton commanded `SwerveModuleState` setpoints for each module;
     // states are given in a tuple of [top left, top right, bottom left, bottom right].
@@ -50,7 +66,8 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
         BaseSwerveModule bottomLeftModule,
         BaseSwerveModule bottomRightModule,
         double maxVel, double maxAccel, double maxOmega, double maxAlpha,
-        SwerveDriveKinematics kinematics
+        SwerveDriveKinematics kinematics,
+        PhotonWrapper photonWrapper
     ) {
         MAX_VEL = maxVel;
         MAX_ACCEL = maxAccel;
@@ -63,6 +80,7 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
         this.bottomRightModule = bottomRightModule;
 
         this.kinematics = kinematics;
+        this.photonWrapper = photonWrapper;
 
         // Initialize pose estimator
         poseEstimator = new SwerveDrivePoseEstimator(
@@ -76,6 +94,14 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
             new MatBuilder<>(Nat.N3(), Nat.N1()).fill(0.1, 0.1, 0.01)
         );
 
+        shuffleboardTab = Shuffleboard.getTab("Drivetrain");
+        shuffleboardTab.add("Field", fieldWidget)
+            .withPosition(0, 0)
+            .withSize(8, 5);
+        xEntry = shuffleboardTab.add("x pos (in)", 0).withPosition(0, 5).getEntry();
+        yEntry = shuffleboardTab.add("y pos (in)", 0).withPosition(1, 5).getEntry();
+        thetaEntry = shuffleboardTab.add("theta pos (deg)", 0).withPosition(2, 5).getEntry();
+
         lockTimer = new Timer();
     }
 
@@ -83,10 +109,26 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
     public void periodic() {
         // Update pose estimator from swerve module states
         Rotation2d gyroAngle = getGyroHeading();
-        poseEstimator.update(
+        Pose2d estimate = poseEstimator.update(
             gyroAngle,
             getModuleStates()
         );
+
+        // Update Shuffleboard
+        if (SHUFFLEBOARD_ENABLE) {
+            xEntry.setValue(Units.metersToInches(estimate.getX()));
+            yEntry.setValue(Units.metersToInches(estimate.getY()));
+            thetaEntry.setValue(estimate.getRotation().getDegrees());
+            fieldWidget.setRobotPose(estimate);
+        }
+
+        // Add vision pose estimate to pose estimator
+        if (VISION_ENABLE) photonWrapper.getRobotPoses(estimate).forEach((visionPose) -> {
+            poseEstimator.addVisionMeasurement(
+                visionPose.estimatedPose.toPose2d(),
+                visionPose.timestampSeconds
+            );
+        });
 
         // If all commanded velocities are 0, the system is idle (drivers / commands are
         // not supplying input).

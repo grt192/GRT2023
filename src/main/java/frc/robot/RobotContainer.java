@@ -27,7 +27,7 @@ import frc.robot.controllers.BaseDriveController;
 import frc.robot.controllers.DualJoystickDriveController;
 import frc.robot.controllers.TwistJoystickDriveController;
 import frc.robot.controllers.XboxDriveController;
-import frc.robot.jetson.JetsonConnection;
+import frc.robot.vision.PhotonWrapper;
 import frc.robot.subsystems.drivetrain.TankSubsystem;
 import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
 import frc.robot.subsystems.drivetrain.MissileShellSwerveSubsystem;
@@ -57,7 +57,7 @@ public class RobotContainer {
     private final TiltedElevatorSubsystem tiltedElevatorSubsystem;
     private final RollerToTiltedSubsystem rollerToTiltedSubsystem;
 
-    //private final JetsonConnection jetsonConnection;
+    private final PhotonWrapper photonWrapper;
 
     // Controllers and buttons
     private final BaseDriveController driveController;
@@ -84,17 +84,19 @@ public class RobotContainer {
         mechRBumper = new JoystickButton(mechController, XboxController.Button.kRightBumper.value);
 
     // Commands
-    private final ShuffleboardTab shuffleboardTab = Shuffleboard.getTab("Auton");
+    private final ShuffleboardTab shuffleboardTab = Shuffleboard.getTab("Drivetrain");
     private final SendableChooser<Command> autonChooser;
     private final BalancerCommand balancerCommand;
-    
+
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
     public RobotContainer() {
         driveController = new DualJoystickDriveController();
 
-        driveSubsystem = new SwerveSubsystem();
+        photonWrapper = new PhotonWrapper();
+
+        driveSubsystem = new SwerveSubsystem(photonWrapper);
         rollerSubsystem = new RollerSubsystem();
         tiltedElevatorSubsystem = new TiltedElevatorSubsystem();
         rollerToTiltedSubsystem = new RollerToTiltedSubsystem(rollerSubsystem, tiltedElevatorSubsystem);
@@ -250,7 +252,7 @@ public class RobotContainer {
         }
 
         shuffleboardTab.add(autonChooser)
-            .withPosition(0, 0)
+            .withPosition(8, 0)
             .withSize(4, 2);
 
         CameraServer.startAutomaticCapture();
