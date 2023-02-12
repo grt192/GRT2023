@@ -107,7 +107,8 @@ public class SwerveModule2020 implements BaseSwerveModule {
      */
     private Rotation2d getAngle() {
         return new Rotation2d(
-                steerMotor.getSelectedSensorPosition() * STEER_TICKS_TO_RADIANS + offsetRads);
+            steerMotor.getSelectedSensorPosition() * STEER_TICKS_TO_RADIANS + offsetRads
+        );
     }
 
     /**
@@ -133,5 +134,11 @@ public class SwerveModule2020 implements BaseSwerveModule {
         }
 
         return new Pair<>(targetVel, angleRads + deltaRads);
+    }
+
+    @Override
+    public void close() throws Exception {
+        driveMotor.close();
+        steerMotor.close();
     }
 }

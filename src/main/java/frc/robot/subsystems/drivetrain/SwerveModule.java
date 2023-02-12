@@ -52,10 +52,12 @@ public class SwerveModule implements BaseSwerveModule {
     private static final double steerD = 0;
     private static final double steerFF = 0;
 
+    /*
     private final ShuffleboardTab shuffleboardTab;
     private final GenericEntry 
         targetVelEntry, currentVelEntry, velErrorEntry,
         targetAngleEntry, currentAngleEntry, angleErrorEntry;
+    */
 
     /**
      * Constructs a SwerveModule from a drive and steer motor CAN ID and an angle offset.
@@ -109,6 +111,7 @@ public class SwerveModule implements BaseSwerveModule {
         steerPidController.setPositionPIDWrappingMinInput(0.0);
         steerPidController.setPositionPIDWrappingMaxInput(2 * Math.PI);
 
+        /*
         shuffleboardTab = Shuffleboard.getTab("Swerve " + drivePort + " " + steerPort);
         targetVelEntry = shuffleboardTab.add("Target velocity (mps)", 0.0)
             .withPosition(0, 0)
@@ -137,6 +140,7 @@ public class SwerveModule implements BaseSwerveModule {
             .withSize(5, 3)
             // .withWidget(BuiltInWidgets.kGraph)
             .getEntry();
+        */
 
         this.offsetRads = offsetRads;
     }
@@ -176,6 +180,7 @@ public class SwerveModule implements BaseSwerveModule {
         double targetAngle = optimized.angle.getRadians() - offsetRads;
 
         // Set shuffleboard debug info
+        /*
         targetVelEntry.setDouble(optimized.speedMetersPerSecond);
         currentVelEntry.setDouble(currentVelocity);
         velErrorEntry.setDouble(optimized.speedMetersPerSecond - currentVelocity);
@@ -183,6 +188,7 @@ public class SwerveModule implements BaseSwerveModule {
         targetAngleEntry.setDouble(Math.toDegrees(MathUtil.angleModulus(targetAngle)));
         currentAngleEntry.setDouble(currentAngle.minus(new Rotation2d(offsetRads)).getDegrees());
         angleErrorEntry.setDouble(MathUtil.angleModulus(targetAngle - currentAngle.getRadians() + offsetRads));
+        */
 
         // driveMotor.set(ControlMode.Velocity, optimized.getFirst() / (DRIVE_TICKS_TO_METERS * 10.0));
         drivePidController.setReference(optimized.speedMetersPerSecond, ControlType.kVelocity);
@@ -255,5 +261,21 @@ public class SwerveModule implements BaseSwerveModule {
         public BottomRight(int drivePort, int steerPort, double offsetRads) {
             super(drivePort, steerPort, offsetRads + Math.PI);
         }
+    }
+
+    @Override
+    public void close() throws Exception {
+        driveMotor.close();
+        steerMotor.close();
+
+        /*
+        targetVelEntry.close();
+        currentVelEntry.close();
+        velErrorEntry.close();
+
+        targetAngleEntry.close();
+        currentAngleEntry.close();
+        angleErrorEntry.close();
+        */
     }
 }

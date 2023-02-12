@@ -22,7 +22,7 @@ import frc.robot.vision.PhotonWrapper;
  * The superclass for the current `SwerveSubsystem` and `SwerveSubsystem2020` that contains all the
  * logic for managing module states, updating odometry, and taking driver input.
  */
-public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
+public abstract class BaseSwerveSubsystem extends BaseDrivetrain implements AutoCloseable {
     private final BaseSwerveModule topLeftModule;
     private final BaseSwerveModule topRightModule;
     private final BaseSwerveModule bottomLeftModule;
@@ -44,9 +44,11 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
 
     private Rotation2d angleOffset = new Rotation2d(0);
 
+    /*
     private final ShuffleboardTab shuffleboardTab;
     private final GenericEntry xEntry, yEntry, thetaEntry;
     private final Field2d fieldWidget = new Field2d();
+    */
 
     private static final boolean SHUFFLEBOARD_ENABLE = true;
     private static final boolean VISION_ENABLE = true;
@@ -94,6 +96,7 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
             new MatBuilder<>(Nat.N3(), Nat.N1()).fill(0.1, 0.1, 0.01)
         );
 
+        /*
         shuffleboardTab = Shuffleboard.getTab("Drivetrain");
         shuffleboardTab.add("Field", fieldWidget)
             .withPosition(0, 0)
@@ -101,6 +104,7 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
         xEntry = shuffleboardTab.add("x pos (in)", 0).withPosition(0, 5).getEntry();
         yEntry = shuffleboardTab.add("y pos (in)", 0).withPosition(1, 5).getEntry();
         thetaEntry = shuffleboardTab.add("theta pos (deg)", 0).withPosition(2, 5).getEntry();
+        */
 
         lockTimer = new Timer();
     }
@@ -115,12 +119,14 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
         );
 
         // Update Shuffleboard
+        /*
         if (SHUFFLEBOARD_ENABLE) {
             xEntry.setValue(Units.metersToInches(estimate.getX()));
             yEntry.setValue(Units.metersToInches(estimate.getY()));
             thetaEntry.setValue(estimate.getRotation().getDegrees());
             fieldWidget.setRobotPose(estimate);
         }
+        */
 
         // Add vision pose estimate to pose estimator
         if (VISION_ENABLE) photonWrapper.getRobotPoses(estimate).forEach((visionPose) -> {
@@ -296,5 +302,23 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
         return ahrs.isConnected()
             ? getGyroHeading().minus(angleOffset)
             : getRobotPosition().getRotation();
+    }
+
+    @Override
+    public void close() throws Exception {
+        topLeftModule.close();
+        topRightModule.close();
+        bottomLeftModule.close();
+        bottomRightModule.close();
+
+        ahrs.close();
+
+        // photonWrapper.close();
+        /*
+        xEntry.close();
+        yEntry.close();
+        thetaEntry.close();
+        fieldWidget.close();
+        */
     }
 }

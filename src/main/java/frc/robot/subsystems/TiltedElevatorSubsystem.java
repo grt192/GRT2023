@@ -21,7 +21,7 @@ import frc.robot.motorcontrol.MotorUtil;
 
 import static frc.robot.Constants.TiltedElevatorConstants.*;
 
-public class TiltedElevatorSubsystem extends SubsystemBase {
+public class TiltedElevatorSubsystem extends SubsystemBase implements AutoCloseable {
     private final CANSparkMax extensionMotor;
     private final RelativeEncoder extensionEncoder;
     private final SparkMaxPIDController extensionPidController;
@@ -55,6 +55,7 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
 
     public boolean pieceGrabbed = false;
 
+    /*
     private final ShuffleboardTab shuffleboardTab = Shuffleboard.getTab("Tilted Elevator");
     private final GenericEntry extensionPEntry = shuffleboardTab.add("Extension P", extensionP).getEntry();
     private final GenericEntry extensionIEntry = shuffleboardTab.add("Extension I", extensionI).getEntry();
@@ -74,6 +75,7 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
     private final GenericEntry currentStateEntry = shuffleboardTab.add("Current State", state.toString()).getEntry();
 
     private final GenericEntry offsetDistEntry = shuffleboardTab.add("offset (in)", offsetDistMeters).getEntry();
+    */
 
     public enum ElevatorState {
         GROUND(0) {
@@ -148,7 +150,7 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
         // if (zeroLimitSwitch.get()) extensionEncoder.setPosition(0); 
 
         if (IS_MANUAL) {
-            manualPowerEntry.setDouble(manualPower);
+            // manualPowerEntry.setDouble(manualPower);
             extensionMotor.set(manualPower);
             return;
         }
@@ -170,9 +172,9 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
         double currentPos = extensionEncoder.getPosition();
         double currentVel = extensionEncoder.getVelocity();
 
-        currentVelEntry.setDouble(currentVel);
-        currentExtensionEntry.setDouble(Units.metersToInches(currentPos));
-        offsetDistEntry.setDouble(Units.metersToInches(offsetDistMeters));
+        // currentVelEntry.setDouble(currentVel);
+        // currentExtensionEntry.setDouble(Units.metersToInches(currentPos));
+        // offsetDistEntry.setDouble(Units.metersToInches(offsetDistMeters));
 
         // Units.inchesToMeters(targetExtensionEntry.getDouble(0));
         this.targetExtension = state.getExtension(pieceGrabbed) + offsetDistMeters;
@@ -192,7 +194,7 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
             );
         }
 
-        currentStateEntry.setString(state.toString());
+        // currentStateEntry.setString(state.toString());
     }
 
     /**
@@ -244,5 +246,29 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
         } else {
             this.manualPower = 0;
         }
+    }
+
+    @Override
+    public void close() throws Exception {
+        extensionMotor.close();
+        extensionFollow.close();
+        zeroLimitSwitch.close();
+
+        /*
+        extensionPEntry.close();
+        extensionIEntry.close();
+        extensionDEntry.close();
+        extensionFFEntry.close();
+        extensionToleranceEntry.close();
+        arbFFEntry.close();
+        manualPowerEntry.close();
+        maxVelEntry.close();
+        maxAccelEntry.close();
+        currentVelEntry.close();
+        targetExtensionEntry.close();
+        currentExtensionEntry.close();
+        currentStateEntry.close();
+        offsetDistEntry.close();
+        */
     }
 }

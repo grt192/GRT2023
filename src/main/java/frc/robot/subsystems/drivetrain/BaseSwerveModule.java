@@ -3,7 +3,7 @@ package frc.robot.subsystems.drivetrain;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 
-public interface BaseSwerveModule {
+public interface BaseSwerveModule extends AutoCloseable {
     /**
      * Gets the current state of the module as a `SwerveModulePosition`.
      * @return The state of the module.

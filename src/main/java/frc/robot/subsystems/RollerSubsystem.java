@@ -14,7 +14,7 @@ import frc.robot.motorcontrol.MotorUtil;
 
 import static frc.robot.Constants.RollerConstants.*;
 
-public class RollerSubsystem extends SubsystemBase {
+public class RollerSubsystem extends SubsystemBase implements AutoCloseable {
     private final WPI_TalonSRX leftBeak;
     private final WPI_TalonSRX rightBeak;
     private final WPI_TalonSRX openMotor;
@@ -133,6 +133,13 @@ public class RollerSubsystem extends SubsystemBase {
         else{
             System.out.println("no object");
         }
-        
+    }
+
+    @Override
+    public void close() throws Exception {
+        leftBeak.close();
+        rightBeak.close();
+        openMotor.close();
+        limitSwitch.close();
     }
 }
