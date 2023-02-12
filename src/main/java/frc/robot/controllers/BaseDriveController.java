@@ -22,7 +22,7 @@ public abstract class BaseDriveController {
     public abstract double getRotatePower();
 
     /**
-     * Gets the whether swerve should be run in robot-relative mode.
+     * Gets whether swerve should be run in robot-relative mode.
      * @return Whether swerve should be run in robot-relative mode.
      */
     public abstract boolean getSwerveRelative();

@@ -8,10 +8,10 @@ import frc.robot.subsystems.RollerSubsystem;
  * Intakes 1 game piece with the roller mech. This command runs the rollers at a set power
  * until the limit switch is triggered.
  */
-public class AidenIntakeCommand extends CommandBase {
+public class RollerIntakeCommand extends CommandBase {
     private final RollerSubsystem rollerSubsystem;
 
-    public AidenIntakeCommand(RollerSubsystem rollerSubsystem){
+    public RollerIntakeCommand(RollerSubsystem rollerSubsystem){
         this.rollerSubsystem = rollerSubsystem;
         addRequirements(rollerSubsystem);
     }

@@ -6,10 +6,10 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.subsystems.GripperSubsytem;
 
 /**
- * [no use] Intakes 1 game piece with the pfft gripper mech.
+ * Intakes 1 game piece with the pfft gripper mech.
  */
-public class MatthewIntakeCommand extends InstantCommand {
-    public MatthewIntakeCommand(GripperSubsytem gripperSubsystem) {
+public class GripperIntakeCommand extends InstantCommand {
+    public GripperIntakeCommand(GripperSubsytem gripperSubsystem) {
         super(() -> {
             System.out.print("Gripper is to close");
             gripperSubsystem.setState(Value.kReverse);

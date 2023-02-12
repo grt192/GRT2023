@@ -7,9 +7,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
-import frc.robot.commands.grabber.AidenIntakeCommand;
-import frc.robot.commands.grabber.AidenPlaceCommand;
-import frc.robot.commands.mover.JulianLevelCommand;
+import frc.robot.commands.grabber.RollerIntakeCommand;
+import frc.robot.commands.grabber.RollerPlaceCommand;
+import frc.robot.commands.mover.TiltedElevatorCommand;
 import frc.robot.commands.swerve.FollowPathCommand;
 import frc.robot.positions.PiecePosition;
 import frc.robot.positions.PlacePosition;
@@ -43,8 +43,8 @@ public abstract class BaseAutonSequence extends SequentialCommandGroup {
      */
     protected Command goAndGrab(Pose2d initialPose, PiecePosition finalPose) {
         return FollowPathCommand.from(swerveSubsystem, initialPose, List.of(), finalPose.getPose())
-            .alongWith(new JulianLevelCommand(tiltedElevatorSubsystem, ElevatorState.GROUND))
-            .alongWith(new AidenIntakeCommand(rollerSubsystem));
+            .alongWith(new TiltedElevatorCommand(tiltedElevatorSubsystem, ElevatorState.GROUND))
+            .alongWith(new RollerIntakeCommand(rollerSubsystem));
     }
 
     /**
@@ -55,7 +55,7 @@ public abstract class BaseAutonSequence extends SequentialCommandGroup {
      */
     protected Command goAndPlace(Pose2d initialPose, PlacePosition finalState) {
         return FollowPathCommand.from(swerveSubsystem, initialPose, List.of(), finalState.getPose())
-            .alongWith(new JulianLevelCommand(tiltedElevatorSubsystem, finalState.getElevatorState())) // or .alongWith()?
-            .andThen(new AidenPlaceCommand(rollerSubsystem));
+            .alongWith(new TiltedElevatorCommand(tiltedElevatorSubsystem, finalState.getElevatorState())) // or .alongWith()?
+            .andThen(new RollerPlaceCommand(rollerSubsystem));
     }
 }
