@@ -1,6 +1,7 @@
 package frc.robot.vision;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -25,7 +26,6 @@ import static frc.robot.Constants.VisionConstants.*;
  * A connection to PhotonVision on the coprocessor.
  */
 public class PhotonWrapper {
-
     private final PhotonPoseEstimator frontPoseEstimator;
     private final PhotonPoseEstimator backPoseEstimator;
 
@@ -55,15 +55,15 @@ public class PhotonWrapper {
                 // new AprilTagFieldLayout(Filesystem.getDeployDirectory() + "/2023-chargedup.json"),
                 AprilTagFields.k2023ChargedUp.loadAprilTagLayoutField(),
                 PoseStrategy.CLOSEST_TO_REFERENCE_POSE,
-                FRONT_CAMERA.getFirst(),
-                FRONT_CAMERA.getSecond()
+                FRONT_CAMERA,
+                FRONT_CAMERA_POSE
             );
 
             backPoseEstimator = new PhotonPoseEstimator(
                 AprilTagFields.k2023ChargedUp.loadAprilTagLayoutField(),
                 PoseStrategy.CLOSEST_TO_REFERENCE_POSE,
-                BACK_CAMERA.getFirst(),
-                BACK_CAMERA.getSecond()
+                BACK_CAMERA,
+                BACK_CAMERA_POSE
             );
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -115,6 +115,9 @@ public class PhotonWrapper {
             }
         }
 
-        return Arrays.asList(frontPose, backPose);
+        List<EstimatedRobotPose> outputPoses = new ArrayList<EstimatedRobotPose>();
+        if (frontPose != null) outputPoses.add(frontPose);
+        if (backPose != null) outputPoses.add(backPose);
+        return outputPoses;
     }
 }

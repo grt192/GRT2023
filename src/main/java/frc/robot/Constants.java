@@ -111,24 +111,19 @@ public final class Constants {
     }
 
     public static final class VisionConstants {
-        // TODO: measure using tape measure; current positions from CAD       
-        public static Pair<PhotonCamera, Transform3d> FRONT_CAMERA = 
-            new Pair<PhotonCamera, Transform3d>(
-                new PhotonCamera("Arducam_OV9281_USB_Camera"), 
-                new Transform3d(
-                    new Translation3d(Units.inchesToMeters((34.750/2)-7.25+0.25), Units.inchesToMeters((28/2)-(2.403+1)), Units.inchesToMeters(22.538375 + 0.201000/2)),
-                    new Rotation3d(0, 0, 0)
-                )
-            );
-        
-        public static Pair<PhotonCamera, Transform3d> BACK_CAMERA = 
-            new Pair<PhotonCamera, Transform3d>(
-                new PhotonCamera("HD USB Camera"), 
-                new Transform3d(
-                    new Translation3d(Units.inchesToMeters((34.750/2)-9.75-0.25), Units.inchesToMeters((28/2)-(2.403+1)), Units.inchesToMeters(22.538375 + 0.201000/2)),
-                    new Rotation3d(0, 0, Math.PI)
-                )
-            );
+        public static PhotonCamera FRONT_CAMERA = new PhotonCamera("Arducam_OV9281_USB_Camera");
+        public static Transform3d FRONT_CAMERA_POSE = new Transform3d(
+            // new Translation3d(Units.inchesToMeters(10.375), Units.inchesToMeters(10.597), Units.inchesToMeters(22.638875)),
+            new Translation3d(Units.inchesToMeters(8.25), Units.inchesToMeters(10.597), Units.inchesToMeters(22.638875)),
+            new Rotation3d(0, 0, 0)
+        );
+    
+        public static PhotonCamera BACK_CAMERA = new PhotonCamera("HD_USB_Camera");
+        public static Transform3d BACK_CAMERA_POSE = new Transform3d(
+            // new Translation3d(Units.inchesToMeters(7.375), Units.inchesToMeters(10.597), Units.inchesToMeters(22.638875)),
+            new Translation3d(Units.inchesToMeters(5), Units.inchesToMeters(10.597), Units.inchesToMeters(22.638875)),
+            new Rotation3d(0, 0, Math.PI)
+        );
     }
 
     public static final class GripperConstants {
