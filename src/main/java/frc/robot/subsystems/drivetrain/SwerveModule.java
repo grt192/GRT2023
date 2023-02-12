@@ -86,7 +86,7 @@ public class SwerveModule implements BaseSwerveModule {
             driveEncoder.setPositionConversionFactor(DRIVE_ROTATIONS_TO_METERS);
             driveEncoder.setVelocityConversionFactor(DRIVE_ROTATIONS_TO_METERS / 60.0); // min = 60s
     
-            drivePidController = sparkMax.getPIDController();
+            drivePidController = MotorUtil.createSparkMaxPIDController(sparkMax, driveEncoder);
             drivePidController.setP(driveP);
             drivePidController.setI(driveI);
             drivePidController.setD(driveD);
@@ -99,8 +99,7 @@ public class SwerveModule implements BaseSwerveModule {
             steerAbsoluteEncoder = sparkMax.getAnalog(SparkMaxAnalogSensor.Mode.kAbsolute);
             steerAbsoluteEncoder.setPositionConversionFactor(STEER_VOLTS_TO_RADIANS);
     
-            steerPidController = sparkMax.getPIDController();
-            steerPidController.setFeedbackDevice(steerAbsoluteEncoder);
+            steerPidController = MotorUtil.createSparkMaxPIDController(sparkMax, steerAbsoluteEncoder);
             steerPidController.setP(steerP);
             steerPidController.setI(steerI);
             steerPidController.setD(steerD);

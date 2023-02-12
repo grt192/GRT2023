@@ -101,7 +101,7 @@ public class PivotElevatorSubsystem extends SubsystemBase{
     }
 
     public PivotElevatorSubsystem(){
-        rotationMotor = MotorUtil.createSparkMax(ROTATION_MOTOR_PORT, (CANSparkMax sparkMax) -> {
+        rotationMotor = MotorUtil.createSparkMax(ROTATION_MOTOR_PORT, (sparkMax) -> {
             sparkMax.setIdleMode(IdleMode.kBrake);
             sparkMax.setInverted(true);
 
@@ -109,22 +109,22 @@ public class PivotElevatorSubsystem extends SubsystemBase{
             rotationEncoder.setPositionConversionFactor(ROTATION_ROT_TO_RAD);
             rotationEncoder.setPosition(0);
 
-            rotationPidController = sparkMax.getPIDController();
+            rotationPidController = MotorUtil.createSparkMaxPIDController(sparkMax, rotationEncoder);
             rotationPidController.setP(rotationP);
             rotationPidController.setI(rotationI);
             rotationPidController.setD(rotationD);
-            
+
             sparkMax.enableSoftLimit(SoftLimitDirection.kForward, true);
             sparkMax.enableSoftLimit(SoftLimitDirection.kReverse, true);
             sparkMax.setSoftLimit(SoftLimitDirection.kForward, (float) Units.degreesToRadians(90));
             sparkMax.setSoftLimit(SoftLimitDirection.kReverse, (float) Units.degreesToRadians(-90));
         });
 
-        rotationMotorFollower = MotorUtil.createSparkMax(ROTATION_FOLLOWER_MOTOR_PORT, (CANSparkMax sparkMax) -> {
+        rotationMotorFollower = MotorUtil.createSparkMax(ROTATION_FOLLOWER_MOTOR_PORT, (sparkMax) -> {
             sparkMax.follow(rotationMotor);
         });
 
-        extensionMotor = MotorUtil.createSparkMax(EXTENSION_MOTOR_PORT, (CANSparkMax sparkMax) -> {
+        extensionMotor = MotorUtil.createSparkMax(EXTENSION_MOTOR_PORT, (sparkMax) -> {
             sparkMax.setIdleMode(IdleMode.kBrake);
 
             extensionEncoder = sparkMax.getEncoder();
@@ -136,12 +136,11 @@ public class PivotElevatorSubsystem extends SubsystemBase{
             sparkMax.setSoftLimit(SoftLimitDirection.kForward, (float) Units.inchesToMeters(24));
             sparkMax.setSoftLimit(SoftLimitDirection.kReverse, (float) Units.inchesToMeters(0));
 
-            extensionPidController = sparkMax.getPIDController();
+            extensionPidController = MotorUtil.createSparkMaxPIDController(sparkMax, extensionEncoder);
             extensionPidController.setP(extensionP);
             extensionPidController.setI(extensionI);
             extensionPidController.setD(extensionD);
         });
-
     }
 
     @Override

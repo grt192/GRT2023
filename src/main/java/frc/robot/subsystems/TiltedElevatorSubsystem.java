@@ -127,7 +127,7 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
             sparkMax.enableSoftLimit(SoftLimitDirection.kReverse, true);
             sparkMax.setSoftLimit(SoftLimitDirection.kReverse, (float) Units.inchesToMeters(-2));
 
-            extensionPidController = sparkMax.getPIDController();
+            extensionPidController = MotorUtil.createSparkMaxPIDController(sparkMax, extensionEncoder);
             extensionPidController.setP(extensionP);
             extensionPidController.setI(extensionI);
             extensionPidController.setD(extensionD);

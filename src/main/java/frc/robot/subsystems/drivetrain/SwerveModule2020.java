@@ -52,7 +52,7 @@ public class SwerveModule2020 implements BaseSwerveModule {
             driveEncoder.setPositionConversionFactor(DRIVE_ROTATIONS_TO_METERS);
             driveEncoder.setVelocityConversionFactor(DRIVE_ROTATIONS_TO_METERS / 60.0); // RPM -> m/s
 
-            drivePidController = sparkMax.getPIDController();
+            drivePidController = MotorUtil.createSparkMaxPIDController(sparkMax, driveEncoder);
             drivePidController.setP(driveP);
             drivePidController.setI(driveI);
             drivePidController.setD(driveD);

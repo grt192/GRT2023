@@ -6,8 +6,11 @@ import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.MotorFeedbackSensor;
 import com.revrobotics.REVLibError;
+import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.DriverStation;
@@ -110,6 +113,21 @@ public class MotorUtil {
      */
     public static CANSparkMax createSparkMax550(int deviceId) {
         return createSparkMax550(deviceId, (sparkMax) -> {});
+    }
+
+    /**
+     * Creates a SparkMaxPIDController from a given SparkMax and feedback device.
+     * @param spark The SparkMax to get a PID controller for.
+     * @param encoder The feedback device to use for PID.
+     * @return The configured SparkMaxPIDController.
+     */
+    public static SparkMaxPIDController createSparkMaxPIDController(CANSparkMax spark, MotorFeedbackSensor encoder) {
+        SparkMaxPIDController pidController = spark.getPIDController();
+
+        // Set feedback device
+        pidController.setFeedbackDevice(encoder);
+
+        return pidController;
     }
 
     /**
