@@ -125,7 +125,7 @@ public class MotorUtil {
         SparkMaxPIDController pidController = spark.getPIDController();
 
         // Set feedback device
-        pidController.setFeedbackDevice(encoder);
+        checkError(spark.getDeviceId(), pidController.setFeedbackDevice(encoder), "PID feedback device");
 
         return pidController;
     }
