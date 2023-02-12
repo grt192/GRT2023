@@ -6,13 +6,9 @@ package frc.robot;
 
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
-import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.util.Units;
-
-import java.util.Arrays;
-import java.util.List;
 
 import org.photonvision.PhotonCamera;
 
@@ -111,15 +107,15 @@ public final class Constants {
     }
 
     public static final class VisionConstants {
-        public static PhotonCamera FRONT_CAMERA = new PhotonCamera("Arducam_OV9281_USB_Camera");
-        public static Transform3d FRONT_CAMERA_POSE = new Transform3d(
+        public static final PhotonCamera FRONT_CAMERA = new PhotonCamera("Arducam_OV9281_USB_Camera");
+        public static final Transform3d FRONT_CAMERA_POSE = new Transform3d(
             // new Translation3d(Units.inchesToMeters(10.375), Units.inchesToMeters(10.597), Units.inchesToMeters(22.638875)),
             new Translation3d(Units.inchesToMeters(8.25), Units.inchesToMeters(10.597), Units.inchesToMeters(22.638875)),
             new Rotation3d(0, 0, 0)
         );
-    
-        public static PhotonCamera BACK_CAMERA = new PhotonCamera("HD_USB_Camera");
-        public static Transform3d BACK_CAMERA_POSE = new Transform3d(
+
+        public static final PhotonCamera BACK_CAMERA = new PhotonCamera("HD_USB_Camera");
+        public static final Transform3d BACK_CAMERA_POSE = new Transform3d(
             // new Translation3d(Units.inchesToMeters(7.375), Units.inchesToMeters(10.597), Units.inchesToMeters(22.638875)),
             new Translation3d(Units.inchesToMeters(5), Units.inchesToMeters(10.597), Units.inchesToMeters(22.638875)),
             new Rotation3d(0, 0, Math.PI)

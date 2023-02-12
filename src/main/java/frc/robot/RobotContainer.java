@@ -56,7 +56,7 @@ public class RobotContainer {
     private final RollerSubsystem rollerSubsystem;
     private final TiltedElevatorSubsystem tiltedElevatorSubsystem;
     private final RollerToTiltedSubsystem rollerToTiltedSubsystem;
-    
+
     private final PhotonWrapper photonWrapper;
 
     // Controllers and buttons
@@ -87,7 +87,7 @@ public class RobotContainer {
     private final ShuffleboardTab shuffleboardTab = Shuffleboard.getTab("Drivetrain");
     private final SendableChooser<Command> autonChooser;
     private final BalancerCommand balancerCommand;
-    
+
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
@@ -100,7 +100,7 @@ public class RobotContainer {
         rollerSubsystem = new RollerSubsystem();
         tiltedElevatorSubsystem = new TiltedElevatorSubsystem();
         rollerToTiltedSubsystem = new RollerToTiltedSubsystem(rollerSubsystem, tiltedElevatorSubsystem);
-        
+
         balancerCommand = new BalancerCommand(driveSubsystem);
 
         // Configure the button bindings
