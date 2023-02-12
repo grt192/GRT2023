@@ -49,8 +49,8 @@ public class SwerveModule2020 implements BaseSwerveModule {
         driveMotor.setIdleMode(IdleMode.kBrake);
 
         driveEncoder = driveMotor.getEncoder();
-        driveEncoder.setVelocityConversionFactor(DRIVE_ROTATIONS_TO_METERS / 60.0); // RPM -> m/s
         driveEncoder.setPositionConversionFactor(DRIVE_ROTATIONS_TO_METERS);
+        driveEncoder.setVelocityConversionFactor(DRIVE_ROTATIONS_TO_METERS / 60.0); // RPM -> m/s
 
         drivePidController = driveMotor.getPIDController();
         drivePidController.setP(driveP);

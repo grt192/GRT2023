@@ -47,15 +47,12 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
 
     private Rotation2d angleOffset = new Rotation2d(0);
 
-    private boolean SHUFFLEBOARD_ON = true;
+    private final ShuffleboardTab shuffleboardTab;
+    private final GenericEntry xEntry, yEntry, thetaEntry;
+    private final Field2d fieldWidget = new Field2d();
 
-    private final ShuffleboardTab fieldShuffleboardTab = Shuffleboard.getTab("Field2d");
-    private final Field2d cfield = new Field2d();
-    
-    private final ShuffleboardTab shuffleboardTab = Shuffleboard.getTab("Drivetrain");
-    private final GenericEntry xEntry = shuffleboardTab.add("x pos", 0).withPosition(0, 0).getEntry();
-    private final GenericEntry yEntry = shuffleboardTab.add("y pos", 0).withPosition(1, 0).getEntry();
-    private final GenericEntry thetaEntry = shuffleboardTab.add("theta pos", 0).withPosition(2, 0).getEntry();
+    private static final boolean SHUFFLEBOARD_ENABLE = true;
+    private static final boolean VISION_ENABLE = true;
 
     // The driver or auton commanded `SwerveModuleState` setpoints for each module;
     // states are given in a tuple of [top left, top right, bottom left, bottom right].
@@ -75,7 +72,6 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
         SwerveDriveKinematics kinematics,
         PhotonWrapper photonWrapper
     ) {
-
         MAX_VEL = maxVel;
         MAX_ACCEL = maxAccel;
         MAX_OMEGA = maxOmega;
@@ -89,8 +85,6 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
         this.kinematics = kinematics;
         this.photonWrapper = photonWrapper;
 
-        fieldShuffleboardTab.add("Field", cfield);
-
         // Initialize pose estimator
         poseEstimator = new SwerveDrivePoseEstimator(
             kinematics,
@@ -103,30 +97,36 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
             new MatBuilder<>(Nat.N3(), Nat.N1()).fill(0.1, 0.1, 0.01)
         );
 
+        shuffleboardTab = Shuffleboard.getTab("Drivetrain");
+        shuffleboardTab.add("Field", fieldWidget)
+            .withPosition(0, 0)
+            .withSize(8, 5);
+        xEntry = shuffleboardTab.add("x pos (in)", 0).withPosition(0, 5).getEntry();
+        yEntry = shuffleboardTab.add("y pos (in)", 0).withPosition(1, 5).getEntry();
+        thetaEntry = shuffleboardTab.add("theta pos (deg)", 0).withPosition(2, 5).getEntry();
+
         lockTimer = new Timer();
     }
 
     @Override
     public void periodic() {
-
         // Update pose estimator from swerve module states
         Rotation2d gyroAngle = getGyroHeading();
-        
         Pose2d estimate = poseEstimator.update(
             gyroAngle,
             getModuleStates()
         );
 
         // Update Shuffleboard
-        if (SHUFFLEBOARD_ON) {
+        if (SHUFFLEBOARD_ENABLE) {
             xEntry.setValue(Units.metersToInches(estimate.getX()));
             yEntry.setValue(Units.metersToInches(estimate.getY()));
             thetaEntry.setValue(estimate.getRotation().getDegrees());
-            cfield.setRobotPose(estimate);
+            fieldWidget.setRobotPose(estimate);
         }
 
         // Add vision pose estimate to pose estimator
-        photonWrapper.getRobotPoses(estimate).forEach((visionPose) -> {
+        if (VISION_ENABLE) photonWrapper.getRobotPoses(estimate).forEach((visionPose) -> {
             poseEstimator.addVisionMeasurement(
                 visionPose.estimatedPose.toPose2d(),
                 visionPose.timestampSeconds

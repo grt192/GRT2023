@@ -84,7 +84,7 @@ public class RobotContainer {
         mechRBumper = new JoystickButton(mechController, XboxController.Button.kRightBumper.value);
 
     // Commands
-    private final ShuffleboardTab shuffleboardTab = Shuffleboard.getTab("Auton");
+    private final ShuffleboardTab shuffleboardTab = Shuffleboard.getTab("Drivetrain");
     private final SendableChooser<Command> autonChooser;
     private final BalancerCommand balancerCommand;
     
@@ -252,7 +252,7 @@ public class RobotContainer {
         }
 
         shuffleboardTab.add(autonChooser)
-            .withPosition(0, 0)
+            .withPosition(8, 0)
             .withSize(4, 2);
 
         CameraServer.startAutomaticCapture();

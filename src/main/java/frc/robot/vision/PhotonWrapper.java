@@ -2,7 +2,6 @@ package frc.robot.vision;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,7 +15,6 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.Filesystem;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 
@@ -29,38 +27,30 @@ public class PhotonWrapper {
     private final PhotonPoseEstimator frontPoseEstimator;
     private final PhotonPoseEstimator backPoseEstimator;
 
-    private final boolean SHUFFLEBOARD_ON = true;
+    private final ShuffleboardTab shuffleboardTab;
+    private final GenericEntry frontStatusEntry, xPosFrontEntry, yPosFrontEntry, timestampFrontEntry;
+    private final GenericEntry backStatusEntry, xPosBackEntry, yPosBackEntry, timestampBackEntry;
 
-    private final ShuffleboardTab shuffleboardTab = Shuffleboard.getTab("PhotonVision");
-
-    private final GenericEntry frontStatusEntry = shuffleboardTab.add("front tag?", false).withWidget(BuiltInWidgets.kBooleanBox).withPosition(0, 0).getEntry();
-    private final GenericEntry xPosFrontEntry = shuffleboardTab.add("xpos front", 0).withPosition(0, 1).getEntry();
-    private final GenericEntry yPosFrontEntry = shuffleboardTab.add("ypos front", 0).withPosition(1, 1).getEntry();
-    private final GenericEntry timestampFrontEntry = shuffleboardTab.add("timestamp front", 0).withPosition(2, 1).getEntry();
-
-    private final GenericEntry backStatusEntry = shuffleboardTab.add("back tag?", false).withWidget(BuiltInWidgets.kBooleanBox).withPosition(0, 2).getEntry();
-    private final GenericEntry xPosBackEntry = shuffleboardTab.add("xpos back", 0).withPosition(0, 3).getEntry();
-    private final GenericEntry yPosBackEntry = shuffleboardTab.add("ypos back", 0).withPosition(1, 3).getEntry();
-    private final GenericEntry timestampBackEntry = shuffleboardTab.add("timestamp back", 0).withPosition(2, 3).getEntry();
-
+    private static final boolean SHUFFLEBOARD_ENABLE = true;
 
     /**
      * Constructs a PhotonVision connection to the coprocessor.
      */
     public PhotonWrapper() {
-
         try {
+            AprilTagFieldLayout fieldLayout = AprilTagFields.k2023ChargedUp.loadAprilTagLayoutField();
+
             frontPoseEstimator = new PhotonPoseEstimator(
                 // new AprilTagFieldLayout(AprilTagFields.k2023ChargedUp.m_resourceFile),
                 // new AprilTagFieldLayout(Filesystem.getDeployDirectory() + "/2023-chargedup.json"),
-                AprilTagFields.k2023ChargedUp.loadAprilTagLayoutField(),
+                fieldLayout,
                 PoseStrategy.CLOSEST_TO_REFERENCE_POSE,
                 FRONT_CAMERA,
                 FRONT_CAMERA_POSE
             );
 
             backPoseEstimator = new PhotonPoseEstimator(
-                AprilTagFields.k2023ChargedUp.loadAprilTagLayoutField(),
+                fieldLayout,
                 PoseStrategy.CLOSEST_TO_REFERENCE_POSE,
                 BACK_CAMERA,
                 BACK_CAMERA_POSE
@@ -68,22 +58,29 @@ public class PhotonWrapper {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
+        shuffleboardTab = Shuffleboard.getTab("PhotonVision");
+
+        frontStatusEntry = shuffleboardTab.add("Front tag detected", false).withPosition(0, 0).getEntry();
+        xPosFrontEntry = shuffleboardTab.add("Front x-pos", 0).withPosition(0, 1).getEntry();
+        yPosFrontEntry = shuffleboardTab.add("Front y-pos", 0).withPosition(1, 1).getEntry();
+        timestampFrontEntry = shuffleboardTab.add("Front timestamp", 0).withPosition(2, 1).getEntry();
+
+        backStatusEntry = shuffleboardTab.add("Back tag detected", false).withPosition(0, 2).getEntry();
+        xPosBackEntry = shuffleboardTab.add("Back x-pos", 0).withPosition(0, 3).getEntry();
+        yPosBackEntry = shuffleboardTab.add("Back y-pos", 0).withPosition(1, 3).getEntry();
+        timestampBackEntry = shuffleboardTab.add("Back timestamp", 0).withPosition(2, 3).getEntry();
     }
 
     /**
-     * Get estimated robot pose from a single photon camera. 
-     * @param prevEstimatedRobotPose The last odometry robot pose estimate
-     * @param poseEstimator The estimated vision pose.
-     * @return
+     * Get the optional estimated robot pose from a single photon pose estimator. 
+     * @param prevEstimatedRobotPose The last odometry robot pose estimate.
+     * @param poseEstimator The pose estimator to update.
+     * @return The estimated optional estimated vision pose.
      */
-    public EstimatedRobotPose getRobotPose(Pose2d prevEstimatedRobotPose, PhotonPoseEstimator poseEstimator) {
+    public Optional<EstimatedRobotPose> getRobotPose(Pose2d prevEstimatedRobotPose, PhotonPoseEstimator poseEstimator) {
         poseEstimator.setReferencePose(prevEstimatedRobotPose); // input odometry pose
-        Optional<EstimatedRobotPose> estimatedPose = poseEstimator.update();
-
-        if (estimatedPose.isPresent()) {
-            return estimatedPose.get();
-        }
-        return null;
+        return poseEstimator.update();
     }
 
     /**
@@ -94,30 +91,30 @@ public class PhotonWrapper {
      * @return A list of estimated vision poses.
      */
     public List<EstimatedRobotPose> getRobotPoses(Pose2d prevEstimatedRobotPose) {
-        EstimatedRobotPose frontPose = getRobotPose(prevEstimatedRobotPose, frontPoseEstimator);
-        EstimatedRobotPose backPose = getRobotPose(prevEstimatedRobotPose, backPoseEstimator);
+        Optional<EstimatedRobotPose> frontEstimate = getRobotPose(prevEstimatedRobotPose, frontPoseEstimator);
+        Optional<EstimatedRobotPose> backEstimate = getRobotPose(prevEstimatedRobotPose, backPoseEstimator);
 
         // Update Shuffleboard
-        if (SHUFFLEBOARD_ON) {
-            frontStatusEntry.setBoolean(frontPose != null);
-            backStatusEntry.setBoolean(backPose != null);
+        if (SHUFFLEBOARD_ENABLE) {
+            frontStatusEntry.setBoolean(frontEstimate.isPresent());
+            backStatusEntry.setBoolean(backEstimate.isPresent());
 
-            if (frontPose != null) {
+            frontEstimate.ifPresent((frontPose) -> {
                 xPosFrontEntry.setValue(Units.metersToInches(frontPose.estimatedPose.getX()));
                 yPosFrontEntry.setValue(Units.metersToInches(frontPose.estimatedPose.getY()));
                 timestampFrontEntry.setValue(frontPose.timestampSeconds);
-            }
-            
-            if (backPose != null) {
+            });
+
+            backEstimate.ifPresent((backPose) -> {
                 xPosBackEntry.setValue(Units.metersToInches(backPose.estimatedPose.getX()));
                 yPosBackEntry.setValue(Units.metersToInches(backPose.estimatedPose.getY()));
                 timestampBackEntry.setValue(backPose.timestampSeconds);
-            }
+            });
         }
 
         List<EstimatedRobotPose> outputPoses = new ArrayList<EstimatedRobotPose>();
-        if (frontPose != null) outputPoses.add(frontPose);
-        if (backPose != null) outputPoses.add(backPose);
+        if (frontEstimate.isPresent()) outputPoses.add(frontEstimate.get());
+        if (backEstimate.isPresent()) outputPoses.add(backEstimate.get());
         return outputPoses;
     }
 }
