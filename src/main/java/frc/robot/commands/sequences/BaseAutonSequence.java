@@ -32,7 +32,6 @@ public abstract class BaseAutonSequence extends SequentialCommandGroup {
         this.tiltedElevatorSubsystem = tiltedElevatorSubsystem;
 
         addRequirements(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem);
-
         addCommands(new InstantCommand(() -> swerveSubsystem.resetPose(initialPose), swerveSubsystem));
     }
 
