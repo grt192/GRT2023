@@ -1,4 +1,4 @@
-package frc.robot.motorcontrol;
+package frc.robot.util;
 
 import java.util.function.Consumer;
 

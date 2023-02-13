@@ -4,7 +4,7 @@ import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
-import frc.robot.motorcontrol.MotorUtil;
+import frc.robot.util.MotorUtil;
 
 import static frc.robot.Constants.TankConstants.*;
 

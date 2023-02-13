@@ -16,7 +16,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 
-import frc.robot.motorcontrol.MotorUtil;
+import frc.robot.util.MotorUtil;
 
 /**
  * A swerve module with a NEO drive motor and a BAG steer motor, for running

@@ -22,7 +22,7 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 
-import frc.robot.motorcontrol.MotorUtil;
+import frc.robot.util.MotorUtil;
 
 /**
  * A swerve module with a Falcon drive motor and a NEO steer motor.
