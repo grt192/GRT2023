@@ -162,13 +162,13 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
             return;
         }
 
-        ShuffleboardUtil.pollShuffleboardP(extensionPEntry, extensionPidController);
-        ShuffleboardUtil.pollShuffleboardI(extensionIEntry, extensionPidController);
-        ShuffleboardUtil.pollShuffleboardD(extensionDEntry, extensionPidController);
-        ShuffleboardUtil.pollShuffleboardFF(extensionFFEntry, extensionPidController);
-        ShuffleboardUtil.pollShuffleboardMaxVel(maxVelEntry, extensionPidController);
-        ShuffleboardUtil.pollShuffleboardMaxAccel(maxAccelEntry, extensionPidController);
-        ShuffleboardUtil.pollShuffleboardSmartMotionTolerance(extensionToleranceEntry, extensionPidController);
+        ShuffleboardUtil.pollShuffleboardDouble(extensionPEntry, extensionPidController::setP);
+        ShuffleboardUtil.pollShuffleboardDouble(extensionIEntry, extensionPidController::setI);
+        ShuffleboardUtil.pollShuffleboardDouble(extensionDEntry, extensionPidController::setD);
+        ShuffleboardUtil.pollShuffleboardDouble(extensionFFEntry, extensionPidController::setFF);
+        ShuffleboardUtil.pollShuffleboardDouble(maxVelEntry, (value) -> extensionPidController.setSmartMotionMaxVelocity(value, 0));
+        ShuffleboardUtil.pollShuffleboardDouble(maxAccelEntry, (value) -> extensionPidController.setSmartMotionMaxAccel(value, 0));
+        ShuffleboardUtil.pollShuffleboardDouble(extensionToleranceEntry, (value) -> extensionPidController.setSmartMotionAllowedClosedLoopError(value, 0));
         arbFeedforward = arbFFEntry.getDouble(arbFeedforward);
 
         // System.out.println(extensionEncoder.getPosition());

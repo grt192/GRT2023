@@ -151,13 +151,13 @@ public class PivotElevatorSubsystem extends SubsystemBase{
         targetAngleEntry.setDouble(Units.radiansToDegrees(currentState.angle + angleOffset));
         targetExtensionEntry.setDouble(Units.metersToInches(currentState.extension + extensionOffset));
 
-        ShuffleboardUtil.pollShuffleboardP(rotationPEntry, rotationPidController);
-        ShuffleboardUtil.pollShuffleboardI(rotationIEntry, rotationPidController);
-        ShuffleboardUtil.pollShuffleboardD(rotationDEntry, rotationPidController);
+        ShuffleboardUtil.pollShuffleboardDouble(rotationPEntry, rotationPidController::setP);
+        ShuffleboardUtil.pollShuffleboardDouble(rotationIEntry, rotationPidController::setI);
+        ShuffleboardUtil.pollShuffleboardDouble(rotationDEntry, rotationPidController::setD);
 
-        ShuffleboardUtil.pollShuffleboardP(extensionPEntry, extensionPidController);
-        ShuffleboardUtil.pollShuffleboardI(extensionIEntry, extensionPidController);
-        ShuffleboardUtil.pollShuffleboardD(extensionDEntry, extensionPidController);
+        ShuffleboardUtil.pollShuffleboardDouble(extensionPEntry, extensionPidController::setP);
+        ShuffleboardUtil.pollShuffleboardDouble(extensionIEntry, extensionPidController::setI);
+        ShuffleboardUtil.pollShuffleboardDouble(extensionDEntry, extensionPidController::setD);
     }
 
     private void goTo(double angle, double extension){
