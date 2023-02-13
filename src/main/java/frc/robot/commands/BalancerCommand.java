@@ -27,6 +27,8 @@ public class BalancerCommand extends CommandBase {
 
     public boolean reachedStation;
     public boolean passedCenter;
+    public boolean waiting;
+    public boolean balanced;
 
     private final Timer timer;
 
@@ -35,7 +37,7 @@ public class BalancerCommand extends CommandBase {
         this.ahrs = driveSubsystem.getAhrs();
 
         drivePID = new PIDController(0.3/35, 0.0, 0.0); // no deriv successful
-        turnPID = new PIDController(0.2/5,0.0, 0.0); // kP = max pwr / max err
+        turnPID = new PIDController(0.1/5,0.0, 0.0); // kP = max pwr / max err
         timer = new Timer();
         addRequirements(driveSubsystem);
     }
@@ -51,47 +53,50 @@ public class BalancerCommand extends CommandBase {
     @Override
     public void execute() {
         
-        returnAngularPower = turnPID.calculate((initialHeading - ahrs.getCompassHeading()), 0); // correct angle of approach
+        returnAngularPower = turnPID.calculate((ahrs.getCompassHeading() - initialHeading), 0); // correct angle of approach
         
         if(!reachedStation) {
-            returnDrivePower = 0.80;
-            if(ahrs.getPitch() >= 15.0) reachedStation = true;
+            returnDrivePower = - 0.80;
+            if(ahrs.getPitch() <= - 15.0) reachedStation = true;
         }
         else{
             currentAngle = ahrs.getPitch();
-            angularAcceleration = Math.abs(currentAngle - oldAngle) / timer.get(); // calc magnitude of angular acceleration based on delta angle over time
-            timer.reset();
+            angularAcceleration = Math.abs(currentAngle - oldAngle); // calc magnitude of angular acceleration based on delta angle over time
+            System.out.println(ahrs.getPitch());
+            
 
             if(!passedCenter){
-                returnDrivePower = 0.15; //.15 successful
-                if(ahrs.getPitch() <= 0.0){
+                returnDrivePower = - 0.2; //.15 successful
+                if(ahrs.getPitch() >= -5.0){
                     passedCenter = true; // <= 1.0 worked 
                     if(driveSubsystem instanceof BaseSwerveSubsystem) ((BaseSwerveSubsystem) driveSubsystem).lockNow();
                     // lock the moment the CG passes the center to minimize overshoot
                 }
             }
             else{
-                if(Math.abs(ahrs.getPitch()) <= 2.0){
-                    returnDrivePower = 0.0;
-                    if(driveSubsystem instanceof BaseSwerveSubsystem) ((BaseSwerveSubsystem) driveSubsystem).lockNow();
-                    // lock as soon as level is detected
-                }
-                else{
-                    if(angularAcceleration <= 0.3){ // threshold value (deg / sec) TBD
-                        returnDrivePower = -1 * drivePID.calculate(ahrs.getPitch(), 0);
-                        // if acceleration is low, platform is relatively stable, so try leveling
+                // if((Math.abs(ahrs.getPitch()) <= 2.0) || (Math.abs(angularAcceleration) <= 5.8)){
+                //     returnDrivePower = 0.0;
+                //     if(driveSubsystem instanceof BaseSwerveSubsystem) ((BaseSwerveSubsystem) driveSubsystem).lockNow();
+                //     // lock as soon as level is detected
+                // }
+                // else{
+                    returnDrivePower = -1 * drivePID.calculate(ahrs.getPitch(), 0);
+                    System.out.println(returnDrivePower);
+                    if(Math.abs(ahrs.getPitch()) <= 2.0 && !waiting){
+                        timer.reset();
+                        waiting = true;
+                        timer.start();
                     }
-                    else{
-                        returnDrivePower = 0.0;
-                        if(driveSubsystem instanceof BaseSwerveSubsystem) ((BaseSwerveSubsystem) driveSubsystem).lockNow();
-                        // if platform is rocking, lock wheels to preserve stability
+                    if(waiting){
+                        if(Math.abs(ahrs.getPitch()) <= 1.0 && timer.hasElapsed(0.1)) balanced = true;
                     }
-                }
+                    
+                // }
             }
         }
 
         if(driveSubsystem instanceof BaseSwerveSubsystem){
-            ((BaseSwerveSubsystem) driveSubsystem).setDrivePowers(returnDrivePower, returnAngularPower);
+            ((BaseSwerveSubsystem) driveSubsystem).setDrivePowers(returnDrivePower, 0.0);
         }
         else driveSubsystem.setDrivePowers(returnDrivePower);
 
@@ -105,7 +110,7 @@ public class BalancerCommand extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return reachedStation && Math.abs(ahrs.getPitch()) <= 2.0;
+        return reachedStation && balanced;
         // return reachedStation && Math.abs(ahrs.getPitch()) <= 2.0 && stoptimer.hasElapsed(0.20);
     }
 }

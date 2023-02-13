@@ -152,9 +152,19 @@ public class RobotContainer {
      * passing it to a {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
      */
     private void configureButtonBindings() {
-        driveController.getBalancerButton().whileTrue(balancerCommand);
+
         driveController.getCameraSwitchButton().onTrue(new InstantCommand(switchableCamera::switchCamera));
 
+        driveController.getBalancerButton()
+            .onTrue(new InstantCommand(() -> {
+                balancerCommand.reachedStation = false;
+                balancerCommand.passedCenter = false;
+                balancerCommand.balanced = false;
+                balancerCommand.waiting = false;
+
+            }))
+            .whileTrue(balancerCommand);
+        
         if (driveSubsystem instanceof BaseSwerveSubsystem) {
             final BaseSwerveSubsystem swerveSubsystem = (BaseSwerveSubsystem) driveSubsystem;
 
