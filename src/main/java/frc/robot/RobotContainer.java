@@ -77,7 +77,7 @@ public class RobotContainer {
     private UsbCamera front;
     private UsbCamera back;
     ComplexWidget cameraSelection;
-    private int CameraID = 0;
+    private int cameraID = 0;
     private VideoSink server;
 
     private final GenericHID switchboard = new GenericHID(3);
@@ -165,15 +165,13 @@ public class RobotContainer {
     private void configureButtonBindings() {
         driveController.getCameraSwitchButton()
         .onTrue(new InstantCommand(() -> {
-            if(CameraID == 0){
+            if(cameraID == 0){
                 server.setSource(front);
-                CameraID = 1;
-                System.out.println("CAMERA SET TO FRONT");
+                cameraID = 1;
             }
             else{
                 server.setSource(back);
-                CameraID = 0;
-                System.out.println("CAMERA SET TO BACK");
+                cameraID = 0;
             }
         }));
         
