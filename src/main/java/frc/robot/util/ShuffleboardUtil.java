@@ -3,6 +3,7 @@ package frc.robot.util;
 import java.util.Optional;
 import java.util.function.Consumer;
 
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.revrobotics.SparkMaxPIDController;
 
 import edu.wpi.first.networktables.GenericEntry;
@@ -19,12 +20,30 @@ public class ShuffleboardUtil {
     }
 
     /**
+     * Polls a Shuffleboard entry for a `double` change, updating the provided TalonSRX's P gain if it is found.
+     * @param entry The shuffleboard entry to poll.
+     * @param talon The TalonSRX to update.
+     */
+    public static void pollShuffleboardP(GenericEntry entry, WPI_TalonSRX talon) {
+        pollShuffleboardValue(entry, (value) -> talon.config_kP(0, value.getDouble()));
+    }
+
+    /**
      * Polls a Shuffleboard entry for a `double` change, updating the provided SparkMax PID controller's I gain if it is found.
      * @param entry The shuffleboard entry to poll.
      * @param pidController The PID controller to update.
      */
     public static void pollShuffleboardI(GenericEntry entry, SparkMaxPIDController pidController) {
         pollShuffleboardValue(entry, (value) -> pidController.setI(value.getDouble()));
+    }
+
+    /**
+     * Polls a Shuffleboard entry for a `double` change, updating the provided TalonSRX's P gain if it is found.
+     * @param entry The shuffleboard entry to poll.
+     * @param talon The TalonSRX to update.
+     */
+    public static void pollShuffleboardI(GenericEntry entry, WPI_TalonSRX talon) {
+        pollShuffleboardValue(entry, (value) -> talon.config_kI(0, value.getDouble()));
     }
 
     /**
@@ -37,12 +56,30 @@ public class ShuffleboardUtil {
     }
 
     /**
+     * Polls a Shuffleboard entry for a `double` change, updating the provided TalonSRX's D gain if it is found.
+     * @param entry The shuffleboard entry to poll.
+     * @param talon The TalonSRX to update.
+     */
+    public static void pollShuffleboardD(GenericEntry entry, WPI_TalonSRX talon) {
+        pollShuffleboardValue(entry, (value) -> talon.config_kD(0, value.getDouble()));
+    }
+
+    /**
      * Polls a Shuffleboard entry for a `double` change, updating the provided SparkMax PID controller's FF gain if it is found.
      * @param entry The shuffleboard entry to poll.
      * @param pidController The PID controller to update.
      */
     public static void pollShuffleboardFF(GenericEntry entry, SparkMaxPIDController pidController) {
         pollShuffleboardValue(entry, (value) -> pidController.setFF(value.getDouble()));
+    }
+
+    /**
+     * Polls a Shuffleboard entry for a `double` change, updating the provided TalonSRX's FF gain if it is found.
+     * @param entry The shuffleboard entry to poll.
+     * @param talon The TalonSRX to update.
+     */
+    public static void pollShuffleboardFF(GenericEntry entry, WPI_TalonSRX talon) {
+        pollShuffleboardValue(entry, (value) -> talon.config_kF(0, value.getDouble()));
     }
 
     /**
@@ -57,6 +94,17 @@ public class ShuffleboardUtil {
     }
 
     /**
+     * Polls a Shuffleboard entry for a `double` change, updating the provided TalonSRX's MotionMagic
+     * cruise (max) velocity if it is found.
+     * 
+     * @param entry The shuffleboard entry to poll.
+     * @param talon The TalonSRX to update.
+     */
+    public static void pollShuffleboardMaxVel(GenericEntry entry, WPI_TalonSRX talon) {
+        pollShuffleboardValue(entry, (value) -> talon.configMotionCruiseVelocity(value.getDouble()));
+    }
+
+    /**
      * Polls a Shuffleboard entry for a `double` change, updating the provided SparkMax PID controller's
      * Smart Motion max acceleration if it is found.
      * 
@@ -65,6 +113,17 @@ public class ShuffleboardUtil {
      */
     public static void pollShuffleboardMaxAccel(GenericEntry entry, SparkMaxPIDController pidController) {
         pollShuffleboardValue(entry, (value) -> pidController.setSmartMotionMaxAccel(value.getDouble(), 0));
+    }
+
+    /**
+     * Polls a Shuffleboard entry for a `double` change, updating the provided TalonSRX's MotionMagic
+     * max acceleration if it is found.
+     * 
+     * @param entry The shuffleboard entry to poll.
+     * @param talon The TalonSRX to update.
+     */
+    public static void pollShuffleboardMaxAccel(GenericEntry entry, WPI_TalonSRX talon) {
+        pollShuffleboardValue(entry, (value) -> talon.configMotionAcceleration(value.getDouble()));
     }
 
     /**
