@@ -285,6 +285,8 @@ public class RobotContainer {
             .onTrue(new InstantCommand(() -> {
                 balancerCommand.reachedStation = false;
                 balancerCommand.passedCenter = false;
+                balancerCommand.balanced = false;
+                balancerCommand.waiting = false;
 
             }))
             .whileTrue(balancerCommand);
