@@ -3,6 +3,7 @@ package frc.robot.commands.grabber;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 import frc.robot.subsystems.RollerSubsystem;
+import frc.robot.subsystems.RollerSubsystem.HeldPiece;
 
 /**
  * Intakes 1 game piece with the roller mech. This command runs the rollers at a set power
@@ -34,6 +35,6 @@ public class RollerIntakeCommand extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return rollerSubsystem.hasPiece();
+        return rollerSubsystem.getPiece() != HeldPiece.EMPTY;
     }
 }

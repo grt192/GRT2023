@@ -19,12 +19,16 @@ public class RollerSubsystem extends SubsystemBase {
     private final WPI_TalonSRX rightBeak;
     private final WPI_TalonSRX openMotor;
 
-    public final DigitalInput limitSwitch;
+    private final DigitalInput limitSwitch;
+    private final ColorSensorV3 crolorSensor;
+
+    public enum HeldPiece {
+        CONE, CUBE, EMPTY;
+    }
+
+    private HeldPiece heldPiece = HeldPiece.EMPTY;
 
     private final Timer openTimer = new Timer();
-
-    private final I2C.Port sensorPort = I2C.Port.kMXP;
-    private final ColorSensorV3 crolorSensor = new ColorSensorV3(sensorPort);
 
     private final int coneRedMax = 80;
     private final int coneRedMin = 65;
@@ -65,6 +69,7 @@ public class RollerSubsystem extends SubsystemBase {
         openMotor.setInverted(true);
 
         limitSwitch = new DigitalInput(LIMIT_SWITCH_ID);
+        crolorSensor = new ColorSensorV3(I2C.Port.kMXP);
 
         //for tuning
         // entry = tab.add("R", 0).getEntry();
@@ -80,11 +85,11 @@ public class RollerSubsystem extends SubsystemBase {
     }
 
     /**
-     * Gets whether there is a piece in the subsystem (whether the limit switch is pressed).
-     * @return Whether the limit switch is pressed.
+     * Gets the currently held piece in the subsystem, or `HeldPiece.EMPTY` if there is no piece.
+     * @return The held piece, or `HeldPiece.EMPTY`.
      */
-    public boolean hasPiece() {
-        return limitSwitch.get();
+    public HeldPiece getPiece() {
+        return heldPiece;
     }
 
     /**
@@ -124,6 +129,7 @@ public class RollerSubsystem extends SubsystemBase {
         // gentry.setValue(green);
         // bentry.setValue(blue);
 
+        // TODO: modify `heldPiece` based on color sensor data
         if (red > cubeRedMin && red < cubeRedMax && blue > cubeBlueMin && blue < cubeBlueMax && green < cubeGreenMax && green > cubeGreenMin){
             // System.out.println("cube");
         }
