@@ -6,7 +6,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 
-import frc.robot.commands.mover.JulianLevelCommand;
+import frc.robot.commands.mover.TiltedElevatorCommand;
 import frc.robot.commands.swerve.FollowPathCommand;
 import frc.robot.positions.PiecePosition;
 import frc.robot.positions.PlacePosition;
@@ -54,7 +54,7 @@ public abstract class BaseBottomAutonSequence extends BaseAutonSequence {
      * @return The `SequentialCommandGroup` representing running the commands in order.
      */
     protected Command goAndGrabBottomPath(Pose2d initialPose, Pose2d midPose1, Pose2d midPose2, PiecePosition finalPose) {
-        return new JulianLevelCommand(tiltedElevatorSubsystem, ElevatorState.GROUND)
+        return new TiltedElevatorCommand(tiltedElevatorSubsystem, ElevatorState.GROUND)
             .alongWith(FollowPathCommand.from(swerveSubsystem, initialPose, List.of(), midPose1))
             .andThen(new PrintCommand("hit MidPose1"))
             .andThen(FollowPathCommand.from(swerveSubsystem, midPose1, List.of(), midPose2))
@@ -71,7 +71,7 @@ public abstract class BaseBottomAutonSequence extends BaseAutonSequence {
      * @return The `SequentialCommandGroup` representing running the commands in order.
      */
     protected Command goAndPlaceBottomPath(Pose2d initialPose, Pose2d midPose1, Pose2d midPose2, PlacePosition finalState) {
-        return new JulianLevelCommand(tiltedElevatorSubsystem, ElevatorState.GROUND)
+        return new TiltedElevatorCommand(tiltedElevatorSubsystem, ElevatorState.GROUND)
             .alongWith(FollowPathCommand.from(swerveSubsystem, initialPose, List.of(), midPose1))
             .andThen(new PrintCommand("hit MidPose1"))
             .andThen(FollowPathCommand.from(swerveSubsystem, midPose1, List.of(), midPose2))
