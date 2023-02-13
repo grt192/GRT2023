@@ -125,13 +125,13 @@ public class RollerSubsystem extends SubsystemBase {
         // bentry.setValue(blue);
 
         if (red > cubeRedMin && red < cubeRedMax && blue > cubeBlueMin && blue < cubeBlueMax && green < cubeGreenMax && green > cubeGreenMin){
-            System.out.println("cube");
+            // System.out.println("cube");
         }
         else if (red > coneRedMin && red < coneRedMax && blue > coneBlueMin && blue < coneBlueMax && green < coneGreenMax && green > coneGreenMin){
-            System.out.println("cone");
+            // System.out.println("cone");
         }
         else{
-            System.out.println("no object");
+            // System.out.println("no object");
         }
         
     }

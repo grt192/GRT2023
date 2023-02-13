@@ -33,7 +33,7 @@ public final class Constants {
     public static final class SwerveConstants {
         public static final int tlDrive = 2;
         public static final int tlSteer = 3;
-        public static final double tlOffsetRads = 0.57522836526;
+        public static final double tlOffsetRads = -5.704799652099609;
         public static final Translation2d tlPos = new Translation2d(
             Units.inchesToMeters(12.0),
             Units.inchesToMeters(8.75)
