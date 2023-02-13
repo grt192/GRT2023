@@ -14,7 +14,7 @@ import frc.robot.motorcontrol.MotorUtil;
 
 public class MissileShellSwerveSweeperSubsystem extends BaseDrivetrain {
     private final CANSparkMax steerMotor;
-    private final SparkMaxAnalogSensor steerAbsoluteEncoder;
+    private SparkMaxAnalogSensor steerAbsoluteEncoder;
 
     private static final int STEER_PORT = Constants.SwerveConstants.brSteer;
     private static final double SWEEP_SPEED = 0.05;
@@ -25,10 +25,11 @@ public class MissileShellSwerveSweeperSubsystem extends BaseDrivetrain {
     private final GenericEntry currentVoltsEntry, maxVoltsEntry, minVoltsEntry;
 
     public MissileShellSwerveSweeperSubsystem() {
-        steerMotor = MotorUtil.createSparkMax(STEER_PORT);
-        steerMotor.setIdleMode(IdleMode.kBrake);
+        steerMotor = MotorUtil.createSparkMax(STEER_PORT, (CANSparkMax sparkMax) -> {
+            sparkMax.setIdleMode(IdleMode.kBrake);
 
-        steerAbsoluteEncoder = steerMotor.getAnalog(SparkMaxAnalogSensor.Mode.kAbsolute);
+            steerAbsoluteEncoder = sparkMax.getAnalog(SparkMaxAnalogSensor.Mode.kAbsolute);
+        });
 
         shuffleboardTab = Shuffleboard.getTab("Swerve sweeper " + STEER_PORT);
         currentVoltsEntry = shuffleboardTab.add("Current voltage", 0.0)

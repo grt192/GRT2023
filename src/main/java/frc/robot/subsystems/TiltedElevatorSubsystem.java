@@ -23,8 +23,8 @@ import static frc.robot.Constants.TiltedElevatorConstants.*;
 
 public class TiltedElevatorSubsystem extends SubsystemBase {
     private final CANSparkMax extensionMotor;
-    private final RelativeEncoder extensionEncoder;
-    private final SparkMaxPIDController extensionPidController;
+    private RelativeEncoder extensionEncoder;
+    private SparkMaxPIDController extensionPidController;
 
     private final CANSparkMax extensionFollow;
 
@@ -44,7 +44,6 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
 
     private double maxVel = 1.1; // m/s
     private double maxAccel = 1.8; // 0.6 // m/s^2
-    private double targetExtension = 0;
 
     private ElevatorState state = ElevatorState.GROUND;
     private double manualPower = 0;
@@ -81,7 +80,7 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
             public double getExtension(boolean hasPiece) {
                 // If a piece is being held, raise it slightly so that it doesn't drag across the floor.
                 return hasPiece 
-                    ? extendDistanceMeters + Units.inchesToMeters(1)
+                    ? extendDistanceMeters + Units.inchesToMeters(5)
                     : extendDistanceMeters;
             }
         },
@@ -113,34 +112,35 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
     }
 
     public TiltedElevatorSubsystem() {
-        extensionMotor = MotorUtil.createSparkMax(EXTENSION_ID);
-        extensionMotor.setIdleMode(IdleMode.kBrake); 
-        extensionMotor.setInverted(true);
+        extensionMotor = MotorUtil.createSparkMax(EXTENSION_ID, (sparkMax) -> {
+            sparkMax.setIdleMode(IdleMode.kBrake); 
+            sparkMax.setInverted(true);
 
-        extensionMotor.enableSoftLimit(SoftLimitDirection.kForward, true);
-        extensionMotor.setSoftLimit(SoftLimitDirection.kForward, EXTENSION_LIMIT);
-        extensionMotor.enableSoftLimit(SoftLimitDirection.kReverse, true);
-        extensionMotor.setSoftLimit(SoftLimitDirection.kReverse, (float) Units.inchesToMeters(-2));
+            extensionEncoder = sparkMax.getEncoder();
+            extensionEncoder.setPositionConversionFactor(EXTENSION_ROTATIONS_TO_METERS);
+            extensionEncoder.setVelocityConversionFactor(EXTENSION_ROTATIONS_TO_METERS / 60.0);
+            extensionEncoder.setPosition(0);
 
-        extensionEncoder = extensionMotor.getEncoder();
-        extensionEncoder.setPositionConversionFactor(EXTENSION_ROTATIONS_TO_METERS);
-        extensionEncoder.setVelocityConversionFactor(EXTENSION_ROTATIONS_TO_METERS / 60.0);
-        extensionEncoder.setPosition(0);
+            sparkMax.enableSoftLimit(SoftLimitDirection.kForward, true);
+            sparkMax.setSoftLimit(SoftLimitDirection.kForward, EXTENSION_LIMIT);
+            sparkMax.enableSoftLimit(SoftLimitDirection.kReverse, true);
+            sparkMax.setSoftLimit(SoftLimitDirection.kReverse, (float) Units.inchesToMeters(-2));
 
-        extensionPidController = extensionMotor.getPIDController();
-        extensionPidController.setFeedbackDevice(extensionEncoder);
-        extensionPidController.setP(extensionP);
-        extensionPidController.setI(extensionI);
-        extensionPidController.setD(extensionD);
-        extensionPidController.setFF(extensionFF);
-        extensionPidController.setSmartMotionAllowedClosedLoopError(extensionTolerance, 0);
-        extensionPidController.setSmartMotionMaxVelocity(maxVel, 0);
-        extensionPidController.setSmartMotionMaxAccel(maxAccel, 0);
-        extensionPidController.setSmartMotionAccelStrategy(AccelStrategy.kTrapezoidal, 0);
+            extensionPidController = MotorUtil.createSparkMaxPIDController(sparkMax, extensionEncoder);
+            extensionPidController.setP(extensionP);
+            extensionPidController.setI(extensionI);
+            extensionPidController.setD(extensionD);
+            extensionPidController.setFF(extensionFF);
+            extensionPidController.setSmartMotionAllowedClosedLoopError(extensionTolerance, 0);
+            extensionPidController.setSmartMotionMaxVelocity(maxVel, 0);
+            extensionPidController.setSmartMotionMaxAccel(maxAccel, 0);
+            extensionPidController.setSmartMotionAccelStrategy(AccelStrategy.kTrapezoidal, 0);
+        });
 
-        extensionFollow = MotorUtil.createSparkMax(EXTENSION_FOLLOW_ID);
-        extensionFollow.follow(extensionMotor);
-        extensionFollow.setIdleMode(IdleMode.kBrake);
+        extensionFollow = MotorUtil.createSparkMax(EXTENSION_FOLLOW_ID, (sparkMax) -> {
+            sparkMax.follow(extensionMotor);
+            sparkMax.setIdleMode(IdleMode.kBrake);
+        });
     }
 
     @Override
@@ -175,13 +175,15 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
         offsetDistEntry.setDouble(Units.metersToInches(offsetDistMeters));
 
         // Units.inchesToMeters(targetExtensionEntry.getDouble(0));
-        this.targetExtension = state.getExtension(pieceGrabbed) + offsetDistMeters;
+        double targetExtension = state.getExtension(pieceGrabbed) + offsetDistMeters;
+
+        targetExtensionEntry.setDouble(targetExtension);
 
         // If we're trying to get to 0, set the motor to 0 power so the carriage drops with gravity
         // and hits the hard stop / limit switch.
-        if (this.targetExtension == 0 && currentPos < Units.inchesToMeters(1)) {
+        if (targetExtension <= 0 && currentPos < Units.inchesToMeters(1)) {
             extensionMotor.set(0);
-        } else if (this.targetExtension == 0 && currentPos < Units.inchesToMeters(5)) {
+        } else if (targetExtension <= 0 && currentPos < Units.inchesToMeters(5)) {
             extensionMotor.set(-0.075);
         } else {
             // Set PID reference
@@ -237,12 +239,6 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
      * @param power The manual [-1.0, 1.0] driver-controlled power.
      */
     public void setManualPower(double power) {
-        if (power > 0.5) {
-            this.manualPower = 0.3;
-        } else if (manualPower < -0.5) {
-            this.manualPower = -0.3;
-        } else {
-            this.manualPower = 0;
-        }
+        this.manualPower = power;
     }
 }

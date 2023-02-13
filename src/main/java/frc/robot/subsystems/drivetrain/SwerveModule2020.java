@@ -24,8 +24,8 @@ import frc.robot.motorcontrol.MotorUtil;
  */
 public class SwerveModule2020 implements BaseSwerveModule {
     private final CANSparkMax driveMotor;
-    private final RelativeEncoder driveEncoder;
-    private final SparkMaxPIDController drivePidController;
+    private RelativeEncoder driveEncoder;
+    private SparkMaxPIDController drivePidController;
 
     private final WPI_TalonSRX steerMotor;
 
@@ -45,18 +45,19 @@ public class SwerveModule2020 implements BaseSwerveModule {
     private static final double steerFF = 0;
 
     public SwerveModule2020(int drivePort, int steerPort, double offsetRads) {
-        driveMotor = MotorUtil.createSparkMax(drivePort);
-        driveMotor.setIdleMode(IdleMode.kBrake);
+        driveMotor = MotorUtil.createSparkMax(drivePort, (sparkMax) -> {
+            sparkMax.setIdleMode(IdleMode.kBrake);
 
-        driveEncoder = driveMotor.getEncoder();
-        driveEncoder.setPositionConversionFactor(DRIVE_ROTATIONS_TO_METERS);
-        driveEncoder.setVelocityConversionFactor(DRIVE_ROTATIONS_TO_METERS / 60.0); // RPM -> m/s
+            driveEncoder = sparkMax.getEncoder();
+            driveEncoder.setPositionConversionFactor(DRIVE_ROTATIONS_TO_METERS);
+            driveEncoder.setVelocityConversionFactor(DRIVE_ROTATIONS_TO_METERS / 60.0); // RPM -> m/s
 
-        drivePidController = driveMotor.getPIDController();
-        drivePidController.setP(driveP);
-        drivePidController.setI(driveI);
-        drivePidController.setD(driveD);
-        drivePidController.setFF(driveFF);
+            drivePidController = MotorUtil.createSparkMaxPIDController(sparkMax, driveEncoder);
+            drivePidController.setP(driveP);
+            drivePidController.setI(driveI);
+            drivePidController.setD(driveD);
+            drivePidController.setFF(driveFF);
+        });
 
         steerMotor = MotorUtil.createTalonSRX(steerPort);
         steerMotor.setNeutralMode(NeutralMode.Brake);

@@ -30,12 +30,12 @@ import frc.robot.motorcontrol.MotorUtil;
 public class SwerveModule implements BaseSwerveModule {
     // private final WPI_TalonFX driveMotor;
     private final CANSparkMax driveMotor;
-    private final RelativeEncoder driveEncoder;
-    private final SparkMaxPIDController drivePidController;
+    private RelativeEncoder driveEncoder;
+    private SparkMaxPIDController drivePidController;
 
     private final CANSparkMax steerMotor;
-    private final SparkMaxAnalogSensor steerAbsoluteEncoder;
-    private final SparkMaxPIDController steerPidController;
+    private SparkMaxAnalogSensor steerAbsoluteEncoder;
+    private SparkMaxPIDController steerPidController;
 
     private final double offsetRads;
 
@@ -79,35 +79,36 @@ public class SwerveModule implements BaseSwerveModule {
          * driveMotor.config_kF(0, driveFF);
          */
 
-        driveMotor = MotorUtil.createSparkMax(drivePort);
-        driveMotor.setIdleMode(IdleMode.kBrake);
+        driveMotor = MotorUtil.createSparkMax(drivePort, (sparkMax) -> {
+            sparkMax.setIdleMode(IdleMode.kBrake);
 
-        driveEncoder = driveMotor.getEncoder();
-        driveEncoder.setPositionConversionFactor(DRIVE_ROTATIONS_TO_METERS);
-        driveEncoder.setVelocityConversionFactor(DRIVE_ROTATIONS_TO_METERS / 60.0); // min = 60s
+            driveEncoder = sparkMax.getEncoder();
+            driveEncoder.setPositionConversionFactor(DRIVE_ROTATIONS_TO_METERS);
+            driveEncoder.setVelocityConversionFactor(DRIVE_ROTATIONS_TO_METERS / 60.0); // min = 60s
+    
+            drivePidController = MotorUtil.createSparkMaxPIDController(sparkMax, driveEncoder);
+            drivePidController.setP(driveP);
+            drivePidController.setI(driveI);
+            drivePidController.setD(driveD);
+            drivePidController.setFF(driveFF);
+        });
 
-        drivePidController = driveMotor.getPIDController();
-        drivePidController.setP(driveP);
-        drivePidController.setI(driveI);
-        drivePidController.setD(driveD);
-        drivePidController.setFF(driveFF);
+        steerMotor = MotorUtil.createSparkMax550(steerPort, (sparkMax) -> {
+            sparkMax.setIdleMode(IdleMode.kBrake);
 
-        steerMotor = MotorUtil.createSparkMax(steerPort);
-        steerMotor.setIdleMode(IdleMode.kBrake);
-
-        steerAbsoluteEncoder = steerMotor.getAnalog(SparkMaxAnalogSensor.Mode.kAbsolute);
-        steerAbsoluteEncoder.setPositionConversionFactor(STEER_VOLTS_TO_RADIANS);
-
-        steerPidController = steerMotor.getPIDController();
-        steerPidController.setFeedbackDevice(steerAbsoluteEncoder);
-        steerPidController.setP(steerP);
-        steerPidController.setI(steerI);
-        steerPidController.setD(steerD);
-        steerPidController.setFF(steerFF);
-
-        steerPidController.setPositionPIDWrappingEnabled(true);
-        steerPidController.setPositionPIDWrappingMinInput(0.0);
-        steerPidController.setPositionPIDWrappingMaxInput(2 * Math.PI);
+            steerAbsoluteEncoder = sparkMax.getAnalog(SparkMaxAnalogSensor.Mode.kAbsolute);
+            steerAbsoluteEncoder.setPositionConversionFactor(STEER_VOLTS_TO_RADIANS);
+    
+            steerPidController = MotorUtil.createSparkMaxPIDController(sparkMax, steerAbsoluteEncoder);
+            steerPidController.setP(steerP);
+            steerPidController.setI(steerI);
+            steerPidController.setD(steerD);
+            steerPidController.setFF(steerFF);
+    
+            steerPidController.setPositionPIDWrappingEnabled(true);
+            steerPidController.setPositionPIDWrappingMinInput(0.0);
+            steerPidController.setPositionPIDWrappingMaxInput(2 * Math.PI);
+        });
 
         shuffleboardTab = Shuffleboard.getTab("Swerve " + drivePort + " " + steerPort);
         targetVelEntry = shuffleboardTab.add("Target velocity (mps)", 0.0)

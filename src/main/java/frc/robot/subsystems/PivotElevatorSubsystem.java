@@ -12,19 +12,21 @@ import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
 import frc.robot.motorcontrol.MotorUtil;
+
 import static frc.robot.Constants.MoverConstants.*;
 
 public class PivotElevatorSubsystem extends SubsystemBase{
     private final CANSparkMax rotationMotor;
-    private final RelativeEncoder rotationEncoder;
-    private final SparkMaxPIDController rotationPidController;
+    private RelativeEncoder rotationEncoder;
+    private SparkMaxPIDController rotationPidController;
 
     private final CANSparkMax rotationMotorFollower;
 
     private final CANSparkMax extensionMotor;
-    private final RelativeEncoder extensionEncoder;
-    private final SparkMaxPIDController extensionPidController;
+    private RelativeEncoder extensionEncoder;
+    private SparkMaxPIDController extensionPidController;
 
     private double rotationP = 0.125;
     private double rotationI = 0;
@@ -58,18 +60,36 @@ public class PivotElevatorSubsystem extends SubsystemBase{
     private final GenericEntry extensionIEntry = shuffleboardTab.add("Extension I", extensionI).getEntry();
     private final GenericEntry extensionDEntry = shuffleboardTab.add("Extension D", extensionD).getEntry();
 
-
     public enum GamePiece {
         CONE, CUBE;
     }
-    
+
     public enum MoverPosition {
-        VERTICAL(0,0),
-        GROUND(Units.degreesToRadians(90), distanceToExtension(Units.inchesToMeters(25))),
-        SUBSTATION(Units.degreesToRadians(65), distanceToExtension(Units.inchesToMeters(44))),
-        CUBEMID(Units.degreesToRadians(72), distanceToExtension(Units.inchesToMeters(34))), CUBEHIGH(Units.degreesToRadians(66),distanceToExtension(Units.inchesToMeters(44))), 
-        CONEMID(Units.degreesToRadians(62),distanceToExtension(Units.inchesToMeters(34))), CONEHIGH(Units.degreesToRadians(66),distanceToExtension(Units.inchesToMeters(44)))
-        ;
+        VERTICAL(0, 0),
+        GROUND(
+            Units.degreesToRadians(90),
+            distanceToExtension(Units.inchesToMeters(25))
+        ),
+        SUBSTATION(
+            Units.degreesToRadians(65),
+            distanceToExtension(Units.inchesToMeters(44))
+        ),
+        CUBEMID(
+            Units.degreesToRadians(72),
+            distanceToExtension(Units.inchesToMeters(34))
+        ),
+        CUBEHIGH(
+            Units.degreesToRadians(66),
+            distanceToExtension(Units.inchesToMeters(44))
+        ), 
+        CONEMID(
+            Units.degreesToRadians(62),
+            distanceToExtension(Units.inchesToMeters(34))
+        ),
+        CONEHIGH(
+            Units.degreesToRadians(66),
+            distanceToExtension(Units.inchesToMeters(44))
+        );
 
         public double angle; //radians, 0 is vertical
         public double extension; //meters, 0 extension is 25 inches from pivot
@@ -81,44 +101,46 @@ public class PivotElevatorSubsystem extends SubsystemBase{
     }
 
     public PivotElevatorSubsystem(){
-        rotationMotor = MotorUtil.createSparkMax(ROTATION_MOTOR_PORT);
-        rotationMotor.setIdleMode(IdleMode.kBrake);
-        rotationMotor.setInverted(true);
-        rotationMotorFollower = MotorUtil.createSparkMax(ROTATION_FOLLOWER_MOTOR_PORT);
-        rotationMotorFollower.follow(rotationMotor);
+        rotationMotor = MotorUtil.createSparkMax(ROTATION_MOTOR_PORT, (sparkMax) -> {
+            sparkMax.setIdleMode(IdleMode.kBrake);
+            sparkMax.setInverted(true);
 
-        rotationEncoder = rotationMotor.getEncoder();
-        rotationEncoder.setPositionConversionFactor(ROTATION_ROT_TO_RAD);
-        rotationEncoder.setPosition(0);
-        
-        rotationMotor.enableSoftLimit(SoftLimitDirection.kForward, true);
-        rotationMotor.enableSoftLimit(SoftLimitDirection.kReverse, true);
-        rotationMotor.setSoftLimit(SoftLimitDirection.kForward, (float) Units.degreesToRadians(90));
-        rotationMotor.setSoftLimit(SoftLimitDirection.kReverse, (float) Units.degreesToRadians(-90));
+            rotationEncoder = sparkMax.getEncoder();
+            rotationEncoder.setPositionConversionFactor(ROTATION_ROT_TO_RAD);
+            rotationEncoder.setPosition(0);
 
-        rotationPidController = rotationMotor.getPIDController();
-        rotationPidController.setP(rotationP);
-        rotationPidController.setI(rotationI);
-        rotationPidController.setD(rotationD);
+            rotationPidController = MotorUtil.createSparkMaxPIDController(sparkMax, rotationEncoder);
+            rotationPidController.setP(rotationP);
+            rotationPidController.setI(rotationI);
+            rotationPidController.setD(rotationD);
 
+            sparkMax.enableSoftLimit(SoftLimitDirection.kForward, true);
+            sparkMax.enableSoftLimit(SoftLimitDirection.kReverse, true);
+            sparkMax.setSoftLimit(SoftLimitDirection.kForward, (float) Units.degreesToRadians(90));
+            sparkMax.setSoftLimit(SoftLimitDirection.kReverse, (float) Units.degreesToRadians(-90));
+        });
 
-        extensionMotor = MotorUtil.createSparkMax(EXTENSION_MOTOR_PORT);
-        extensionMotor.setIdleMode(IdleMode.kBrake);
+        rotationMotorFollower = MotorUtil.createSparkMax(ROTATION_FOLLOWER_MOTOR_PORT, (sparkMax) -> {
+            sparkMax.follow(rotationMotor);
+        });
 
-        extensionEncoder = extensionMotor.getEncoder();
-        extensionEncoder.setPositionConversionFactor(EXTENSION_ROT_TO_M);
-        extensionEncoder.setPosition(0);
-        
-        extensionMotor.enableSoftLimit(SoftLimitDirection.kForward, true);
-        extensionMotor.enableSoftLimit(SoftLimitDirection.kReverse, true);
-        extensionMotor.setSoftLimit(SoftLimitDirection.kForward, (float) Units.inchesToMeters(24));
-        extensionMotor.setSoftLimit(SoftLimitDirection.kReverse, (float) Units.inchesToMeters(0));
+        extensionMotor = MotorUtil.createSparkMax(EXTENSION_MOTOR_PORT, (sparkMax) -> {
+            sparkMax.setIdleMode(IdleMode.kBrake);
 
-        extensionPidController = extensionMotor.getPIDController();
-        extensionPidController.setP(extensionP);
-        extensionPidController.setI(extensionI);
-        extensionPidController.setD(extensionD);
+            extensionEncoder = sparkMax.getEncoder();
+            extensionEncoder.setPositionConversionFactor(EXTENSION_ROT_TO_M);
+            extensionEncoder.setPosition(0);
 
+            sparkMax.enableSoftLimit(SoftLimitDirection.kForward, true);
+            sparkMax.enableSoftLimit(SoftLimitDirection.kReverse, true);
+            sparkMax.setSoftLimit(SoftLimitDirection.kForward, (float) Units.inchesToMeters(24));
+            sparkMax.setSoftLimit(SoftLimitDirection.kReverse, (float) Units.inchesToMeters(0));
+
+            extensionPidController = MotorUtil.createSparkMaxPIDController(sparkMax, extensionEncoder);
+            extensionPidController.setP(extensionP);
+            extensionPidController.setI(extensionI);
+            extensionPidController.setD(extensionD);
+        });
     }
 
     @Override
@@ -140,7 +162,6 @@ public class PivotElevatorSubsystem extends SubsystemBase{
         double exti = extensionIEntry.getDouble(extensionI);
         double extd = extensionDEntry.getDouble(extensionD);
 
-
         if(rotp != rotationP){
             rotationP = rotp;
         }
@@ -159,9 +180,7 @@ public class PivotElevatorSubsystem extends SubsystemBase{
         if(extd != extensionD){
             extensionD = extd;
         }
-
     }
-
 
     private void goTo(double angle, double extension){
         rotationPidController.setReference(angle, ControlType.kPosition);
@@ -201,5 +220,4 @@ public class PivotElevatorSubsystem extends SubsystemBase{
         rotationMotor.set(xPower * .2);
         extensionMotor.set(yPower * .2);
     }
-
 }
