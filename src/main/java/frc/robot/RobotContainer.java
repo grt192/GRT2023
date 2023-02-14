@@ -56,7 +56,7 @@ import frc.robot.subsystems.TiltedElevatorSubsystem.ElevatorState;
  */
 public class RobotContainer {
     // Subsystems
-    private final BaseSwerveSubsystem driveSubsystem;
+    private final BaseDrivetrain driveSubsystem;
     // private final GripperSubsytem gripperSubsystem;
     // private final RollerSubsystem rollerSubsystem;
     // private final TiltedElevatorSubsystem tiltedElevatorSubsystem;
@@ -65,12 +65,6 @@ public class RobotContainer {
 
     // Controllers and buttons
     private final BaseDriveController driveController;
-
-    private UsbCamera front;
-    private UsbCamera back;
-    NetworkTableEntry cameraSelection;
-    private int CameraID = 0;
-    VideoSink server;
 
     private final GenericHID switchboard = new GenericHID(3);
     private final JoystickButton
@@ -105,12 +99,6 @@ public class RobotContainer {
      */
     public RobotContainer() {
         driveController = new XboxDriveController();
-
-        front =  CameraServer.startAutomaticCapture();
-        back =  CameraServer.startAutomaticCapture();
-        cameraSelection = NetworkTableInstance.getDefault().getTable("").getEntry("CameraSelection");
-        
-        server = CameraServer.getServer();
 
         driveSubsystem = new SwerveSubsystem();
         // gripperSubsystem = new GripperSubsytem();
@@ -271,7 +259,6 @@ public class RobotContainer {
             .withPosition(0, 0)
             .withSize(4, 2);
 
-        CameraServer.startAutomaticCapture();
     }
 
     /**
@@ -290,24 +277,6 @@ public class RobotContainer {
 
             }))
             .whileTrue(balancerCommand);
-
-        driveController.getCameraSwitchButton()
-        .onTrue(new InstantCommand(() -> {
-            if(CameraID == 0){
-                cameraSelection.setString(front.getName());
-                server.setSource(front);
-                CameraID = 1;
-                System.out.println("CAMERA SET TO FRONT ");
-            }
-            else{
-                cameraSelection.setString(back.getName());
-                server.setSource(back);
-                CameraID = 0;
-                System.out.println("CAMERA SET TO BACK ");
-            }
-            
-            
-        }));
         
         if (driveSubsystem instanceof BaseSwerveSubsystem) {
             final BaseSwerveSubsystem swerveSubsystem = (BaseSwerveSubsystem) driveSubsystem;
@@ -321,24 +290,23 @@ public class RobotContainer {
             }, swerveSubsystem));
 
             driveController.getFieldResetButton().onTrue(new InstantCommand(swerveSubsystem::resetFieldAngle, swerveSubsystem));
-        } 
-        // else if (driveSubsystem instanceof TankSubsystem) {
-        //     final TankSubsystem tankSubsystem = (TankSubsystem) driveSubsystem;
+        } else if (driveSubsystem instanceof TankSubsystem) {
+            final TankSubsystem tankSubsystem = (TankSubsystem) driveSubsystem;
 
-        //     tankSubsystem.setDefaultCommand(new RunCommand(() -> {
-        //         double forwardPower = 0.75 * driveController.getForwardPower();
-        //         double turnPower = 0.75 * driveController.getRotatePower();
-        //         tankSubsystem.setDrivePowers(forwardPower, turnPower);
-        //     }, tankSubsystem));
-        // } else if (driveSubsystem instanceof MissileShellSwerveSubsystem) {
-        //     final MissileShellSwerveSubsystem swerveSubsystem = (MissileShellSwerveSubsystem) driveSubsystem;
+            tankSubsystem.setDefaultCommand(new RunCommand(() -> {
+                double forwardPower = 0.75 * driveController.getForwardPower();
+                double turnPower = 0.75 * driveController.getRotatePower();
+                tankSubsystem.setDrivePowers(forwardPower, turnPower);
+            }, tankSubsystem));
+        } else if (driveSubsystem instanceof MissileShellSwerveSubsystem) {
+            final MissileShellSwerveSubsystem swerveSubsystem = (MissileShellSwerveSubsystem) driveSubsystem;
 
-        //     swerveSubsystem.setDefaultCommand(new RunCommand(() -> {
-        //         double xPower = driveController.getForwardPower();
-        //         double yPower = driveController.getLeftPower();
-        //         swerveSubsystem.setDrivePowers(xPower, yPower);
-        //     }, swerveSubsystem));
-        // }
+            swerveSubsystem.setDefaultCommand(new RunCommand(() -> {
+                double xPower = driveController.getForwardPower();
+                double yPower = driveController.getLeftPower();
+                swerveSubsystem.setDrivePowers(xPower, yPower);
+            }, swerveSubsystem));
+        }
 
         /*
         rollerSubsystem.setDefaultCommand(new RunCommand(() -> {
