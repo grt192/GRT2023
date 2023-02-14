@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+import frc.robot.Constants;
 import frc.robot.util.MotorUtil;
 import frc.robot.util.ShuffleboardUtil;
 
@@ -29,7 +30,7 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
 
     private final CANSparkMax extensionFollow;
 
-    private final DigitalInput zeroLimitSwitch = new DigitalInput(ZERO_LIMIT_ID);
+    private final DigitalInput zeroLimitSwitch;
 
     private static final double EXTENSION_GEAR_RATIO = 14.0 / 64.0;
     private static final double EXTENSION_CIRCUMFERENCE = Units.inchesToMeters(Math.PI * 0.500); // approx circumference of winch
@@ -130,6 +131,9 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
             sparkMax.setIdleMode(IdleMode.kBrake);
         });
 
+        if (Constants.IS_R1) zeroLimitSwitch = null;
+        else zeroLimitSwitch = new DigitalInput(ZERO_LIMIT_ID);
+
         // TODO: positions
         shuffleboardTab = Shuffleboard.getTab("Tilted Elevator");
 
@@ -153,7 +157,8 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        // if (zeroLimitSwitch.get()) extensionEncoder.setPosition(0); 
+        if (zeroLimitSwitch != null && zeroLimitSwitch.get())
+            extensionEncoder.setPosition(0); 
 
         // If we're in manual power mode, use percent out power supplied by driver joystick.
         if (IS_MANUAL) {

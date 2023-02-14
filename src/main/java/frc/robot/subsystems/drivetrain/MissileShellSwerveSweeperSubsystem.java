@@ -16,7 +16,7 @@ public class MissileShellSwerveSweeperSubsystem extends BaseDrivetrain {
     private final CANSparkMax steerMotor;
     private SparkMaxAnalogSensor steerAbsoluteEncoder;
 
-    private static final int STEER_PORT = Constants.SwerveConstants.brSteer;
+    private static final int STEER_PORT = Constants.SwerveConstants.BR_STEER;
     private static final double SWEEP_SPEED = 0.05;
 
     private double maxVolts, minVolts = 1.0; // TODO: better way of setting "unset" min volts?
