@@ -24,8 +24,6 @@ import frc.robot.vision.PhotonWrapper;
  */
 public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
 
-    private final Field2d cfield = new Field2d();
-
     private final BaseSwerveModule topLeftModule;
     private final BaseSwerveModule topRightModule;
     private final BaseSwerveModule bottomLeftModule;
@@ -85,8 +83,6 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
         this.kinematics = kinematics;
         this.photonWrapper = photonWrapper;
 
-        SmartDashboard.putData("Field", cfield);
-
         // Initialize pose estimator
         poseEstimator = new SwerveDrivePoseEstimator(
             kinematics,
@@ -112,8 +108,6 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
 
     @Override
     public void periodic() {
-
-        cfield.setRobotPose(getRobotPosition());
 
         // Update pose estimator from swerve module states
         Rotation2d gyroAngle = getGyroHeading();

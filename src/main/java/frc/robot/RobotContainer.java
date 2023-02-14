@@ -42,6 +42,7 @@ import frc.robot.controllers.BaseDriveController;
 import frc.robot.controllers.DualJoystickDriveController;
 import frc.robot.controllers.TwistJoystickDriveController;
 import frc.robot.controllers.XboxDriveController;
+import frc.robot.vision.CameraSwitch;
 import frc.robot.vision.PhotonWrapper;
 import frc.robot.subsystems.drivetrain.TankSubsystem;
 import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
@@ -74,11 +75,8 @@ public class RobotContainer {
     // Controllers and buttons
     private final BaseDriveController driveController;
 
-    private UsbCamera front;
-    private UsbCamera back;
+    private CameraSwitch switchableCamera;
     ComplexWidget cameraSelection;
-    private int cameraID = 0;
-    private VideoSink server;
 
     private final GenericHID switchboard = new GenericHID(3);
     private final JoystickButton
@@ -114,17 +112,16 @@ public class RobotContainer {
         driveController = new XboxDriveController();
 
         photonWrapper = new PhotonWrapper();
-        front =  CameraServer.startAutomaticCapture(0);
-        back =  CameraServer.startAutomaticCapture(1);
-        
-        server = CameraServer.getServer();
+        switchableCamera = new CameraSwitch();
 
         driveSubsystem = new SwerveSubsystem(photonWrapper);
         rollerSubsystem = new RollerSubsystem();
         tiltedElevatorSubsystem = new TiltedElevatorSubsystem();
 
         superstructure = new Superstructure(rollerSubsystem, tiltedElevatorSubsystem);
-        cameraSelection = Shuffleboard.getTab("Driver Camera").add("Intake Camera", server.getSource());
+        cameraSelection = shuffleboardTab.add("Intake Camera", switchableCamera.getSource())
+            .withPosition(8, 3)
+            .withSize(4,2);
 
         // Configure the button bindings
         configureButtonBindings();
@@ -164,16 +161,7 @@ public class RobotContainer {
      */
     private void configureButtonBindings() {
         driveController.getCameraSwitchButton()
-        .onTrue(new InstantCommand(() -> {
-            if(cameraID == 0){
-                server.setSource(front);
-                cameraID = 1;
-            }
-            else{
-                server.setSource(back);
-                cameraID = 0;
-            }
-        }));
+        .onTrue(new InstantCommand(() -> switchableCamera.switchCamera()));
         
         if (driveSubsystem instanceof BaseSwerveSubsystem) {
             final BaseSwerveSubsystem swerveSubsystem = (BaseSwerveSubsystem) driveSubsystem;
