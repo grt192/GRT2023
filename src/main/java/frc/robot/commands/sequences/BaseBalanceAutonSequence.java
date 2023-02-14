@@ -23,7 +23,7 @@ public abstract class BaseBalanceAutonSequence extends BaseAutonSequence {
      */
     public BaseBalanceAutonSequence(
         BaseSwerveSubsystem swerveSubsystem, RollerSubsystem rollerSubsystem, TiltedElevatorSubsystem tiltedElevatorSubsystem,
-        Pose2d initialPose, PlacePosition placeState, Pose2d outsidePose
+        Pose2d initialPose, PlacePosition placeState, Pose2d midoutsidePose, Pose2d outsideoutsidePose, Pose2d backoutsidePose
     ) {
         super(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, initialPose);
 
@@ -31,7 +31,10 @@ public abstract class BaseBalanceAutonSequence extends BaseAutonSequence {
             // Place preloaded game piece
             goAndPlace(initialPose, placeState),
             // Go out of community
-            FollowPathCommand.from(swerveSubsystem, placeState.getPose(), List.of(), outsidePose),
+            FollowPathCommand.from(swerveSubsystem, placeState.getPose(), List.of(), midoutsidePose),
+            //do 180
+            FollowPathCommand.from(swerveSubsystem, midoutsidePose, List.of(), outsideoutsidePose),
+            FollowPathCommand.from(swerveSubsystem, outsideoutsidePose, List.of(), backoutsidePose),
             // Go and balance on charging station
             new BalancerCommand(swerveSubsystem)
         );

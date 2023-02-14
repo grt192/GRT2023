@@ -19,8 +19,18 @@ public class RedBalanceAuton extends BaseBalanceAutonSequence {
         Units.inchesToMeters(107.638),
         Rotation2d.fromDegrees(0)
     );
-    private static final Pose2d OUTSIDE_POSE = new Pose2d(
-        Units.inchesToMeters(426.049),
+    private static final Pose2d MIDOUTSIDE_POSE = new Pose2d(
+        Units.inchesToMeters(401.150),
+        Units.inchesToMeters(107.638),
+        Rotation2d.fromDegrees(180)
+    );
+    private static final Pose2d OUTSIDEOUTSIDE_POSE = new Pose2d(
+        Units.inchesToMeters(436.300),
+        Units.inchesToMeters(107.638),
+        Rotation2d.fromDegrees(90)
+    );
+    private static final Pose2d BACKOUTSIDE_POSE = new Pose2d(
+        Units.inchesToMeters(401.150),
         Units.inchesToMeters(107.638),
         Rotation2d.fromDegrees(0)
     );
@@ -32,7 +42,7 @@ public class RedBalanceAuton extends BaseBalanceAutonSequence {
     ) {
         super(
             swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem,
-            INITIAL_POSE, PlacePosition.Red.C3HIGH, OUTSIDE_POSE
+            INITIAL_POSE, PlacePosition.Red.C3HIGH, MIDOUTSIDE_POSE, OUTSIDEOUTSIDE_POSE, BACKOUTSIDE_POSE
         );
     }
 }
