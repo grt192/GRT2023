@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 
 import frc.robot.Constants;
-import frc.robot.motorcontrol.MotorUtil;
+import frc.robot.util.MotorUtil;
 
 public class MissileShellSwerveSweeperSubsystem extends BaseDrivetrain {
     private final CANSparkMax steerMotor;
@@ -25,7 +25,7 @@ public class MissileShellSwerveSweeperSubsystem extends BaseDrivetrain {
     private final GenericEntry currentVoltsEntry, maxVoltsEntry, minVoltsEntry;
 
     public MissileShellSwerveSweeperSubsystem() {
-        steerMotor = MotorUtil.createSparkMax(STEER_PORT, (CANSparkMax sparkMax) -> {
+        steerMotor = MotorUtil.createSparkMax(STEER_PORT, (sparkMax) -> {
             sparkMax.setIdleMode(IdleMode.kBrake);
 
             steerAbsoluteEncoder = sparkMax.getAnalog(SparkMaxAnalogSensor.Mode.kAbsolute);

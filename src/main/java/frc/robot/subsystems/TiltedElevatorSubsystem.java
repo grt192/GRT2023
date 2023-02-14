@@ -17,7 +17,8 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-import frc.robot.motorcontrol.MotorUtil;
+import frc.robot.util.MotorUtil;
+import frc.robot.util.ShuffleboardUtil;
 
 import static frc.robot.Constants.TiltedElevatorConstants.*;
 
@@ -35,44 +36,31 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
     private static final double EXTENSION_ROTATIONS_TO_METERS = EXTENSION_GEAR_RATIO * EXTENSION_CIRCUMFERENCE * 2.0 * (15.0 / 13.4);
     private static final float EXTENSION_LIMIT = 26.0f;
 
-    private double extensionP = 0.25; //.4 // 4.9;
-    private double extensionI = 0;
-    private double extensionD = 0.9; //.2
-    private double extensionFF = 0.3; //0.1
-    private double extensionTolerance = 0.003;
+    private static final double extensionP = 0.25; //.4 // 4.9;
+    private static final double extensionI = 0;
+    private static final double extensionD = 0.9; //.2
+    private static final double extensionFF = 0.3; //0.1
+    private static final double maxVel = 1.1; // m/s
+    private static final double maxAccel = 1.8; // 0.6 // m/s^2
+    private static final double extensionTolerance = 0.003;
     private double arbFeedforward = 0.02;
 
-    private double maxVel = 1.1; // m/s
-    private double maxAccel = 1.8; // 0.6 // m/s^2
-
     private ElevatorState state = ElevatorState.GROUND;
+
+    private static final boolean IS_MANUAL = false;
     private double manualPower = 0;
-    private double offsetDistMeters = 0;
 
     private static final double OFFSET_FACTOR = 0.01; // The factor to multiply driver input by when changing the offset.
-    private static final boolean IS_MANUAL = false;
+    private double offsetDistMeters = 0;
 
     public boolean pieceGrabbed = false;
 
-    private final ShuffleboardTab shuffleboardTab = Shuffleboard.getTab("Tilted Elevator");
-    private final GenericEntry extensionPEntry = shuffleboardTab.add("Extension P", extensionP).getEntry();
-    private final GenericEntry extensionIEntry = shuffleboardTab.add("Extension I", extensionI).getEntry();
-    private final GenericEntry extensionDEntry = shuffleboardTab.add("Extension D", extensionD).getEntry();
-    private final GenericEntry extensionFFEntry = shuffleboardTab.add("Extension FF", extensionFF).getEntry();
-    private final GenericEntry extensionToleranceEntry = shuffleboardTab.add("Extension Tolerance", extensionTolerance).getEntry();
-    private final GenericEntry arbFFEntry = shuffleboardTab.add("Arb FF", arbFeedforward).getEntry();
-
-    private final GenericEntry manualPowerEntry = shuffleboardTab.add("Manual Power", manualPower).getEntry();
-
-    private final GenericEntry maxVelEntry = shuffleboardTab.add("Max Vel", maxVel).getEntry();
-    private final GenericEntry maxAccelEntry = shuffleboardTab.add("Max Accel", maxAccel).getEntry();
-    private final GenericEntry currentVelEntry = shuffleboardTab.add("Current Vel (mps)", 0.0).getEntry();
-
-    private final GenericEntry targetExtensionEntry = shuffleboardTab.add("Target Ext (in)", 0.0).getEntry();
-    private final GenericEntry currentExtensionEntry = shuffleboardTab.add("Current Ext (in)", 0.0).getEntry();
-    private final GenericEntry currentStateEntry = shuffleboardTab.add("Current State", state.toString()).getEntry();
-
-    private final GenericEntry offsetDistEntry = shuffleboardTab.add("offset (in)", offsetDistMeters).getEntry();
+    private final ShuffleboardTab shuffleboardTab;
+    private final GenericEntry 
+        extensionPEntry, extensionIEntry, extensionDEntry, extensionFFEntry,
+        maxVelEntry, maxAccelEntry, extensionToleranceEntry, arbFFEntry;
+    private final GenericEntry manualPowerEntry, targetExtensionEntry;
+    private final GenericEntry currentExtensionEntry, currentVelEntry, currentStateEntry, offsetDistEntry;
 
     public enum ElevatorState {
         GROUND(0) {
@@ -141,43 +129,53 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
             sparkMax.follow(extensionMotor);
             sparkMax.setIdleMode(IdleMode.kBrake);
         });
+
+        // TODO: positions
+        shuffleboardTab = Shuffleboard.getTab("Tilted Elevator");
+
+        extensionPEntry = shuffleboardTab.add("Extension P", extensionP).withPosition(0, 0).getEntry();
+        extensionIEntry = shuffleboardTab.add("Extension I", extensionI).getEntry();
+        extensionDEntry = shuffleboardTab.add("Extension D", extensionD).getEntry();
+        extensionFFEntry = shuffleboardTab.add("Extension FF", extensionFF).getEntry();
+        maxVelEntry = shuffleboardTab.add("Max vel", maxVel).getEntry();
+        maxAccelEntry = shuffleboardTab.add("Max accel", maxAccel).getEntry();
+        extensionToleranceEntry = shuffleboardTab.add("Extension tolerance", extensionTolerance).getEntry();
+        arbFFEntry = shuffleboardTab.add("Arb FF", arbFeedforward).getEntry();
+
+        manualPowerEntry = shuffleboardTab.add("Manual Power", manualPower).getEntry();
+        targetExtensionEntry = shuffleboardTab.add("Target Ext (in)", 0.0).getEntry();
+
+        currentStateEntry = shuffleboardTab.add("Current state", state.toString()).getEntry();
+        currentExtensionEntry = shuffleboardTab.add("Current Ext (in)", 0.0).getEntry();
+        currentVelEntry = shuffleboardTab.add("Current Vel (mps)", 0.0).getEntry();
+        offsetDistEntry = shuffleboardTab.add("Offset (in)", offsetDistMeters).getEntry();
     }
 
     @Override
     public void periodic() {
         // if (zeroLimitSwitch.get()) extensionEncoder.setPosition(0); 
 
+        // If we're in manual power mode, use percent out power supplied by driver joystick.
         if (IS_MANUAL) {
             manualPowerEntry.setDouble(manualPower);
             extensionMotor.set(manualPower);
             return;
         }
 
-        // Otherwise, use PID
-        /*
-        extensionPidController.setP(extensionPEntry.getDouble(extensionP));
-        extensionPidController.setI(extensionIEntry.getDouble(extensionI));
-        extensionPidController.setD(extensionDEntry.getDouble(extensionD));
-        extensionPidController.setFF(extensionFFEntry.getDouble(extensionFF));
-        extensionPidController.setSmartMotionMaxVelocity(maxVelEntry.getDouble(maxVel), 0);
-        extensionPidController.setSmartMotionMaxAccel(maxAccelEntry.getDouble(maxAccel), 0);
-        extensionPidController.setSmartMotionAllowedClosedLoopError(extensionToleranceEntry.getDouble(extensionTolerance), 0);
+        ShuffleboardUtil.pollShuffleboardDouble(extensionPEntry, extensionPidController::setP);
+        ShuffleboardUtil.pollShuffleboardDouble(extensionIEntry, extensionPidController::setI);
+        ShuffleboardUtil.pollShuffleboardDouble(extensionDEntry, extensionPidController::setD);
+        ShuffleboardUtil.pollShuffleboardDouble(extensionFFEntry, extensionPidController::setFF);
+        ShuffleboardUtil.pollShuffleboardDouble(maxVelEntry, (value) -> extensionPidController.setSmartMotionMaxVelocity(value, 0));
+        ShuffleboardUtil.pollShuffleboardDouble(maxAccelEntry, (value) -> extensionPidController.setSmartMotionMaxAccel(value, 0));
+        ShuffleboardUtil.pollShuffleboardDouble(extensionToleranceEntry, (value) -> extensionPidController.setSmartMotionAllowedClosedLoopError(value, 0));
         arbFeedforward = arbFFEntry.getDouble(arbFeedforward);
-        */
 
         // System.out.println(extensionEncoder.getPosition());
 
         double currentPos = extensionEncoder.getPosition();
         double currentVel = extensionEncoder.getVelocity();
-
-        currentVelEntry.setDouble(currentVel);
-        currentExtensionEntry.setDouble(Units.metersToInches(currentPos));
-        offsetDistEntry.setDouble(Units.metersToInches(offsetDistMeters));
-
-        // Units.inchesToMeters(targetExtensionEntry.getDouble(0));
         double targetExtension = state.getExtension(pieceGrabbed) + offsetDistMeters;
-
-        targetExtensionEntry.setDouble(targetExtension);
 
         // If we're trying to get to 0, set the motor to 0 power so the carriage drops with gravity
         // and hits the hard stop / limit switch.
@@ -194,7 +192,11 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
             );
         }
 
+        currentExtensionEntry.setDouble(Units.metersToInches(currentPos));
+        currentVelEntry.setDouble(currentVel);
         currentStateEntry.setString(state.toString());
+        targetExtensionEntry.setDouble(targetExtension);
+        offsetDistEntry.setDouble(Units.metersToInches(offsetDistMeters));
     }
 
     /**

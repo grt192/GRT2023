@@ -13,7 +13,8 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-import frc.robot.motorcontrol.MotorUtil;
+import frc.robot.util.MotorUtil;
+import frc.robot.util.ShuffleboardUtil;
 
 import static frc.robot.Constants.MoverConstants.*;
 
@@ -28,15 +29,15 @@ public class PivotElevatorSubsystem extends SubsystemBase{
     private RelativeEncoder extensionEncoder;
     private SparkMaxPIDController extensionPidController;
 
-    private double rotationP = 0.125;
-    private double rotationI = 0;
-    private double rotationD = 0;
-    private final double ROTATION_ROT_TO_RAD = ROTATION_GEAR_RATIO * 2 * Math.PI;
+    private static final double rotationP = 0.125;
+    private static final double rotationI = 0;
+    private static final double rotationD = 0;
+    private static final double ROTATION_ROT_TO_RAD = ROTATION_GEAR_RATIO * 2 * Math.PI;
 
-    private double extensionP = 0.125;
-    private double extensionI = 0;
-    private double extensionD = 0;
-    private final double EXTENSION_ROT_TO_M = Units.inchesToMeters(0.5615); 
+    private static final double extensionP = 0.125;
+    private static final double extensionI = 0;
+    private static final double extensionD = 0;
+    private static final double EXTENSION_ROT_TO_M = Units.inchesToMeters(0.5615); 
 
     private final boolean RESET_OFFSET_ON_STAGE_SWITCH = true;
     private double angleOffset = 0; //radians
@@ -59,10 +60,6 @@ public class PivotElevatorSubsystem extends SubsystemBase{
     private final GenericEntry extensionPEntry = shuffleboardTab.add("Extension P", extensionP).getEntry();
     private final GenericEntry extensionIEntry = shuffleboardTab.add("Extension I", extensionI).getEntry();
     private final GenericEntry extensionDEntry = shuffleboardTab.add("Extension D", extensionD).getEntry();
-
-    public enum GamePiece {
-        CONE, CUBE;
-    }
 
     public enum MoverPosition {
         VERTICAL(0, 0),
@@ -145,7 +142,7 @@ public class PivotElevatorSubsystem extends SubsystemBase{
 
     @Override
     public void periodic(){
-        if(!TESTING){
+        if (!TESTING) {
             goTo(currentState.angle + angleOffset, currentState.extension + extensionOffset);
         }
 
@@ -153,33 +150,14 @@ public class PivotElevatorSubsystem extends SubsystemBase{
         currentExtensionEntry.setDouble(Units.metersToInches(extensionEncoder.getPosition()));
         targetAngleEntry.setDouble(Units.radiansToDegrees(currentState.angle + angleOffset));
         targetExtensionEntry.setDouble(Units.metersToInches(currentState.extension + extensionOffset));
-        
-        double rotp = rotationPEntry.getDouble(rotationP);
-        double roti = rotationIEntry.getDouble(rotationI);
-        double rotd = rotationDEntry.getDouble(rotationD);
 
-        double extp = extensionPEntry.getDouble(extensionP);
-        double exti = extensionIEntry.getDouble(extensionI);
-        double extd = extensionDEntry.getDouble(extensionD);
+        ShuffleboardUtil.pollShuffleboardDouble(rotationPEntry, rotationPidController::setP);
+        ShuffleboardUtil.pollShuffleboardDouble(rotationIEntry, rotationPidController::setI);
+        ShuffleboardUtil.pollShuffleboardDouble(rotationDEntry, rotationPidController::setD);
 
-        if(rotp != rotationP){
-            rotationP = rotp;
-        }
-        if(roti != rotationI){
-            rotationI = roti;
-        }
-        if(rotd != rotationD){
-            rotationD = rotd;
-        }
-        if(extp != extensionP){
-            extensionP = extp;
-        }
-        if(exti != extensionI){
-            extensionI = exti;
-        }
-        if(extd != extensionD){
-            extensionD = extd;
-        }
+        ShuffleboardUtil.pollShuffleboardDouble(extensionPEntry, extensionPidController::setP);
+        ShuffleboardUtil.pollShuffleboardDouble(extensionIEntry, extensionPidController::setI);
+        ShuffleboardUtil.pollShuffleboardDouble(extensionDEntry, extensionPidController::setD);
     }
 
     private void goTo(double angle, double extension){
@@ -210,8 +188,8 @@ public class PivotElevatorSubsystem extends SubsystemBase{
             setOffsetPowers(xPower, yPower);
         }
     }
+
     public void setOffsetPowers(double xPower, double yPower){
-        
         angleOffset += xPower * ANGLE_OFFSET_SPEED;
         extensionOffset += yPower * EXTENSION_OFFSET_SPEED;
     }
