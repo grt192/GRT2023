@@ -55,8 +55,14 @@ import frc.robot.subsystems.TiltedElevatorSubsystem.ElevatorState;
 public class RobotContainer {
     // Subsystems
     private final BaseDrivetrain driveSubsystem;
+<<<<<<< HEAD
     private final RollerSubsystem rollerSubsystem;
     private final TiltedElevatorSubsystem tiltedElevatorSubsystem;
+=======
+    // private final GripperSubsytem gripperSubsystem;
+    // private final RollerSubsystem rollerSubsystem;
+    // private final TiltedElevatorSubsystem tiltedElevatorSubsystem;
+>>>>>>> a411fce (achieved ten second balance)
 
     private final Superstructure superstructure;
     private final PhotonWrapper photonWrapper;
@@ -99,12 +105,19 @@ public class RobotContainer {
     public RobotContainer() {
         driveController = new XboxDriveController();
 
+<<<<<<< HEAD
         photonWrapper = new PhotonWrapper();
         switchableCamera = new SwitchableCamera();
 
         driveSubsystem = new SwerveSubsystem(photonWrapper);
         rollerSubsystem = new RollerSubsystem();
         tiltedElevatorSubsystem = new TiltedElevatorSubsystem();
+=======
+        driveSubsystem = new SwerveSubsystem();
+        // gripperSubsystem = new GripperSubsytem();
+        // rollerSubsystem = new RollerSubsystem();
+        // tiltedElevatorSubsystem = new TiltedElevatorSubsystem();
+>>>>>>> a411fce (achieved ten second balance)
 
         superstructure = new Superstructure(rollerSubsystem, tiltedElevatorSubsystem);
         balancerCommand = new BalancerCommand(driveSubsystem);
@@ -140,9 +153,12 @@ public class RobotContainer {
             .withPosition(8, 0)
             .withSize(4, 2);
 
+<<<<<<< HEAD
         shuffleboardTab.add("Intake Camera", switchableCamera.getSource())
             .withPosition(8, 3)
             .withSize(4, 2);
+=======
+>>>>>>> a411fce (achieved ten second balance)
     }
 
     /**
@@ -181,7 +197,10 @@ public class RobotContainer {
             mechAButton.onTrue(new DropperChooserCommand(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem));
 
             driveController.getFieldResetButton().onTrue(new InstantCommand(swerveSubsystem::resetFieldAngle, swerveSubsystem));
+<<<<<<< HEAD
             driveController.getChargingStationLockButton().onTrue(new InstantCommand(swerveSubsystem::toggleChargingStationLocked, swerveSubsystem));
+=======
+>>>>>>> a411fce (achieved ten second balance)
         } else if (driveSubsystem instanceof TankSubsystem) {
             final TankSubsystem tankSubsystem = (TankSubsystem) driveSubsystem;
 

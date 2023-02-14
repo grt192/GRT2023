@@ -15,8 +15,8 @@ public class BalancerCommand extends CommandBase {
     private final AHRS ahrs; 
     
     private double initialHeading;
-    private double oldAngle;
-    private double currentAngle;
+    private double oldPitch;
+    private double currentPitch;
     private double angularAcceleration;
 
     PIDController drivePID;
@@ -47,21 +47,24 @@ public class BalancerCommand extends CommandBase {
         System.out.println("------------------- Balancer initialized -------------------");
         initialHeading = ahrs.getCompassHeading();
         reachedStation = false;
+        passedCenter = false;
+        balanced = false;
+        waiting = false;
 
     }
 
     @Override
     public void execute() {
         
-        returnAngularPower = turnPID.calculate((ahrs.getCompassHeading() - initialHeading), 0); // correct angle of approach
+        returnAngularPower = turnPID.calculate(ahrs.getCompassHeading(), initialHeading); // correct angle of approach
         
         if(!reachedStation) {
             returnDrivePower = - 0.80;
             if(ahrs.getPitch() <= - 15.0) reachedStation = true;
         }
         else{
-            currentAngle = ahrs.getPitch();
-            angularAcceleration = Math.abs(currentAngle - oldAngle); // calc magnitude of angular acceleration based on delta angle over time
+            currentPitch = ahrs.getPitch();
+            angularAcceleration = Math.abs(currentPitch - oldPitch); // calc magnitude of angular acceleration based on delta angle over time
             System.out.println(ahrs.getPitch());
             
 
@@ -83,12 +86,13 @@ public class BalancerCommand extends CommandBase {
                     returnDrivePower = -1 * drivePID.calculate(ahrs.getPitch(), 0);
                     System.out.println(returnDrivePower);
                     if(Math.abs(ahrs.getPitch()) <= 2.0 && !waiting){
-                        timer.reset();
+                        // timer.reset();
                         waiting = true;
-                        timer.start();
+                        // timer.start();
                     }
                     if(waiting){
-                        if(Math.abs(ahrs.getPitch()) <= 1.0 && timer.hasElapsed(0.1)) balanced = true;
+                        // if(Math.abs(ahrs.getPitch()) <= 1.0 && timer.hasElapsed(0.1)) balanced = true;
+                        if(Math.abs(ahrs.getPitch()) <= 1.0 && angularAcceleration <= 0.2) balanced = true;
                     }
                     
                 // }
@@ -100,7 +104,7 @@ public class BalancerCommand extends CommandBase {
         }
         else driveSubsystem.setDrivePowers(returnDrivePower);
 
-        oldAngle = currentAngle; // set the current angle to old angle so it is accessible for next cycle     
+        oldPitch = currentPitch; // set the current angle to old angle so it is accessible for next cycle     
     }
 
     @Override
