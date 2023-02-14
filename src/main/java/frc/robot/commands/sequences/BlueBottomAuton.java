@@ -26,7 +26,7 @@ public class BlueBottomAuton extends BaseBottomAutonSequence {
         Rotation2d.fromDegrees(180)
     );
     private static final Pose2d MIDPOS2 = new Pose2d(
-        Units.inchesToMeters(179.577),
+        Units.inchesToMeters(195.000),
         Units.inchesToMeters(28.007), 
         Rotation2d.fromDegrees(180)
     );
