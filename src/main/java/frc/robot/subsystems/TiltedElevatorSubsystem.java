@@ -23,7 +23,7 @@ import frc.robot.util.ShuffleboardUtil;
 import static frc.robot.Constants.TiltedElevatorConstants.*;
 
 public class TiltedElevatorSubsystem extends SubsystemBase {
-    private final CANSparkMax extensionMotor;
+    private CANSparkMax extensionMotor;
     private RelativeEncoder extensionEncoder;
     private SparkMaxPIDController extensionPidController;
 
@@ -43,6 +43,7 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
     private static final double maxVel = 1.1; // m/s
     private static final double maxAccel = 1.8; // 0.6 // m/s^2
     private static final double extensionTolerance = 0.003;
+    private static final double extensionRampRate = 0;
     private double arbFeedforward = 0.02;
 
     private ElevatorState state = ElevatorState.GROUND;
@@ -58,7 +59,7 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
     private final ShuffleboardTab shuffleboardTab;
     private final GenericEntry 
         extensionPEntry, extensionIEntry, extensionDEntry, extensionFFEntry,
-        maxVelEntry, maxAccelEntry, extensionToleranceEntry, arbFFEntry;
+        maxVelEntry, maxAccelEntry, extensionToleranceEntry, arbFFEntry, rampEntry;
     private final GenericEntry manualPowerEntry, targetExtensionEntry;
     private final GenericEntry currentExtensionEntry, currentVelEntry, currentStateEntry, offsetDistEntry;
 
@@ -103,6 +104,7 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
         extensionMotor = MotorUtil.createSparkMax(EXTENSION_ID, (sparkMax) -> {
             sparkMax.setIdleMode(IdleMode.kBrake); 
             sparkMax.setInverted(true);
+            sparkMax.setClosedLoopRampRate(extensionRampRate);
 
             extensionEncoder = sparkMax.getEncoder();
             extensionEncoder.setPositionConversionFactor(EXTENSION_ROTATIONS_TO_METERS);
@@ -141,6 +143,7 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
         maxAccelEntry = shuffleboardTab.add("Max accel", maxAccel).getEntry();
         extensionToleranceEntry = shuffleboardTab.add("Extension tolerance", extensionTolerance).getEntry();
         arbFFEntry = shuffleboardTab.add("Arb FF", arbFeedforward).getEntry();
+        rampEntry = shuffleboardTab.add("Ramp Rate", extensionRampRate).getEntry();
 
         manualPowerEntry = shuffleboardTab.add("Manual Power", manualPower).getEntry();
         targetExtensionEntry = shuffleboardTab.add("Target Ext (in)", 0.0).getEntry();
@@ -169,6 +172,7 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
         ShuffleboardUtil.pollShuffleboardDouble(maxVelEntry, (value) -> extensionPidController.setSmartMotionMaxVelocity(value, 0));
         ShuffleboardUtil.pollShuffleboardDouble(maxAccelEntry, (value) -> extensionPidController.setSmartMotionMaxAccel(value, 0));
         ShuffleboardUtil.pollShuffleboardDouble(extensionToleranceEntry, (value) -> extensionPidController.setSmartMotionAllowedClosedLoopError(value, 0));
+        ShuffleboardUtil.pollShuffleboardDouble(rampEntry, (value) -> extensionMotor.setClosedLoopRampRate(extensionRampRate));
         arbFeedforward = arbFFEntry.getDouble(arbFeedforward);
 
         // System.out.println(extensionEncoder.getPosition());
