@@ -13,12 +13,12 @@ public class SwerveSubsystem2020 extends BaseSwerveSubsystem {
 
     public SwerveSubsystem2020(PhotonWrapper photonWrapper) {
         super(
-            new SwerveModule2020(tlDrive, tlSteer, tlOffsetRads),
-            new SwerveModule2020(trDrive, trSteer, trOffsetRads),
-            new SwerveModule2020(blDrive, blSteer, blOffsetRads),
-            new SwerveModule2020(brDrive, brSteer, brOffsetRads),
+            new SwerveModule2020(TL_DRIVE, TL_STEER, TL_OFFSET_RADS),
+            new SwerveModule2020(TR_DRIVE, TR_STEER, TR_OFFSET_RADS),
+            new SwerveModule2020(BL_DRIVE, BL_STEER, BL_OFFSET_RADS),
+            new SwerveModule2020(BR_DRIVE, BR_STEER, BR_OFFSET_RADS),
             MAX_VEL, MAX_ACCEL, MAX_OMEGA, MAX_ALPHA,
-            new SwerveDriveKinematics(tlPos, trPos, blPos, brPos),
+            new SwerveDriveKinematics(TL_POS, TR_POS, BL_POS, BR_POS),
             photonWrapper
         );
     }

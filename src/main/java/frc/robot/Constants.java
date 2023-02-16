@@ -23,6 +23,8 @@ import org.photonvision.PhotonCamera;
  * wherever the constants are needed, to reduce verbosity.
  */
 public final class Constants {
+    public static final boolean IS_R1 = true;
+
     public static final class TankConstants{
         public static final int LEFT_MAIN = 19;
         public static final int LEFT_FOLLOW = 18;
@@ -31,69 +33,88 @@ public final class Constants {
     }
 
     public static final class SwerveConstants {
-        public static final int tlDrive = 2;
-        public static final int tlSteer = 3;
-        public static final double tlOffsetRads = -5.704799652099609;
-        public static final Translation2d tlPos = new Translation2d(
+        public static final int TL_DRIVE = 2;
+        public static final int TL_STEER = 3;
+        public static final double TL_OFFSET_RADS = IS_R1 
+            ? -5.704799652099609
+            : 1.19783924818;
+        public static final Translation2d TL_POS = IS_R1 ? new Translation2d(
             Units.inchesToMeters(12.0),
             Units.inchesToMeters(8.75)
+        ) : new Translation2d(
+            Units.inchesToMeters(13.625),
+            Units.inchesToMeters(10.25)
         );
 
-        public static final int trDrive = 16;
-        public static final int trSteer = 17;
-        public static final double trOffsetRads = -0.842838776116;
-        public static final Translation2d trPos = new Translation2d(
+        public static final int TR_DRIVE = 16;
+        public static final int TR_STEER = 17;
+        public static final double TR_OFFSET_RADS = IS_R1 
+            ? -0.842838776116
+            : 0.205864894386;
+        public static final Translation2d TR_POS = IS_R1 ? new Translation2d(
             Units.inchesToMeters(12.0),
             Units.inchesToMeters(-8.75)
+        ) : new Translation2d(
+            Units.inchesToMeters(13.625),
+            Units.inchesToMeters(-10.25)
         );
 
-        // TODO: reflash sparkmaxes to fix this
-        public static final int blDrive = 20;
-        public static final int blSteer = 1;
-        public static final double blOffsetRads = -0.793255341057;
-        public static final Translation2d blPos = new Translation2d(
+        public static final int BL_DRIVE = 20;
+        public static final int BL_STEER = 1;
+        public static final double BL_OFFSET_RADS = IS_R1
+            ? -0.793255341057
+            : -1.922969685;
+        public static final Translation2d BL_POS = IS_R1 ? new Translation2d(
             Units.inchesToMeters(-12.0),
             Units.inchesToMeters(8.75)
+        ) : new Translation2d(
+            Units.inchesToMeters(-13.625),
+            Units.inchesToMeters(10.25)
         );
 
-        public static final int brDrive = 18;
-        public static final int brSteer = 19;
-        public static final double brOffsetRads = 0.561284053322;
-        public static final Translation2d brPos = new Translation2d(
+        public static final int BR_DRIVE = 18;
+        public static final int BR_STEER = 19;
+        public static final double BR_OFFSET_RADS = IS_R1
+            ? 0.561284053322
+            : -1.38840819598;
+        public static final Translation2d BR_POS = IS_R1 ? new Translation2d(
             Units.inchesToMeters(-12.0),
             Units.inchesToMeters(-8.75)
+        ) : new Translation2d(
+            Units.inchesToMeters(-13.625),
+            Units.inchesToMeters(-10.25)
         );
     }
 
     public static final class SwerveConstants2020 {
-        public static final int tlDrive = 14;
-        public static final int tlSteer = 10;
-        public static final double tlOffsetRads = 1.53398078789;
-        public static final Translation2d tlPos =  new Translation2d(
+        public static final int TL_DRIVE = 14;
+        public static final int TL_STEER = 10;
+        public static final double TL_OFFSET_RADS = 1.53398078789;
+        public static final Translation2d TL_POS = new Translation2d(
             Units.inchesToMeters(13.1365),
             Units.inchesToMeters(10.3865)
         );
 
-        public static final int trDrive = 4;
-        public static final int trSteer = 5;
-        public static final double trOffsetRads = 1.31922347758 + Math.PI;
-        public static final Translation2d trPos = new Translation2d(
+        public static final int TR_DRIVE = 4;
+        public static final int TR_STEER = 5;
+        public static final double TR_OFFSET_RADS = 1.31922347758 + Math.PI;
+        public static final Translation2d TR_POS = new Translation2d(
             Units.inchesToMeters(13.1365),
             Units.inchesToMeters(-10.3865)
         );
 
-        public static final int blDrive = 13;
-        public static final int blSteer = 11;
-        public static final double blOffsetRads = 2.28256341237 + Math.PI;
-        public static final Translation2d blPos = new Translation2d(
+        public static final int BL_DRIVE = 13;
+        public static final int BL_STEER = 11;
+        public static final double BL_OFFSET_RADS = 2.28256341237 + Math.PI;
+        public static final Translation2d BL_POS = new Translation2d(
             Units.inchesToMeters(-13.1365),
             Units.inchesToMeters(10.3865)
         );
 
-        public static final int brDrive = 1;
-        public static final int brSteer = 12;
-        public static final double brOffsetRads = 3.135456730438264;
-        public static final Translation2d brPos = new Translation2d(
+        public static final int BR_DRIVE = 1;
+        public static final int BR_STEER = 12;
+        public static final double BR_OFFSET_RADS = 3.135456730438264;
+        public static final Translation2d BR_POS = new Translation2d(
             Units.inchesToMeters(-13.1365),
             Units.inchesToMeters(-10.3865)
         );
@@ -132,7 +153,7 @@ public final class Constants {
     public static final class RollerConstants {
         public static final int OPEN_ID = 12;
         public static final int LEFT_ID = 13;
-        public static final int RIGHT_ID = 14; 
+        public static final int RIGHT_ID = 14;
         public static final int LIMIT_SWITCH_ID = 0;
     }
 
