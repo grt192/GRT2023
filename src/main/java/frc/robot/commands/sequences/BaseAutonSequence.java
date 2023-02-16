@@ -46,16 +46,4 @@ public abstract class BaseAutonSequence extends SequentialCommandGroup {
             .alongWith(new TiltedElevatorCommand(tiltedElevatorSubsystem, ElevatorState.GROUND))
             .alongWith(new RollerIntakeCommand(rollerSubsystem));
     }
-
-    /**
-     * Goes to a position and places the currently held game piece.
-     * @param intialPose The initial pose of the robot.
-     * @param finalState The destination pose and elevator state of the robot.
-     * @return The `SequentialCommandGroup` representing running the commands in order.
-     */
-    protected Command goAndPlace(Pose2d initialPose, PlacePosition finalState) {
-        return FollowPathCommand.from(swerveSubsystem, initialPose, List.of(), finalState.getPose())
-            .alongWith(new TiltedElevatorCommand(tiltedElevatorSubsystem, finalState.getElevatorState())) // or .alongWith()?
-            .andThen(new RollerPlaceCommand(rollerSubsystem));
-    }
 }

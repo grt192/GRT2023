@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.PrintCommand;
 
 import frc.robot.commands.mover.TiltedElevatorCommand;
 import frc.robot.commands.swerve.FollowPathCommand;
+import frc.robot.commands.swerve.GoAndPlaceCommand;
 import frc.robot.positions.PiecePosition;
 import frc.robot.positions.PlacePosition;
 import frc.robot.subsystems.RollerSubsystem;
@@ -37,7 +38,7 @@ public abstract class BaseBottomAutonSequence extends BaseAutonSequence {
 
         addCommands(
             // Place preloaded game piece
-            goAndPlace(initialPose, placeState),
+            new GoAndPlaceCommand(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, initialPose, placeState),
             // Go and grab 2nd piece
             goAndGrabBottomPath(placeState.getPose(), midPose1, midPose2, grabPose),
             // Go and place grabbed piece
@@ -76,6 +77,6 @@ public abstract class BaseBottomAutonSequence extends BaseAutonSequence {
             .andThen(new PrintCommand("hit MidPose1"))
             .andThen(FollowPathCommand.from(swerveSubsystem, midPose1, List.of(), midPose2))
             .andThen(new PrintCommand("hit MidPose2"))
-            .andThen(goAndPlace(midPose2, finalState));
+            .andThen(new GoAndPlaceCommand(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, midPose2, finalState));
     }
 }

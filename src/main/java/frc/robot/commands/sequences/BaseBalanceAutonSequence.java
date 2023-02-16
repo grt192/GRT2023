@@ -6,6 +6,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 
 import frc.robot.commands.BalancerCommand;
 import frc.robot.commands.swerve.FollowPathCommand;
+import frc.robot.commands.swerve.GoAndPlaceCommand;
 import frc.robot.positions.PlacePosition;
 import frc.robot.subsystems.RollerSubsystem;
 import frc.robot.subsystems.TiltedElevatorSubsystem;
@@ -29,7 +30,7 @@ public abstract class BaseBalanceAutonSequence extends BaseAutonSequence {
 
         addCommands(
             // Place preloaded game piece
-            goAndPlace(initialPose, placeState),
+            new GoAndPlaceCommand(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, initialPose, placeState),
             // Go out of community
             FollowPathCommand.from(swerveSubsystem, placeState.getPose(), List.of(), outsidePose),
             // Go and balance on charging station
