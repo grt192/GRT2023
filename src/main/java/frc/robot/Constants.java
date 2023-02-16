@@ -42,8 +42,8 @@ public final class Constants {
             Units.inchesToMeters(12.0),
             Units.inchesToMeters(8.75)
         ) : new Translation2d(
-            Units.inchesToMeters(0),
-            Units.inchesToMeters(0)
+            Units.inchesToMeters(13.625),
+            Units.inchesToMeters(10.25)
         );
 
         public static final int TR_DRIVE = 16;
@@ -55,8 +55,8 @@ public final class Constants {
             Units.inchesToMeters(12.0),
             Units.inchesToMeters(-8.75)
         ) : new Translation2d(
-            Units.inchesToMeters(0),
-            Units.inchesToMeters(0)
+            Units.inchesToMeters(13.625),
+            Units.inchesToMeters(-10.25)
         );
 
         public static final int BL_DRIVE = 20;
@@ -68,8 +68,8 @@ public final class Constants {
             Units.inchesToMeters(-12.0),
             Units.inchesToMeters(8.75)
         ) : new Translation2d(
-            Units.inchesToMeters(0),
-            Units.inchesToMeters(0)
+            Units.inchesToMeters(-13.625),
+            Units.inchesToMeters(10.25)
         );
 
         public static final int BR_DRIVE = 18;
@@ -81,8 +81,8 @@ public final class Constants {
             Units.inchesToMeters(-12.0),
             Units.inchesToMeters(-8.75)
         ) : new Translation2d(
-            Units.inchesToMeters(0),
-            Units.inchesToMeters(0)
+            Units.inchesToMeters(-13.625),
+            Units.inchesToMeters(-10.25)
         );
     }
 

@@ -29,6 +29,7 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
     private SparkMaxPIDController extensionPidController;
 
     private final CANSparkMax extensionFollow;
+    private final CANSparkMax extensionFollowB;
 
     private final DigitalInput zeroLimitSwitch;
 
@@ -127,6 +128,12 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
         });
 
         extensionFollow = MotorUtil.createSparkMax(EXTENSION_FOLLOW_ID, (sparkMax) -> {
+            sparkMax.follow(extensionMotor);
+            sparkMax.setIdleMode(IdleMode.kBrake);
+        });
+
+        if (Constants.IS_R1) extensionFollowB = null;
+        else extensionFollowB = MotorUtil.createSparkMax(EXTENSION_FOLLOW_B_ID, (sparkMax) -> {
             sparkMax.follow(extensionMotor);
             sparkMax.setIdleMode(IdleMode.kBrake);
         });
