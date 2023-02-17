@@ -44,7 +44,7 @@ public abstract class BaseAutonSequence extends SequentialCommandGroup {
     protected Command goAndGrab(Pose2d initialPose, PiecePosition finalPose) {
         return FollowPathCommand.from(swerveSubsystem, initialPose, List.of(), finalPose.getPose())
             .alongWith(new TiltedElevatorCommand(tiltedElevatorSubsystem, ElevatorState.GROUND))
-            .andThen(new RollerIntakeCommand(rollerSubsystem));
+            .andThen(new RollerIntakeCommand(rollerSubsystem).withTimeout(3));
     }
 
     /**
