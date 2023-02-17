@@ -6,13 +6,29 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 
+import frc.robot.commands.sequences.BlueBalanceAuton;
+import frc.robot.commands.sequences.BlueBottomAuton;
+import frc.robot.commands.sequences.BlueTopAuton;
+import frc.robot.commands.sequences.RedBalanceAuton;
+import frc.robot.commands.sequences.RedBottomAuton;
+import frc.robot.commands.sequences.RedTopAuton;
+import frc.robot.commands.sequences.test.BoxAutonSequence;
+import frc.robot.commands.sequences.test.GRTAutonSequence;
+import frc.robot.commands.sequences.test.HighRotationLinePath;
+import frc.robot.commands.sequences.test.RotatingSCurveAutonSequence;
+import frc.robot.commands.sequences.test.StraightLinePath;
 import frc.robot.commands.swerve.FollowPathCommand;
+import frc.robot.subsystems.RollerSubsystem;
+import frc.robot.subsystems.TiltedElevatorSubsystem;
 import frc.robot.subsystems.drivetrain.SwerveSubsystem;
 
 import java.util.List;
 
-public class WheelHeadingTrajectoryTest {
+public class AutonTrajectoryPathTest {
     private static final SwerveSubsystem swerveSubsystem = new SwerveSubsystem(null);
+    private static final RollerSubsystem rollerSubsystem = new RollerSubsystem();
+    private static final TiltedElevatorSubsystem tiltedElevatorSubsystem = new TiltedElevatorSubsystem();
+
     private static final double ACCEPTABLE_ANGLE_DELTA = 1e-15;
 
     /**
@@ -21,7 +37,7 @@ public class WheelHeadingTrajectoryTest {
      * End: (1, 1)
      */
     @Test
-    public void correctHeadings() {
+    public void trajectoryNoWaypoint() {
         runTrajectoryTest(
             FollowPathCommand.createWheelHeadingTrajectory(
                 swerveSubsystem,
@@ -41,7 +57,7 @@ public class WheelHeadingTrajectoryTest {
      * End: (2, 0)
      */
     @Test
-    public void correctHeadingsOneWaypoint() {
+    public void trajectoryOneWaypoint() {
         runTrajectoryTest(
             FollowPathCommand.createWheelHeadingTrajectory(
                 swerveSubsystem,
@@ -62,7 +78,7 @@ public class WheelHeadingTrajectoryTest {
      * End: (3, 0)
      */
     @Test
-    public void correctHeadingsTwoWaypoints() {
+    public void trajectoryTwoWaypoints() {
         runTrajectoryTest(
             FollowPathCommand.createWheelHeadingTrajectory(
                 swerveSubsystem,
@@ -82,7 +98,7 @@ public class WheelHeadingTrajectoryTest {
      * Ensures that wheel headings are correctly generated when custom headings are passed in.
      */
     @Test
-    public void correctHeadingsCustomHeadings() {
+    public void trajectoryCustomHeadings() {
         runTrajectoryTest(
             FollowPathCommand.createWheelHeadingTrajectory(
                 swerveSubsystem,
@@ -98,6 +114,38 @@ public class WheelHeadingTrajectoryTest {
             Math.PI / 2.0,
             Math.PI / 2.0
         );
+    }
+
+    /**
+     * Ensures that all test auton paths compile.
+     */
+    @Test
+    public void compileTestPaths() {
+        new StraightLinePath(swerveSubsystem);
+        new HighRotationLinePath(swerveSubsystem);
+        new RotatingSCurveAutonSequence(swerveSubsystem);
+        new BoxAutonSequence(swerveSubsystem);
+        new GRTAutonSequence(swerveSubsystem);
+    }
+
+    /**
+     * Ensures that all red auton paths compile.
+     */
+    @Test
+    public void compileRedPaths() {
+        new RedTopAuton(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem);
+        new RedBalanceAuton(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem);
+        new RedBottomAuton(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem);
+    }
+
+    /**
+     * Ensures that all blue auton paths compile.
+     */
+    @Test
+    public void compileBluePaths() {
+        new BlueTopAuton(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem);
+        new BlueBalanceAuton(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem);
+        new BlueBottomAuton(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem);
     }
 
     /**
