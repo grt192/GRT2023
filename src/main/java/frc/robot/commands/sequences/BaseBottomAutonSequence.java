@@ -41,12 +41,12 @@ public abstract class BaseBottomAutonSequence extends BaseAutonSequence {
             // Go and grab 2nd piece
             goAndGrabBottomPath(placeState.getPose(), midPose1, midPose2, grabPose),
             // Go and place grabbed piece
-            goAndPlaceBottomPath(grabPose.getPose(), midPose1, midPose2, placeState2)
+            goAndPlaceBottomPath(grabPose.getPose(), midPose2, midPose1, placeState2)
         );
     }
 
     /**
-     * Goes to a positon to place a game piece, avoiding the charging station and only turning 90 degrees.
+     * Goes to a positon to place a game piece, avoiding the charging station and turning 180 degrees.
      * @param initialPose The initial pose of the robot
      * @param midPose1 Middle pose 1
      * @param midPose2 Middle pose 2 
@@ -63,7 +63,7 @@ public abstract class BaseBottomAutonSequence extends BaseAutonSequence {
     }
 
     /**
-     * Goes to a positon to place a game piece, avoiding the charging station and only turning 90 degrees.
+     * Goes to a positon to place a game piece, avoiding the charging station and turning 180 degrees.
      * @param initialPose The initial pose of the robot
      * @param midPose1 Middle pose 1
      * @param midPose2 Middle pose 2 
