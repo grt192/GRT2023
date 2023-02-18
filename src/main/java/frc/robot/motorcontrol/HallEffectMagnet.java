@@ -1,5 +1,6 @@
 package frc.robot.motorcontrol;
 
+import edu.wpi.first.math.util.Units;
 import frc.robot.subsystems.TiltedElevatorSubsystem.ElevatorState;
 
 public class HallEffectMagnet {
@@ -17,6 +18,8 @@ public class HallEffectMagnet {
     }
     
     public double getExtendDistanceMeters() { return extendDistanceMeters; }
+    
+    public double getExtendDistanceInches() { return Units.metersToInches(extendDistanceMeters); }
 
     public boolean hasElevatorState() { return elevatorState != null; }
 
