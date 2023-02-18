@@ -31,7 +31,7 @@ public abstract class BaseTopAutonSequence extends BaseAutonSequence {
     public BaseTopAutonSequence(
         BaseSwerveSubsystem swerveSubsystem, RollerSubsystem rollerSubsystem, TiltedElevatorSubsystem tiltedElevatorSubsystem,
         Pose2d initialPose, Pose2d midPose1, Pose2d midPose2, Pose2d midPose3, 
-        PlaceState placeState, PiecePosition grabPose, PlaceState placeState2
+        PlaceState placeState, Pose2d grabPose, PlaceState placeState2
     ) {
         super(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, initialPose);
 
@@ -41,7 +41,7 @@ public abstract class BaseTopAutonSequence extends BaseAutonSequence {
             // Go and grab 2nd piece
             goAndGrabTopPath(placeState.getPose(), midPose1, midPose2, midPose3, grabPose), 
             // Go and place grabbed piece
-            goAndPlaceTopPath(grabPose.getPose(), midPose3, midPose2, midPose1, placeState2)
+            goAndPlaceTopPath(grabPose, midPose3, midPose2, midPose1, placeState2)
         );
     }
 
@@ -54,7 +54,7 @@ public abstract class BaseTopAutonSequence extends BaseAutonSequence {
      * @param finalPose Destination position of robot
      * @return The `SequentialCommandGroup` representing running the commands in order.
      */
-    private Command goAndGrabTopPath(Pose2d initialPose, Pose2d midPose1, Pose2d midPose2, Pose2d midPose3, PiecePosition finalPose) {
+    private Command goAndGrabTopPath(Pose2d initialPose, Pose2d midPose1, Pose2d midPose2, Pose2d midPose3, Pose2d finalPose) {
         return new TiltedElevatorCommand(tiltedElevatorSubsystem, ElevatorState.GROUND)
             .alongWith(FollowPathCommand.from(swerveSubsystem, initialPose, List.of(), midPose1))
             .andThen(FollowPathCommand.from(swerveSubsystem, midPose1, List.of(), midPose2))

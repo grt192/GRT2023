@@ -8,7 +8,6 @@ import edu.wpi.first.wpilibj2.command.PrintCommand;
 
 import frc.robot.commands.mover.TiltedElevatorCommand;
 import frc.robot.commands.swerve.FollowPathCommand;
-import frc.robot.positions.PiecePosition;
 import frc.robot.positions.PlacePosition.PlaceState;
 import frc.robot.subsystems.RollerSubsystem;
 import frc.robot.subsystems.TiltedElevatorSubsystem;
@@ -31,7 +30,7 @@ public abstract class BaseBottomAutonSequence extends BaseAutonSequence {
     public BaseBottomAutonSequence(
         BaseSwerveSubsystem swerveSubsystem, RollerSubsystem rollerSubsystem, TiltedElevatorSubsystem tiltedElevatorSubsystem,
         Pose2d initialPose, Pose2d midPose1, Pose2d midPose2, 
-        PlaceState placeState, PiecePosition grabPose, PlaceState placeState2
+        PlaceState placeState, Pose2d grabPose, PlaceState placeState2
     ) {
         super(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, initialPose);
 
@@ -41,7 +40,7 @@ public abstract class BaseBottomAutonSequence extends BaseAutonSequence {
             // Go and grab 2nd piece
             goAndGrabBottomPath(placeState.getPose(), midPose1, midPose2, grabPose),
             // Go and place grabbed piece
-            goAndPlaceBottomPath(grabPose.getPose(), midPose2, midPose1, placeState2)
+            goAndPlaceBottomPath(grabPose, midPose2, midPose1, placeState2)
         );
     }
 
@@ -53,7 +52,7 @@ public abstract class BaseBottomAutonSequence extends BaseAutonSequence {
      * @param finalPose Destination position of robot
      * @return The `SequentialCommandGroup` representing running the commands in order.
      */
-    protected Command goAndGrabBottomPath(Pose2d initialPose, Pose2d midPose1, Pose2d midPose2, PiecePosition finalPose) {
+    protected Command goAndGrabBottomPath(Pose2d initialPose, Pose2d midPose1, Pose2d midPose2, Pose2d finalPose) {
         return new TiltedElevatorCommand(tiltedElevatorSubsystem, ElevatorState.GROUND)
             .alongWith(FollowPathCommand.from(swerveSubsystem, initialPose, List.of(), midPose1))
             .andThen(new PrintCommand("hit MidPose1"))

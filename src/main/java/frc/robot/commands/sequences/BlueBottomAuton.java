@@ -35,7 +35,7 @@ public class BlueBottomAuton extends BaseBottomAutonSequence {
     private static final PlaceState PLACE_STATE = PlacePosition.A2HIGH.BLUE;
     private static final PlaceState PLACE_STATE_2 = PlacePosition.A2MID.BLUE;
 
-    private static final PiecePosition GRAB_POSE = PiecePosition.Blue.PIECE4;
+    private static final Pose2d GRAB_POSE = PiecePosition.PIECE4.BLUE;
 
     public BlueBottomAuton(
         BaseSwerveSubsystem swerveSubsystem,

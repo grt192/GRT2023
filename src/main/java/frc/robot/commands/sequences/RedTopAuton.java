@@ -40,7 +40,7 @@ public class RedTopAuton extends BaseTopAutonSequence {
     private static final PlaceState PLACE_STATE = PlacePosition.C3HIGH.RED;
     private static final PlaceState PLACE_STATE_2 = PlacePosition.C3MID.RED;
 
-    private static final PiecePosition GRAB_POSE = PiecePosition.Red.PIECE1;
+    private static final Pose2d GRAB_POSE = PiecePosition.PIECE1.RED;
 
     public RedTopAuton(
         BaseSwerveSubsystem swerveSubsystem,
