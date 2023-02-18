@@ -19,8 +19,6 @@ public class BaseBalanceAutonSequence extends BaseAutonSequence {
     private static final FieldPosition MID_POSE_2 = FieldPosition.BALANCE_MIDPOS_2;
     private static final FieldPosition MID_POSE_3 = FieldPosition.BALANCE_MIDPOS_3;
 
-    private static final PlacePosition PLACE_POSE = PlacePosition.B1MID;
-
     /**
      * Balancing auton sequence.
      * @param swerveSubsystem The swerve subsystem.
@@ -39,13 +37,12 @@ public class BaseBalanceAutonSequence extends BaseAutonSequence {
         Pose2d midPose2 = MID_POSE_2.getPose(isRed);
         Pose2d midPose3 = MID_POSE_3.getPose(isRed);
 
-        PlaceState placeState = PLACE_POSE.getPlaceState(isRed);
 
         addCommands(
             // Place preloaded game piece
-            goAndPlace(initialPose.getPose(), placeState),
+            Place(initialPose.getElevatorState()),
             // Go out of community
-            FollowPathCommand.from(swerveSubsystem, placeState.getPose(), List.of(), midPose1),
+            FollowPathCommand.from(swerveSubsystem, initialPose.getPose(), List.of(), midPose1),
             //do 180
             FollowPathCommand.from(swerveSubsystem, midPose1, List.of(), midPose2),
             FollowPathCommand.from(swerveSubsystem, midPose2, List.of(), midPose3),

@@ -23,7 +23,6 @@ public abstract class BaseTopAutonSequence extends BaseAutonSequence {
     private static final FieldPosition MID_POSE_4 = FieldPosition.TOP_MIDPOS_4;
 
     private static final PlacePosition PLACE_POSE = PlacePosition.C2MID;
-    private static final PlacePosition PLACE_POSE_2 = PlacePosition.C3MID;
 
     private static final FieldPosition GRAB_POSE = FieldPosition.PIECE1;
 
@@ -46,17 +45,16 @@ public abstract class BaseTopAutonSequence extends BaseAutonSequence {
         Pose2d midPose4 = MID_POSE_4.getPose(isRed);
 
         PlaceState placeState = PLACE_POSE.getPlaceState(isRed);
-        PlaceState placeState2 = PLACE_POSE_2.getPlaceState(isRed);
 
         Pose2d grabPose = GRAB_POSE.getPose(isRed);
 
         addCommands(
             // Place preloaded game piece
-            goAndPlace(initialPose.getPose(), placeState),
+            Place(initialPose.getElevatorState()),
             // Go and grab 2nd piece
-            goAndGrabTopPath(placeState.getPose(), midPose1, midPose2, midPose3, midPose4, grabPose), 
+            goAndGrabTopPath(initialPose.getPose(), midPose1, midPose2, midPose3, midPose4, grabPose), 
             // Go and place grabbed piece
-            goAndPlaceTopPath(grabPose, midPose4, midPose3, midPose2, midPose1, placeState2)
+            goAndPlaceTopPath(grabPose, midPose4, midPose3, midPose2, midPose1, placeState)
         );
     }
 

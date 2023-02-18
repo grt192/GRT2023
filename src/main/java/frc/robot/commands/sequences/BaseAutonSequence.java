@@ -6,7 +6,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.grabber.RollerIntakeCommand;
 import frc.robot.commands.grabber.RollerPlaceCommand;
 import frc.robot.commands.mover.TiltedElevatorCommand;
@@ -56,7 +56,12 @@ public abstract class BaseAutonSequence extends SequentialCommandGroup {
      */
     protected Command goAndPlace(Pose2d initialPose, PlaceState finalState) {
         return FollowPathCommand.from(swerveSubsystem, initialPose, List.of(), finalState.getPose())
-            .alongWith(new TiltedElevatorCommand(tiltedElevatorSubsystem, finalState.getElevatorState()))
+            .alongWith(Place(finalState.getElevatorState()));
+    }
+
+    protected Command Place(ElevatorState height){
+        return (new TiltedElevatorCommand(tiltedElevatorSubsystem, height))
+            .andThen(new WaitCommand(2))
             .andThen(new RollerPlaceCommand(rollerSubsystem));
     }
 }
