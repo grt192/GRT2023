@@ -164,6 +164,7 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
             extensionMotor.set(manualPower);
             return;
         }
+        System.out.println(extensionMotor.getClosedLoopRampRate());
 
         ShuffleboardUtil.pollShuffleboardDouble(extensionPEntry, extensionPidController::setP);
         ShuffleboardUtil.pollShuffleboardDouble(extensionIEntry, extensionPidController::setI);
@@ -172,7 +173,7 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
         ShuffleboardUtil.pollShuffleboardDouble(maxVelEntry, (value) -> extensionPidController.setSmartMotionMaxVelocity(value, 0));
         ShuffleboardUtil.pollShuffleboardDouble(maxAccelEntry, (value) -> extensionPidController.setSmartMotionMaxAccel(value, 0));
         ShuffleboardUtil.pollShuffleboardDouble(extensionToleranceEntry, (value) -> extensionPidController.setSmartMotionAllowedClosedLoopError(value, 0));
-        ShuffleboardUtil.pollShuffleboardDouble(rampEntry, (value) -> extensionMotor.setClosedLoopRampRate(extensionRampRate));
+        ShuffleboardUtil.pollShuffleboardDouble(rampEntry, (value) -> extensionMotor.setClosedLoopRampRate(value));
         arbFeedforward = arbFFEntry.getDouble(arbFeedforward);
 
         // System.out.println(extensionEncoder.getPosition());
@@ -181,25 +182,18 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
         double currentVel = extensionEncoder.getVelocity();
         double targetExtension = state.getExtension(pieceGrabbed) + offsetDistMeters;
 
-        // If we're trying to get to 0, set the motor to 0 power so the carriage drops with gravity
-        // and hits the hard stop / limit switch.
-        if (targetExtension <= 0 && currentPos < Units.inchesToMeters(1)) {
-            extensionMotor.set(0);
-        } else if (targetExtension <= 0 && currentPos < Units.inchesToMeters(5)) {
-            extensionMotor.set(-0.075);
-        } else {
-            // Set PID reference
-            extensionPidController.setReference(
-                MathUtil.clamp(targetExtension, 0, EXTENSION_LIMIT),
-                ControlType.kSmartMotion, 0,
-                arbFeedforward, ArbFFUnits.kPercentOut
-            );
-        }
+        
+        // Set PID reference
+        extensionPidController.setReference(
+            MathUtil.clamp(targetExtension, 0, EXTENSION_LIMIT),
+            ControlType.kPosition, 0,
+            arbFeedforward, ArbFFUnits.kPercentOut
+        );
 
         currentExtensionEntry.setDouble(Units.metersToInches(currentPos));
         currentVelEntry.setDouble(currentVel);
         currentStateEntry.setString(state.toString());
-        targetExtensionEntry.setDouble(targetExtension);
+        targetExtensionEntry.setDouble(Units.metersToInches(targetExtension));
         offsetDistEntry.setDouble(Units.metersToInches(offsetDistMeters));
     }
 
