@@ -12,7 +12,6 @@ import frc.robot.commands.grabber.RollerPlaceCommand;
 import frc.robot.commands.mover.TiltedElevatorCommand;
 import frc.robot.commands.swerve.FollowPathCommand;
 import frc.robot.commands.swerve.LockSwerveCommand;
-import frc.robot.positions.PiecePosition;
 import frc.robot.positions.PlacePosition.PlaceState;
 import frc.robot.subsystems.RollerSubsystem;
 import frc.robot.subsystems.TiltedElevatorSubsystem;

@@ -5,6 +5,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 
 import frc.robot.subsystems.TiltedElevatorSubsystem.ElevatorState;
+import frc.robot.util.FieldUtil;
 
 public enum PlacePosition {
     C3MID(new Pose2d(
@@ -105,9 +106,20 @@ public enum PlacePosition {
     public final PlaceState BLUE;
 
     private PlacePosition(Pose2d pose, ElevatorState elevatorState) {
-        // TODO: mirror
-        this.RED = new PlaceState(pose, elevatorState);
+        this.RED = new PlaceState(
+            FieldUtil.mirrorPoseAcrossField(pose),
+            elevatorState
+        );
         this.BLUE = new PlaceState(pose, elevatorState);
+    }
+
+    /**
+     * Gets the team-specific `PlaceState` represented by this place position.
+     * @param isRed Whether to return the RED state. If false, returns BLUE.
+     * @return The team-specific state.
+     */
+    public PlaceState getPlaceState(boolean isRed) {
+        return isRed ? RED : BLUE;
     }
 
     public class PlaceState {

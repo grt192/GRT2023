@@ -7,7 +7,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 
 import frc.robot.commands.mover.TiltedElevatorCommand;
 import frc.robot.commands.swerve.FollowPathCommand;
-import frc.robot.positions.PiecePosition;
+import frc.robot.positions.FieldPosition;
+import frc.robot.positions.PlacePosition;
 import frc.robot.positions.PlacePosition.PlaceState;
 import frc.robot.subsystems.RollerSubsystem;
 import frc.robot.subsystems.TiltedElevatorSubsystem;
@@ -15,26 +16,39 @@ import frc.robot.subsystems.TiltedElevatorSubsystem.ElevatorState;
 import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
 
 public abstract class BaseTopAutonSequence extends BaseAutonSequence {
+    private static final FieldPosition INITIAL_POSE = FieldPosition.TOP_INIT;
+    private static final FieldPosition MID_POSE_1 = FieldPosition.TOP_MIDPOS_1;
+    private static final FieldPosition MID_POSE_2 = FieldPosition.TOP_MIDPOS_2;
+    private static final FieldPosition MID_POSE_3 = FieldPosition.TOP_MIDPOS_3;
+    private static final FieldPosition MID_POSE_4 = FieldPosition.TOP_MIDPOS_4;
+
+    private static final PlacePosition PLACE_POSE = PlacePosition.C2MID;
+    private static final PlacePosition PLACE_POSE_2 = PlacePosition.C3MID;
+
+    private static final FieldPosition GRAB_POSE = FieldPosition.PIECE1;
+
     /**
      * Non-balancing top auton sequence.
      * @param swerveSubsystem The swerve subsystem.
      * @param rollerSubsystem The roller subsystem.
      * @param tiltedElevatorSubsystem The tilted elevator subsystem.
-     * @param initialPose The initial pose of the robot.
-     * @param midPose1 The first midpose of the sequence. Avoids Charging Station.
-     * @param midPose2 The second midpose of the sequence. Keeps robot in same orentiation.
-     * @param midPose3 The third midpose of the sequence. Turns robot 90 degrees to grab game piece from the side (top).
-     * @param midPose4 4th midPose
-     * @param placeState The state of the robot when placing the first game piece (pose and elevator state).
-     * @param grabPose The pose to grab the second game piece at.
-     * @param placeState2 The state of the robot when placing the second game piece (pose and elevator state).
      */
     public BaseTopAutonSequence(
         BaseSwerveSubsystem swerveSubsystem, RollerSubsystem rollerSubsystem, TiltedElevatorSubsystem tiltedElevatorSubsystem,
-        Pose2d initialPose, Pose2d midPose1, Pose2d midPose2, Pose2d midPose3, Pose2d midPose4,
-        PlaceState placeState, Pose2d grabPose, PlaceState placeState2
+        boolean isRed // TODO: better way of passing this
     ) {
-        super(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, initialPose);
+        super(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, INITIAL_POSE.getPose(isRed)); // TODO: better
+
+        Pose2d initialPose = INITIAL_POSE.getPose(isRed);
+        Pose2d midPose1 = MID_POSE_1.getPose(isRed);
+        Pose2d midPose2 = MID_POSE_2.getPose(isRed);
+        Pose2d midPose3 = MID_POSE_3.getPose(isRed);
+        Pose2d midPose4 = MID_POSE_4.getPose(isRed);
+
+        PlaceState placeState = PLACE_POSE.getPlaceState(isRed);
+        PlaceState placeState2 = PLACE_POSE_2.getPlaceState(isRed);
+
+        Pose2d grabPose = GRAB_POSE.getPose(isRed);
 
         addCommands(
             // Place preloaded game piece
