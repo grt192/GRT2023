@@ -66,14 +66,9 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
     private final GenericEntry manualPowerEntry, targetExtensionEntry;
     private final GenericEntry currentExtensionEntry, currentVelEntry, currentStateEntry, offsetDistEntry;
     // Hall effect sensor things
-    private HallEffectSensor rightHallSensor;
     private HallEffectSensor leftHallSensor;
-    private final HallEffectMagnet[] RIGHT_MAGNETS = {
-        new HallEffectMagnet(Units.inchesToMeters(5)),
-        new HallEffectMagnet(Units.inchesToMeters(30), ElevatorState.CHUTE)
-    };
     private final HallEffectMagnet[] LEFT_MAGNETS = {
-        new HallEffectMagnet(Units.inchesToMeters(20))
+        new HallEffectMagnet(Units.inchesToMeters(30)) // todo
     };
 
 
@@ -169,7 +164,6 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
         currentVelEntry = shuffleboardTab.add("Current Vel (mps)", 0.0).getEntry();
         offsetDistEntry = shuffleboardTab.add("Offset (in)", offsetDistMeters).getEntry();
 
-        rightHallSensor = new HallEffectSensor(RIGHT_HALL_ID, RIGHT_MAGNETS, extensionEncoder.getPosition());
         leftHallSensor = new HallEffectSensor(LEFT_HALL_ID, LEFT_MAGNETS, extensionEncoder.getPosition());
     }
 
@@ -184,11 +178,7 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
         double currentVel = extensionEncoder.getVelocity();
 
         // Reset encoder using hall effect sensor
-        HallEffectMagnet rightHallState = rightHallSensor.getHallEffectState(currentPos);
         HallEffectMagnet leftHallState = leftHallSensor.getHallEffectState(currentPos);
-        if (rightHallState != null) {
-            extensionEncoder.setPosition(rightHallState.getExtendDistanceMeters());
-        }
         if (leftHallState != null) {
             extensionEncoder.setPosition(leftHallState.getExtendDistanceMeters());
         }
