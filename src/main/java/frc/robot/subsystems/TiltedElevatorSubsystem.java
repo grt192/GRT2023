@@ -23,7 +23,7 @@ import frc.robot.util.ShuffleboardUtil;
 import static frc.robot.Constants.TiltedElevatorConstants.*;
 
 public class TiltedElevatorSubsystem extends SubsystemBase {
-    private CANSparkMax extensionMotor;
+    private final CANSparkMax extensionMotor;
     private RelativeEncoder extensionEncoder;
     private SparkMaxPIDController extensionPidController;
 
@@ -154,7 +154,6 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
             extensionMotor.set(manualPower);
             return;
         }
-        System.out.println(extensionMotor.getClosedLoopRampRate());
 
         ShuffleboardUtil.pollShuffleboardDouble(extensionPEntry, extensionPidController::setP);
         ShuffleboardUtil.pollShuffleboardDouble(extensionIEntry, extensionPidController::setI);
@@ -162,8 +161,6 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
         ShuffleboardUtil.pollShuffleboardDouble(extensionToleranceEntry, (value) -> extensionPidController.setSmartMotionAllowedClosedLoopError(value, 0));
         ShuffleboardUtil.pollShuffleboardDouble(rampEntry, (value) -> extensionMotor.setClosedLoopRampRate(value));
         arbFeedforward = arbFFEntry.getDouble(arbFeedforward);
-
-        // System.out.println(extensionEncoder.getPosition());
 
         double currentPos = extensionEncoder.getPosition();
         double currentVel = extensionEncoder.getVelocity();
