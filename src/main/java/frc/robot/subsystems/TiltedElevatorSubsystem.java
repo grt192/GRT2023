@@ -18,7 +18,6 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.Constants;
-import frc.robot.util.MotorUtil;
 import frc.robot.util.ShuffleboardUtil;
 import frc.robot.motorcontrol.HallEffectMagnet;
 import frc.robot.motorcontrol.HallEffectSensor;
@@ -193,32 +192,17 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
         ShuffleboardUtil.pollShuffleboardDouble(extensionToleranceEntry, (value) -> extensionPidController.setSmartMotionAllowedClosedLoopError(value, 0));
         ShuffleboardUtil.pollShuffleboardDouble(rampEntry, (value) -> extensionMotor.setClosedLoopRampRate(value));
         arbFeedforward = arbFFEntry.getDouble(arbFeedforward);
+        double targetExtension = state.getExtension(pieceGrabbed) + offsetDistMeters;
 
-        // System.out.println(extensionEncoder.getPosition());
+        // Set PID reference
+        extensionPidController.setReference(
+            MathUtil.clamp(targetExtension, 0, EXTENSION_LIMIT),
+            ControlType.kPosition, 0,
+            arbFeedforward, ArbFFUnits.kPercentOut
+        );
 
-        currentVelEntry.setDouble(currentVel);
         currentExtensionEntry.setDouble(Units.metersToInches(currentPos));
         currentVelEntry.setDouble(currentVel);
-        offsetDistEntry.setDouble(Units.metersToInches(offsetDistMeters));
-
-        // Units.inchesToMeters(targetExtensionEntry.getDouble(0));
-        this.targetExtension = state.getExtension(pieceGrabbed) + offsetDistMeters;
-
-        // If we're trying to get to 0, set the motor to 0 power so the carriage drops with gravity
-        // and hits the hard stop / limit switch.
-        if (this.targetExtension == 0 && currentPos < Units.inchesToMeters(1)) {
-            extensionMotor.set(0);
-        } else if (this.targetExtension == 0 && currentPos < Units.inchesToMeters(5)) {
-            extensionMotor.set(-0.075);
-        } else {
-            // Set PID reference
-            extensionPidController.setReference(
-                MathUtil.clamp(targetExtension, 0, EXTENSION_LIMIT),
-                ControlType.kSmartMotion, 0,
-                arbFeedforward, ArbFFUnits.kPercentOut
-            );
-        }
-
         currentStateEntry.setString(state.toString());
         targetExtensionEntry.setDouble(Units.metersToInches(targetExtension));
         offsetDistEntry.setDouble(Units.metersToInches(offsetDistMeters));
