@@ -36,6 +36,11 @@ public class BlueTopAuton extends BaseTopAutonSequence {
         Units.inchesToMeters(205.895),
         Rotation2d.fromDegrees(-90)
     );
+    private static final Pose2d MIDPOS4 = new Pose2d(
+        Units.inchesToMeters(278.978),
+        Units.inchesToMeters(205.895),
+        Rotation2d.fromDegrees(-90)
+    );
 
     private static final PlaceState PLACE_STATE = PlacePosition.C2MID.BLUE;
     private static final PlaceState PLACE_STATE_2 = PlacePosition.C3MID.BLUE;
@@ -49,7 +54,7 @@ public class BlueTopAuton extends BaseTopAutonSequence {
     ) {
         super(
             swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem,
-            INITIAL_POSE, MIDPOS1, MIDPOS2, MIDPOS3,
+            INITIAL_POSE, MIDPOS1, MIDPOS2, MIDPOS3, MIDPOS4,
             PLACE_STATE, GRAB_POSE, PLACE_STATE_2
         );
     }

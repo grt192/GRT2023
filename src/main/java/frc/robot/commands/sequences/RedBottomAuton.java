@@ -26,9 +26,9 @@ public class RedBottomAuton extends BaseBottomAutonSequence {
         Units.inchesToMeters(28.007),
         new Rotation2d()
     );
-    private static final Pose2d MIDPOS2 = new Pose2d(
-        Units.inchesToMeters(456.3),
-        Units.inchesToMeters(28.007),
+    private static final Pose2d MIDPOS2 = new Pose2d( //updated
+        Units.inchesToMeters(455.300),
+        Units.inchesToMeters(22.000),
         new Rotation2d()
     );
 
