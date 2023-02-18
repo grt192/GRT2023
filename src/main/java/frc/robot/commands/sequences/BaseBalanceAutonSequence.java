@@ -7,6 +7,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import frc.robot.commands.BalancerCommand;
 import frc.robot.commands.swerve.FollowPathCommand;
 import frc.robot.positions.PlacePosition;
+import frc.robot.positions.PlacePosition.PlaceState;
 import frc.robot.subsystems.RollerSubsystem;
 import frc.robot.subsystems.TiltedElevatorSubsystem;
 import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
@@ -23,7 +24,7 @@ public abstract class BaseBalanceAutonSequence extends BaseAutonSequence {
      */
     public BaseBalanceAutonSequence(
         BaseSwerveSubsystem swerveSubsystem, RollerSubsystem rollerSubsystem, TiltedElevatorSubsystem tiltedElevatorSubsystem,
-        Pose2d initialPose, PlacePosition placeState, Pose2d midoutsidePose, Pose2d outsideoutsidePose, Pose2d backoutsidePose
+        Pose2d initialPose, PlaceState placeState, Pose2d midoutsidePose, Pose2d outsideoutsidePose, Pose2d backoutsidePose
     ) {
         super(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, initialPose);
 

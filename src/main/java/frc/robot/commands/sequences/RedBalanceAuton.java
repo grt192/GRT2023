@@ -5,6 +5,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 
 import frc.robot.positions.PlacePosition;
+import frc.robot.positions.PlacePosition.PlaceState;
 import frc.robot.subsystems.RollerSubsystem;
 import frc.robot.subsystems.TiltedElevatorSubsystem;
 import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
@@ -35,6 +36,8 @@ public class RedBalanceAuton extends BaseBalanceAutonSequence {
         Rotation2d.fromDegrees(0)
     );
 
+    private static final PlaceState PLACE_STATE = PlacePosition.C3HIGH.RED;
+
     public RedBalanceAuton(
         BaseSwerveSubsystem swerveSubsystem,
         RollerSubsystem rollerSubsystem,
@@ -42,7 +45,7 @@ public class RedBalanceAuton extends BaseBalanceAutonSequence {
     ) {
         super(
             swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem,
-            INITIAL_POSE, PlacePosition.Red.C3HIGH, MIDOUTSIDE_POSE, OUTSIDEOUTSIDE_POSE, BACKOUTSIDE_POSE
+            INITIAL_POSE, PLACE_STATE, MIDOUTSIDE_POSE, OUTSIDEOUTSIDE_POSE, BACKOUTSIDE_POSE
         );
     }
 }

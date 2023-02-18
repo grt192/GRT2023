@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.commands.mover.TiltedElevatorCommand;
 import frc.robot.commands.swerve.FollowPathCommand;
 import frc.robot.positions.PiecePosition;
-import frc.robot.positions.PlacePosition;
+import frc.robot.positions.PlacePosition.PlaceState;
 import frc.robot.subsystems.RollerSubsystem;
 import frc.robot.subsystems.TiltedElevatorSubsystem;
 import frc.robot.subsystems.TiltedElevatorSubsystem.ElevatorState;
@@ -31,7 +31,7 @@ public abstract class BaseTopAutonSequence extends BaseAutonSequence {
     public BaseTopAutonSequence(
         BaseSwerveSubsystem swerveSubsystem, RollerSubsystem rollerSubsystem, TiltedElevatorSubsystem tiltedElevatorSubsystem,
         Pose2d initialPose, Pose2d midPose1, Pose2d midPose2, Pose2d midPose3, 
-        PlacePosition placeState, PiecePosition grabPose, PlacePosition placeState2
+        PlaceState placeState, PiecePosition grabPose, PlaceState placeState2
     ) {
         super(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, initialPose);
 
@@ -71,7 +71,7 @@ public abstract class BaseTopAutonSequence extends BaseAutonSequence {
      * @param finalState Final state of the robot when placing the game piece.
      * @return The `SequentialCommandGroup` representing running the commands in order.
      */
-    private Command goAndPlaceTopPath(Pose2d initialPose, Pose2d midPose1, Pose2d midPose2, Pose2d midPose3, PlacePosition finalState) {
+    private Command goAndPlaceTopPath(Pose2d initialPose, Pose2d midPose1, Pose2d midPose2, Pose2d midPose3, PlaceState finalState) {
         return new TiltedElevatorCommand(tiltedElevatorSubsystem, ElevatorState.GROUND)
             .alongWith(FollowPathCommand.from(swerveSubsystem, initialPose, List.of(), midPose1))
             .andThen(FollowPathCommand.from(swerveSubsystem, midPose1, List.of(), midPose2))

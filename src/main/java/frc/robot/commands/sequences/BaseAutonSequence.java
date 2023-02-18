@@ -13,7 +13,7 @@ import frc.robot.commands.mover.TiltedElevatorCommand;
 import frc.robot.commands.swerve.FollowPathCommand;
 import frc.robot.commands.swerve.LockSwerveCommand;
 import frc.robot.positions.PiecePosition;
-import frc.robot.positions.PlacePosition;
+import frc.robot.positions.PlacePosition.PlaceState;
 import frc.robot.subsystems.RollerSubsystem;
 import frc.robot.subsystems.TiltedElevatorSubsystem;
 import frc.robot.subsystems.TiltedElevatorSubsystem.ElevatorState;
@@ -55,7 +55,7 @@ public abstract class BaseAutonSequence extends SequentialCommandGroup {
      * @param finalState The destination pose and elevator state of the robot.
      * @return The `SequentialCommandGroup` representing running the commands in order.
      */
-    protected Command goAndPlace(Pose2d initialPose, PlacePosition finalState) {
+    protected Command goAndPlace(Pose2d initialPose, PlaceState finalState) {
         return FollowPathCommand.from(swerveSubsystem, initialPose, List.of(), finalState.getPose())
             .alongWith(new TiltedElevatorCommand(tiltedElevatorSubsystem, finalState.getElevatorState()))
             .andThen(new RollerPlaceCommand(rollerSubsystem));

@@ -6,6 +6,7 @@ import edu.wpi.first.math.util.Units;
 
 import frc.robot.positions.PiecePosition;
 import frc.robot.positions.PlacePosition;
+import frc.robot.positions.PlacePosition.PlaceState;
 import frc.robot.subsystems.RollerSubsystem;
 import frc.robot.subsystems.TiltedElevatorSubsystem;
 import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
@@ -36,8 +37,8 @@ public class RedTopAuton extends BaseTopAutonSequence {
         Rotation2d.fromDegrees(-90)
     );
 
-    private static final PlacePosition PLACE_STATE = PlacePosition.Red.C3HIGH;
-    private static final PlacePosition PLACE_STATE_2 = PlacePosition.Red.C3MID;
+    private static final PlaceState PLACE_STATE = PlacePosition.C3HIGH.RED;
+    private static final PlaceState PLACE_STATE_2 = PlacePosition.C3MID.RED;
 
     private static final PiecePosition GRAB_POSE = PiecePosition.Red.PIECE1;
 

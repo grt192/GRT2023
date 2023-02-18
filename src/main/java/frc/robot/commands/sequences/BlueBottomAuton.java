@@ -6,6 +6,7 @@ import edu.wpi.first.math.util.Units;
 
 import frc.robot.positions.PiecePosition;
 import frc.robot.positions.PlacePosition;
+import frc.robot.positions.PlacePosition.PlaceState;
 import frc.robot.subsystems.RollerSubsystem;
 import frc.robot.subsystems.TiltedElevatorSubsystem;
 import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
@@ -31,8 +32,8 @@ public class BlueBottomAuton extends BaseBottomAutonSequence {
         Rotation2d.fromDegrees(180)
     );
 
-    private static final PlacePosition PLACE_STATE = PlacePosition.Blue.A2HIGH;
-    private static final PlacePosition PLACE_STATE_2 = PlacePosition.Blue.A2MID;
+    private static final PlaceState PLACE_STATE = PlacePosition.A2HIGH.BLUE;
+    private static final PlaceState PLACE_STATE_2 = PlacePosition.A2MID.BLUE;
 
     private static final PiecePosition GRAB_POSE = PiecePosition.Blue.PIECE4;
 
