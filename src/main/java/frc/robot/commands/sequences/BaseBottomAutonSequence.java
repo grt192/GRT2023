@@ -27,7 +27,7 @@ public abstract class BaseBottomAutonSequence extends BaseAutonSequence {
     private static final FieldPosition GRAB_POSE = FieldPosition.PIECE4;
 
     /**
-     * Non-balancing auton sequence.
+     * Non-balancing bottom auton sequence.
      * @param swerveSubsystem The swerve subsystem.
      * @param rollerSubsystem The roller subsystem.
      * @param tiltedElevatorSubsystem The tilted elevator subsystem.

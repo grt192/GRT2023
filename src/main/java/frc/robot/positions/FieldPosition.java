@@ -8,7 +8,7 @@ import frc.robot.util.FieldUtil;
 
 public enum FieldPosition {
     BOTTOM_INIT(new Pose2d(
-        Units.inchesToMeters(PlacePosition.BLUE_INIT_X_IN),
+        Units.inchesToMeters(75.178),
         Units.inchesToMeters(17.714),
         Rotation2d.fromDegrees(180)
     )),
@@ -24,7 +24,7 @@ public enum FieldPosition {
     )),
 
     BALANCE_INIT(new Pose2d(
-        Units.inchesToMeters(PlacePosition.BLUE_INIT_X_IN),
+        Units.inchesToMeters(75.178),
         Units.inchesToMeters(107.638),
         Rotation2d.fromDegrees(180)
     )),
@@ -45,7 +45,7 @@ public enum FieldPosition {
     )),
 
     TOP_INIT(new Pose2d(
-        Units.inchesToMeters(PlacePosition.BLUE_INIT_X_IN),
+        Units.inchesToMeters(75.178),
         Units.inchesToMeters(190.366),
         Rotation2d.fromDegrees(180)
     )),
@@ -91,12 +91,17 @@ public enum FieldPosition {
         Rotation2d.fromDegrees(0)
     ));
 
-    public final Pose2d RED;
     public final Pose2d BLUE;
+    public final Pose2d RED;
 
+    /**
+     * Constructs a `FieldPosition` from a blue-team pose. The red-team pose is automatically generated
+     * by mirroring the blue.
+     * @param pose The blue-team pose.
+     */
     private FieldPosition(Pose2d pose) {
-        this.RED = FieldUtil.mirrorPoseAcrossField(pose);
         this.BLUE = pose;
+        this.RED = FieldUtil.mirrorPoseAcrossField(pose);
     }
 
     /**
