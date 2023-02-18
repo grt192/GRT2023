@@ -4,9 +4,10 @@ import edu.wpi.first.wpilibj.DigitalInput;
 
 public class HallEffectSensor {
     private DigitalInput sensor;
-    private HallEffectMagnet[] magnets;
+    private HallEffectMagnet[] magnets; // array of magnet locations from smallest extension to largest extension
 
-    // Different values means between two magnets, same values means at a magnet.
+    // State vars tracking current sensor location using index of magnet position[]
+    // Ie. [-1, 0] means sensor is located in the area before the 1st magnet, [1, 1] means sensor is at 2nd magnet 
     private int lowerPos; // -1 min, (array length - 1) max
     private int upperPos; // 0 min, array length max
 
