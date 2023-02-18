@@ -126,11 +126,14 @@ public final class Constants {
         public static final int EXTENSION_ID = 7;
         public static final int EXTENSION_FOLLOW_ID = 8;
         public static final int EXTENSION_FOLLOW_B_ID = 9;
-        public static final int ZERO_LIMIT_ID = 1;
         
-        // DIO ports for hall effect sensors
-        public static final int RIGHT_HALL_ID = 1; // TODO
-        public static final int LEFT_HALL_ID = 2; // TODO
+        public static final float EXTENSION_LIMIT = (float) Units.inchesToMeters(30); // TODO
+
+        public static final int ZERO_LIMIT_ID = 1;
+        public static final int LEFT_HALL_ID = 2; // TODO DIO port
+        public static final HallEffectMagnet[] LEFT_MAGNETS = {
+            new HallEffectMagnet(Units.inchesToMeters(EXTENSION_LIMIT)) // todo
+        };
     }
 
     public static final class VisionConstants {
