@@ -23,7 +23,7 @@ import org.photonvision.PhotonCamera;
  * wherever the constants are needed, to reduce verbosity.
  */
 public final class Constants {
-    public static final boolean IS_R1 = true;
+    public static final boolean IS_R1 = false;
 
     public static final class TankConstants{
         public static final int LEFT_MAIN = 19;
@@ -37,7 +37,7 @@ public final class Constants {
         public static final int TL_STEER = 3;
         public static final double TL_OFFSET_RADS = IS_R1 
             ? -5.704799652099609
-            : 1.19783924818;
+            : -Math.toRadians(107.2996217475);
         public static final Translation2d TL_POS = IS_R1 ? new Translation2d(
             Units.inchesToMeters(12.0),
             Units.inchesToMeters(8.75)
@@ -50,7 +50,7 @@ public final class Constants {
         public static final int TR_STEER = 17;
         public static final double TR_OFFSET_RADS = IS_R1 
             ? -0.842838776116
-            : 0.205864894386;
+            : -Math.toRadians(175.9342529432362) + Math.toRadians(90);
         public static final Translation2d TR_POS = IS_R1 ? new Translation2d(
             Units.inchesToMeters(12.0),
             Units.inchesToMeters(-8.75)
@@ -63,7 +63,7 @@ public final class Constants {
         public static final int BL_STEER = 1;
         public static final double BL_OFFSET_RADS = IS_R1
             ? -0.793255341057
-            : -1.922969685;
+            : -Math.toRadians(-163.38474021228726) + Math.toRadians(90);
         public static final Translation2d BL_POS = IS_R1 ? new Translation2d(
             Units.inchesToMeters(-12.0),
             Units.inchesToMeters(8.75)
@@ -76,7 +76,7 @@ public final class Constants {
         public static final int BR_STEER = 19;
         public static final double BR_OFFSET_RADS = IS_R1
             ? 0.561284053322
-            : -1.38840819598;
+            : -Math.toRadians(70.05468216569288) + Math.toRadians(180);
         public static final Translation2d BR_POS = IS_R1 ? new Translation2d(
             Units.inchesToMeters(-12.0),
             Units.inchesToMeters(-8.75)

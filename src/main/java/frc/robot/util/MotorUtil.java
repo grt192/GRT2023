@@ -62,7 +62,7 @@ public class MotorUtil {
 
         // Apply manually configured settings
         configureMotor.accept(spark);
-        checkError(deviceId, spark.burnFlash(), "burn flash");
+        // checkError(deviceId, spark.burnFlash(), "burn flash");
 
         return spark;
     }
@@ -101,7 +101,7 @@ public class MotorUtil {
 
         // Apply manually configured settings
         configureMotor.accept(spark);
-        checkError(deviceId, spark.burnFlash(), "burn flash");
+        // checkError(deviceId, spark.burnFlash(), "burn flash");
 
         return spark;
     }

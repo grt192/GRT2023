@@ -132,8 +132,6 @@ public class RobotContainer {
         shuffleboardTab.add(autonChooser)
             .withPosition(8, 0)
             .withSize(4, 2);
-
-        CameraServer.startAutomaticCapture();
     }
 
     /**
