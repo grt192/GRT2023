@@ -9,7 +9,6 @@ import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
 import frc.robot.util.MotorUtil;
 
 import static frc.robot.Constants.RollerConstants.*;

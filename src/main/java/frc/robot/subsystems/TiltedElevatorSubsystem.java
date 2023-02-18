@@ -18,10 +18,10 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.Constants;
-import frc.robot.util.ShuffleboardUtil;
 import frc.robot.motorcontrol.HallEffectMagnet;
 import frc.robot.motorcontrol.HallEffectSensor;
-import frc.robot.motorcontrol.MotorUtil;
+import frc.robot.util.MotorUtil;
+import frc.robot.util.ShuffleboardUtil;
 
 import static frc.robot.Constants.TiltedElevatorConstants.*;
 
