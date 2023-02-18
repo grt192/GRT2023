@@ -24,7 +24,7 @@ public class RollerIntakeCommand extends CommandBase {
 
     @Override
     public void execute() {
-        rollerSubsystem.setRollPower(0.3);
+        rollerSubsystem.setRollPower(-0.3);
     }
 
     @Override
