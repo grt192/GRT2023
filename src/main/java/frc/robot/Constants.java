@@ -130,7 +130,7 @@ public final class Constants {
         public static final float EXTENSION_LIMIT = (float) Units.inchesToMeters(30); // TODO
 
         public static final int ZERO_LIMIT_ID = 1;
-        public static final int LEFT_HALL_ID = 2; // TODO DIO port
+        public static final int LEFT_HALL_ID = 4;
         public static final HallEffectMagnet[] LEFT_MAGNETS = {
             new HallEffectMagnet(Units.inchesToMeters(EXTENSION_LIMIT)) // todo
         };
