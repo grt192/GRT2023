@@ -33,6 +33,7 @@ import frc.robot.commands.auton.test.TenFeetStraightLinePath;
 import frc.robot.commands.auton.test.TwentyFeetStraightLinePath;
 import frc.robot.commands.balancing.BaseBalancerCommand;
 import frc.robot.commands.balancing.DefaultBalancerCommand;
+import frc.robot.commands.MotorTestCommand;
 import frc.robot.commands.dropping.DropperChooserCommand;
 import frc.robot.controllers.BaseDriveController;
 import frc.robot.controllers.DualJoystickDriveController;
@@ -258,5 +259,12 @@ public class RobotContainer {
      */
     public Command getAutonomousCommand() {
         return autonChooser.getSelected();
+    }
+    
+    /**
+     * Used by Robot to run MotorTestCommand with RobotConatiner's sussystems. 
+     */
+    public Command runMotorTesting(){
+        return new MotorTestCommand( (BaseSwerveSubsystem) driveSubsystem, tiltedElevatorSubsystem, rollerSubsystem);
     }
 }
