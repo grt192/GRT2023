@@ -16,7 +16,7 @@ import frc.robot.subsystems.TiltedElevatorSubsystem.ElevatorState;
 import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
 
 public abstract class BaseTopAutonSequence extends BaseAutonSequence {
-    private static final FieldPosition INITIAL_POSE = FieldPosition.TOP_INIT;
+    private static final PlacePosition INITIAL_POSE = PlacePosition.C3MID;
     private static final FieldPosition MID_POSE_1 = FieldPosition.TOP_MIDPOS_1;
     private static final FieldPosition MID_POSE_2 = FieldPosition.TOP_MIDPOS_2;
     private static final FieldPosition MID_POSE_3 = FieldPosition.TOP_MIDPOS_3;
@@ -37,9 +37,9 @@ public abstract class BaseTopAutonSequence extends BaseAutonSequence {
         BaseSwerveSubsystem swerveSubsystem, RollerSubsystem rollerSubsystem, TiltedElevatorSubsystem tiltedElevatorSubsystem,
         boolean isRed // TODO: better way of passing this
     ) {
-        super(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, INITIAL_POSE.getPose(isRed)); // TODO: better
+        super(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, INITIAL_POSE.getPlaceState(isRed).getPose()); // TODO: better
 
-        Pose2d initialPose = INITIAL_POSE.getPose(isRed);
+        PlaceState initialPose = INITIAL_POSE.getPlaceState(isRed);
         Pose2d midPose1 = MID_POSE_1.getPose(isRed);
         Pose2d midPose2 = MID_POSE_2.getPose(isRed);
         Pose2d midPose3 = MID_POSE_3.getPose(isRed);
@@ -52,7 +52,7 @@ public abstract class BaseTopAutonSequence extends BaseAutonSequence {
 
         addCommands(
             // Place preloaded game piece
-            goAndPlace(initialPose, placeState),
+            goAndPlace(initialPose.getPose(), placeState),
             // Go and grab 2nd piece
             goAndGrabTopPath(placeState.getPose(), midPose1, midPose2, midPose3, midPose4, grabPose), 
             // Go and place grabbed piece

@@ -7,11 +7,11 @@ import edu.wpi.first.math.util.Units;
 import frc.robot.util.FieldUtil;
 
 public enum FieldPosition {
-    BOTTOM_INIT(new Pose2d(
-        Units.inchesToMeters(75.178),
-        Units.inchesToMeters(17.714),
-        Rotation2d.fromDegrees(180)
-    )),
+    // BOTTOM_INIT(new Pose2d(
+    //     Units.inchesToMeters(75.178),
+    //     Units.inchesToMeters(17.714),
+    //     Rotation2d.fromDegrees(180)
+    // )),
     BOTTOM_MIDPOS_1(new Pose2d(
         Units.inchesToMeters(94.373),
         Units.inchesToMeters(28.007),
@@ -23,11 +23,11 @@ public enum FieldPosition {
         Rotation2d.fromDegrees(180)
     )),
 
-    BALANCE_INIT(new Pose2d(
-        Units.inchesToMeters(75.178),
-        Units.inchesToMeters(107.638),
-        Rotation2d.fromDegrees(180)
-    )),
+    // BALANCE_INIT(new Pose2d(
+    //     Units.inchesToMeters(75.178),
+    //     Units.inchesToMeters(107.638),
+    //     Rotation2d.fromDegrees(180)
+    // )),
     BALANCE_MIDPOS_1(new Pose2d(
         Units.inchesToMeters(215.000),
         Units.inchesToMeters(107.638),
@@ -44,11 +44,11 @@ public enum FieldPosition {
         Rotation2d.fromDegrees(0)
     )),
 
-    TOP_INIT(new Pose2d(
-        Units.inchesToMeters(75.178),
-        Units.inchesToMeters(190.366),
-        Rotation2d.fromDegrees(180)
-    )),
+    // TOP_INIT(new Pose2d(
+    //     Units.inchesToMeters(75.178),
+    //     Units.inchesToMeters(190.366),
+    //     Rotation2d.fromDegrees(180)
+    // )),
     TOP_MIDPOS_1(new Pose2d(
         Units.inchesToMeters(94.373),
         Units.inchesToMeters(187.638),
