@@ -7,22 +7,23 @@ import frc.robot.subsystems.TiltedElevatorSubsystem.ElevatorState;
 
 public class TiltedElevatorCommand extends CommandBase {
     private final TiltedElevatorSubsystem tiltedElevatorSubsystem;
-    private final ElevatorState level;
+    private final ElevatorState targetState;
 
-    public TiltedElevatorCommand(TiltedElevatorSubsystem tiltedElevatorSubsystem, ElevatorState level) {
+    public TiltedElevatorCommand(TiltedElevatorSubsystem tiltedElevatorSubsystem, ElevatorState targetState) {
         this.tiltedElevatorSubsystem = tiltedElevatorSubsystem;
-        this.level = level;
-
+        this.targetState = targetState;
         addRequirements(tiltedElevatorSubsystem);
     }
 
-    @Override
-    public void initialize() {
-        System.out.println("Mover to " + level);
-        tiltedElevatorSubsystem.setState(level);
+    public void initialize(){
+        System.out.println("Mover to " + targetState);
+        tiltedElevatorSubsystem.setState(targetState);
     }
 
-    @Override
+    public void end(boolean interrupted) {
+        System.out.println("Mover at " + targetState);
+    }
+    
     public boolean isFinished() {
         return tiltedElevatorSubsystem.atTarget();
     }

@@ -28,14 +28,6 @@ public class DropperChooserCommand extends InstantCommand {
         BaseSwerveSubsystem swerveSubsystem, RollerSubsystem rollerSubsystem, TiltedElevatorSubsystem tiltedElevatorSubsystem
     ) {
         ElevatorState state = tiltedElevatorSubsystem.getState();
-        if(state == ElevatorState.CONE_HIGH){
-            return(new DropSequence(rollerSubsystem, tiltedElevatorSubsystem, 
-            ElevatorState.CONE_HIGH_DROP, 0, .2));
-        }
-        if(state == ElevatorState.CONE_MID){
-            return(new DropSequence(rollerSubsystem, tiltedElevatorSubsystem,
-             ElevatorState.CONE_MID_DROP, .4, .2));
-        }
 
         return switch (state) {
             case CONE_HIGH -> new DropSequence(
