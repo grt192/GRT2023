@@ -43,6 +43,11 @@ public class XboxDriveController extends BaseDriveController {
     }
 
     @Override
+    public JoystickButton getflipConeButton() {
+        return driveAButton;
+    }
+
+    @Override
     public JoystickButton getFieldResetButton() {
         return driveAButton;
     }

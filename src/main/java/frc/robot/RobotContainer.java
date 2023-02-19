@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 import frc.robot.commands.BalancerCommand;
+import frc.robot.commands.FlipConeCommand;
 import frc.robot.commands.dropping.DropperChooserCommand;
 import frc.robot.commands.sequences.BlueBalanceAuton;
 import frc.robot.commands.sequences.BlueBottomAuton;
@@ -167,6 +168,7 @@ public class RobotContainer {
 
             driveController.getFieldResetButton().onTrue(new InstantCommand(swerveSubsystem::resetFieldAngle, swerveSubsystem));
             driveController.getChargingStationLockButton().onTrue(new InstantCommand(swerveSubsystem::toggleChargingStationLocked, swerveSubsystem));
+            driveController.getflipConeButton().onTrue(new FlipConeCommand(swerveSubsystem, tiltedElevatorSubsystem));
         } else if (driveSubsystem instanceof TankSubsystem) {
             final TankSubsystem tankSubsystem = (TankSubsystem) driveSubsystem;
 
@@ -226,8 +228,6 @@ public class RobotContainer {
         mechLBumper.onTrue(new InstantCommand(() -> {
             tiltedElevatorSubsystem.toggleState(ElevatorState.CONE_MID, ElevatorState.CONE_HIGH);
         }, tiltedElevatorSubsystem));
-
-        
     }
 
     /**

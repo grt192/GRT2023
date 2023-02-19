@@ -61,6 +61,11 @@ public class DualJoystickDriveController extends BaseDriveController {
     }
 
     @Override
+    public JoystickButton getflipConeButton(){
+        return leftMiddleLeftButton;
+    }
+
+    @Override
     public JoystickButton getFieldResetButton() {
         return leftMiddleButton;
     }

@@ -59,6 +59,7 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
     private double offsetDistMeters = 0;
 
     public boolean pieceGrabbed = false;
+    public boolean flipCone = false;
     private boolean hallPressed = false;
 
     private final ShuffleboardTab shuffleboardTab;

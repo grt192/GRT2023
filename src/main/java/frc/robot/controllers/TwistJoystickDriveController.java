@@ -49,6 +49,11 @@ public class TwistJoystickDriveController extends BaseDriveController {
     }
 
     @Override
+    public JoystickButton getflipConeButton() {
+        return leftMiddleLeftButton;
+    }
+
+    @Override
     public JoystickButton getFieldResetButton() {
         return leftMiddleButton;
     }
