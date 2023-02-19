@@ -83,8 +83,8 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
         },
         CHUTE(Units.inchesToMeters(40)),
         SUBSTATION(Units.inchesToMeters(50)), // absolute height = 37.375 in
-        CUBE_MID(Units.inchesToMeters(33)), // absolute height = 14.25 in
-        CUBE_HIGH(Units.inchesToMeters(53)), // absolute height = 31.625 in
+        CUBE_MID(Units.inchesToMeters(Constants.IS_R1 ? 33 : 40)), // absolute height = 14.25 in
+        CUBE_HIGH(Units.inchesToMeters(Constants.IS_R1 ? 53 : 55)), // absolute height = 31.625 in
         CONE_MID(Units.inchesToMeters(50)), // absolute height = 34 in
         CONE_MID_DROP(CONE_MID.getExtension(false) - Units.inchesToMeters(5)),
         CONE_HIGH(Units.inchesToMeters(62.5)), // absolute height = 46 in
