@@ -94,7 +94,7 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
             new MatBuilder<>(Nat.N3(), Nat.N1()).fill(0.1, 0.1, 0.01)
         );
 
-        shuffleboardTab = Shuffleboard.getTab("Drivetrain");
+        shuffleboardTab = Shuffleboard.getTab("Driver");
         shuffleboardTab.add("Field", fieldWidget)
             .withPosition(0, 0)
             .withSize(8, 5);

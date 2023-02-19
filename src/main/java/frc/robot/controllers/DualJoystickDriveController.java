@@ -12,7 +12,8 @@ public class DualJoystickDriveController extends BaseDriveController {
     private final Joystick leftJoystick = new Joystick(0);
     private final JoystickButton
         leftTrigger = new JoystickButton(leftJoystick, 1),
-        leftMButton = new JoystickButton(leftJoystick, 2);
+        leftMButton = new JoystickButton(leftJoystick, 2),
+        leftTopCenterButton = new JoystickButton(leftJoystick, 3);
 
     private final Joystick rightJoystick = new Joystick(1);
     private final JoystickButton
@@ -48,5 +49,10 @@ public class DualJoystickDriveController extends BaseDriveController {
     @Override
     public JoystickButton getFieldResetButton() {
         return leftMButton;
+    }
+
+    @Override
+    public JoystickButton getCameraSwitchButton() {
+        return leftTopCenterButton;
     }
 }

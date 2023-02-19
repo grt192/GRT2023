@@ -4,9 +4,9 @@
 
 package frc.robot;
 
-import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.shuffleboard.ComplexWidget;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -31,6 +31,7 @@ import frc.robot.controllers.BaseDriveController;
 import frc.robot.controllers.DualJoystickDriveController;
 import frc.robot.controllers.TwistJoystickDriveController;
 import frc.robot.controllers.XboxDriveController;
+import frc.robot.vision.SwitchableCamera;
 import frc.robot.vision.PhotonWrapper;
 import frc.robot.subsystems.drivetrain.TankSubsystem;
 import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
@@ -59,6 +60,7 @@ public class RobotContainer {
 
     private final Superstructure superstructure;
     private final PhotonWrapper photonWrapper;
+    private final SwitchableCamera switchableCamera;
 
     // Controllers and buttons
     private final BaseDriveController driveController;
@@ -85,7 +87,7 @@ public class RobotContainer {
         mechRBumper = new JoystickButton(mechController, XboxController.Button.kRightBumper.value);
 
     // Commands
-    private final ShuffleboardTab shuffleboardTab = Shuffleboard.getTab("Drivetrain");
+    private final ShuffleboardTab shuffleboardTab = Shuffleboard.getTab("Driver");
     private final SendableChooser<Command> autonChooser;
     private final BalancerCommand balancerCommand;
 
@@ -96,6 +98,7 @@ public class RobotContainer {
         driveController = new XboxDriveController();
 
         photonWrapper = new PhotonWrapper();
+        switchableCamera = new SwitchableCamera();
 
         driveSubsystem = new SwerveSubsystem(photonWrapper);
         rollerSubsystem = new RollerSubsystem();
@@ -129,8 +132,12 @@ public class RobotContainer {
             autonChooser.addOption("Blue bottom auton", new BlueBottomAuton(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem));
         }
 
-        shuffleboardTab.add(autonChooser)
+        shuffleboardTab.add("Auton", autonChooser)
             .withPosition(8, 0)
+            .withSize(4, 2);
+
+        shuffleboardTab.add("Intake Camera", switchableCamera.getSource())
+            .withPosition(8, 3)
             .withSize(4, 2);
     }
 
@@ -142,6 +149,7 @@ public class RobotContainer {
      */
     private void configureButtonBindings() {
         driveController.getBalancerButton().whileTrue(balancerCommand);
+        driveController.getCameraSwitchButton().onTrue(new InstantCommand(switchableCamera::switchCamera));
 
         if (driveSubsystem instanceof BaseSwerveSubsystem) {
             final BaseSwerveSubsystem swerveSubsystem = (BaseSwerveSubsystem) driveSubsystem;
