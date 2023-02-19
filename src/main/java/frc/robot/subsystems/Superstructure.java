@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.subsystems.RollerSubsystem.HeldPiece;
@@ -16,5 +17,6 @@ public class Superstructure extends SubsystemBase {
     @Override
     public void periodic() {
         tiltedElevatorSubsystem.pieceGrabbed = rollerSubsystem.getPiece() != HeldPiece.EMPTY;
+        rollerSubsystem.allowOpen = tiltedElevatorSubsystem.getHeight() >= Units.inchesToMeters(20);
     }
 }
