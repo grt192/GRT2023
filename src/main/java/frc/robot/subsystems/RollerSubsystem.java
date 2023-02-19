@@ -14,6 +14,11 @@ import frc.robot.util.MotorUtil;
 
 import static frc.robot.Constants.RollerConstants.*;
 
+import java.sql.Time;
+
+import org.opencv.osgi.OpenCVInterface;
+import org.opencv.osgi.OpenCVNativeLoader;
+
 public class RollerSubsystem extends SubsystemBase {
     private final WPI_TalonSRX leftBeak;
     private final WPI_TalonSRX rightBeak;
@@ -30,6 +35,7 @@ public class RollerSubsystem extends SubsystemBase {
     public boolean allowOpen = true;
 
     private final Timer openTimer = new Timer();
+    private final Timer closeTimer = new Timer();
     private final Timer rollTimer = new Timer();
 
     private final int coneRedMax = 80;
@@ -53,6 +59,7 @@ public class RollerSubsystem extends SubsystemBase {
     // private final GenericEntry bentry;
 
     private final double OPEN_TIME_SECONDS = 1.0;
+    private final double CLOSE_TIME_SECONDS = 0.5;
     private final double COOLDOWN_SECONDS = 2.0;
 
     private double rollPower = 0.0;
@@ -87,6 +94,8 @@ public class RollerSubsystem extends SubsystemBase {
      */
     public void openMotor() {
         openTimer.start();
+        closeTimer.stop();
+        closeTimer.reset();
     }
 
     public InstantCommand getOuttakeCommand(double power, double duration){
@@ -120,9 +129,28 @@ public class RollerSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        // If `OPEN_TIME` hasn't elapsed yet, run the motor.
         boolean opening = openTimer.get() > 0 && !openTimer.hasElapsed(OPEN_TIME_SECONDS);
-        openMotor.set(opening && allowOpen ? 0.5 : 0);
+        boolean closing = !opening || !allowOpen;
+
+        if (closing) {
+            closeTimer.start();
+        }
+
+        if (closeTimer.get() > 0) {
+            if (!closeTimer.hasElapsed(CLOSE_TIME_SECONDS)) {
+                openMotor.set(-.2);
+            } else {
+                openMotor.set(0);
+            }
+        } else {
+            openMotor.set(0.5);
+        }
+
+        // If `OPEN_TIME` hasn't elapsed yet, run the motor.
+        // boolean opening = openTimer.get() > 0 && !openTimer.hasElapsed(OPEN_TIME_SECONDS);
+        // if (opening && allowOpen) {
+        //     openMotor.set(opening && allowOpen ? 0.5 : 0);
+        // }
 
         // If the cooldown has passed, stop and reset the timer.
         if (openTimer.hasElapsed(OPEN_TIME_SECONDS + COOLDOWN_SECONDS)) {

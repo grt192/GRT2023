@@ -50,7 +50,7 @@ public class DropSequence extends SequentialCommandGroup {
             new InstantCommand(rollerSubsystem::openMotor, rollerSubsystem),
             rollerSubsystem.getOuttakeCommand(-outtakePower, outtakeDuration),
             new WaitCommand(waitTime2),
-            FollowPathCommand.from(swerveSubsystem, currentPos, List.of(), targetPos),
+            // FollowPathCommand.from(swerveSubsystem, currentPos, List.of(), targetPos),
             new WaitCommand(waitTime3),
             new TiltedElevatorCommand(tiltedElevatorSubsystem, ElevatorState.GROUND)
         );

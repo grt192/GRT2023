@@ -181,22 +181,34 @@ public class RobotContainer {
             rollerSubsystem.setRollPower(rollPower);
         }, rollerSubsystem));
 
+        mechYButton.onTrue(new InstantCommand(() -> {
+            rollerSubsystem.openMotor();;
+        }, rollerSubsystem));
+
         tiltedElevatorSubsystem.setDefaultCommand(new RunCommand(() -> {
             double yPower = -mechController.getLeftY();
+            double pov = mechController.getPOV();
+            if(pov == 0){
+                tiltedElevatorSubsystem.setState(ElevatorState.SUBSTATION);
+            } else if (pov == 270){
+                tiltedElevatorSubsystem.setState(ElevatorState.HYBRID);
+            } else if (pov == 180){
+                tiltedElevatorSubsystem.setState(ElevatorState.GROUND);
+            } else if (pov == 90){
+                tiltedElevatorSubsystem.resetOffset();
+            }
             tiltedElevatorSubsystem.setManualPower(yPower);
 
             tiltedElevatorSubsystem.changeOffsetDistMeters(yPower);
-        }, tiltedElevatorSubsystem));
-
-        mechYButton.onTrue(new InstantCommand(() -> {
-            tiltedElevatorSubsystem.toggleState(ElevatorState.GROUND, ElevatorState.SUBSTATION);
         }, tiltedElevatorSubsystem));
 
         mechBButton.onTrue(new InstantCommand(() -> {
             tiltedElevatorSubsystem.toggleState(ElevatorState.GROUND, ElevatorState.CHUTE);
         }, tiltedElevatorSubsystem));
 
-        mechXButton.onTrue(new InstantCommand(tiltedElevatorSubsystem::resetOffset));
+        mechXButton.onTrue(new InstantCommand(() -> {
+            tiltedElevatorSubsystem.setState(ElevatorState.HOME);
+        }, tiltedElevatorSubsystem));
 
         mechRBumper.onTrue(new InstantCommand(() -> {
             tiltedElevatorSubsystem.toggleState(ElevatorState.CUBE_MID, ElevatorState.CUBE_HIGH);
@@ -205,6 +217,8 @@ public class RobotContainer {
         mechLBumper.onTrue(new InstantCommand(() -> {
             tiltedElevatorSubsystem.toggleState(ElevatorState.CONE_MID, ElevatorState.CONE_HIGH);
         }, tiltedElevatorSubsystem));
+
+        
     }
 
     /**

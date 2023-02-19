@@ -89,7 +89,8 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
         CONE_MID_DROP(CONE_MID.getExtension(false) - Units.inchesToMeters(10)),
         CONE_HIGH(Units.inchesToMeters(62.5)), // absolute height = 46 in
         CONE_HIGH_DROP(CONE_HIGH.getExtension(false) - Units.inchesToMeters(0)),
-        HYBRID(Units.inchesToMeters(24));//NEEDS TUNING
+        HYBRID(Units.inchesToMeters(20)),//NEEDS TUNING
+        HOME(Units.inchesToMeters(0));
 
         protected double extendDistanceMeters; // meters, extension distance of winch
 
@@ -199,6 +200,23 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
             extensionMotor.set(manualPower);
             return;
         }
+
+        if(state == ElevatorState.HOME){
+            if(zeroLimitSwitch != null && zeroLimitSwitch.get()){
+                extensionMotor.set(-.1);
+                extensionMotor.enableSoftLimit(SoftLimitDirection.kReverse, false);
+                return;
+            } else if(!zeroLimitSwitch.get()){
+                extensionMotor.set(0);
+                extensionMotor.enableSoftLimit(SoftLimitDirection.kReverse, true);
+                state = ElevatorState.GROUND;
+                return;
+            } else {
+                extensionMotor.set(0);
+            }
+        } else {
+            extensionMotor.enableSoftLimit(SoftLimitDirection.kReverse, true);
+        }
         
         // Temporarily store mechanism state during single periodic loop
         double currentPos = extensionEncoder.getPosition();
@@ -215,7 +233,7 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
 
         // If we're trying to get to 0, set the motor to 0 power so the carriage drops with gravity
         // and hits the hard stop / limit switch.
-        if (targetExtension == 0 && currentPos < Units.inchesToMeters(1)) {
+        if (targetExtension == 0 && currentPos < Units.inchesToMeters(1) && zeroLimitSwitch.get()) {
             extensionMotor.set(-0.075);
         }
         // If we're trying to get max extension and we're currently within 1'' of our goal, move elevator up so it hits the magnet
