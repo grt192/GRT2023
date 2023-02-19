@@ -85,10 +85,10 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
         SUBSTATION(Units.inchesToMeters(50)), // absolute height = 37.375 in
         CUBE_MID(Units.inchesToMeters(Constants.IS_R1 ? 33 : 40)), // absolute height = 14.25 in
         CUBE_HIGH(Units.inchesToMeters(Constants.IS_R1 ? 53 : 55)), // absolute height = 31.625 in
-        CONE_MID(Units.inchesToMeters(50)), // absolute height = 34 in
-        CONE_MID_DROP(CONE_MID.getExtension(false) - Units.inchesToMeters(5)),
+        CONE_MID(Units.inchesToMeters(48)), // absolute height = 34 in
+        CONE_MID_DROP(CONE_MID.getExtension(false) - Units.inchesToMeters(10)),
         CONE_HIGH(Units.inchesToMeters(62.5)), // absolute height = 46 in
-        CONE_HIGH_DROP(CONE_HIGH.getExtension(false) - Units.inchesToMeters(3));
+        CONE_HIGH_DROP(CONE_HIGH.getExtension(false) - Units.inchesToMeters(0));
 
         protected double extendDistanceMeters; // meters, extension distance of winch
 
@@ -288,5 +288,9 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
      */
     public void setManualPower(double power) {
         this.manualPower = power;
+    }
+
+    public double getHeight() { 
+        return this.extensionEncoder.getPosition();
     }
 }

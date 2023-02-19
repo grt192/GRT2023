@@ -26,6 +26,7 @@ public class RollerSubsystem extends SubsystemBase {
     }
 
     private HeldPiece heldPiece = HeldPiece.EMPTY;
+    public boolean allowOpen = true;
 
     private final Timer openTimer = new Timer();
 
@@ -103,7 +104,7 @@ public class RollerSubsystem extends SubsystemBase {
     public void periodic() {
         // If `OPEN_TIME` hasn't elapsed yet, run the motor.
         boolean opening = openTimer.get() > 0 && !openTimer.hasElapsed(OPEN_TIME_SECONDS);
-        openMotor.set(opening ? 0.3 : 0);
+        openMotor.set(opening && allowOpen ? 0.5 : 0);
 
         // If the cooldown has passed, stop and reset the timer.
         if (openTimer.hasElapsed(OPEN_TIME_SECONDS + COOLDOWN_SECONDS)) {
