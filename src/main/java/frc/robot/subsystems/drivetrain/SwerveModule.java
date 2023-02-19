@@ -203,6 +203,24 @@ public class SwerveModule implements BaseSwerveModule {
     }
 
     /**
+     * Returns the raw value, in radians, reported by the steer absolute encoder.
+     * @return The current radians reported by the absolute encoder.
+     */
+    public double getRawAngleRads() {
+        return steerAbsoluteEncoder.getPosition();
+    }
+
+    /**
+     * Returns the position offset, in radians, used to align the zero of the module with the front
+     * of the robot (ex. for the top right module, this is -pi/2).
+     * 
+     * @return The position offset, in radians.
+     */
+    public double getPositionOffsetRads() {
+        return 0.0;
+    }
+
+    /**
      * Utility class to construct a top left swerve module from a module's pin offset.
      * The offset to align the pin with the front of the robot is automatically applied.
      */
@@ -221,12 +239,19 @@ public class SwerveModule implements BaseSwerveModule {
      * The offset to align the pin with the front of the robot is automatically applied.
      */
     public static class TopRight extends SwerveModule {
+        private static final double POS_OFFSET = -Math.PI / 2.0;
+
         public TopRight(int drivePort, int steerPort) {
-            super(drivePort, steerPort, -Math.PI / 2.0);
+            super(drivePort, steerPort, POS_OFFSET);
         }
 
         public TopRight(int drivePort, int steerPort, double offsetRads) {
-            super(drivePort, steerPort, offsetRads - Math.PI / 2.0);
+            super(drivePort, steerPort, offsetRads + POS_OFFSET);
+        }
+
+        @Override
+        public double getPositionOffsetRads() {
+            return POS_OFFSET;
         }
     }
 
@@ -235,12 +260,19 @@ public class SwerveModule implements BaseSwerveModule {
      * The offset to align the pin with the front of the robot is automatically applied.
      */
     public static class BottomLeft extends SwerveModule {
+        private static final double POS_OFFSET = Math.PI / 2.0;
+
         public BottomLeft(int drivePort, int steerPort) {
-            super(drivePort, steerPort, Math.PI / 2.0);
+            super(drivePort, steerPort, POS_OFFSET);
         }
 
         public BottomLeft(int drivePort, int steerPort, double offsetRads) {
-            super(drivePort, steerPort, offsetRads + Math.PI / 2.0);
+            super(drivePort, steerPort, offsetRads + POS_OFFSET);
+        }
+
+        @Override
+        public double getPositionOffsetRads() {
+            return POS_OFFSET;
         }
     }
 
@@ -249,12 +281,19 @@ public class SwerveModule implements BaseSwerveModule {
      * The offset to align the pin with the front of the robot is automatically applied.
      */
     public static class BottomRight extends SwerveModule {
+        private static final double POS_OFFSET = Math.PI;
+
         public BottomRight(int drivePort, int steerPort) {
-            super(drivePort, steerPort, Math.PI);
+            super(drivePort, steerPort, POS_OFFSET);
         }
 
         public BottomRight(int drivePort, int steerPort, double offsetRads) {
-            super(drivePort, steerPort, offsetRads + Math.PI);
+            super(drivePort, steerPort, offsetRads + POS_OFFSET);
+        }
+
+        @Override
+        public double getPositionOffsetRads() {
+            return POS_OFFSET;
         }
     }
 }
