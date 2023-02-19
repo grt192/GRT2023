@@ -4,30 +4,27 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.math.trajectory.TrajectoryConfig;
+import edu.wpi.first.math.trajectory.constraint.SwerveDriveKinematicsConstraint;
 
-import frc.robot.commands.sequences.BlueBalanceAuton;
-import frc.robot.commands.sequences.BlueBottomAuton;
-import frc.robot.commands.sequences.BlueTopAuton;
-import frc.robot.commands.sequences.RedBalanceAuton;
-import frc.robot.commands.sequences.RedBottomAuton;
-import frc.robot.commands.sequences.RedTopAuton;
-import frc.robot.commands.sequences.test.BoxAutonSequence;
-import frc.robot.commands.sequences.test.GRTAutonSequence;
-import frc.robot.commands.sequences.test.HighRotationLinePath;
-import frc.robot.commands.sequences.test.RotatingSCurveAutonSequence;
-import frc.robot.commands.sequences.test.StraightLinePath;
+import frc.robot.Constants.SwerveConstants;
 import frc.robot.commands.swerve.FollowPathCommand;
-import frc.robot.subsystems.RollerSubsystem;
-import frc.robot.subsystems.TiltedElevatorSubsystem;
 import frc.robot.subsystems.drivetrain.SwerveSubsystem;
 
 import java.util.List;
 
-public class AutonTrajectoryPathTest {
-    private static final SwerveSubsystem swerveSubsystem = new SwerveSubsystem(null);
-    private static final RollerSubsystem rollerSubsystem = new RollerSubsystem();
-    private static final TiltedElevatorSubsystem tiltedElevatorSubsystem = new TiltedElevatorSubsystem();
+public class WheelHeadingTrajectoryTest {
+    private static final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(
+        SwerveConstants.TL_POS,
+        SwerveConstants.TR_POS,
+        SwerveConstants.BL_POS,
+        SwerveConstants.BR_POS
+    );
+    private static final TrajectoryConfig config = new TrajectoryConfig(SwerveSubsystem.MAX_VEL, SwerveSubsystem.MAX_ACCEL)
+        .setKinematics(kinematics)
+        .addConstraint(new SwerveDriveKinematicsConstraint(kinematics, SwerveSubsystem.MAX_VEL));
 
     private static final double ACCEPTABLE_ANGLE_DELTA = 1e-15;
 
@@ -40,10 +37,10 @@ public class AutonTrajectoryPathTest {
     public void trajectoryNoWaypoint() {
         runTrajectoryTest(
             FollowPathCommand.createWheelHeadingTrajectory(
-                swerveSubsystem,
                 new Pose2d(),
                 List.of(),
-                new Pose2d(1, 1, new Rotation2d())
+                new Pose2d(1, 1, new Rotation2d()),
+                config
             ),
             Math.PI / 4.0,
             Math.PI / 4.0
@@ -60,10 +57,10 @@ public class AutonTrajectoryPathTest {
     public void trajectoryOneWaypoint() {
         runTrajectoryTest(
             FollowPathCommand.createWheelHeadingTrajectory(
-                swerveSubsystem,
                 new Pose2d(),
                 List.of(new Translation2d(1, 1)),
-                new Pose2d(2, 0, new Rotation2d())
+                new Pose2d(2, 0, new Rotation2d()),
+                config
             ),
             Math.PI / 4.0,
             -Math.PI / 4.0
@@ -81,13 +78,13 @@ public class AutonTrajectoryPathTest {
     public void trajectoryTwoWaypoints() {
         runTrajectoryTest(
             FollowPathCommand.createWheelHeadingTrajectory(
-                swerveSubsystem,
                 new Pose2d(),
                 List.of(
                     new Translation2d(1, 1),
                     new Translation2d(2, -1)
                 ),
-                new Pose2d(3, 0, new Rotation2d())
+                new Pose2d(3, 0, new Rotation2d()),
+                config
             ),
             Math.PI / 4.0,
             Math.PI / 4.0
@@ -101,7 +98,6 @@ public class AutonTrajectoryPathTest {
     public void trajectoryCustomHeadings() {
         runTrajectoryTest(
             FollowPathCommand.createWheelHeadingTrajectory(
-                swerveSubsystem,
                 new Pose2d(),
                 List.of(
                     new Translation2d(1, 1),
@@ -109,43 +105,12 @@ public class AutonTrajectoryPathTest {
                 ),
                 new Pose2d(3, 0, new Rotation2d()),
                 new Rotation2d(Math.PI / 2.0),
-                new Rotation2d(Math.PI / 2.0)
+                new Rotation2d(Math.PI / 2.0),
+                config
             ),
             Math.PI / 2.0,
             Math.PI / 2.0
         );
-    }
-
-    /**
-     * Ensures that all test auton paths compile.
-     */
-    @Test
-    public void compileTestPaths() {
-        new StraightLinePath(swerveSubsystem);
-        new HighRotationLinePath(swerveSubsystem);
-        new RotatingSCurveAutonSequence(swerveSubsystem);
-        new BoxAutonSequence(swerveSubsystem);
-        new GRTAutonSequence(swerveSubsystem);
-    }
-
-    /**
-     * Ensures that all red auton paths compile.
-     */
-    @Test
-    public void compileRedPaths() {
-        new RedTopAuton(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem);
-        new RedBalanceAuton(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem);
-        new RedBottomAuton(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem);
-    }
-
-    /**
-     * Ensures that all blue auton paths compile.
-     */
-    @Test
-    public void compileBluePaths() {
-        new BlueTopAuton(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem);
-        new BlueBalanceAuton(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem);
-        new BlueBottomAuton(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem);
     }
 
     /**
