@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 import frc.robot.commands.BalancerCommand;
+import frc.robot.commands.dropping.DropperChooserCommand;
 import frc.robot.commands.sequences.BlueBalanceAuton;
 import frc.robot.commands.sequences.BlueBottomAuton;
 import frc.robot.commands.sequences.BlueTopAuton;
@@ -178,7 +179,7 @@ public class RobotContainer {
             rollerSubsystem.setRollPower(rollPower);
         }, rollerSubsystem));
 
-        mechAButton.onTrue(new InstantCommand(rollerSubsystem::openMotor, rollerSubsystem));
+        mechAButton.onTrue(new InstantCommand(() -> DropperChooserCommand.choose(tiltedElevatorSubsystem, rollerSubsystem).schedule()));
 
         tiltedElevatorSubsystem.setDefaultCommand(new RunCommand(() -> {
             double yPower = -mechController.getLeftY();
