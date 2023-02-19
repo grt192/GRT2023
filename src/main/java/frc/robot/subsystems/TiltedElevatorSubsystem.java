@@ -155,7 +155,7 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        if (zeroLimitSwitch.get()) extensionEncoder.setPosition(0); 
+        if (!zeroLimitSwitch.get()) extensionEncoder.setPosition(0); 
 
         // If we're in manual power mode, use percent out power supplied by driver joystick.
         if (IS_MANUAL) {
