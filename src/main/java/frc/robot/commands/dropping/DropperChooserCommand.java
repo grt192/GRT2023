@@ -14,11 +14,11 @@ public class DropperChooserCommand{
         ElevatorState state = tiltedElevatorSubsystem.getState();
         if(state == ElevatorState.CONE_HIGH){
             return(new DropSequence(rollerSubsystem, tiltedElevatorSubsystem, 
-            ElevatorState.CONE_HIGH_DROP, .2, .2));
+            ElevatorState.CONE_HIGH_DROP, 0, .2));
         }
         if(state == ElevatorState.CONE_MID){
             return(new DropSequence(rollerSubsystem, tiltedElevatorSubsystem,
-             ElevatorState.CONE_MID_DROP, .2, .2));
+             ElevatorState.CONE_MID_DROP, .4, .2));
         }
 
         return(new DropSequence(rollerSubsystem, tiltedElevatorSubsystem, state, 0, 0));
