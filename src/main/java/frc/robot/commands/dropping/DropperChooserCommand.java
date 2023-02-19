@@ -10,10 +10,12 @@ import frc.robot.subsystems.TiltedElevatorSubsystem.ElevatorState;
 import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
 
 public class DropperChooserCommand extends InstantCommand {
-    public DropperChooserCommand(RollerSubsystem rollerSubsystem, TiltedElevatorSubsystem tiltedElevatorSubsystem, BaseSwerveSubsystem baseSwerveSubsystem) {
+    public DropperChooserCommand(
+        BaseSwerveSubsystem swerveSubsystem, RollerSubsystem rollerSubsystem, TiltedElevatorSubsystem tiltedElevatorSubsystem
+    ) {
         super(() -> {
-            getSequence(rollerSubsystem, tiltedElevatorSubsystem, baseSwerveSubsystem).schedule();
-        }, rollerSubsystem, tiltedElevatorSubsystem, baseSwerveSubsystem);
+            getSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem).schedule();
+        }, rollerSubsystem, tiltedElevatorSubsystem, swerveSubsystem);
     }
 
     /**
@@ -23,7 +25,7 @@ public class DropperChooserCommand extends InstantCommand {
      * @return The `SequentialCommandGroup` representing dropping the piece as a sequence.
      */
     private static SequentialCommandGroup getSequence(
-        RollerSubsystem rollerSubsystem, TiltedElevatorSubsystem tiltedElevatorSubsystem, BaseSwerveSubsystem baseSwerveSubsystem
+        BaseSwerveSubsystem swerveSubsystem, RollerSubsystem rollerSubsystem, TiltedElevatorSubsystem tiltedElevatorSubsystem
     ) {
         ElevatorState state = tiltedElevatorSubsystem.getState();
         if(state == ElevatorState.CONE_HIGH){
@@ -36,20 +38,30 @@ public class DropperChooserCommand extends InstantCommand {
         }
 
         return switch (state) {
-            case CONE_HIGH -> new DropSequence(rollerSubsystem, tiltedElevatorSubsystem, baseSwerveSubsystem,
-                ElevatorState.CONE_HIGH_DROP, .2, 0, 0, .2, 0, 0);
-            
-            case CONE_MID -> new DropSequence(rollerSubsystem, tiltedElevatorSubsystem, baseSwerveSubsystem,
-                ElevatorState.CONE_MID_DROP, .2, 0, 0, .2, 0, 0);
+            case CONE_HIGH -> new DropSequence(
+                swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem,
+                ElevatorState.CONE_HIGH_DROP, .2, 0, 0, .2, 0, 0
+            );
 
-            case CUBE_HIGH -> new DropSequence(rollerSubsystem, tiltedElevatorSubsystem, baseSwerveSubsystem,
-                ElevatorState.CUBE_HIGH, 0, .2, .5, .2, Units.inchesToMeters(5), .5);
-            
-            case CUBE_MID -> new DropSequence(rollerSubsystem, tiltedElevatorSubsystem, baseSwerveSubsystem,
-                ElevatorState.CUBE_MID, 0, .2, .5, .2, Units.inchesToMeters(5), .5);
-            
-            default -> new DropSequence(rollerSubsystem, tiltedElevatorSubsystem, baseSwerveSubsystem,
-                state, 0, 0, 0, 0, 0, 0);
+            case CONE_MID -> new DropSequence(
+                swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem,
+                ElevatorState.CONE_MID_DROP, .2, 0, 0, .2, 0, 0
+            );
+
+            case CUBE_HIGH -> new DropSequence(
+                swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem,
+                ElevatorState.CUBE_HIGH, 0, .2, .5, .2, Units.inchesToMeters(5), .5
+            );
+
+            case CUBE_MID -> new DropSequence(
+                swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem,
+                ElevatorState.CUBE_MID, 0, .2, .5, .2, Units.inchesToMeters(5), .5
+            );
+
+            default -> new DropSequence(
+                swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem,
+                state, 0, 0, 0, 0, 0, 0
+            );
         };
     }
 }

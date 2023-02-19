@@ -211,7 +211,7 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
         ShuffleboardUtil.pollShuffleboardDouble(extensionToleranceEntry, (value) -> extensionPidController.setSmartMotionAllowedClosedLoopError(value, 0));
         ShuffleboardUtil.pollShuffleboardDouble(rampEntry, (value) -> extensionMotor.setClosedLoopRampRate(value));
         arbFeedforward = arbFFEntry.getDouble(arbFeedforward);
-        double targetExtension = getTarget();
+        double targetExtension = getTargetExtension();
 
 
         // If we're trying to get to 0, set the motor to 0 power so the carriage drops with gravity
@@ -243,14 +243,18 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
 
     /**
      * Sets the state of the subsystem.
-     * @param state The state to set it to.
+     * @param state The `ElevatorState` to set the subsystem to.
      */
     public void setState(ElevatorState state) {
         this.state = state;
     }
 
-    public ElevatorState getState(){
-        return(state);
+    /**
+     * Gets the state of the subsystem.
+     * @return The `ElevatorState` of the subsystem.
+     */
+    public ElevatorState getState() {
+        return state;
     }
 
     /**
@@ -290,15 +294,27 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
         this.manualPower = power;
     }
 
-    public double getHeight() { 
-        return this.extensionEncoder.getPosition();
+    /**
+     * Gets the current extension, in meters, of the subsystem.
+     * @return The current extension, in meters.
+     */
+    public double getExtension() { 
+        return extensionEncoder.getPosition();
     }
 
-    public double getTarget() {
+    /**
+     * Gets the target extension, in meters, of the subsystem.
+     * @return The target extension, in meters.
+     */
+    public double getTargetExtension() {
         return state.getExtension(pieceGrabbed) + offsetDistMeters;
     }
 
+    /**
+     * Gets whether the elevator has reached its target extension.
+     * @return Whether the elevator has reached its target extension.
+     */
     public boolean atTarget() {
-        return(Math.abs(getHeight() - getTarget()) <= EXTENSION_TOLERANCE);
+        return Math.abs(getExtension() - getTargetExtension()) <= EXTENSION_TOLERANCE;
     }
 }
