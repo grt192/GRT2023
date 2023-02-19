@@ -179,7 +179,11 @@ public class RobotContainer {
             rollerSubsystem.setRollPower(rollPower);
         }, rollerSubsystem));
 
-        mechAButton.onTrue(new DropperChooserCommand(rollerSubsystem, tiltedElevatorSubsystem));
+        if(driveSubsystem instanceof SwerveSubsystem){
+            final SwerveSubsystem swerveSubsystem = (SwerveSubsystem) driveSubsystem;
+            
+            mechAButton.onTrue(new DropperChooserCommand(rollerSubsystem, tiltedElevatorSubsystem, swerveSubsystem));
+        }
 
         tiltedElevatorSubsystem.setDefaultCommand(new RunCommand(() -> {
             double yPower = -mechController.getLeftY();
