@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.REVLibError;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMax.SoftLimitDirection;
@@ -12,16 +13,17 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.Constants;
-import frc.robot.motorcontrol.HallEffectMagnet;
-import frc.robot.motorcontrol.HallEffectSensor;
 import frc.robot.util.MotorUtil;
 import frc.robot.util.ShuffleboardUtil;
+import frc.robot.motorcontrol.HallEffectSensor;
+import frc.robot.motorcontrol.HallEffectMagnet;
 
 import static frc.robot.Constants.TiltedElevatorConstants.*;
 
@@ -45,7 +47,7 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
     private static final double extensionD = 0;
     private static final double extensionTolerance = 0.003;
     private static final double extensionRampRate = 0.4;
-    private double arbFeedforward = 0.03;
+    private double arbFeedforward = 0;
 
     private ElevatorState state = ElevatorState.GROUND;
 
@@ -56,6 +58,7 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
     private double offsetDistMeters = 0;
 
     public boolean pieceGrabbed = false;
+    private boolean hallPressed = false;
 
     private final ShuffleboardTab shuffleboardTab;
     private final GenericEntry 
@@ -63,7 +66,9 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
         extensionToleranceEntry, arbFFEntry, rampEntry;
     private final GenericEntry manualPowerEntry, targetExtensionEntry;
     private final GenericEntry currentExtensionEntry, currentVelEntry, currentStateEntry, offsetDistEntry;
-    private final GenericEntry limitSwitchEntry;
+    private final GenericEntry limitSwitchEntry, hallEntry;
+
+    private HallEffectMagnet lastHallPos = null;
 
 
     public enum ElevatorState {
@@ -81,7 +86,7 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
         CUBE_MID(Units.inchesToMeters(33)), // absolute height = 14.25 in
         CUBE_HIGH(Units.inchesToMeters(53)), // absolute height = 31.625 in
         CONE_MID(Units.inchesToMeters(50)), // absolute height = 34 in
-        CONE_HIGH(Units.inchesToMeters(0)); // absolute height = 46 in
+        CONE_HIGH(Units.inchesToMeters(62.5)); // absolute height = 46 in
 
         protected double extendDistanceMeters; // meters, extension distance of winch
 
@@ -115,7 +120,7 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
             extensionEncoder.setPosition(0);
 
             sparkMax.enableSoftLimit(SoftLimitDirection.kForward, true);
-            sparkMax.setSoftLimit(SoftLimitDirection.kForward, EXTENSION_LIMIT);
+            sparkMax.setSoftLimit(SoftLimitDirection.kForward, (float) (EXTENSION_LIMIT + Units.inchesToMeters(.5)));
             sparkMax.enableSoftLimit(SoftLimitDirection.kReverse, true);
             sparkMax.setSoftLimit(SoftLimitDirection.kReverse, (float) Units.inchesToMeters(-2));
 
@@ -150,6 +155,7 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
         extensionToleranceEntry = shuffleboardTab.add("Extension tolerance", extensionTolerance).withPosition(0, 1).getEntry();
         arbFFEntry = shuffleboardTab.add("Arb FF", arbFeedforward).withPosition(1, 1).getEntry();
         rampEntry = shuffleboardTab.add("Ramp Rate", extensionRampRate).withPosition(2, 1).getEntry();
+        hallEntry = shuffleboardTab.add("Hall effect", hallPressed).getEntry();
 
         manualPowerEntry = shuffleboardTab.add("Manual Power", manualPower).withPosition(0, 2).getEntry();
         targetExtensionEntry = shuffleboardTab.add("Target Ext (in)", 0.0).withPosition(1, 2).getEntry();
@@ -163,20 +169,27 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
             
         if (!Constants.IS_R1)
             leftHallSensor.addToShuffleboard(shuffleboardTab, 4, 1);
+
     }
 
     
     @Override
     public void periodic() {
         // When limit switch is pressed, reset encoder
-        if (zeroLimitSwitch != null && zeroLimitSwitch.get())
+        if (zeroLimitSwitch != null && !zeroLimitSwitch.get())
             extensionEncoder.setPosition(0); 
 
         // When magnet is detected, reset encoder
         if (leftHallSensor != null) {
             HallEffectMagnet leftHallSensorPos = leftHallSensor.getHallEffectState(extensionEncoder.getPosition());
-            if (leftHallSensorPos != null)
-                extensionEncoder.setPosition(leftHallSensorPos.getExtendDistanceMeters());
+            // System.out.println(leftHallSensorPos);
+            // System.out.println(lastHallPos + " " + leftHallSensorPos);
+            if (leftHallSensorPos != null && lastHallPos == null){
+                REVLibError error = extensionEncoder.setPosition(Units.inchesToMeters(62.5));//leftHallSensorPos.getExtendDistanceMeters());
+                DriverStation.reportError(error.toString(), false);
+                DriverStation.reportError("bruh", false);
+            }
+            lastHallPos = leftHallSensorPos;
         }
         
         // If we're in manual power mode, use percent out power supplied by driver joystick.
@@ -198,30 +211,32 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
         arbFeedforward = arbFFEntry.getDouble(arbFeedforward);
         double targetExtension = state.getExtension(pieceGrabbed) + offsetDistMeters;
 
+
         // If we're trying to get to 0, set the motor to 0 power so the carriage drops with gravity
         // and hits the hard stop / limit switch.
         if (targetExtension == 0 && currentPos < Units.inchesToMeters(1)) {
             extensionMotor.set(-0.075);
         }
         // If we're trying to get max extension and we're currently within 1'' of our goal, move elevator up so it hits the magnet
-        else if (targetExtension == EXTENSION_LIMIT && (EXTENSION_LIMIT - currentPos < Units.inchesToMeters(1))) {
-            extensionMotor.set(0.075);
-        } 
-        else {
+        // else if (targetExtension >= EXTENSION_LIMIT && (EXTENSION_LIMIT - currentPos < Units.inchesToMeters(1))) {
+        //     extensionMotor.set(0.075);
+        // } 
+        // else {
             // Set PID reference
             extensionPidController.setReference(
                 MathUtil.clamp(targetExtension, 0, EXTENSION_LIMIT),
-                ControlType.kSmartMotion, 0,
+                ControlType.kPosition, 0,
                 arbFeedforward, ArbFFUnits.kPercentOut
             );
-        }
+        // }
 
         currentExtensionEntry.setDouble(Units.metersToInches(currentPos));
         currentVelEntry.setDouble(currentVel);
         currentStateEntry.setString(state.toString());
         targetExtensionEntry.setDouble(Units.metersToInches(targetExtension));
         offsetDistEntry.setDouble(Units.metersToInches(offsetDistMeters));
-        limitSwitchEntry.setBoolean(zeroLimitSwitch.get());
+        limitSwitchEntry.setBoolean(!zeroLimitSwitch.get());
+        hallEntry.setBoolean(leftHallSensor.getHallEffectState(extensionEncoder.getPosition()) != null);
     }
 
     /**
