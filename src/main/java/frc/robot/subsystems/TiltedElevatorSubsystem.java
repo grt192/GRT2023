@@ -88,7 +88,8 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
         CONE_MID(Units.inchesToMeters(48)), // absolute height = 34 in
         CONE_MID_DROP(CONE_MID.getExtension(false) - Units.inchesToMeters(10)),
         CONE_HIGH(Units.inchesToMeters(62.5)), // absolute height = 46 in
-        CONE_HIGH_DROP(CONE_HIGH.getExtension(false) - Units.inchesToMeters(0));
+        CONE_HIGH_DROP(CONE_HIGH.getExtension(false) - Units.inchesToMeters(0)),
+        HYBRID(Units.inchesToMeters(24));//NEEDS TUNING
 
         protected double extendDistanceMeters; // meters, extension distance of winch
 
