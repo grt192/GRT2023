@@ -40,11 +40,13 @@ public class BaseBalanceAutonSequence extends BaseAutonSequence {
         addCommands(
             // Place preloaded game piece
             Place(initialPose.getElevatorState()),
-            // Go out of community
-            FollowPathCommand.from(swerveSubsystem, initialPose.getPose(), List.of(), midPose1, false, true),
-            //do 180
-            FollowPathCommand.from(swerveSubsystem, midPose1, List.of(), midPose2, true, true),
-            FollowPathCommand.from(swerveSubsystem, midPose2, List.of(), midPose3, true, true),
+            // Go out of community and do 180
+            FollowPathCommand.composedFrom(
+                swerveSubsystem,
+                initialPose.getPose(),
+                List.of(midPose1, midPose2),
+                midPose3
+            ),
             // Go and balance on charging station
             new BalancerCommand(swerveSubsystem)
         );

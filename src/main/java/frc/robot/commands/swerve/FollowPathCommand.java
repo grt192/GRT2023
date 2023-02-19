@@ -12,6 +12,8 @@ import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.constraint.SwerveDriveKinematicsConstraint;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 
 import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
@@ -111,6 +113,34 @@ public class FollowPathCommand extends SwerveControllerCommand {
             ),
             end.getRotation()
         );
+    }
+
+    /**
+     * Composes a sequence of FollowPathCommands from a given start point, list of waypoints, and end point. The commands
+     * are composed such that the robot starts and ends at rest, but does not stop in the middle between commands. The robot
+     * will straight-line between waypoints, hitting each heading along the way.
+     * 
+     * @param swerveSubsystem The swerve subsystem.
+     * @param start The start point of the trajectory as a Pose2d.
+     * @param waypoints A list of waypoints the robot must pass through as a List<Pose2d>.
+     * @param end The end point of the trajectory as a Pose2d.
+     * @return The created `Command`.
+     */
+    public static Command composedFrom(BaseSwerveSubsystem swerveSubsystem, Pose2d start, List<Pose2d> waypoints, Pose2d end) {
+        if (waypoints.size() == 0) return from(swerveSubsystem, start, List.of(), end);
+
+        Command sequence = from(swerveSubsystem, start, List.of(), waypoints.get(0), false, true);
+        for (int i = 0; i < waypoints.size() - 1; i++) {
+            sequence = sequence.andThen(from(
+                swerveSubsystem, waypoints.get(i), List.of(), waypoints.get(i + 1),
+                true, true
+            ));
+        }
+
+        return sequence.andThen(from(
+            swerveSubsystem, waypoints.get(waypoints.size() - 1), List.of(), end,
+            true, false
+        ));
     }
 
     /**

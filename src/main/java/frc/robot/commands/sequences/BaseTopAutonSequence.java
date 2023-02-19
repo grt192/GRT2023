@@ -3,16 +3,12 @@ package frc.robot.commands.sequences;
 import java.util.List;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.wpilibj2.command.Command;
 
-import frc.robot.commands.mover.TiltedElevatorCommand;
-import frc.robot.commands.swerve.FollowPathCommand;
 import frc.robot.positions.FieldPosition;
 import frc.robot.positions.PlacePosition;
 import frc.robot.positions.PlacePosition.PlaceState;
 import frc.robot.subsystems.RollerSubsystem;
 import frc.robot.subsystems.TiltedElevatorSubsystem;
-import frc.robot.subsystems.TiltedElevatorSubsystem.ElevatorState;
 import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
 
 public abstract class BaseTopAutonSequence extends BaseAutonSequence {
@@ -52,45 +48,9 @@ public abstract class BaseTopAutonSequence extends BaseAutonSequence {
             // Place preloaded game piece
             Place(initialPose.getElevatorState()),
             // Go and grab 2nd piece
-            goAndGrabTopPath(initialPose.getPose(), midPose1, midPose2, midPose3, midPose4, grabPose), 
+            goAndGrab(initialPose.getPose(), List.of(midPose1, midPose2, midPose3, midPose4), grabPose), 
             // Go and place grabbed piece
-            goAndPlaceTopPath(grabPose, midPose4, midPose3, midPose2, midPose1, placeState)
+            goAndPlace(grabPose, List.of(midPose4, midPose3, midPose2, midPose1), placeState)
         );
-    }
-
-    /**
-     * Goes to a positon to grab gamepiece, avoiding the charging station and only turning 90 degrees.
-     * @param initialPose The initial pose of the robot
-     * @param midPose1 Middle pose 1
-     * @param midPose2 Middle pose 2 (usually the pose that turns the robot 90)
-     * @param midPose3 (usually the pose that turns the robot 90)
-     * @param finalPose Destination position of robot
-     * @return The `SequentialCommandGroup` representing running the commands in order.
-     */
-    private Command goAndGrabTopPath(Pose2d initialPose, Pose2d midPose1, Pose2d midPose2, Pose2d midPose3, Pose2d midPose4, Pose2d finalPose) {
-        return new TiltedElevatorCommand(tiltedElevatorSubsystem, ElevatorState.GROUND)
-            .alongWith(FollowPathCommand.from(swerveSubsystem, initialPose, List.of(), midPose1, false, true))
-            .andThen(FollowPathCommand.from(swerveSubsystem, midPose1, List.of(), midPose2, true, true))
-            .andThen(FollowPathCommand.from(swerveSubsystem, midPose2, List.of(), midPose3, true, true))
-            .andThen(FollowPathCommand.from(swerveSubsystem, midPose3, List.of(), midPose4, true, true))
-            .andThen(goAndGrab(midPose4, finalPose));
-    }
-
-    /**
-     * Goes to a positon to place gamepiece, avoiding the charging station and only turning 90 degrees.
-     * @param initialPose The initial pose of the robot
-     * @param midPose1 Middle pose 1
-     * @param midPose2 Middle pose 2 
-     * @param midPose3 (usually the pose that turns the robot 90)
-     * @param finalState Final state of the robot when placing the game piece.
-     * @return The `SequentialCommandGroup` representing running the commands in order.
-     */
-    private Command goAndPlaceTopPath(Pose2d initialPose, Pose2d midPose1, Pose2d midPose2, Pose2d midPose3, Pose2d midPose4, PlaceState finalState) {
-        return new TiltedElevatorCommand(tiltedElevatorSubsystem, ElevatorState.GROUND)
-            .alongWith(FollowPathCommand.from(swerveSubsystem, initialPose, List.of(), midPose1, false, true))
-            .andThen(FollowPathCommand.from(swerveSubsystem, midPose1, List.of(), midPose2, true, true))
-            .andThen(FollowPathCommand.from(swerveSubsystem, midPose2, List.of(), midPose3, true, true))
-            .andThen(FollowPathCommand.from(swerveSubsystem, midPose3, List.of(), midPose4, true, true))
-            .andThen(goAndPlace(midPose4, finalState));
     }
 }

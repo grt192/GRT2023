@@ -38,11 +38,12 @@ public abstract class BaseAutonSequence extends SequentialCommandGroup {
     /**
      * Goes to a position and intakes a game piece.
      * @param intialPose The initial pose of the robot.
+     * @param waypoints The waypoints to hit along the path.
      * @param finalPose The destination pose of the robot.
      * @return The `SequentialCommandGroup` representing running the commands in order.
      */
-    protected Command goAndGrab(Pose2d initialPose, Pose2d finalPose) {
-        return FollowPathCommand.from(swerveSubsystem, initialPose, List.of(), finalPose, true, false)
+    protected Command goAndGrab(Pose2d initialPose, List<Pose2d> waypoints, Pose2d finalPose) {
+        return FollowPathCommand.composedFrom(swerveSubsystem, initialPose, waypoints, finalPose)
             .alongWith(new TiltedElevatorCommand(tiltedElevatorSubsystem, ElevatorState.GROUND))
             .andThen(new LockSwerveCommand(swerveSubsystem))
             .andThen(new RollerIntakeCommand(rollerSubsystem).withTimeout(3));
@@ -51,11 +52,12 @@ public abstract class BaseAutonSequence extends SequentialCommandGroup {
     /**
      * Goes to a position and places the currently held game piece.
      * @param intialPose The initial pose of the robot.
+     * @param waypoints The waypoints to hit along the path.
      * @param finalState The destination pose and elevator state of the robot.
      * @return The `SequentialCommandGroup` representing running the commands in order.
      */
-    protected Command goAndPlace(Pose2d initialPose, PlaceState finalState) {
-        return FollowPathCommand.from(swerveSubsystem, initialPose, List.of(), finalState.getPose(), true, false)
+    protected Command goAndPlace(Pose2d initialPose, List<Pose2d> waypoints, PlaceState finalState) {
+        return FollowPathCommand.composedFrom(swerveSubsystem, initialPose, waypoints, finalState.getPose())
             .alongWith(Place(finalState.getElevatorState()));
     }
 
