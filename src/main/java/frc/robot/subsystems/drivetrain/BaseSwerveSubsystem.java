@@ -1,5 +1,7 @@
 package frc.robot.subsystems.drivetrain;
 
+import com.revrobotics.CANSparkMax.IdleMode;
+
 import edu.wpi.first.math.MatBuilder;
 import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
@@ -105,6 +107,7 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
         thetaEntry = shuffleboardTab.add("theta pos (deg)", 0).withPosition(2, 5).getEntry();
 
         lockTimer = new Timer();
+        brakeTimer = new Timer();
     }
 
     @Override
@@ -142,9 +145,14 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
         // Start lock timer when idle
         if (isIdle) {
             lockTimer.start();
+            
+            brakeTimer.start();
         } else {
             lockTimer.stop();
             lockTimer.reset();
+
+            brakeTimer.stop();
+            brakeTimer.reset();
         }
 
         // Lock the swerve modules in an X (or parallel to the charging station if the state is set) if the lock timeout has elapsed,
@@ -167,6 +175,22 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
             topRightModule.setDesiredState(states[1]);
             bottomLeftModule.setDesiredState(states[2]);
             bottomRightModule.setDesiredState(states[3]);
+        }
+
+        // Put modules on brake AFTER timeout has elapsed.  
+        if (BRAKE_ENABLE && brakeTimer.hasElapsed(BRAKE_TIMEOUT_SECONDS)) {
+            ((SwerveModule) topLeftModule).setSparkMaxIdleMode(IdleMode.kBrake);
+            ((SwerveModule) topRightModule).setSparkMaxIdleMode(IdleMode.kBrake);
+            ((SwerveModule) bottomLeftModule).setSparkMaxIdleMode(IdleMode.kBrake);
+            ((SwerveModule) bottomRightModule).setSparkMaxIdleMode(IdleMode.kBrake);
+        }
+
+        // Put modules on coast mode when swerve begins moving
+        if (BRAKE_ENABLE && !isIdle) {
+            ((SwerveModule) topLeftModule).setSparkMaxIdleMode(IdleMode.kCoast);
+            ((SwerveModule) topRightModule).setSparkMaxIdleMode(IdleMode.kCoast);
+            ((SwerveModule) bottomLeftModule).setSparkMaxIdleMode(IdleMode.kCoast);
+            ((SwerveModule) bottomRightModule).setSparkMaxIdleMode(IdleMode.kCoast);
         }
     }
 
