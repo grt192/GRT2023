@@ -30,5 +30,4 @@ public abstract class BaseDriveController {
     public abstract JoystickButton getBalancerButton();
     public abstract JoystickButton getFieldResetButton();
     public abstract JoystickButton getCameraSwitchButton();
-    
 }

@@ -50,7 +50,7 @@ public class DualJoystickDriveController extends BaseDriveController {
     public JoystickButton getFieldResetButton() {
         return leftMButton;
     }
-    
+
     @Override
     public JoystickButton getCameraSwitchButton() {
         return leftTopCenterButton;

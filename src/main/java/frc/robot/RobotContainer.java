@@ -4,22 +4,11 @@
 
 package frc.robot;
 
-import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.cscore.UsbCamera;
-import edu.wpi.first.cscore.VideoSink;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.util.Units;
-import edu.wpi.first.networktables.GenericEntry;
-import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.ComplexWidget;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -42,7 +31,7 @@ import frc.robot.controllers.BaseDriveController;
 import frc.robot.controllers.DualJoystickDriveController;
 import frc.robot.controllers.TwistJoystickDriveController;
 import frc.robot.controllers.XboxDriveController;
-import frc.robot.vision.CameraSwitch;
+import frc.robot.vision.SwitchableCamera;
 import frc.robot.vision.PhotonWrapper;
 import frc.robot.subsystems.drivetrain.TankSubsystem;
 import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
@@ -71,12 +60,10 @@ public class RobotContainer {
 
     private final Superstructure superstructure;
     private final PhotonWrapper photonWrapper;
+    private final SwitchableCamera switchableCamera;
 
     // Controllers and buttons
     private final BaseDriveController driveController;
-
-    private CameraSwitch switchableCamera;
-    ComplexWidget cameraSelection;
 
     private final GenericHID switchboard = new GenericHID(3);
     private final JoystickButton
@@ -99,11 +86,10 @@ public class RobotContainer {
         mechLBumper = new JoystickButton(mechController, XboxController.Button.kLeftBumper.value),
         mechRBumper = new JoystickButton(mechController, XboxController.Button.kRightBumper.value);
 
-        
-
     // Commands
     private final ShuffleboardTab shuffleboardTab = Shuffleboard.getTab("Drivetrain");
     private final SendableChooser<Command> autonChooser;
+    private final BalancerCommand balancerCommand;
 
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -112,16 +98,14 @@ public class RobotContainer {
         driveController = new XboxDriveController();
 
         photonWrapper = new PhotonWrapper();
-        switchableCamera = new CameraSwitch();
+        switchableCamera = new SwitchableCamera();
 
         driveSubsystem = new SwerveSubsystem(photonWrapper);
         rollerSubsystem = new RollerSubsystem();
         tiltedElevatorSubsystem = new TiltedElevatorSubsystem();
 
         superstructure = new Superstructure(rollerSubsystem, tiltedElevatorSubsystem);
-        cameraSelection = shuffleboardTab.add("Intake Camera", switchableCamera.getSource())
-            .withPosition(8, 3)
-            .withSize(4,2);
+        balancerCommand = new BalancerCommand(driveSubsystem);
 
         // Configure the button bindings
         configureButtonBindings();
@@ -148,8 +132,12 @@ public class RobotContainer {
             autonChooser.addOption("Blue bottom auton", new BlueBottomAuton(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem));
         }
 
-        shuffleboardTab.add(autonChooser)
+        shuffleboardTab.add("Auton", autonChooser)
             .withPosition(8, 0)
+            .withSize(4, 2);
+
+        shuffleboardTab.add("Intake Camera", switchableCamera.getSource())
+            .withPosition(8, 3)
             .withSize(4, 2);
     }
 
@@ -160,9 +148,9 @@ public class RobotContainer {
      * passing it to a {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
      */
     private void configureButtonBindings() {
-        driveController.getCameraSwitchButton()
-        .onTrue(new InstantCommand(() -> switchableCamera.switchCamera()));
-        
+        driveController.getBalancerButton().whileTrue(balancerCommand);
+        driveController.getCameraSwitchButton().onTrue(new InstantCommand(switchableCamera::switchCamera));
+
         if (driveSubsystem instanceof BaseSwerveSubsystem) {
             final BaseSwerveSubsystem swerveSubsystem = (BaseSwerveSubsystem) driveSubsystem;
 
@@ -175,7 +163,55 @@ public class RobotContainer {
             }, swerveSubsystem));
 
             driveController.getFieldResetButton().onTrue(new InstantCommand(swerveSubsystem::resetFieldAngle, swerveSubsystem));
-        } 
+        } else if (driveSubsystem instanceof TankSubsystem) {
+            final TankSubsystem tankSubsystem = (TankSubsystem) driveSubsystem;
+
+            tankSubsystem.setDefaultCommand(new RunCommand(() -> {
+                double forwardPower = 0.75 * driveController.getForwardPower();
+                double turnPower = 0.75 * driveController.getRotatePower();
+                tankSubsystem.setDrivePowers(forwardPower, turnPower);
+            }, tankSubsystem));
+        } else if (driveSubsystem instanceof MissileShellSwerveSubsystem) {
+            final MissileShellSwerveSubsystem swerveSubsystem = (MissileShellSwerveSubsystem) driveSubsystem;
+
+            swerveSubsystem.setDefaultCommand(new RunCommand(() -> {
+                double xPower = driveController.getForwardPower();
+                double yPower = driveController.getLeftPower();
+                swerveSubsystem.setDrivePowers(xPower, yPower);
+            }, swerveSubsystem));
+        }
+
+        rollerSubsystem.setDefaultCommand(new RunCommand(() -> {
+            double rollPower = mechController.getRightTriggerAxis() - mechController.getLeftTriggerAxis();
+            rollerSubsystem.setRollPower(rollPower);
+        }, rollerSubsystem));
+
+        mechAButton.onTrue(new InstantCommand(rollerSubsystem::openMotor, rollerSubsystem));
+
+        tiltedElevatorSubsystem.setDefaultCommand(new RunCommand(() -> {
+            double yPower = -mechController.getLeftY();
+            tiltedElevatorSubsystem.setManualPower(yPower);
+
+            tiltedElevatorSubsystem.changeOffsetDistMeters(yPower);
+        }, tiltedElevatorSubsystem));
+
+        mechYButton.onTrue(new InstantCommand(() -> {
+            tiltedElevatorSubsystem.toggleState(ElevatorState.GROUND, ElevatorState.SUBSTATION);
+        }, tiltedElevatorSubsystem));
+
+        mechBButton.onTrue(new InstantCommand(() -> {
+            tiltedElevatorSubsystem.toggleState(ElevatorState.GROUND, ElevatorState.CHUTE);
+        }, tiltedElevatorSubsystem));
+
+        mechXButton.onTrue(new InstantCommand(tiltedElevatorSubsystem::resetOffset));
+
+        mechRBumper.onTrue(new InstantCommand(() -> {
+            tiltedElevatorSubsystem.toggleState(ElevatorState.CUBE_MID, ElevatorState.CUBE_HIGH);
+        }, tiltedElevatorSubsystem));
+
+        mechLBumper.onTrue(new InstantCommand(() -> {
+            tiltedElevatorSubsystem.toggleState(ElevatorState.CONE_MID, ElevatorState.CONE_HIGH);
+        }, tiltedElevatorSubsystem));
     }
 
     /**
