@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+<<<<<<< HEAD
 
 import frc.robot.commands.BalancerCommand;
 import frc.robot.commands.auton.BalanceAutonSequence;
@@ -27,6 +28,10 @@ import frc.robot.commands.auton.test.RotatingSCurveAutonSequence;
 import frc.robot.commands.auton.test.TenFeetStraightLinePath;
 import frc.robot.commands.auton.test.TwentyFeetStraightLinePath;
 import frc.robot.commands.dropping.DropperChooserCommand;
+=======
+import frc.robot.commands.Balancing.BalancerCommand;
+import frc.robot.commands.swerve.FollowPathCommand;
+>>>>>>> 0d79236 (added three balancer commands)
 import frc.robot.controllers.BaseDriveController;
 import frc.robot.controllers.DualJoystickDriveController;
 import frc.robot.controllers.TwistJoystickDriveController;

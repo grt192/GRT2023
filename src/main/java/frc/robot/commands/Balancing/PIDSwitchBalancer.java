@@ -1,4 +1,4 @@
-package frc.robot.commands;
+package frc.robot.commands.Balancing;
 
 import com.fasterxml.jackson.databind.JsonSerializable.Base;
 import com.kauailabs.navx.frc.AHRS;
@@ -10,16 +10,17 @@ import frc.robot.subsystems.drivetrain.BaseDrivetrain;
 import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
 import edu.wpi.first.wpilibj.Timer;
 
-public class BalancerCommand extends CommandBase {
+public class PIDSwitchBalancer extends CommandBase {
     private final BaseDrivetrain driveSubsystem;
     private final AHRS ahrs; 
     
     private double initialHeading;
     private double oldPitch;
     private double currentPitch;
-    private double angularAcceleration;
+    private double deltaAngle;
 
-    PIDController drivePID;
+    PIDController roughPID;
+    PIDController finePID;
     PIDController turnPID;
 
     private double returnDrivePower; // drive power to be returned to DT
@@ -28,20 +29,25 @@ public class BalancerCommand extends CommandBase {
     public boolean reachedStation;
     public boolean passedCenter;
     public boolean waiting;
+
+    public boolean fine; 
     public boolean balanced;
 
     private final Timer timer;
 
-    public BalancerCommand(BaseDrivetrain driveSubsystem) {
+    public PIDSwitchBalancer(BaseDrivetrain driveSubsystem) {
         this.driveSubsystem = driveSubsystem;
         this.ahrs = driveSubsystem.getAhrs();
 
-        drivePID = new PIDController(0.3/35, 0.0, 0.0); // no deriv successful
+        roughPID = new PIDController(0.5/35, 0.0, 0.0); 
+        finePID = new PIDController(0.25/22, 0.0, 0.0); 
+
         turnPID = new PIDController(0.1/5,0.0, 0.0); // kP = max pwr / max err
         timer = new Timer();
         addRequirements(driveSubsystem);
     }
 
+    // Called when the command is initially scheduled.
     @Override
     public void initialize() {
         System.out.println("------------------- Balancer initialized -------------------");
@@ -53,49 +59,30 @@ public class BalancerCommand extends CommandBase {
 
     }
 
+    // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
         
         returnAngularPower = turnPID.calculate(ahrs.getCompassHeading(), initialHeading); // correct angle of approach
-        
+
         if(!reachedStation) {
             returnDrivePower = - 0.80;
             if(ahrs.getPitch() <= - 15.0) reachedStation = true;
         }
         else{
-            currentPitch = ahrs.getPitch();
-            angularAcceleration = Math.abs(currentPitch - oldPitch); // calc magnitude of angular acceleration based on delta angle over time
-            System.out.println(ahrs.getPitch());
             
+            currentPitch = ahrs.getPitch();
+            deltaAngle = Math.abs(currentPitch - oldPitch);
+            fine = ahrs.getPitch() >= -11.0 && deltaAngle <= 0.25;
 
-            if(!passedCenter){
-                returnDrivePower = - 0.2; //.15 successful
-                if(ahrs.getPitch() >= -5.0){
-                    passedCenter = true; // <= 1.0 worked 
-                    if(driveSubsystem instanceof BaseSwerveSubsystem) ((BaseSwerveSubsystem) driveSubsystem).lockNow();
-                    // lock the moment the CG passes the center to minimize overshoot
-                }
-            }
-            else{
-                // if((Math.abs(ahrs.getPitch()) <= 2.0) || (Math.abs(angularAcceleration) <= 5.8)){
-                //     returnDrivePower = 0.0;
-                //     if(driveSubsystem instanceof BaseSwerveSubsystem) ((BaseSwerveSubsystem) driveSubsystem).lockNow();
-                //     // lock as soon as level is detected
-                // }
-                // else{
-                    returnDrivePower = -1 * drivePID.calculate(ahrs.getPitch(), 0);
-                    System.out.println(returnDrivePower);
-                    if(Math.abs(ahrs.getPitch()) <= 2.0 && !waiting){
-                        // timer.reset();
-                        waiting = true;
-                        // timer.start();
-                    }
-                    if(waiting){
-                        // if(Math.abs(ahrs.getPitch()) <= 1.0 && timer.hasElapsed(0.1)) balanced = true;
-                        if(Math.abs(ahrs.getPitch()) <= 1.0 && angularAcceleration <= 0.2) balanced = true;
-                    }
-                    
-                // }
+            if(fine) returnDrivePower = -1 * finePID.calculate(ahrs.getPitch(), 0);
+            else returnDrivePower = -1 * roughPID.calculate(ahrs.getPitch(), 0);
+           
+            System.out.println("DeltaAngle" + deltaAngle);
+            
+            if(Math.abs(ahrs.getPitch()) <= 2.0 && deltaAngle <= 0.05){
+                balanced = true;
+                if(driveSubsystem instanceof BaseSwerveSubsystem) ((BaseSwerveSubsystem) driveSubsystem).lockNow();
             }
         }
 
@@ -107,11 +94,13 @@ public class BalancerCommand extends CommandBase {
         oldPitch = currentPitch; // set the current angle to old angle so it is accessible for next cycle     
     }
 
+    // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
         System.out.println("------------------- Balancing process finished -------------------");
     }
 
+    // Returns true when the command should end.
     @Override
     public boolean isFinished() {
         return reachedStation && balanced;
