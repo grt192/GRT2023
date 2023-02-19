@@ -7,8 +7,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-
-import frc.robot.commands.BalancerCommand;
+import frc.robot.commands.Balancing.BalancerCommand;
 import frc.robot.commands.grabber.AidenIntakeCommand;
 import frc.robot.commands.grabber.AidenPlaceCommand;
 import frc.robot.commands.mover.JulianLevelCommand;
