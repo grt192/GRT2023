@@ -16,7 +16,7 @@ public class MissileShellSwerveSubsystem extends BaseDrivetrain {
     private final SwerveModule module;
     private final SwerveDriveKinematics kinematics;
 
-    public static final double MAX_VEL = SwerveSubsystem.MAX_VEL; // Max robot tangential velocity, in percent output
+    public static final double MAX_VEL = SwerveSubsystem.MAX_VEL; // Max robot tangential velocity, in m/s
     private static final boolean OFFSET_TUNING_ENABLE = true; // Whether to use this subsystem for swerve module offset tuning.
 
     private SwerveModuleState[] states = {
@@ -42,18 +42,18 @@ public class MissileShellSwerveSubsystem extends BaseDrivetrain {
         SwerveDriveKinematics.desaturateWheelSpeeds(states, MAX_VEL);
         module.setDesiredState(states[0]);
 
-        // Print values for encoder tuning. To set a zero, offset + currentAngle = 0 -> offset = -currentAngle.
+        // Print values for encoder tuning. To set a zero, currentAngle + offset = 0 -> offset = -currentAngle.
         // In case the offset is 180 degrees off, also print it plus pi.
         if (OFFSET_TUNING_ENABLE) {
             double currentAngleRads = module.getRawAngleRads();
 
-            // The robot offset is the offset of the module assuming that it is aligned with the front of the robot.
+            // The offset of the module assuming that it is aligned with the front of the robot.
             // For the robot offset, subtract the position offset automatically applied by the module subclasses.
             // currentAngle + offset + posOffset = 0 -> offset = -currentAngle - posOffset.
             double robotOffset = MathUtil.angleModulus(-currentAngleRads - module.getPositionOffsetRads());
             double flippedRobotOffset = MathUtil.angleModulus(-currentAngleRads - module.getPositionOffsetRads() + Math.PI);
 
-            // The pin offset is the offset of the module assuming that it is aligned with the aligning pin.
+            // The offset of the module assuming that it is aligned with its aligning pin.
             // For the pin offset, subtract pi/2 to account for the pin being 90 degrees off.
             // currentAngle + offset + pi/2 = 0 -> offset = -currentAngle - pi/2.
             double pinOffset = MathUtil.angleModulus(-currentAngleRads - Math.PI / 2);
@@ -64,7 +64,7 @@ public class MissileShellSwerveSubsystem extends BaseDrivetrain {
                 + "\ncurrent angle: " + currentAngleRads
                 + "\nrobot offset: " + robotOffset + ", robot offset (flipped): " + flippedRobotOffset
                 + "\npin offset: " + pinOffset + ", pin offset (flipped): " + flippedPinOffset
-                + "-".repeat(20)
+                + "\n" + "-".repeat(20)
             );
         }
     }
