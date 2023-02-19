@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.revrobotics.ColorSensorV3;
@@ -69,7 +70,7 @@ public class RollerSubsystem extends SubsystemBase {
 
         rightBeak = MotorUtil.createTalonSRX(RIGHT_ID);
         rightBeak.follow(leftBeak);
-        rightBeak.setInverted(true);
+        rightBeak.setInverted(InvertType.OpposeMaster);
         rightBeak.setNeutralMode(NeutralMode.Brake);
 
         openMotor = MotorUtil.createTalonSRX(OPEN_ID);

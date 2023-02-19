@@ -37,17 +37,19 @@ public class DualJoystickDriveController extends BaseDriveController {
 
     @Override
     public double getForwardPower() {
-        return MathUtil.applyDeadband(-(leftTrigger.getAsBoolean() ? leftJoystick.getY() : leftJoystick.getY() * 0.75), JOYSTICK_DEADBAND);
+        double scale = leftJoystick.getTrigger() ? 1.0 : 0.75;
+        return MathUtil.applyDeadband(-leftJoystick.getY() * scale, JOYSTICK_DEADBAND);
     }
 
     @Override
     public double getLeftPower() {
-        return MathUtil.applyDeadband(-(leftTrigger.getAsBoolean() ? leftJoystick.getX() : leftJoystick.getX() * 0.75), JOYSTICK_DEADBAND);
+        double scale = leftJoystick.getTrigger() ? 1.0 : 0.75;
+        return MathUtil.applyDeadband(-leftJoystick.getX() * scale, JOYSTICK_DEADBAND);
     }
 
     @Override
     public double getRotatePower() {
-        return MathUtil.applyDeadband(-(rightJoystick.getX() * 0.75), JOYSTICK_DEADBAND);
+        return MathUtil.applyDeadband(-rightJoystick.getX() * 0.75, JOYSTICK_DEADBAND);
     }
 
     @Override
