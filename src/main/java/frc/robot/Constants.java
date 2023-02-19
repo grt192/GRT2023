@@ -165,6 +165,8 @@ public final class Constants {
         public static final int LEFT_ID = 13;
         public static final int RIGHT_ID = 14;
         public static final int LIMIT_SWITCH_ID = 0;
+
+        public static final double ALLOW_OPEN_HEIGHT = Units.inchesToMeters(20);
     }
 
     public static final class MoverConstants {
