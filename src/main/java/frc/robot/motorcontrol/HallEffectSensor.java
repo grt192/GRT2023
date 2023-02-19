@@ -67,34 +67,35 @@ public class HallEffectSensor {
      */
     public HallEffectMagnet getHallEffectState(double mechPos) {
         boolean detected = !sensor.get();
-        boolean movingUp = (mechPos - prevMechPos) > 0;
+        return((detected) ? magnets[0] : null);
+        // boolean movingUp = (mechPos - prevMechPos) > 0;
 
-        // If magnet is newly detected
-        if (detected && prevDetected == false) { // 0V signal (ie. false) indicates magnet is detected
-            if (movingUp) {
-                lowerPos = upperPos;
-            } else {
-                upperPos = lowerPos;
-            }
+        // // If magnet is newly detected
+        // if (detected && prevDetected == false) { // 0V signal (ie. false) indicates magnet is detected
+        //     if (movingUp) {
+        //         lowerPos = upperPos;
+        //     } else {
+        //         upperPos = lowerPos;
+        //     }
 
-            setShuffleboardValue(lowerPos, true);
-        }
+        //     setShuffleboardValue(lowerPos, true);
+        // }
         
-        // If magnet is no longer detected
-        if (!detected && prevDetected == true) {
-            setShuffleboardValue(lowerPos, false);
+        // // If magnet is no longer detected
+        // if (!detected && prevDetected == true) {
+        //     setShuffleboardValue(lowerPos, false);
 
-            if (movingUp) {
-                upperPos = lowerPos + 1;
-            } else {
-                lowerPos = upperPos - 1;
-            }
-        }
+        //     if (movingUp) {
+        //         upperPos = lowerPos + 1;
+        //     } else {
+        //         lowerPos = upperPos - 1;
+        //     }
+        // }
 
-        // Set previous state
-        prevDetected = detected;
-        prevMechPos = mechPos;
+        // // Set previous state
+        // prevDetected = detected;
+        // prevMechPos = mechPos;
 
-        return (lowerPos == upperPos) ? magnets[lowerPos] : null;
+        // return (lowerPos == upperPos) ? magnets[lowerPos] : null;
     }
 }
