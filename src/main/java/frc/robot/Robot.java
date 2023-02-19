@@ -19,6 +19,7 @@ import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
 public class Robot extends TimedRobot {
     private RobotContainer robotContainer;
     private Command autonomousCommand;
+    private Command testCommand;
 
     @Override
     public void robotInit() {
@@ -50,8 +51,9 @@ public class Robot extends TimedRobot {
             ((BaseSwerveSubsystem) robotContainer.driveSubsystem).setVisionEnabled(false);
         }
 
-        // Schedule the autonomous command
+        // Schedule the autonomous command and cancel testing
         autonomousCommand = robotContainer.getAutonomousCommand();
+        if (testCommand != null) testCommand.cancel();
         if (autonomousCommand != null) autonomousCommand.schedule();
     }
 
@@ -60,16 +62,17 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopInit() {
+        // enable vision
+        if (robotContainer.driveSubsystem instanceof BaseSwerveSubsystem) {
+            ((BaseSwerveSubsystem) robotContainer.driveSubsystem).setVisionEnabled(false);
+        }
+
         // This makes sure that the autonomous stops running when
         // teleop starts running. If you want the autonomous to
         // continue until interrupted by another command, remove
         // this line or comment it out.
         if (autonomousCommand != null) autonomousCommand.cancel();
-
-        // enable vision
-        if (robotContainer.driveSubsystem instanceof BaseSwerveSubsystem) {
-            ((BaseSwerveSubsystem) robotContainer.driveSubsystem).setVisionEnabled(false);
-        }
+        if (testCommand != null) testCommand.cancel();
     }
 
     @Override
@@ -77,7 +80,10 @@ public class Robot extends TimedRobot {
 
     @Override
     public void testInit() {
-        robotContainer.runMotorTesting();
+        // Schedule the test command and cancel auton
+        testCommand = robotContainer.getTestCommand();
+        if (autonomousCommand != null) autonomousCommand.cancel();
+        if (testCommand != null) testCommand.schedule();
     }
 
     @Override

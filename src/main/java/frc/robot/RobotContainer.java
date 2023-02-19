@@ -262,9 +262,14 @@ public class RobotContainer {
     }
     
     /**
-     * Used by Robot to run MotorTestCommand with RobotConatiner's sussystems. 
+     * Use this to pass the test command to the main {@link Robot} class.
+     * @return the command to run in test
      */
-    public Command runMotorTesting(){
-        return new MotorTestCommand( (BaseSwerveSubsystem) driveSubsystem, tiltedElevatorSubsystem, rollerSubsystem);
+    public Command getTestCommand() {
+        return new MotorTestCommand(
+            (BaseSwerveSubsystem) driveSubsystem,
+            tiltedElevatorSubsystem,
+            rollerSubsystem
+        );
     }
 }
