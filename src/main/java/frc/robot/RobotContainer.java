@@ -87,7 +87,7 @@ public class RobotContainer {
         mechRBumper = new JoystickButton(mechController, XboxController.Button.kRightBumper.value);
 
     // Commands
-    private final ShuffleboardTab shuffleboardTab = Shuffleboard.getTab("Drivetrain");
+    private final ShuffleboardTab shuffleboardTab = Shuffleboard.getTab("Driver");
     private final SendableChooser<Command> autonChooser;
     private final BalancerCommand balancerCommand;
 
