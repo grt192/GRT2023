@@ -37,7 +37,7 @@ public final class Constants {
         public static final int TL_STEER = 3;
         public static final double TL_OFFSET_RADS = IS_R1 
             ? -5.704799652099609
-            : -Math.toRadians(107.2996217475);
+            : 1.26886096795;
         public static final Translation2d TL_POS = IS_R1 ? new Translation2d(
             Units.inchesToMeters(12.0),
             Units.inchesToMeters(8.75)
@@ -50,7 +50,7 @@ public final class Constants {
         public static final int TR_STEER = 17;
         public static final double TR_OFFSET_RADS = IS_R1 
             ? -0.842838776116
-            : -Math.toRadians(175.9342529432362) + Math.toRadians(90);
+            : 1.59672083457;
         public static final Translation2d TR_POS = IS_R1 ? new Translation2d(
             Units.inchesToMeters(12.0),
             Units.inchesToMeters(-8.75)
@@ -63,7 +63,7 @@ public final class Constants {
         public static final int BL_STEER = 1;
         public static final double BL_OFFSET_RADS = IS_R1
             ? -0.793255341057
-            : -Math.toRadians(-163.38474021228726) + Math.toRadians(90);
+            : 2.47434924841;
         public static final Translation2d BL_POS = IS_R1 ? new Translation2d(
             Units.inchesToMeters(-12.0),
             Units.inchesToMeters(8.75)
@@ -76,7 +76,7 @@ public final class Constants {
         public static final int BR_STEER = 19;
         public static final double BR_OFFSET_RADS = IS_R1
             ? 0.561284053322
-            : -Math.toRadians(70.05468216569288) + Math.toRadians(180);
+            : 0.703113468485;
         public static final Translation2d BR_POS = IS_R1 ? new Translation2d(
             Units.inchesToMeters(-12.0),
             Units.inchesToMeters(-8.75)

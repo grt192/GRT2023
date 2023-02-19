@@ -6,7 +6,6 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMax.SoftLimitDirection;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
-import com.revrobotics.SparkMaxPIDController.AccelStrategy;
 import com.revrobotics.SparkMaxPIDController.ArbFFUnits;
 
 import edu.wpi.first.math.MathUtil;
@@ -133,8 +132,7 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
             sparkMax.setIdleMode(IdleMode.kBrake);
         });
 
-        if (Constants.IS_R1) zeroLimitSwitch = null;
-        else zeroLimitSwitch = new DigitalInput(ZERO_LIMIT_ID);
+        zeroLimitSwitch = new DigitalInput(ZERO_LIMIT_ID);
 
         // TODO: positions
         shuffleboardTab = Shuffleboard.getTab("Tilted Elevator");
@@ -157,8 +155,7 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        if (zeroLimitSwitch != null && zeroLimitSwitch.get())
-            extensionEncoder.setPosition(0); 
+        if (!zeroLimitSwitch.get()) extensionEncoder.setPosition(0); 
 
         // If we're in manual power mode, use percent out power supplied by driver joystick.
         if (IS_MANUAL) {
