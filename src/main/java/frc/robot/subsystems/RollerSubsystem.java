@@ -111,28 +111,24 @@ public class RollerSubsystem extends SubsystemBase {
         boolean stopOpening = !allowOpen && prevAllowedOpen; // only heed falling edge of allowed open so we can open from ground position
         prevAllowedOpen = allowOpen;
 
-        boolean opening = openTimer.get() > 0 && !openTimer.hasElapsed(OPEN_TIME_SECONDS);
-        boolean closing = !opening || stopOpening;
-
-        if (closing) {
+        // If we're opening and not allowed to anymore, or if we've finished opening, stop opening and start closing.
+        if ((openTimer.get() > 0 && stopOpening) || openTimer.hasElapsed(OPEN_TIME_SECONDS)) {
+            openTimer.stop();
+            openTimer.reset();
             closeTimer.start();
         }
 
-        if (closeTimer.get() > 0) {
-            if (!closeTimer.hasElapsed(CLOSE_TIME_SECONDS)) {
-                openMotor.set(-.2);
-            } else {
-                openMotor.set(0);
-            }
-        } else {
-            openMotor.set(0.5);
+        // If we're closing and finished, stop closing.
+        if (closeTimer.hasElapsed(CLOSE_TIME_SECONDS)) {
+            closeTimer.stop();
+            closeTimer.reset();
         }
 
-        // If the cooldown has passed, stop and reset the timer.
-        if (openTimer.hasElapsed(OPEN_TIME_SECONDS + COOLDOWN_SECONDS)) {
-            openTimer.stop();
-            openTimer.reset();
-        }
+        // Otherwise, open if we're opening and close if we're closing.
+        openMotor.set(
+            openTimer.get() > 0 ? 0.5 :
+            closeTimer.get() > 0 ? -0.2 : 0
+        );
 
         // if wheels must intake, and the limit switch is not pressed, turn on motors
         if (limitSwitch.get()) {
