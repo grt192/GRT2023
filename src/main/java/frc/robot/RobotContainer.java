@@ -187,7 +187,7 @@ public class RobotContainer {
             rollerSubsystem.setRollPower(rollPower);
         }, rollerSubsystem));
 
-        mechAButton.onTrue(new InstantCommand(() -> DropperChooserCommand.choose(tiltedElevatorSubsystem, rollerSubsystem).schedule()));
+        mechAButton.onTrue(new DropperChooserCommand(rollerSubsystem, tiltedElevatorSubsystem));
 
         tiltedElevatorSubsystem.setDefaultCommand(new RunCommand(() -> {
             double yPower = -mechController.getLeftY();
