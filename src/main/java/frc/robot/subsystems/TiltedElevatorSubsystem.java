@@ -211,7 +211,7 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
         ShuffleboardUtil.pollShuffleboardDouble(extensionToleranceEntry, (value) -> extensionPidController.setSmartMotionAllowedClosedLoopError(value, 0));
         ShuffleboardUtil.pollShuffleboardDouble(rampEntry, (value) -> extensionMotor.setClosedLoopRampRate(value));
         arbFeedforward = arbFFEntry.getDouble(arbFeedforward);
-        double targetExtension = state.getExtension(pieceGrabbed) + offsetDistMeters;
+        double targetExtension = getTarget();
 
 
         // If we're trying to get to 0, set the motor to 0 power so the carriage drops with gravity
@@ -292,5 +292,13 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
 
     public double getHeight() { 
         return this.extensionEncoder.getPosition();
+    }
+
+    public double getTarget() {
+        return state.getExtension(pieceGrabbed) + offsetDistMeters;
+    }
+
+    public boolean atTarget() {
+        return(Math.abs(getHeight() - getTarget()) <= EXTENSION_TOLERANCE);
     }
 }
