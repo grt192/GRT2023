@@ -42,7 +42,7 @@ public abstract class BaseAutonSequence extends SequentialCommandGroup {
      * @return The `SequentialCommandGroup` representing running the commands in order.
      */
     protected Command goAndGrab(Pose2d initialPose, Pose2d finalPose) {
-        return FollowPathCommand.from(swerveSubsystem, initialPose, List.of(), finalPose)
+        return FollowPathCommand.from(swerveSubsystem, initialPose, List.of(), finalPose, true, false)
             .alongWith(new TiltedElevatorCommand(tiltedElevatorSubsystem, ElevatorState.GROUND))
             .andThen(new LockSwerveCommand(swerveSubsystem))
             .andThen(new RollerIntakeCommand(rollerSubsystem).withTimeout(3));
@@ -55,12 +55,13 @@ public abstract class BaseAutonSequence extends SequentialCommandGroup {
      * @return The `SequentialCommandGroup` representing running the commands in order.
      */
     protected Command goAndPlace(Pose2d initialPose, PlaceState finalState) {
-        return FollowPathCommand.from(swerveSubsystem, initialPose, List.of(), finalState.getPose())
+        return FollowPathCommand.from(swerveSubsystem, initialPose, List.of(), finalState.getPose(), true, false)
             .alongWith(Place(finalState.getElevatorState()));
     }
 
+    // TODO: this will eventually be a drop sequence
     protected Command Place(ElevatorState height){
-        return (new TiltedElevatorCommand(tiltedElevatorSubsystem, height))
+        return new TiltedElevatorCommand(tiltedElevatorSubsystem, height)
             .andThen(new WaitCommand(2))
             .andThen(new RollerPlaceCommand(rollerSubsystem));
     }

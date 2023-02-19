@@ -66,9 +66,9 @@ public abstract class BaseBottomAutonSequence extends BaseAutonSequence {
      */
     protected Command goAndGrabBottomPath(Pose2d initialPose, Pose2d midPose1, Pose2d midPose2, Pose2d finalPose) {
         return new TiltedElevatorCommand(tiltedElevatorSubsystem, ElevatorState.GROUND)
-            .alongWith(FollowPathCommand.from(swerveSubsystem, initialPose, List.of(), midPose1))
+            .alongWith(FollowPathCommand.from(swerveSubsystem, initialPose, List.of(), midPose1, false, true))
             .andThen(new PrintCommand("hit MidPose1"))
-            .andThen(FollowPathCommand.from(swerveSubsystem, midPose1, List.of(), midPose2))
+            .andThen(FollowPathCommand.from(swerveSubsystem, midPose1, List.of(), midPose2, true, true))
             .andThen(new PrintCommand("hit MidPose2"))
             .andThen(goAndGrab(midPose2, finalPose));
     }
@@ -83,9 +83,9 @@ public abstract class BaseBottomAutonSequence extends BaseAutonSequence {
      */
     protected Command goAndPlaceBottomPath(Pose2d initialPose, Pose2d midPose1, Pose2d midPose2, PlaceState finalState) {
         return new TiltedElevatorCommand(tiltedElevatorSubsystem, ElevatorState.GROUND)
-            .alongWith(FollowPathCommand.from(swerveSubsystem, initialPose, List.of(), midPose1))
+            .alongWith(FollowPathCommand.from(swerveSubsystem, initialPose, List.of(), midPose1, false, true))
             .andThen(new PrintCommand("hit MidPose1"))
-            .andThen(FollowPathCommand.from(swerveSubsystem, midPose1, List.of(), midPose2))
+            .andThen(FollowPathCommand.from(swerveSubsystem, midPose1, List.of(), midPose2, true, true))
             .andThen(new PrintCommand("hit MidPose2"))
             .andThen(goAndPlace(midPose2, finalState));
     }

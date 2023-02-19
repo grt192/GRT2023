@@ -69,10 +69,10 @@ public abstract class BaseTopAutonSequence extends BaseAutonSequence {
      */
     private Command goAndGrabTopPath(Pose2d initialPose, Pose2d midPose1, Pose2d midPose2, Pose2d midPose3, Pose2d midPose4, Pose2d finalPose) {
         return new TiltedElevatorCommand(tiltedElevatorSubsystem, ElevatorState.GROUND)
-            .alongWith(FollowPathCommand.from(swerveSubsystem, initialPose, List.of(), midPose1))
-            .andThen(FollowPathCommand.from(swerveSubsystem, midPose1, List.of(), midPose2))
-            .andThen(FollowPathCommand.from(swerveSubsystem, midPose2, List.of(), midPose3))
-            .andThen(FollowPathCommand.from(swerveSubsystem, midPose3, List.of(), midPose4))
+            .alongWith(FollowPathCommand.from(swerveSubsystem, initialPose, List.of(), midPose1, false, true))
+            .andThen(FollowPathCommand.from(swerveSubsystem, midPose1, List.of(), midPose2, true, true))
+            .andThen(FollowPathCommand.from(swerveSubsystem, midPose2, List.of(), midPose3, true, true))
+            .andThen(FollowPathCommand.from(swerveSubsystem, midPose3, List.of(), midPose4, true, true))
             .andThen(goAndGrab(midPose4, finalPose));
     }
 
@@ -87,10 +87,10 @@ public abstract class BaseTopAutonSequence extends BaseAutonSequence {
      */
     private Command goAndPlaceTopPath(Pose2d initialPose, Pose2d midPose1, Pose2d midPose2, Pose2d midPose3, Pose2d midPose4, PlaceState finalState) {
         return new TiltedElevatorCommand(tiltedElevatorSubsystem, ElevatorState.GROUND)
-            .alongWith(FollowPathCommand.from(swerveSubsystem, initialPose, List.of(), midPose1))
-            .andThen(FollowPathCommand.from(swerveSubsystem, midPose1, List.of(), midPose2))
-            .andThen(FollowPathCommand.from(swerveSubsystem, midPose2, List.of(), midPose3))
-            .andThen(FollowPathCommand.from(swerveSubsystem, midPose3, List.of(), midPose4))
+            .alongWith(FollowPathCommand.from(swerveSubsystem, initialPose, List.of(), midPose1, false, true))
+            .andThen(FollowPathCommand.from(swerveSubsystem, midPose1, List.of(), midPose2, true, true))
+            .andThen(FollowPathCommand.from(swerveSubsystem, midPose2, List.of(), midPose3, true, true))
+            .andThen(FollowPathCommand.from(swerveSubsystem, midPose3, List.of(), midPose4, true, true))
             .andThen(goAndPlace(midPose4, finalState));
     }
 }
