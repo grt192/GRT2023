@@ -1,25 +1,29 @@
 package frc.robot.commands.mover;
 
-import java.util.Set;
-
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.Subsystem;
+
 import frc.robot.subsystems.TiltedElevatorSubsystem;
 import frc.robot.subsystems.TiltedElevatorSubsystem.ElevatorState;
 
-
 public class TiltedElevatorCommand extends CommandBase {
-    TiltedElevatorSubsystem tiltedElevatorSubsystem;
+    private final TiltedElevatorSubsystem tiltedElevatorSubsystem;
+    private final ElevatorState level;
 
     public TiltedElevatorCommand(TiltedElevatorSubsystem tiltedElevatorSubsystem, ElevatorState level) {
         this.tiltedElevatorSubsystem = tiltedElevatorSubsystem;
-        System.out.println("Mover to " + level);
-        tiltedElevatorSubsystem.setState(level);
+        this.level = level;
+
         addRequirements(tiltedElevatorSubsystem);
     }
-    
+
+    @Override
+    public void initialize() {
+        System.out.println("Mover to " + level);
+        tiltedElevatorSubsystem.setState(level);
+    }
+
+    @Override
     public boolean isFinished() {
-        return(tiltedElevatorSubsystem.atTarget());
+        return tiltedElevatorSubsystem.atTarget();
     }
 }

@@ -17,6 +17,6 @@ public class Superstructure extends SubsystemBase {
     @Override
     public void periodic() {
         tiltedElevatorSubsystem.pieceGrabbed = rollerSubsystem.getPiece() != HeldPiece.EMPTY;
-        rollerSubsystem.allowOpen = tiltedElevatorSubsystem.getHeight() >= Units.inchesToMeters(20);
+        rollerSubsystem.allowOpen = tiltedElevatorSubsystem.getExtension() >= Units.inchesToMeters(20);
     }
 }

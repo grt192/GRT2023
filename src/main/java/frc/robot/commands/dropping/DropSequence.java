@@ -17,31 +17,32 @@ import frc.robot.subsystems.TiltedElevatorSubsystem;
 import frc.robot.subsystems.TiltedElevatorSubsystem.ElevatorState;
 import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
 
-public class DropSequence extends SequentialCommandGroup{
+public class DropSequence extends SequentialCommandGroup {
+    /*
+     * Order of commands
+     * 1. Moves to dropHeight
+     * 2. Waits waitTime1 (dont want to be moving when letting go)
+     * 3. Releases gamepiece and outtakes at outtakePower for outtakeDuration
+     * 4. Waits waitTime2 (dont want to be moving before piece is fully out)
+     * 5. Moves backwards reverseDist
+     * 6. Waits waitTime3
+     * 7. Moves to GROUND
+     */
     public DropSequence(
-        RollerSubsystem rollerSubsystem, TiltedElevatorSubsystem tiltedElevatorSubsystem, BaseSwerveSubsystem baseSwerveSubsystem,
+        BaseSwerveSubsystem swerveSubsystem, RollerSubsystem rollerSubsystem, TiltedElevatorSubsystem tiltedElevatorSubsystem,
         ElevatorState dropHeight, double waitTime1, double outtakePower, double outtakeDuration,
-         double waitTime2, double reverseDist, double waitTime3
+        double waitTime2, double reverseDist, double waitTime3
     ) {
-        addRequirements(rollerSubsystem, tiltedElevatorSubsystem);
-        /*
-         * Order of commands
-         * 1. Moves to dropHeight
-         * 2. Waits waitTime1 (dont want to be moving when letting go)
-         * 3. Releases gamepiece and outtakes at outtakePower for outtakeDuration
-         * 4. Waits waitTime2 (dont want to be moving before piece is fully out)
-         * 5. Moves backwards reverseDist
-         * 6. Waits waitTime3
-         * 7. Moves to GROUND
-         */
+        addRequirements(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem);
 
-        Pose2d currentPos = baseSwerveSubsystem.getRobotPosition();
-
-        Pose2d targetPos = currentPos.plus(new Transform2d(new Translation2d(-reverseDist * currentPos.getRotation().getCos(),
-                                                                             -reverseDist * currentPos.getRotation().getSin()),
-                                                                             new Rotation2d()));
-
-        
+        Pose2d currentPos = swerveSubsystem.getRobotPosition();
+        Pose2d targetPos = currentPos.plus(new Transform2d(
+            new Translation2d(
+                -reverseDist * currentPos.getRotation().getCos(),
+                -reverseDist * currentPos.getRotation().getSin()
+            ),
+            new Rotation2d()
+        ));
 
         addCommands(
             new TiltedElevatorCommand(tiltedElevatorSubsystem, dropHeight),
@@ -49,7 +50,7 @@ public class DropSequence extends SequentialCommandGroup{
             new InstantCommand(rollerSubsystem::openMotor, rollerSubsystem),
             rollerSubsystem.getOuttakeCommand(-outtakePower, outtakeDuration),
             new WaitCommand(waitTime2),
-            FollowPathCommand.from(baseSwerveSubsystem, currentPos, List.of(), targetPos),
+            FollowPathCommand.from(swerveSubsystem, currentPos, List.of(), targetPos),
             new WaitCommand(waitTime3),
             new TiltedElevatorCommand(tiltedElevatorSubsystem, ElevatorState.GROUND)
         );

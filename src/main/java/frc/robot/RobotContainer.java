@@ -155,6 +155,8 @@ public class RobotContainer {
                 swerveSubsystem.setDrivePowers(xPower, yPower, angularPower, relative);
             }, swerveSubsystem));
 
+            mechAButton.onTrue(new DropperChooserCommand(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem));
+
             driveController.getFieldResetButton().onTrue(new InstantCommand(swerveSubsystem::resetFieldAngle, swerveSubsystem));
         } else if (driveSubsystem instanceof TankSubsystem) {
             final TankSubsystem tankSubsystem = (TankSubsystem) driveSubsystem;
@@ -178,12 +180,6 @@ public class RobotContainer {
             double rollPower = mechController.getRightTriggerAxis() - mechController.getLeftTriggerAxis();
             rollerSubsystem.setRollPower(rollPower);
         }, rollerSubsystem));
-
-        if(driveSubsystem instanceof SwerveSubsystem){
-            final SwerveSubsystem swerveSubsystem = (SwerveSubsystem) driveSubsystem;
-            
-            mechAButton.onTrue(new DropperChooserCommand(rollerSubsystem, tiltedElevatorSubsystem, swerveSubsystem));
-        }
 
         tiltedElevatorSubsystem.setDefaultCommand(new RunCommand(() -> {
             double yPower = -mechController.getLeftY();
