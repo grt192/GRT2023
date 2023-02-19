@@ -63,7 +63,7 @@ public final class Constants {
         public static final int BL_STEER = 1;
         public static final double BL_OFFSET_RADS = IS_R1
             ? -0.793255341057
-            : -1.76599744061;
+            : 2.47434924841;
         public static final Translation2d BL_POS = IS_R1 ? new Translation2d(
             Units.inchesToMeters(-12.0),
             Units.inchesToMeters(8.75)
