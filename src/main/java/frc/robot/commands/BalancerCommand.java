@@ -2,12 +2,11 @@ package frc.robot.commands;
 
 import com.kauailabs.navx.frc.AHRS;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 import frc.robot.subsystems.drivetrain.BaseDrivetrain;
-import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
-import edu.wpi.first.wpilibj.Timer;
 
 public class BalancerCommand extends CommandBase {
     private final BaseDrivetrain driveSubsystem;
@@ -19,47 +18,41 @@ public class BalancerCommand extends CommandBase {
     private double returnPower; //power to be returned to DT
     public boolean reachedStation;
     public boolean passedCenter;
-    private boolean timerEnabled;
-    
-    PIDController pid;
+
+    private final PIDController pid;
 
     public BalancerCommand(BaseDrivetrain driveSubsystem) {
         this.driveSubsystem = driveSubsystem;
         this.ahrs = driveSubsystem.getAhrs();
-        pid = new PIDController(0.3/35, 0.0, 0.0); // no deriv successful
+        pid = new PIDController(0.3 / 35, 0.0, 0.0); // no deriv successful
         stoptimer = new Timer();
         reachedStation = false;
         addRequirements(driveSubsystem);
     }
 
-    // Called when the command is initially scheduled.
     @Override
     public void initialize() {
         System.out.println("---------------------- Balancer initialized ----------------------");
     }
 
-    // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
         // currentAngle = ahrs.getPitch();
-        if(!reachedStation) {
+        if (!reachedStation) {
             returnPower = 0.80;
             System.out.println(ahrs.getPitch());
-            if(ahrs.getPitch() >= 15.0) reachedStation = true;
-        }
-        else{
-            if(!passedCenter){
-                returnPower = 0.15; //.15 successful
-                if(ahrs.getPitch() <= -3.0) passedCenter = true;
-            }
-            else{
+            reachedStation = ahrs.getPitch() >= 15.0;
+        } else {
+            if (!passedCenter) {
+                returnPower = 0.15;
+                passedCenter = ahrs.getPitch() <= -3.0;
+            } else {
                 returnPower = -1 * pid.calculate(ahrs.getPitch(), 0);
                 System.out.println(returnPower);
-                if(Math.abs(ahrs.getPitch()) <= 2.0){
+                if (Math.abs(ahrs.getPitch()) <= 2.0) {
                     returnPower = 0.0;
-                    if(driveSubsystem instanceof BaseSwerveSubsystem) ((BaseSwerveSubsystem) driveSubsystem).lockNow();
+                    // if(driveSubsystem instanceof BaseSwerveSubsystem) ((BaseSwerveSubsystem) driveSubsystem).lockNow();
                 }
-                
             }
         }
         // else{
@@ -78,19 +71,15 @@ public class BalancerCommand extends CommandBase {
         //     }
         // }
 
-
-        
         driveSubsystem.setDrivePowers(returnPower);
         oldAngle = currentAngle;        
     }
 
-    // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
         System.out.println("------------------ Balancing process finished ---------------------");
     }
 
-    // Returns true when the command should end.
     @Override
     public boolean isFinished() {
         return reachedStation && Math.abs(ahrs.getPitch()) <= 2.0 && stoptimer.hasElapsed(0.20);
