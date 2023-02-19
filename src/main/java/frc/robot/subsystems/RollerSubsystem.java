@@ -88,6 +88,7 @@ public class RollerSubsystem extends SubsystemBase {
      * Opens the roller by starting the open timer.
      */
     public void openMotor() {
+        if (!allowOpen) return;
         openTimer.start();
         closeTimer.stop();
         closeTimer.reset();
