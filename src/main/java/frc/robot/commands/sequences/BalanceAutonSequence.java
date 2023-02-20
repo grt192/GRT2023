@@ -14,7 +14,8 @@ import frc.robot.subsystems.TiltedElevatorSubsystem;
 import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
 
 public class BalanceAutonSequence extends BaseAutonSequence {
-    private static final PlacePosition INITIAL_POSE = PlacePosition.B2MID;
+    private static final FieldPosition INITIAL_POSE = FieldPosition.B1INIT;
+    private static final PlacePosition PLACE_POSE = PlacePosition.B1MID;
     private static final FieldPosition MID_POSE_1 = FieldPosition.BALANCE_MIDPOS_1;
     private static final FieldPosition MID_POSE_2 = FieldPosition.BALANCE_MIDPOS_2;
     private static final FieldPosition MID_POSE_3 = FieldPosition.BALANCE_MIDPOS_3;
@@ -30,18 +31,21 @@ public class BalanceAutonSequence extends BaseAutonSequence {
         BaseSwerveSubsystem swerveSubsystem, RollerSubsystem rollerSubsystem, TiltedElevatorSubsystem tiltedElevatorSubsystem,
         boolean isRed // TODO: better way of passing this
     ) {
-        super(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, INITIAL_POSE.getPlaceState(isRed)); // TODO: better
+        super(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, INITIAL_POSE.getPose(isRed)); // TODO: better
 
-        PlaceState initialPose = INITIAL_POSE.getPlaceState(isRed);
+        Pose2d initialPose = INITIAL_POSE.getPose(isRed);
+        PlaceState placeState = PLACE_POSE.getPlaceState(isRed);
         Pose2d midPose1 = MID_POSE_1.getPose(isRed);
         Pose2d midPose2 = MID_POSE_2.getPose(isRed);
         Pose2d midPose3 = MID_POSE_3.getPose(isRed);
 
         addCommands(
+            //place preloaded gamepiece
+            goAndPlace(initialPose, List.of(), placeState),
             // Go out of community and do 180
             FollowPathCommand.composedFrom(
                 swerveSubsystem,
-                initialPose.getPose(),
+                initialPose,
                 List.of(midPose1, midPose2),
                 midPose3
             ),

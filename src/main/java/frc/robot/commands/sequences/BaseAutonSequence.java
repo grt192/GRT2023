@@ -26,7 +26,7 @@ public abstract class BaseAutonSequence extends SequentialCommandGroup {
 
     public BaseAutonSequence(
         BaseSwerveSubsystem swerveSubsystem, RollerSubsystem rollerSubsystem, TiltedElevatorSubsystem tiltedElevatorSubsystem,
-        PlaceState initialState
+        Pose2d initialState
     ) {
         this.swerveSubsystem = swerveSubsystem;
         this.rollerSubsystem = rollerSubsystem;
@@ -35,9 +35,7 @@ public abstract class BaseAutonSequence extends SequentialCommandGroup {
         addRequirements(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem);
         addCommands(
             // Reset field position
-            new InstantCommand(() -> swerveSubsystem.resetPose(initialState.getPose()), swerveSubsystem),
-            // Place preloaded game piece
-            DropperChooserCommand.getSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, initialState.getElevatorState())
+            new InstantCommand(() -> swerveSubsystem.resetPose(initialState), swerveSubsystem)
         );
     }
 
