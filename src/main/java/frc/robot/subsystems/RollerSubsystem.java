@@ -35,6 +35,7 @@ public class RollerSubsystem extends SubsystemBase {
 
     private final TrackingTimer openTimer = new TrackingTimer();
     private final TrackingTimer closeTimer = new TrackingTimer();
+    private final TrackingTimer cooldownTimer = new TrackingTimer();
 
     // ~110 for nothing, 130 for cone, 160 for cube
     private static final int CONE_PROXIMITY_THRESHOLD = 115;
@@ -91,13 +92,18 @@ public class RollerSubsystem extends SubsystemBase {
     }
 
     /**
-     * Opens the roller by starting the open timer.
+     * Opens the roller by starting the open timer. Does nothing if we're not allowed
+     * to open, or if opening is still on cooldown.
      */
     public void openMotor() {
         if (!allowOpen) return;
+        if (cooldownTimer.hasStarted() && !cooldownTimer.hasElapsed(COOLDOWN_SECONDS)) return;
+
         openTimer.start();
         closeTimer.stop();
         closeTimer.reset();
+        cooldownTimer.stop();
+        cooldownTimer.reset();
     }
 
     /**
@@ -118,6 +124,7 @@ public class RollerSubsystem extends SubsystemBase {
             openTimer.stop();
             openTimer.reset();
             closeTimer.start();
+            cooldownTimer.start();
         }
 
         // If we're closing and finished, stop closing.
