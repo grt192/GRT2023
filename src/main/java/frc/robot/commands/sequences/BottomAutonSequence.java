@@ -45,11 +45,11 @@ public class BottomAutonSequence extends BaseAutonSequence {
 
         addCommands(
             //place preloaded gamepiece
-            goAndPlace(initialPose, List.of(), placeState1),
+            goAndPlace(initialPose, placeState1),
             // Go and grab 2nd piece
             goAndGrab(initialPose, List.of(midPose1, midPose2), grabPose),
             // Go and place grabbed piece
-            goAndPlace(grabPose, List.of(midPose2, midPose1), placeState2)
+            goAndPlace(grabPose, List.of(midPose2), midPose1, placeState2)
         );
     }
 }

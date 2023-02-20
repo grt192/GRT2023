@@ -41,7 +41,7 @@ public class BalanceAutonSequence extends BaseAutonSequence {
 
         addCommands(
             //place preloaded gamepiece
-            goAndPlace(initialPose, List.of(), placeState),
+            goAndPlace(initialPose, placeState),
             // Go out of community and do 180
             FollowPathCommand.composedFrom(
                 swerveSubsystem,

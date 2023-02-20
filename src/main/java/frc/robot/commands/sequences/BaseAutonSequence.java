@@ -60,8 +60,23 @@ public abstract class BaseAutonSequence extends SequentialCommandGroup {
      * @param finalState The destination pose and elevator state of the robot.
      * @return The `SequentialCommandGroup` representing running the commands in order.
      */
-    protected Command goAndPlace(Pose2d initialPose, List<Pose2d> waypoints, PlaceState finalState) {
-        return FollowPathCommand.composedFrom(swerveSubsystem, initialPose, waypoints, finalState.getPose())
+    protected Command goAndPlace(Pose2d initialPose, List<Pose2d> waypoints, Pose2d lastPose, PlaceState finalState) {
+        return FollowPathCommand.composedFrom(swerveSubsystem, initialPose, waypoints, lastPose)
+            .andThen(new TiltedElevatorCommand(tiltedElevatorSubsystem, finalState.getElevatorState()))
+            .andThen(FollowPathCommand.from(swerveSubsystem, lastPose, List.of(), finalState.getPose()))
             .andThen(DropperChooserCommand.getSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, finalState.getElevatorState()));
     }
+
+        /**
+     * Goes to a position and places the currently held game piece.
+     * @param intialPose The initial pose of the robot.
+     * @param finalState The destination pose and elevator state of the robot.
+     * @return The `SequentialCommandGroup` representing running the commands in order.
+     */
+    protected Command goAndPlace(Pose2d initialPose, PlaceState finalState) {
+        return new TiltedElevatorCommand(tiltedElevatorSubsystem, finalState.getElevatorState())
+            .andThen(FollowPathCommand.from(swerveSubsystem, initialPose, List.of(), finalState.getPose()))
+            .andThen(DropperChooserCommand.getSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, finalState.getElevatorState()));
+    }
+
 }
