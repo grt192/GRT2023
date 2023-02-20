@@ -159,12 +159,6 @@ public class RollerSubsystem extends SubsystemBase {
         // bentry.setValue(blue);
 
         // TODO: modify `heldPiece` based on color sensor data
-        if (!limitSwitch.get()) {
-            heldPiece = HeldPiece.CUBE;
-        } else {
-            heldPiece = HeldPiece.EMPTY;
-        }
-
         if (red > cubeRedMin && red < cubeRedMax && blue > cubeBlueMin && blue < cubeBlueMax && green < cubeGreenMax && green > cubeGreenMin){
             // System.out.println("cube");
         }
