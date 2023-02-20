@@ -30,7 +30,7 @@ public class BalanceAutonSequence extends BaseAutonSequence {
         BaseSwerveSubsystem swerveSubsystem, RollerSubsystem rollerSubsystem, TiltedElevatorSubsystem tiltedElevatorSubsystem,
         boolean isRed // TODO: better way of passing this
     ) {
-        super(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, INITIAL_POSE.getPlaceState(isRed).getPose()); // TODO: better
+        super(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, INITIAL_POSE.getPlaceState(isRed)); // TODO: better
 
         PlaceState initialPose = INITIAL_POSE.getPlaceState(isRed);
         Pose2d midPose1 = MID_POSE_1.getPose(isRed);
@@ -38,8 +38,6 @@ public class BalanceAutonSequence extends BaseAutonSequence {
         Pose2d midPose3 = MID_POSE_3.getPose(isRed);
 
         addCommands(
-            // Place preloaded game piece
-            Place(initialPose.getElevatorState()),
             // Go out of community and do 180
             FollowPathCommand.composedFrom(
                 swerveSubsystem,

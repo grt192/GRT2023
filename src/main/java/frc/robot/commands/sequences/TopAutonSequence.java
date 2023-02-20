@@ -32,7 +32,7 @@ public class TopAutonSequence extends BaseAutonSequence {
         BaseSwerveSubsystem swerveSubsystem, RollerSubsystem rollerSubsystem, TiltedElevatorSubsystem tiltedElevatorSubsystem,
         boolean isRed // TODO: better way of passing this
     ) {
-        super(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, INITIAL_POSE.getPlaceState(isRed).getPose()); // TODO: better
+        super(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, INITIAL_POSE.getPlaceState(isRed)); // TODO: better
 
         PlaceState initialPose = INITIAL_POSE.getPlaceState(isRed);
         Pose2d midPose1 = MID_POSE_1.getPose(isRed);
@@ -45,8 +45,6 @@ public class TopAutonSequence extends BaseAutonSequence {
         Pose2d grabPose = GRAB_POSE.getPose(isRed);
 
         addCommands(
-            // Place preloaded game piece
-            Place(initialPose.getElevatorState()),
             // Go and grab 2nd piece
             goAndGrab(initialPose.getPose(), List.of(midPose1, midPose2, midPose3, midPose4), grabPose), 
             // Go and place grabbed piece

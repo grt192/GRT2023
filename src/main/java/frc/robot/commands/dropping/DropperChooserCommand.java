@@ -17,7 +17,7 @@ public class DropperChooserCommand extends InstantCommand {
     }
 
     /**
-     * Gets the correct drop sequence to schedule for this command.
+     * Gets the drop sequence corresponding to the current ElevatorState.
      * @param rollerSubsystem The roller subsystem.
      * @param tiltedElevatorSubsystem The tilter elevator subsystem.
      * @return The `SequentialCommandGroup` representing dropping the piece as a sequence.
@@ -26,7 +26,20 @@ public class DropperChooserCommand extends InstantCommand {
         BaseSwerveSubsystem swerveSubsystem, RollerSubsystem rollerSubsystem, TiltedElevatorSubsystem tiltedElevatorSubsystem
     ) {
         ElevatorState state = tiltedElevatorSubsystem.getState();
+        return getSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, state);
+    }
 
+    /**
+     * Gets the drop sequence corresponding to a given target ElevatorState.
+     * @param rollerSubsystem The roller subsystem.
+     * @param tiltedElevatorSubsystem The tilter elevator subsystem.
+     * @param state The target ElevatorState.
+     * @return The `SequentialCommandGroup` representing dropping the piece as a sequence.
+     */
+    public static SequentialCommandGroup getSequence(
+        BaseSwerveSubsystem swerveSubsystem, RollerSubsystem rollerSubsystem, TiltedElevatorSubsystem tiltedElevatorSubsystem,
+        ElevatorState state
+    ) {
         return switch (state) {
             case CONE_HIGH -> new DropSequence(
                 swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem,

@@ -8,8 +8,8 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 
+import frc.robot.commands.dropping.DropperChooserCommand;
 import frc.robot.commands.grabber.RollerIntakeCommand;
-import frc.robot.commands.grabber.RollerPlaceCommand;
 import frc.robot.commands.mover.TiltedElevatorCommand;
 import frc.robot.commands.swerve.FollowPathCommand;
 import frc.robot.commands.swerve.LockSwerveCommand;
@@ -26,14 +26,19 @@ public abstract class BaseAutonSequence extends SequentialCommandGroup {
 
     public BaseAutonSequence(
         BaseSwerveSubsystem swerveSubsystem, RollerSubsystem rollerSubsystem, TiltedElevatorSubsystem tiltedElevatorSubsystem,
-        Pose2d initialPose
+        PlaceState initialState
     ) {
         this.swerveSubsystem = swerveSubsystem;
         this.rollerSubsystem = rollerSubsystem;
         this.tiltedElevatorSubsystem = tiltedElevatorSubsystem;
 
         addRequirements(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem);
-        addCommands(new InstantCommand(() -> swerveSubsystem.resetPose(initialPose), swerveSubsystem));
+        addCommands(
+            // Reset field position
+            new InstantCommand(() -> swerveSubsystem.resetPose(initialState.getPose()), swerveSubsystem),
+            // Place preloaded game piece
+            DropperChooserCommand.getSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, initialState.getElevatorState())
+        );
     }
 
     /**
@@ -59,13 +64,6 @@ public abstract class BaseAutonSequence extends SequentialCommandGroup {
      */
     protected Command goAndPlace(Pose2d initialPose, List<Pose2d> waypoints, PlaceState finalState) {
         return FollowPathCommand.composedFrom(swerveSubsystem, initialPose, waypoints, finalState.getPose())
-            .andThen(Place(finalState.getElevatorState()));
-    }
-
-    // TODO: this will eventually be a drop sequence
-    protected Command Place(ElevatorState height){
-        return new TiltedElevatorCommand(tiltedElevatorSubsystem, height)
-            .andThen(new WaitCommand(2))
-            .andThen(new RollerPlaceCommand(rollerSubsystem));
+            .andThen(DropperChooserCommand.getSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, finalState.getElevatorState()));
     }
 }
