@@ -12,16 +12,16 @@ import frc.robot.subsystems.TiltedElevatorSubsystem;
 import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
 
 public class TopAutonSequence extends BaseAutonSequence {
-    private static final FieldPosition INITIAL_POSE = FieldPosition.C2INIT;
+    private static final FieldPosition INITIAL_POSE = FieldPosition.C2_INIT;
+    private static final PlacePosition PLACE_POSE1 = PlacePosition.C2HIGH;
+
     private static final FieldPosition MID_POSE_1 = FieldPosition.TOP_MIDPOS_1;
     private static final FieldPosition MID_POSE_2 = FieldPosition.TOP_MIDPOS_2;
     private static final FieldPosition MID_POSE_3 = FieldPosition.TOP_MIDPOS_3;
     private static final FieldPosition MID_POSE_4 = FieldPosition.TOP_MIDPOS_4;
 
-    private static final PlacePosition PLACE_POSE1 = PlacePosition.C2HIGH;
-    private static final PlacePosition PLACE_POSE2 = PlacePosition.C2MID;
-
     private static final FieldPosition GRAB_POSE = FieldPosition.PIECE1;
+    private static final PlacePosition PLACE_POSE2 = PlacePosition.C2MID;
 
     /**
      * Non-balancing top auton sequence.

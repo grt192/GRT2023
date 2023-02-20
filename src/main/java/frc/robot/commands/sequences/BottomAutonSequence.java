@@ -12,14 +12,14 @@ import frc.robot.subsystems.TiltedElevatorSubsystem;
 import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
 
 public class BottomAutonSequence extends BaseAutonSequence {
-    private static final FieldPosition INITIAL_POSE = FieldPosition.A1INIT;
+    private static final FieldPosition INITIAL_POSE = FieldPosition.A1_INIT;
+    private static final PlacePosition PLACE_POSE1 = PlacePosition.A1MID;
+
     private static final FieldPosition MID_POSE_1 = FieldPosition.BOTTOM_MIDPOS_1;
     private static final FieldPosition MID_POSE_2 = FieldPosition.BOTTOM_MIDPOS_2;
 
-    private static final PlacePosition PLACE_POSE1 = PlacePosition.A1MID;
-    private static final PlacePosition PLACE_POSE2 = PlacePosition.A2MID;
-
     private static final FieldPosition GRAB_POSE = FieldPosition.PIECE4;
+    private static final PlacePosition PLACE_POSE2 = PlacePosition.A2MID;
 
     /**
      * Non-balancing bottom auton sequence.

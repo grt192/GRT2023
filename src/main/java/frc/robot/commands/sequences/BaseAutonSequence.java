@@ -57,26 +57,24 @@ public abstract class BaseAutonSequence extends SequentialCommandGroup {
      * Goes to a position and places the currently held game piece.
      * @param intialPose The initial pose of the robot.
      * @param waypoints The waypoints to hit along the path.
+     * @param raisePose The pose to raise the elevator at.
      * @param finalState The destination pose and elevator state of the robot.
      * @return The `SequentialCommandGroup` representing running the commands in order.
      */
-    protected Command goAndPlace(Pose2d initialPose, List<Pose2d> waypoints, Pose2d lastPose, PlaceState finalState) {
-        return FollowPathCommand.composedFrom(swerveSubsystem, initialPose, waypoints, lastPose)
-            .andThen(new TiltedElevatorCommand(tiltedElevatorSubsystem, finalState.getElevatorState()))
-            .andThen(FollowPathCommand.from(swerveSubsystem, lastPose, List.of(), finalState.getPose()))
-            .andThen(DropperChooserCommand.getSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, finalState.getElevatorState()));
+    protected SequentialCommandGroup goAndPlace(Pose2d initialPose, List<Pose2d> waypoints, Pose2d raisePose, PlaceState finalState) {
+        return FollowPathCommand.composedFrom(swerveSubsystem, initialPose, waypoints, raisePose)
+            .andThen(goAndPlace(raisePose, finalState));
     }
 
-        /**
+    /**
      * Goes to a position and places the currently held game piece.
      * @param intialPose The initial pose of the robot.
      * @param finalState The destination pose and elevator state of the robot.
      * @return The `SequentialCommandGroup` representing running the commands in order.
      */
-    protected Command goAndPlace(Pose2d initialPose, PlaceState finalState) {
+    protected SequentialCommandGroup goAndPlace(Pose2d initialPose, PlaceState finalState) {
         return new TiltedElevatorCommand(tiltedElevatorSubsystem, finalState.getElevatorState())
             .andThen(FollowPathCommand.from(swerveSubsystem, initialPose, List.of(), finalState.getPose()))
             .andThen(DropperChooserCommand.getSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, finalState.getElevatorState()));
     }
-
 }

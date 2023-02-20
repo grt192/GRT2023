@@ -7,51 +7,54 @@ import edu.wpi.first.math.util.Units;
 import frc.robot.util.FieldUtil;
 
 public enum FieldPosition {
-    C3MINIT(new Pose2d(
+    C3_INIT(new Pose2d(
         Units.inchesToMeters(86.855),
         Units.inchesToMeters(195.55),
         Rotation2d.fromDegrees(180)
     )),
-    C2INIT(new Pose2d(
+    C2_INIT(new Pose2d(
         Units.inchesToMeters(86.855),
         Units.inchesToMeters(174.123),
         Rotation2d.fromDegrees(180)
     )),
-    C1INIT(new Pose2d(
+    C1_INIT(new Pose2d(
         Units.inchesToMeters(86.855),
         Units.inchesToMeters(152.123),
         Rotation2d.fromDegrees(180)
     )),
-    B3INIT(new Pose2d(
+
+    B3_INIT(new Pose2d(
         Units.inchesToMeters(86.855),
         Units.inchesToMeters(129.75),
         Rotation2d.fromDegrees(180)
     )),
-    B2INIT(new Pose2d(
+    B2_INIT(new Pose2d(
         Units.inchesToMeters(86.855),
         Units.inchesToMeters(107.801),
         Rotation2d.fromDegrees(180)
     )),
-    B1INIT(new Pose2d(
+    B1_INIT(new Pose2d(
         Units.inchesToMeters(86.855),
         Units.inchesToMeters(86.149),
         Rotation2d.fromDegrees(180)
     )),
-    A3INIT(new Pose2d(
+
+    A3_INIT(new Pose2d(
         Units.inchesToMeters(86.855),
         Units.inchesToMeters(64.818),
         Rotation2d.fromDegrees(180)
     )),
-    A2INIT(new Pose2d(
+    A2_INIT(new Pose2d(
         Units.inchesToMeters(86.855),
         Units.inchesToMeters(41.761),
         Rotation2d.fromDegrees(180)
     )),
-    A1INIT(new Pose2d(
+    A1_INIT(new Pose2d(
         Units.inchesToMeters(86.855),
         Units.inchesToMeters(20.016),
         Rotation2d.fromDegrees(180)
-    )), 
+    )),
+
     BOTTOM_MIDPOS_1(new Pose2d(
         Units.inchesToMeters(94.373),
         Units.inchesToMeters(28.007),
@@ -62,6 +65,7 @@ public enum FieldPosition {
         Units.inchesToMeters(32.000), 
         Rotation2d.fromDegrees(180)
     )),
+
     BALANCE_MIDPOS_1(new Pose2d(
         Units.inchesToMeters(215.000),
         Units.inchesToMeters(107.638),
