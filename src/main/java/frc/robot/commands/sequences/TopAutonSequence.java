@@ -11,23 +11,24 @@ import frc.robot.subsystems.RollerSubsystem;
 import frc.robot.subsystems.TiltedElevatorSubsystem;
 import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
 
-public abstract class BaseBottomAutonSequence extends BaseAutonSequence {
-    private static final PlacePosition INITIAL_POSE = PlacePosition.A1MID;
-    private static final FieldPosition MID_POSE_1 = FieldPosition.BOTTOM_MIDPOS_1;
-    private static final FieldPosition MID_POSE_2 = FieldPosition.BOTTOM_MIDPOS_2;
+public class TopAutonSequence extends BaseAutonSequence {
+    private static final PlacePosition INITIAL_POSE = PlacePosition.C3MID;
+    private static final FieldPosition MID_POSE_1 = FieldPosition.TOP_MIDPOS_1;
+    private static final FieldPosition MID_POSE_2 = FieldPosition.TOP_MIDPOS_2;
+    private static final FieldPosition MID_POSE_3 = FieldPosition.TOP_MIDPOS_3;
+    private static final FieldPosition MID_POSE_4 = FieldPosition.TOP_MIDPOS_4;
 
-    private static final PlacePosition PLACE_POSE = PlacePosition.A2MID;
+    private static final PlacePosition PLACE_POSE = PlacePosition.C2MID;
 
-    private static final FieldPosition GRAB_POSE = FieldPosition.PIECE4;
+    private static final FieldPosition GRAB_POSE = FieldPosition.PIECE1;
 
     /**
-     * Non-balancing bottom auton sequence.
+     * Non-balancing top auton sequence.
      * @param swerveSubsystem The swerve subsystem.
      * @param rollerSubsystem The roller subsystem.
      * @param tiltedElevatorSubsystem The tilted elevator subsystem.
-     * @param isRed Whether this is a red auton path.
      */
-    public BaseBottomAutonSequence(
+    public TopAutonSequence(
         BaseSwerveSubsystem swerveSubsystem, RollerSubsystem rollerSubsystem, TiltedElevatorSubsystem tiltedElevatorSubsystem,
         boolean isRed // TODO: better way of passing this
     ) {
@@ -36,6 +37,8 @@ public abstract class BaseBottomAutonSequence extends BaseAutonSequence {
         PlaceState initialPose = INITIAL_POSE.getPlaceState(isRed);
         Pose2d midPose1 = MID_POSE_1.getPose(isRed);
         Pose2d midPose2 = MID_POSE_2.getPose(isRed);
+        Pose2d midPose3 = MID_POSE_3.getPose(isRed);
+        Pose2d midPose4 = MID_POSE_4.getPose(isRed);
 
         PlaceState placeState = PLACE_POSE.getPlaceState(isRed);
 
@@ -45,9 +48,9 @@ public abstract class BaseBottomAutonSequence extends BaseAutonSequence {
             // Place preloaded game piece
             Place(initialPose.getElevatorState()),
             // Go and grab 2nd piece
-            goAndGrab(initialPose.getPose(), List.of(midPose1, midPose2), grabPose),
+            goAndGrab(initialPose.getPose(), List.of(midPose1, midPose2, midPose3, midPose4), grabPose), 
             // Go and place grabbed piece
-            goAndPlace(grabPose, List.of(midPose2, midPose1), placeState)
+            goAndPlace(grabPose, List.of(midPose4, midPose3, midPose2, midPose1), placeState)
         );
     }
 }

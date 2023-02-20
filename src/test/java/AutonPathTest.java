@@ -1,11 +1,8 @@
 import org.junit.jupiter.api.Test;
 
-import frc.robot.commands.sequences.BlueBalanceAuton;
-import frc.robot.commands.sequences.BlueBottomAuton;
-import frc.robot.commands.sequences.BlueTopAuton;
-import frc.robot.commands.sequences.RedBalanceAuton;
-import frc.robot.commands.sequences.RedBottomAuton;
-import frc.robot.commands.sequences.RedTopAuton;
+import frc.robot.commands.sequences.BalanceAutonSequence;
+import frc.robot.commands.sequences.BottomAutonSequence;
+import frc.robot.commands.sequences.TopAutonSequence;
 import frc.robot.commands.sequences.test.BoxAutonSequence;
 import frc.robot.commands.sequences.test.GRTAutonSequence;
 import frc.robot.commands.sequences.test.HighRotationLinePath;
@@ -37,9 +34,9 @@ public class AutonPathTest {
      */
     @Test
     public void compileRedPaths() {
-        new RedTopAuton(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem);
-        new RedBalanceAuton(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem);
-        new RedBottomAuton(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem);
+        new TopAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, true);
+        new BalanceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, true);
+        new BottomAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, true);
     }
 
     /**
@@ -47,8 +44,8 @@ public class AutonPathTest {
      */
     @Test
     public void compileBluePaths() {
-        new BlueTopAuton(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem);
-        new BlueBalanceAuton(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem);
-        new BlueBottomAuton(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem);
+        new TopAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, false);
+        new BalanceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, false);
+        new BottomAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, false);
     }
 }
