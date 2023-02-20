@@ -58,7 +58,7 @@ public abstract class BaseAutonSequence extends SequentialCommandGroup {
      */
     protected Command goAndPlace(Pose2d initialPose, List<Pose2d> waypoints, PlaceState finalState) {
         return FollowPathCommand.composedFrom(swerveSubsystem, initialPose, waypoints, finalState.getPose())
-            .alongWith(Place(finalState.getElevatorState()));
+            .andThen(Place(finalState.getElevatorState()));
     }
 
     // TODO: this will eventually be a drop sequence

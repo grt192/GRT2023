@@ -118,12 +118,6 @@ public class RobotContainer {
         if (driveSubsystem instanceof BaseSwerveSubsystem) {
             final BaseSwerveSubsystem swerveSubsystem = (BaseSwerveSubsystem) driveSubsystem;
 
-            autonChooser.addOption("Straight-line path", new StraightLinePath(swerveSubsystem));
-            autonChooser.addOption("High rotation straight-line path", new HighRotationLinePath(swerveSubsystem));
-            autonChooser.addOption("Rotating S-curve", new RotatingSCurveAutonSequence(swerveSubsystem));
-            autonChooser.addOption("Box auton", new BoxAutonSequence(swerveSubsystem));
-            autonChooser.addOption("GRT path", new GRTAutonSequence(swerveSubsystem));
-
             autonChooser.addOption("Red top auton", new RedTopAuton(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem));
             autonChooser.addOption("Red balance auton", new RedBalanceAuton(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem));
             autonChooser.addOption("Red bottom auton", new RedBottomAuton(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem));
@@ -131,6 +125,12 @@ public class RobotContainer {
             autonChooser.addOption("Blue top auton", new BlueTopAuton(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem));
             autonChooser.addOption("Blue balance auton", new BlueBalanceAuton(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem));
             autonChooser.addOption("Blue bottom auton", new BlueBottomAuton(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem));
+
+            autonChooser.addOption("Straight-line path", new StraightLinePath(swerveSubsystem));
+            autonChooser.addOption("High rotation straight-line path", new HighRotationLinePath(swerveSubsystem));
+            autonChooser.addOption("Rotating S-curve", new RotatingSCurveAutonSequence(swerveSubsystem));
+            autonChooser.addOption("Box auton", new BoxAutonSequence(swerveSubsystem));
+            autonChooser.addOption("GRT path", new GRTAutonSequence(swerveSubsystem));
         }
 
         shuffleboardTab.add("Auton", autonChooser)
