@@ -13,9 +13,12 @@ public class TwistJoystickDriveController extends BaseDriveController {
     private final Joystick joystick = new Joystick(0);
     private final JoystickButton
         leftTrigger = new JoystickButton(joystick, 1),
-        leftMButton = new JoystickButton(joystick, 2),
-        leftMRButton = new JoystickButton(joystick, 6),
-        leftUnknownButton = new JoystickButton(joystick, 3);
+        leftMiddleButton = new JoystickButton(joystick, 2),
+        leftTopLeftButton = new JoystickButton(joystick, 3),
+        leftTopRightButton = new JoystickButton(joystick, 4),
+        leftMiddleLeftButton = new JoystickButton(joystick, 5),
+        leftMiddleRightButton = new JoystickButton(joystick, 6),
+        leftBackButton = new JoystickButton(joystick, 7);
 
     private final double JOYSTICK_DEADBAND = 0.08;
 
@@ -42,22 +45,21 @@ public class TwistJoystickDriveController extends BaseDriveController {
 
     @Override
     public JoystickButton getBalancerButton() {
-        return leftMRButton;
+        return leftMiddleRightButton;
     }
 
     @Override
     public JoystickButton getFieldResetButton() {
-        return leftMButton;
+        return leftMiddleButton;
     }
 
     @Override
     public JoystickButton getCameraSwitchButton() {
-        return leftUnknownButton;
+        return leftTopLeftButton;
     }
 
     @Override
     public JoystickButton getChargingStationLockButton() {
-        // TODO: this is already taken by swerve relative; map out buttons on cyborg joystick and rebind
-        return leftTrigger;
+        return leftMiddleLeftButton;
     }
 }
