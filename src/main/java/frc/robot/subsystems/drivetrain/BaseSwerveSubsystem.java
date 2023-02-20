@@ -42,6 +42,8 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
     private static final double LOCK_TIMEOUT_SECONDS = 1.0; // The elapsed idle time to wait before locking
     private static final boolean LOCKING_ENABLE = true;
 
+    private boolean chargingStationLocked = false;
+
     private Rotation2d angleOffset = new Rotation2d(0);
 
     private final ShuffleboardTab shuffleboardTab;
@@ -145,9 +147,18 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
             lockTimer.reset();
         }
 
-        // Lock the swerve modules if the lock timeout has elapsed, or set them to their
-        // setpoints if drivers are supplying non-idle input.
-        if (LOCKING_ENABLE && lockTimer.hasElapsed(LOCK_TIMEOUT_SECONDS)) {
+        // Lock the swerve modules parallel to the charging station if the charging station lock state is set, 
+        // lock them in an X if the lock timeout has elapsed, or set them to their setpoints if drivers are supplying
+        // non-idle input.
+        if (chargingStationLocked) {
+            // Lock modules parallel to the charging station, accounting for the orientation of the robot.
+            Rotation2d lockAngle = Rotation2d.fromDegrees(90).minus(getFieldHeading());
+
+            topLeftModule.setDesiredState(new SwerveModuleState(0.0, lockAngle));
+            topRightModule.setDesiredState(new SwerveModuleState(0.0, lockAngle));
+            bottomLeftModule.setDesiredState(new SwerveModuleState(0.0, lockAngle));
+            bottomRightModule.setDesiredState(new SwerveModuleState(0.0, lockAngle));
+        } else if (LOCKING_ENABLE && lockTimer.hasElapsed(LOCK_TIMEOUT_SECONDS)) {
             topLeftModule.setDesiredState(new SwerveModuleState(0.0, new Rotation2d(Math.PI / 4.0)));
             topRightModule.setDesiredState(new SwerveModuleState(0.0, new Rotation2d(-Math.PI / 4.0)));
             bottomLeftModule.setDesiredState(new SwerveModuleState(0.0, new Rotation2d(-Math.PI / 4.0)));
@@ -218,6 +229,14 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
             bottomLeftModule.getState(),
             bottomRightModule.getState()
         };
+    }
+
+    /**
+     * Sets whether the swerve should be locked parallel to the charging station.
+     * @param locked Whethe to lock the swerve parallel to the charging station.
+     */
+    public void setChargingStationLocked(boolean locked) {
+        this.chargingStationLocked = locked;
     }
 
     /**
