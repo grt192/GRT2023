@@ -54,4 +54,10 @@ public class TwistJoystickDriveController extends BaseDriveController {
     public JoystickButton getCameraSwitchButton() {
         return leftUnknownButton;
     }
+
+    @Override
+    public JoystickButton getChargingStationLockButton() {
+        // TODO: this is already taken by swerve relative; map out buttons on cyborg joystick and rebind
+        return leftTrigger;
+    }
 }

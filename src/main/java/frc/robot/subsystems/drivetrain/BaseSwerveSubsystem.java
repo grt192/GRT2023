@@ -147,10 +147,9 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
             lockTimer.reset();
         }
 
-        // Lock the swerve modules parallel to the charging station if the charging station lock state is set, 
-        // lock them in an X if the lock timeout has elapsed, or set them to their setpoints if drivers are supplying
-        // non-idle input.
-        if (chargingStationLocked) {
+        // Lock the swerve modules in an X (or parallel to the charging station if the state is set) if the lock timeout has elapsed,
+        // or set them to their setpoints if drivers are supplying non-idle input.
+        if (chargingStationLocked && lockTimer.hasElapsed(LOCK_TIMEOUT_SECONDS)) {
             // Lock modules parallel to the charging station, accounting for the orientation of the robot.
             Rotation2d lockAngle = Rotation2d.fromDegrees(90).minus(getFieldHeading());
 
@@ -233,10 +232,17 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
 
     /**
      * Sets whether the swerve should be locked parallel to the charging station.
-     * @param locked Whethe to lock the swerve parallel to the charging station.
+     * @param locked Whether to lock the swerve parallel to the charging station.
      */
     public void setChargingStationLocked(boolean locked) {
         this.chargingStationLocked = locked;
+    }
+
+    /**
+     * Toggles whether the swerve should be locked parallel to the charging station.
+     */
+    public void toggleChargingStationLocked() {
+        this.chargingStationLocked = !chargingStationLocked;
     }
 
     /**

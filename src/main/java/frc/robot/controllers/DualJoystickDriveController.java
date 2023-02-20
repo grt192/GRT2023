@@ -55,4 +55,10 @@ public class DualJoystickDriveController extends BaseDriveController {
     public JoystickButton getCameraSwitchButton() {
         return leftTopCenterButton;
     }
+
+    @Override
+    public JoystickButton getChargingStationLockButton() {
+        // TODO: this is already taken by swerve relative; map out buttons on logitech joysticks and rebind
+        return rightTrigger;
+    }
 }
