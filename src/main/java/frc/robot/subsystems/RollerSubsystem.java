@@ -8,8 +8,8 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.util.Color;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
 import frc.robot.util.MotorUtil;
 
 import static frc.robot.Constants.RollerConstants.*;
@@ -31,7 +31,6 @@ public class RollerSubsystem extends SubsystemBase {
 
     private final Timer openTimer = new Timer();
     private final Timer closeTimer = new Timer();
-    private final Timer rollTimer = new Timer();
 
     private final int coneRedMax = 80;
     private final int coneRedMin = 65;
@@ -58,9 +57,6 @@ public class RollerSubsystem extends SubsystemBase {
     private final double COOLDOWN_SECONDS = 2.0;
 
     private double rollPower = 0.0;
-    private double rollDuration = 0.5;
-    private boolean rolling = false;
-    
 
     public RollerSubsystem() {
         leftBeak = MotorUtil.createTalonSRX(LEFT_ID);
@@ -91,19 +87,6 @@ public class RollerSubsystem extends SubsystemBase {
         openTimer.start();
         closeTimer.stop();
         closeTimer.reset();
-    }
-
-    public InstantCommand getOuttakeCommand(double power, double duration){
-        return(new InstantCommand(() -> {
-            roll(power, duration);
-        }));
-    }
-
-    public void roll(double power, double duration){
-        rollTimer.start();
-        rolling = true;
-        rollPower = power;
-        rollDuration = duration;
     }
 
     /**
@@ -151,15 +134,6 @@ public class RollerSubsystem extends SubsystemBase {
         if (openTimer.hasElapsed(OPEN_TIME_SECONDS + COOLDOWN_SECONDS)) {
             openTimer.stop();
             openTimer.reset();
-        }
-
-        if(rolling){
-            if(rollTimer.hasElapsed(rollDuration)){
-                rollPower = 0;
-                rolling = false;
-                rollTimer.stop();
-                rollTimer.reset();
-            }
         }
 
         // if wheels must intake, and the limit switch is not pressed, turn on motors
