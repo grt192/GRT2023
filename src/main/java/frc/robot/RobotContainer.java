@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 import frc.robot.commands.BalancerCommand;
+import frc.robot.commands.dropping.DropperChooserCommand;
 import frc.robot.commands.sequences.BlueBalanceAuton;
 import frc.robot.commands.sequences.BlueBottomAuton;
 import frc.robot.commands.sequences.BlueTopAuton;
@@ -162,6 +163,8 @@ public class RobotContainer {
                 swerveSubsystem.setDrivePowers(xPower, yPower, angularPower, relative);
             }, swerveSubsystem));
 
+            mechAButton.onTrue(new DropperChooserCommand(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem));
+
             driveController.getFieldResetButton().onTrue(new InstantCommand(swerveSubsystem::resetFieldAngle, swerveSubsystem));
         } else if (driveSubsystem instanceof TankSubsystem) {
             final TankSubsystem tankSubsystem = (TankSubsystem) driveSubsystem;
@@ -186,24 +189,34 @@ public class RobotContainer {
             rollerSubsystem.setRollPower(rollPower);
         }, rollerSubsystem));
 
-        mechAButton.onTrue(new InstantCommand(rollerSubsystem::openMotor, rollerSubsystem));
+        mechYButton.onTrue(new InstantCommand(() -> {
+            rollerSubsystem.openMotor();;
+        }, rollerSubsystem));
 
         tiltedElevatorSubsystem.setDefaultCommand(new RunCommand(() -> {
             double yPower = -mechController.getLeftY();
+            double pov = mechController.getPOV();
+            if(pov == 0){
+                tiltedElevatorSubsystem.setState(ElevatorState.SUBSTATION);
+            } else if (pov == 270){
+                tiltedElevatorSubsystem.setState(ElevatorState.HYBRID);
+            } else if (pov == 180){
+                tiltedElevatorSubsystem.setState(ElevatorState.GROUND);
+            } else if (pov == 90){
+                tiltedElevatorSubsystem.resetOffset();
+            }
             tiltedElevatorSubsystem.setManualPower(yPower);
 
             tiltedElevatorSubsystem.changeOffsetDistMeters(yPower);
-        }, tiltedElevatorSubsystem));
-
-        mechYButton.onTrue(new InstantCommand(() -> {
-            tiltedElevatorSubsystem.toggleState(ElevatorState.GROUND, ElevatorState.SUBSTATION);
         }, tiltedElevatorSubsystem));
 
         mechBButton.onTrue(new InstantCommand(() -> {
             tiltedElevatorSubsystem.toggleState(ElevatorState.GROUND, ElevatorState.CHUTE);
         }, tiltedElevatorSubsystem));
 
-        mechXButton.onTrue(new InstantCommand(tiltedElevatorSubsystem::resetOffset));
+        mechXButton.onTrue(new InstantCommand(() -> {
+            tiltedElevatorSubsystem.setState(ElevatorState.HOME);
+        }, tiltedElevatorSubsystem));
 
         mechRBumper.onTrue(new InstantCommand(() -> {
             tiltedElevatorSubsystem.toggleState(ElevatorState.CUBE_MID, ElevatorState.CUBE_HIGH);
@@ -212,6 +225,8 @@ public class RobotContainer {
         mechLBumper.onTrue(new InstantCommand(() -> {
             tiltedElevatorSubsystem.toggleState(ElevatorState.CONE_MID, ElevatorState.CONE_HIGH);
         }, tiltedElevatorSubsystem));
+
+        
     }
 
     /**

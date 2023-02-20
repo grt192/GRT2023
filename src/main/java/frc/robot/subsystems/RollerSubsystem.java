@@ -8,8 +8,8 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.util.Color;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
 import frc.robot.util.MotorUtil;
 
 import static frc.robot.Constants.RollerConstants.*;
@@ -27,8 +27,11 @@ public class RollerSubsystem extends SubsystemBase {
     }
 
     private HeldPiece heldPiece = HeldPiece.EMPTY;
+    public boolean allowOpen = true;
 
     private final Timer openTimer = new Timer();
+    private final Timer closeTimer = new Timer();
+    private final Timer rollTimer = new Timer();
 
     private final int coneRedMax = 80;
     private final int coneRedMin = 65;
@@ -51,9 +54,13 @@ public class RollerSubsystem extends SubsystemBase {
     // private final GenericEntry bentry;
 
     private final double OPEN_TIME_SECONDS = 1.0;
+    private final double CLOSE_TIME_SECONDS = 0.5;
     private final double COOLDOWN_SECONDS = 2.0;
 
     private double rollPower = 0.0;
+    private double rollDuration = 0.5;
+    private boolean rolling = false;
+    
 
     public RollerSubsystem() {
         leftBeak = MotorUtil.createTalonSRX(LEFT_ID);
@@ -82,6 +89,21 @@ public class RollerSubsystem extends SubsystemBase {
      */
     public void openMotor() {
         openTimer.start();
+        closeTimer.stop();
+        closeTimer.reset();
+    }
+
+    public InstantCommand getOuttakeCommand(double power, double duration){
+        return(new InstantCommand(() -> {
+            roll(power, duration);
+        }));
+    }
+
+    public void roll(double power, double duration){
+        rollTimer.start();
+        rolling = true;
+        rollPower = power;
+        rollDuration = duration;
     }
 
     /**
@@ -102,9 +124,28 @@ public class RollerSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        // If `OPEN_TIME` hasn't elapsed yet, run the motor.
         boolean opening = openTimer.get() > 0 && !openTimer.hasElapsed(OPEN_TIME_SECONDS);
-        openMotor.set(opening ? 0.3 : 0);
+        boolean closing = !opening || !allowOpen;
+
+        if (closing) {
+            closeTimer.start();
+        }
+
+        if (closeTimer.get() > 0) {
+            if (!closeTimer.hasElapsed(CLOSE_TIME_SECONDS)) {
+                openMotor.set(-.2);
+            } else {
+                openMotor.set(0);
+            }
+        } else {
+            openMotor.set(0.5);
+        }
+
+        // If `OPEN_TIME` hasn't elapsed yet, run the motor.
+        // boolean opening = openTimer.get() > 0 && !openTimer.hasElapsed(OPEN_TIME_SECONDS);
+        // if (opening && allowOpen) {
+        //     openMotor.set(opening && allowOpen ? 0.5 : 0);
+        // }
 
         // If the cooldown has passed, stop and reset the timer.
         if (openTimer.hasElapsed(OPEN_TIME_SECONDS + COOLDOWN_SECONDS)) {
@@ -112,10 +153,21 @@ public class RollerSubsystem extends SubsystemBase {
             openTimer.reset();
         }
 
+        if(rolling){
+            if(rollTimer.hasElapsed(rollDuration)){
+                rollPower = 0;
+                rolling = false;
+                rollTimer.stop();
+                rollTimer.reset();
+            }
+        }
+
         // if wheels must intake, and the limit switch is not pressed, turn on motors
         if (limitSwitch.get()) {
             leftBeak.set(rollPower);
+            heldPiece = HeldPiece.EMPTY;
         } else {
+            heldPiece = HeldPiece.CONE;
             leftBeak.set(Math.min(rollPower, 0.0));
         }
 

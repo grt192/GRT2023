@@ -10,6 +10,8 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.util.Units;
 
+import frc.robot.motorcontrol.HallEffectMagnet;
+
 import org.photonvision.PhotonCamera;
 
 /**
@@ -124,7 +126,15 @@ public final class Constants {
         public static final int EXTENSION_ID = 7;
         public static final int EXTENSION_FOLLOW_ID = 8;
         public static final int EXTENSION_FOLLOW_B_ID = 9;
+        
+        public static final float EXTENSION_LIMIT = (float) Units.inchesToMeters(62.5);
+        public static final double EXTENSION_TOLERANCE = Units.inchesToMeters(.5);
+
         public static final int ZERO_LIMIT_ID = 1;
+        public static final int LEFT_HALL_ID = 4;
+        public static final HallEffectMagnet[] LEFT_MAGNETS = {
+            new HallEffectMagnet(EXTENSION_LIMIT)
+        };
     }
 
     public static final class VisionConstants {
@@ -155,6 +165,8 @@ public final class Constants {
         public static final int LEFT_ID = 13;
         public static final int RIGHT_ID = 14;
         public static final int LIMIT_SWITCH_ID = 0;
+
+        public static final double ALLOW_OPEN_HEIGHT = Units.inchesToMeters(17);
     }
 
     public static final class MoverConstants {
