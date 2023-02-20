@@ -32,7 +32,7 @@ public class DropperChooserCommand extends InstantCommand {
         return switch (state) {
             case CONE_HIGH -> new DropSequence(
                 swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem,
-                ElevatorState.CONE_HIGH_DROP, .2, 0, 0, .2, 0
+                ElevatorState.CONE_HIGH_DROP, 0, 0, 0, .2, 0
             );
 
             case CONE_MID -> new DropSequence(

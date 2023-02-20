@@ -44,7 +44,7 @@ public class DropSequence extends SequentialCommandGroup {
             new InstantCommand(() -> swerveSubsystem.setDrivePowers(-.2, 0, 0, true)),
             new WaitCommand(backTime),
             new InstantCommand(() -> swerveSubsystem.setDrivePowers(0, 0, 0, true)),
-            new TiltedElevatorCommand(tiltedElevatorSubsystem, ElevatorState.GROUND)
+            new InstantCommand(() -> tiltedElevatorSubsystem.setState(ElevatorState.GROUND))
         );
     }
 }
