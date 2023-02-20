@@ -1,16 +1,10 @@
 package frc.robot.commands.pretest;
 
-import java.util.List;
-
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 
 import frc.robot.commands.mover.TiltedElevatorCommand;
-import frc.robot.commands.swerve.FollowPathCommand;
 import frc.robot.subsystems.RollerSubsystem;
 import frc.robot.subsystems.TiltedElevatorSubsystem;
 import frc.robot.subsystems.TiltedElevatorSubsystem.ElevatorState;
@@ -55,9 +49,10 @@ public class MotorTestCommand extends SequentialCommandGroup {
 
             // Sweep rollers from [-1.0, 1.0]
             new RollerSweepCommand(rollerSubsystem),
+            new WaitCommand(TEST_DELAY_SECS),
 
             // Open motor
-            new InstantCommand(() -> rollerSubsystem.openMotor()),
+            new InstantCommand(rollerSubsystem::openMotor),
             new WaitCommand(MECH_DELAY_SECS),
 
             // Test swerve with forward, back, left, and right powers, and turning counterclockwise and clockwise
