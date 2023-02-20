@@ -1,4 +1,4 @@
-package frc.robot.commands;
+package frc.robot.commands.pretest;
 
 import java.util.List;
 
@@ -53,7 +53,8 @@ public class MotorTestCommand extends SequentialCommandGroup {
             new TiltedElevatorCommand(tiltedElevatorSubsystem, ElevatorState.SUBSTATION),
             new WaitCommand(MECH_DELAY_SECS),
 
-            // TODO: run rollers in and out
+            // Sweep rollers from [-1.0, 1.0]
+            new RollerSweepCommand(rollerSubsystem),
 
             // Open motor
             new InstantCommand(() -> rollerSubsystem.openMotor()),
