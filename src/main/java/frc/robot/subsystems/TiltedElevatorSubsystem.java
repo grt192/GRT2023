@@ -263,6 +263,7 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
      * @param state The `ElevatorState` to set the subsystem to.
      */
     public void setState(ElevatorState state) {
+        resetOffset();
         this.state = state;
     }
 

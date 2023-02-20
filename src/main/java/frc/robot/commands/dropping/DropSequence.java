@@ -6,6 +6,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -30,19 +31,9 @@ public class DropSequence extends SequentialCommandGroup {
      */
     public DropSequence(
         BaseSwerveSubsystem swerveSubsystem, RollerSubsystem rollerSubsystem, TiltedElevatorSubsystem tiltedElevatorSubsystem,
-        ElevatorState dropHeight, double waitTime1, double outtakePower, double outtakeDuration,
-        double waitTime2, double reverseDist, double waitTime3
+        ElevatorState dropHeight, double waitTime1, double outtakePower, double outtakeDuration, double waitTime2, double backTime
     ) {
         addRequirements(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem);
-
-        Pose2d currentPos = swerveSubsystem.getRobotPosition();
-        Pose2d targetPos = currentPos.plus(new Transform2d(
-            new Translation2d(
-                -reverseDist * currentPos.getRotation().getCos(),
-                -reverseDist * currentPos.getRotation().getSin()
-            ),
-            new Rotation2d()
-        ));
 
         addCommands(
             new TiltedElevatorCommand(tiltedElevatorSubsystem, dropHeight),
@@ -50,8 +41,9 @@ public class DropSequence extends SequentialCommandGroup {
             new InstantCommand(rollerSubsystem::openMotor, rollerSubsystem),
             rollerSubsystem.getOuttakeCommand(-outtakePower, outtakeDuration),
             new WaitCommand(waitTime2),
-            // FollowPathCommand.from(swerveSubsystem, currentPos, List.of(), targetPos),
-            new WaitCommand(waitTime3),
+            new InstantCommand(() -> swerveSubsystem.setDrivePowers(-.2, 0, 0, true)),
+            new WaitCommand(backTime),
+            new InstantCommand(() -> swerveSubsystem.setDrivePowers(0, 0, 0, true)),
             new TiltedElevatorCommand(tiltedElevatorSubsystem, ElevatorState.GROUND)
         );
     }

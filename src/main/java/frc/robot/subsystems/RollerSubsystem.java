@@ -170,7 +170,9 @@ public class RollerSubsystem extends SubsystemBase {
         // if wheels must intake, and the limit switch is not pressed, turn on motors
         if (limitSwitch.get()) {
             leftBeak.set(rollPower);
+            heldPiece = HeldPiece.EMPTY;
         } else {
+            heldPiece = HeldPiece.CONE;
             leftBeak.set(Math.min(rollPower, 0.0));
         }
 
