@@ -20,6 +20,9 @@ public class MotorTestCommand extends SequentialCommandGroup {
     private static final double TEST_DELAY_SECS = 1;
     private static final double MECH_DELAY_SECS = 2;
 
+    private static final double SWERVE_DRIVE_POWER = 0.5;
+    private static final double SWERVE_DRIVE_TIME_SECS = 3;
+
     public MotorTestCommand(BaseSwerveSubsystem swerveSubsystem, TiltedElevatorSubsystem tiltedElevatorSubsystem, RollerSubsystem rollerSubsystem) {
         addRequirements(swerveSubsystem, tiltedElevatorSubsystem, rollerSubsystem);
         
@@ -56,29 +59,26 @@ public class MotorTestCommand extends SequentialCommandGroup {
             new InstantCommand(() -> rollerSubsystem.openMotor()),
             new WaitCommand(MECH_DELAY_SECS),
 
-            // Test swerve with S-curves
-            FollowPathCommand.from(
-                swerveSubsystem, 
-                new Pose2d(), 
-                List.of(
-                    new Translation2d(1, 1),
-                    new Translation2d(2, -1) //,
-                    // new Translation2d(3, 0),
-                    // new Translation2d(2, -1),
-                    // new Translation2d(1, 1)
-                ),
-                new Pose2d(3, 0, new Rotation2d())
-                // new Pose2d()
-            ),
-            FollowPathCommand.from(
-                swerveSubsystem,
-                new Pose2d(3, 0, new Rotation2d()),
-                List.of(
-                    new Translation2d(2, -1),
-                    new Translation2d(1, 1)
-                ),
-                new Pose2d()
-            )
+            // Test swerve with forward, back, left, and right powers, and turning counterclockwise and clockwise
+            new InstantCommand(() -> swerveSubsystem.setDrivePowers(SWERVE_DRIVE_POWER, 0, 0, true)),
+            new WaitCommand(SWERVE_DRIVE_TIME_SECS),
+
+            new InstantCommand(() -> swerveSubsystem.setDrivePowers(-SWERVE_DRIVE_POWER, 0, 0, true)),
+            new WaitCommand(SWERVE_DRIVE_TIME_SECS),
+
+            new InstantCommand(() -> swerveSubsystem.setDrivePowers(0, SWERVE_DRIVE_POWER, 0, true)),
+            new WaitCommand(SWERVE_DRIVE_TIME_SECS),
+
+            new InstantCommand(() -> swerveSubsystem.setDrivePowers(0, -SWERVE_DRIVE_POWER, 0, true)),
+            new WaitCommand(SWERVE_DRIVE_TIME_SECS),
+
+            new InstantCommand(() -> swerveSubsystem.setDrivePowers(0, 0, SWERVE_DRIVE_POWER, true)),
+            new WaitCommand(SWERVE_DRIVE_TIME_SECS),
+
+            new InstantCommand(() -> swerveSubsystem.setDrivePowers(0, 0, -SWERVE_DRIVE_POWER, true)),
+            new WaitCommand(SWERVE_DRIVE_TIME_SECS),
+
+            new InstantCommand(() -> swerveSubsystem.setDrivePowers(0, 0, 0, true))
         );
     }
 }
