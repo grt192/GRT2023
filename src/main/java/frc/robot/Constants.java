@@ -10,7 +10,7 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.util.Units;
 
-import frc.robot.motorcontrol.HallEffectMagnet;
+import frc.robot.util.HallEffectSensor;
 
 import org.photonvision.PhotonCamera;
 
@@ -132,8 +132,8 @@ public final class Constants {
 
         public static final int ZERO_LIMIT_ID = 1;
         public static final int LEFT_HALL_ID = 4;
-        public static final HallEffectMagnet[] LEFT_MAGNETS = {
-            new HallEffectMagnet(EXTENSION_LIMIT)
+        public static final HallEffectSensor.Magnet[] LEFT_MAGNETS = {
+            new HallEffectSensor.Magnet(EXTENSION_LIMIT)
         };
     }
 

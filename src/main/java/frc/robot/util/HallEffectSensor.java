@@ -1,15 +1,17 @@
-package frc.robot.motorcontrol;
+package frc.robot.util;
 
 import java.util.ArrayList;
 
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 
 public class HallEffectSensor {
-    private DigitalInput sensor;
-    private HallEffectMagnet[] magnets; // array of magnet locations from smallest extension to largest extension
+    private final DigitalInput sensor;
+    private final Magnet[] magnets; // array of magnet locations from smallest extension to largest extension
+
     private ArrayList<GenericEntry> shuffleboardEntries = null;
 
     // State vars tracking current sensor location using index of magnet position[]
@@ -20,11 +22,11 @@ public class HallEffectSensor {
     private boolean prevDetected;
     private double prevMechPos;
 
-    public HallEffectSensor(int id, HallEffectMagnet[] magnets, double initialMechPos) {
+    public HallEffectSensor(int id, Magnet[] magnets, double initialMechPos) {
         this(id, magnets, initialMechPos, -1, 0);
     }
-    
-    public HallEffectSensor(int id, HallEffectMagnet[] magnets, double initialMechPos, int lowerPos, int upperPos) {
+
+    public HallEffectSensor(int id, Magnet[] magnets, double initialMechPos, int lowerPos, int upperPos) {
         this.sensor = new DigitalInput(id);
         this.magnets = magnets;
 
@@ -43,8 +45,11 @@ public class HallEffectSensor {
      */
     public void addToShuffleboard(ShuffleboardTab shuffleboardTab, int columnIndex, int rowIndex) {
         shuffleboardEntries = new ArrayList<GenericEntry>();
-        for (HallEffectMagnet magnet : magnets) {
-            GenericEntry entry = shuffleboardTab.add("Magnet " + magnet.getExtendDistanceInches() + "in", false).withPosition(columnIndex++, rowIndex).withWidget(BuiltInWidgets.kBooleanBox).getEntry();
+        for (Magnet magnet : magnets) {
+            GenericEntry entry = shuffleboardTab.add("Magnet " + Units.inchesToMeters(magnet.getExtendDistanceMeters()) + "in", false)
+                .withPosition(columnIndex++, rowIndex)
+                .withWidget(BuiltInWidgets.kBooleanBox)
+                .getEntry();
             shuffleboardEntries.add(entry);
         }
     }
@@ -65,9 +70,9 @@ public class HallEffectSensor {
      * @param mechPos Mechanism position, double
      * @return A HallEffectMagnet object or null if sensor is between magnets.
      */
-    public HallEffectMagnet getHallEffectState(double mechPos) {
+    public Magnet getHallEffectState(double mechPos) {
         boolean detected = !sensor.get();
-        return((detected) ? magnets[0] : null);
+        return detected ? magnets[0] : null;
         // boolean movingUp = (mechPos - prevMechPos) > 0;
 
         // // If magnet is newly detected
@@ -97,5 +102,17 @@ public class HallEffectSensor {
         // prevMechPos = mechPos;
 
         // return (lowerPos == upperPos) ? magnets[lowerPos] : null;
+    }
+
+    public static class Magnet {
+        private double extendDistanceMeters;
+
+        public Magnet(double extendDistanceMeters) {
+            this.extendDistanceMeters = extendDistanceMeters;
+        }
+
+        public double getExtendDistanceMeters() {
+            return extendDistanceMeters;
+        }
     }
 }

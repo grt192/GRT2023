@@ -20,10 +20,9 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.Constants;
+import frc.robot.util.HallEffectSensor;
 import frc.robot.util.MotorUtil;
 import frc.robot.util.ShuffleboardUtil;
-import frc.robot.motorcontrol.HallEffectSensor;
-import frc.robot.motorcontrol.HallEffectMagnet;
 
 import static frc.robot.Constants.TiltedElevatorConstants.*;
 import static frc.robot.Constants.IS_R1;
@@ -69,7 +68,7 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
     private final GenericEntry currentExtensionEntry, currentVelEntry, currentStateEntry, offsetDistEntry;
     private final GenericEntry limitSwitchEntry, hallEntry;
 
-    private HallEffectMagnet lastHallPos = null;
+    private HallEffectSensor.Magnet lastHallPos = null;
 
 
     public enum ElevatorState {
@@ -186,7 +185,7 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
 
         // When magnet is detected, reset encoder
         if (leftHallSensor != null) {
-            HallEffectMagnet leftHallSensorPos = leftHallSensor.getHallEffectState(extensionEncoder.getPosition());
+            HallEffectSensor.Magnet leftHallSensorPos = leftHallSensor.getHallEffectState(extensionEncoder.getPosition());
             // System.out.println(leftHallSensorPos);
             // System.out.println(lastHallPos + " " + leftHallSensorPos);
             if (leftHallSensorPos != null && lastHallPos == null){
