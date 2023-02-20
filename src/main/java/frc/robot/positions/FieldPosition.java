@@ -7,11 +7,51 @@ import edu.wpi.first.math.util.Units;
 import frc.robot.util.FieldUtil;
 
 public enum FieldPosition {
-    // BOTTOM_INIT(new Pose2d(
-    //     Units.inchesToMeters(75.178),
-    //     Units.inchesToMeters(17.714),
-    //     Rotation2d.fromDegrees(180)
-    // )),
+    C3MINIT(new Pose2d(
+        Units.inchesToMeters(86.855),
+        Units.inchesToMeters(195.55),
+        Rotation2d.fromDegrees(180)
+    )),
+    C2INIT(new Pose2d(
+        Units.inchesToMeters(86.855),
+        Units.inchesToMeters(174.123),
+        Rotation2d.fromDegrees(180)
+    )),
+    C1INIT(new Pose2d(
+        Units.inchesToMeters(86.855),
+        Units.inchesToMeters(152.123),
+        Rotation2d.fromDegrees(180)
+    )),
+    B3INIT(new Pose2d(
+        Units.inchesToMeters(86.855),
+        Units.inchesToMeters(129.75),
+        Rotation2d.fromDegrees(180)
+    )),
+    B2INIT(new Pose2d(
+        Units.inchesToMeters(86.855),
+        Units.inchesToMeters(107.801),
+        Rotation2d.fromDegrees(180)
+    )),
+    B1INIT(new Pose2d(
+        Units.inchesToMeters(86.855),
+        Units.inchesToMeters(86.149),
+        Rotation2d.fromDegrees(180)
+    )),
+    A3INIT(new Pose2d(
+        Units.inchesToMeters(86.855),
+        Units.inchesToMeters(64.818),
+        Rotation2d.fromDegrees(180)
+    )),
+    A2INIT(new Pose2d(
+        Units.inchesToMeters(86.855),
+        Units.inchesToMeters(41.761),
+        Rotation2d.fromDegrees(180)
+    )),
+    A1INIT(new Pose2d(
+        Units.inchesToMeters(86.855),
+        Units.inchesToMeters(20.016),
+        Rotation2d.fromDegrees(180)
+    )), 
     BOTTOM_MIDPOS_1(new Pose2d(
         Units.inchesToMeters(94.373),
         Units.inchesToMeters(28.007),
@@ -22,12 +62,6 @@ public enum FieldPosition {
         Units.inchesToMeters(32.000), 
         Rotation2d.fromDegrees(180)
     )),
-
-    // BALANCE_INIT(new Pose2d(
-    //     Units.inchesToMeters(75.178),
-    //     Units.inchesToMeters(107.638),
-    //     Rotation2d.fromDegrees(180)
-    // )),
     BALANCE_MIDPOS_1(new Pose2d(
         Units.inchesToMeters(215.000),
         Units.inchesToMeters(107.638),
@@ -44,11 +78,6 @@ public enum FieldPosition {
         Rotation2d.fromDegrees(0)
     )),
 
-    // TOP_INIT(new Pose2d(
-    //     Units.inchesToMeters(75.178),
-    //     Units.inchesToMeters(190.366),
-    //     Rotation2d.fromDegrees(180)
-    // )),
     TOP_MIDPOS_1(new Pose2d(
         Units.inchesToMeters(94.373),
         Units.inchesToMeters(187.638),
