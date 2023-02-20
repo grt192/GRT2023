@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.util.MotorUtil;
+import frc.robot.util.TrackingTimer;
 
 import static frc.robot.Constants.RollerConstants.*;
 
@@ -32,8 +33,8 @@ public class RollerSubsystem extends SubsystemBase {
     public boolean allowOpen = true;
     private boolean prevAllowedOpen = true;
 
-    private final Timer openTimer = new Timer();
-    private final Timer closeTimer = new Timer();
+    private final TrackingTimer openTimer = new TrackingTimer();
+    private final TrackingTimer closeTimer = new TrackingTimer();
 
     // ~110 for nothing, 130 for cone, 160 for cube
     private static final int CONE_PROXIMITY_THRESHOLD = 115;
@@ -113,7 +114,7 @@ public class RollerSubsystem extends SubsystemBase {
         prevAllowedOpen = allowOpen;
 
         // If we're opening and not allowed to anymore, or if we've finished opening, stop opening and start closing.
-        if ((openTimer.get() > 0 && stopOpening) || openTimer.hasElapsed(OPEN_TIME_SECONDS)) {
+        if ((openTimer.hasStarted() && stopOpening) || openTimer.hasElapsed(OPEN_TIME_SECONDS)) {
             openTimer.stop();
             openTimer.reset();
             closeTimer.start();
@@ -126,10 +127,9 @@ public class RollerSubsystem extends SubsystemBase {
         }
 
         // Otherwise, open if we're opening and close if we're closing.
-        openMotor.set(
-            openTimer.get() > 0 ? 0.5 :
-            closeTimer.get() > 0 ? -0.2 : 0
-        );
+        if (openTimer.hasStarted()) openMotor.set(0.5);
+        else if (closeTimer.hasStarted()) openMotor.set(-0.2);
+        else openMotor.set(0);
 
         // if wheels must intake, and the limit switch is not pressed, turn on motors
         if (limitSwitch.get()) {
