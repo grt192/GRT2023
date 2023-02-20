@@ -266,6 +266,7 @@ public class RobotContainer {
      * @return the command to run in test
      */
     public Command getTestCommand() {
+        if (!(driveSubsystem instanceof BaseSwerveSubsystem)) return null;
         return new MotorTestCommand(
             (BaseSwerveSubsystem) driveSubsystem,
             tiltedElevatorSubsystem,
