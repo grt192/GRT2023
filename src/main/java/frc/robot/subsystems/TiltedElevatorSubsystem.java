@@ -26,6 +26,7 @@ import frc.robot.motorcontrol.HallEffectSensor;
 import frc.robot.motorcontrol.HallEffectMagnet;
 
 import static frc.robot.Constants.TiltedElevatorConstants.*;
+import static frc.robot.Constants.IS_R1;
 
 public class TiltedElevatorSubsystem extends SubsystemBase {
     private final CANSparkMax extensionMotor;
@@ -47,7 +48,7 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
     private static final double extensionD = 0;
     private static final double extensionTolerance = 0.003;
     private static final double extensionRampRate = 0.4;
-    private double arbFeedforward = 0;
+    private double arbFeedforward = (IS_R1 ? .03 : 0);
 
     private ElevatorState state = ElevatorState.GROUND;
 
@@ -85,9 +86,9 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
         SUBSTATION(Units.inchesToMeters(50)), // absolute height = 37.375 in
         CUBE_MID(Units.inchesToMeters(Constants.IS_R1 ? 33 : 40)), // absolute height = 14.25 in
         CUBE_HIGH(Units.inchesToMeters(Constants.IS_R1 ? 53 : 55)), // absolute height = 31.625 in
-        CONE_MID(Units.inchesToMeters(48)), // absolute height = 34 in
+        CONE_MID(Units.inchesToMeters(Constants.IS_R1 ? 50 : 48)), // absolute height = 34 in
         CONE_MID_DROP(CONE_MID.getExtension(false) - Units.inchesToMeters(10)),
-        CONE_HIGH(Units.inchesToMeters(62.5)), // absolute height = 46 in
+        CONE_HIGH(Units.inchesToMeters(Constants.IS_R1 ? 53 : 62.5)), // absolute height = 46 in
         CONE_HIGH_DROP(CONE_HIGH.getExtension(false) - Units.inchesToMeters(0)),
         HYBRID(Units.inchesToMeters(20)),//NEEDS TUNING
         HOME(Units.inchesToMeters(0));

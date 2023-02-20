@@ -14,11 +14,6 @@ import frc.robot.util.MotorUtil;
 
 import static frc.robot.Constants.RollerConstants.*;
 
-import java.sql.Time;
-
-import org.opencv.osgi.OpenCVInterface;
-import org.opencv.osgi.OpenCVNativeLoader;
-
 public class RollerSubsystem extends SubsystemBase {
     private final WPI_TalonSRX leftBeak;
     private final WPI_TalonSRX rightBeak;

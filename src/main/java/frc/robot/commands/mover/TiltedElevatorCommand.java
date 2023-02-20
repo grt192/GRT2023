@@ -30,6 +30,6 @@ public class TiltedElevatorCommand extends CommandBase {
     }
     
     public boolean isFinished() {
-        return tiltedElevatorSubsystem.atTarget() || timer.hasElapsed(1);
+        return tiltedElevatorSubsystem.atTarget() || timer.hasElapsed(3);
     }
 }

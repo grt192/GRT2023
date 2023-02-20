@@ -133,7 +133,7 @@ public final class Constants {
         public static final int ZERO_LIMIT_ID = 1;
         public static final int LEFT_HALL_ID = 4;
         public static final HallEffectMagnet[] LEFT_MAGNETS = {
-            new HallEffectMagnet(EXTENSION_LIMIT) // todo
+            new HallEffectMagnet(EXTENSION_LIMIT)
         };
     }
 
