@@ -83,6 +83,7 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
                     : extendDistanceMeters;
             }
         },
+        SLOWLYLOWER(0), //state for flipCone command
         CHUTE(Units.inchesToMeters(40)),
         SUBSTATION(Units.inchesToMeters(50)), // absolute height = 37.375 in
         CUBE_MID(Units.inchesToMeters(Constants.IS_R1 ? 33 : 40)), // absolute height = 14.25 in

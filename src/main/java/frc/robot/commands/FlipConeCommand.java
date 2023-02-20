@@ -18,15 +18,17 @@ public class FlipConeCommand extends CommandBase {
     }
     @Override
     public void initialize() {
-        tiltedElevatorSubsystem.flipCone = !tiltedElevatorSubsystem.flipCone;
-        System.out.println("blej");
+        tiltedElevatorSubsystem.flipCone = !tiltedElevatorSubsystem.flipCone; //"togglable" command, flipcone should init then end if flipcone is false
+        addRequirements(swerveSubsystem, tiltedElevatorSubsystem);
     }
 
     @Override
     public void execute() {
+        tiltedElevatorSubsystem.setState(ElevatorState.SLOWLYLOWER);
         swerveSubsystem.setDrivePowers(-.2);
     }
 
+    //end if button was pressed again or elevator has reached ground(no need to continue backing up)
     @Override
     public boolean isFinished() {
         return (!tiltedElevatorSubsystem.flipCone || tiltedElevatorSubsystem.getExtension() == 0);
