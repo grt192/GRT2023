@@ -24,7 +24,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.commands.Balancing.BalancerCommand;
+import frc.robot.commands.Balancing.DefaultBalancerCommand;
 import frc.robot.commands.swerve.FollowPathCommand;
 import frc.robot.controllers.BaseDriveController;
 import frc.robot.controllers.DualJoystickDriveController;
@@ -91,7 +91,7 @@ public class RobotContainer {
     // Commands
     private final ShuffleboardTab shuffleboardTab = Shuffleboard.getTab("Auton");
     private final SendableChooser<Command> autonChooser;
-    private BalancerCommand balancerCommand;
+    private DefaultBalancerCommand balancerCommand;
 
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -104,7 +104,7 @@ public class RobotContainer {
         // rollerSubsystem = new RollerSubsystem();
         // tiltedElevatorSubsystem = new TiltedElevatorSubsystem();
 
-        balancerCommand = new BalancerCommand(driveSubsystem);
+        balancerCommand = new DefaultBalancerCommand(driveSubsystem);
 
         // Configure the button bindings
         configureButtonBindings();

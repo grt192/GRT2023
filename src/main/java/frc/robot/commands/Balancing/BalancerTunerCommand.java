@@ -10,17 +10,16 @@ import frc.robot.subsystems.drivetrain.BaseDrivetrain;
 import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
 import edu.wpi.first.wpilibj.Timer;
 
-public class PIDSwitchBalancer extends CommandBase {
+public class BalancerTunerCommand extends CommandBase {
     private final BaseDrivetrain driveSubsystem;
     private final AHRS ahrs; 
     
     private double initialHeading;
     private double oldPitch;
     private double currentPitch;
-    private double deltaAngle;
+    private double angularAcceleration;
 
-    PIDController roughPID;
-    PIDController finePID;
+    PIDController drivePID;
     PIDController turnPID;
 
     private double returnDrivePower; // drive power to be returned to DT
@@ -29,19 +28,15 @@ public class PIDSwitchBalancer extends CommandBase {
     public boolean reachedStation;
     public boolean passedCenter;
     public boolean waiting;
-
-    public boolean fine; 
     public boolean balanced;
 
     private final Timer timer;
 
-    public PIDSwitchBalancer(BaseDrivetrain driveSubsystem) {
+    public BalancerTunerCommand(BaseDrivetrain driveSubsystem) {
         this.driveSubsystem = driveSubsystem;
         this.ahrs = driveSubsystem.getAhrs();
 
-        roughPID = new PIDController(0.5/35, 0.0, 0.0); 
-        finePID = new PIDController(0.25/22, 0.0, 0.0); 
-
+        drivePID = new PIDController(0.3/35, 0.0, 0.0); // no deriv successful
         turnPID = new PIDController(0.1/5,0.0, 0.0); // kP = max pwr / max err
         timer = new Timer();
         addRequirements(driveSubsystem);
@@ -63,35 +58,12 @@ public class PIDSwitchBalancer extends CommandBase {
     @Override
     public void execute() {
         
-        returnAngularPower = turnPID.calculate(ahrs.getCompassHeading(), initialHeading); // correct angle of approach
+        // get initial angle
 
-        if(!reachedStation) {
-            returnDrivePower = - 0.80;
-            if(ahrs.getPitch() <= - 15.0) reachedStation = true;
-        }
-        else{
-            
-            currentPitch = ahrs.getPitch();
-            deltaAngle = Math.abs(currentPitch - oldPitch);
-            fine = ahrs.getPitch() >= -11.0 && deltaAngle <= 0.25;
+        // move set amount forward
 
-            if(fine) returnDrivePower = -1 * finePID.calculate(ahrs.getPitch(), 0);
-            else returnDrivePower = -1 * roughPID.calculate(ahrs.getPitch(), 0);
-           
-            System.out.println("DeltaAngle" + deltaAngle);
-            
-            if(Math.abs(ahrs.getPitch()) <= 2.0 && deltaAngle <= 0.05){
-                balanced = true;
-                if(driveSubsystem instanceof BaseSwerveSubsystem) ((BaseSwerveSubsystem) driveSubsystem).lockNow();
-            }
-        }
 
-        if(driveSubsystem instanceof BaseSwerveSubsystem){
-            ((BaseSwerveSubsystem) driveSubsystem).setDrivePowers(returnDrivePower, 0.0);
-        }
-        else driveSubsystem.setDrivePowers(returnDrivePower);
-
-        oldPitch = currentPitch; // set the current angle to old angle so it is accessible for next cycle     
+        driveSubsystem.setDrivePowers(0.0);   
     }
 
     // Called once the command ends or is interrupted.

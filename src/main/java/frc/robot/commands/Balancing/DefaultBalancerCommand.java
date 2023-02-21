@@ -10,7 +10,7 @@ import frc.robot.subsystems.drivetrain.BaseDrivetrain;
 import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
 import edu.wpi.first.wpilibj.Timer;
 
-public class BalancerCommand extends CommandBase {
+public class DefaultBalancerCommand extends CommandBase {
     private final BaseDrivetrain driveSubsystem;
     private final AHRS ahrs; 
     
@@ -32,7 +32,7 @@ public class BalancerCommand extends CommandBase {
 
     private final Timer timer;
 
-    public BalancerCommand(BaseDrivetrain driveSubsystem) {
+    public DefaultBalancerCommand(BaseDrivetrain driveSubsystem) {
         this.driveSubsystem = driveSubsystem;
         this.ahrs = driveSubsystem.getAhrs();
 
