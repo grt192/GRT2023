@@ -59,6 +59,7 @@ public class DualJoystickDriveController extends BaseDriveController {
 
     @Override
     public JoystickButton getBalancerButton() {
+        // TODO: this button is already bound; merge #63 and change this button in rebase
         return leftTrigger;
     }
 

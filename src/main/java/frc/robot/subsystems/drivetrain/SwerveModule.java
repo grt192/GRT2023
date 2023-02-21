@@ -152,10 +152,6 @@ public class SwerveModule implements BaseSwerveModule {
     public SwerveModule(int drivePort, int steerPort) {
         this(drivePort, steerPort, 0.0);
     }
-    
-    public void setSparkMaxIdleMode(IdleMode idleMode) {
-        driveMotor.setIdleMode(idleMode);    
-    }
 
     /**
      * Gets the current state of the module as a `SwerveModulePosition`.

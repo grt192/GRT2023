@@ -96,17 +96,12 @@ public class RobotContainer {
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
     public RobotContainer() {
-
-        CameraServer.startAutomaticCapture();
-
-        // driveController = new XboxDriveController();
         driveController = new DualJoystickDriveController();
 
         photonWrapper = new PhotonWrapper();
         switchableCamera = new SwitchableCamera();
 
-        // driveSubsystem = new SwerveSubsystem(photonWrapper);
-        driveSubsystem = new MissileShellSwerveSubsystem();
+        driveSubsystem = new SwerveSubsystem(photonWrapper);
         rollerSubsystem = new RollerSubsystem();
         tiltedElevatorSubsystem = new TiltedElevatorSubsystem();
 
@@ -217,7 +212,7 @@ public class RobotContainer {
         }, tiltedElevatorSubsystem));
 
         mechBButton.onTrue(new InstantCommand(() -> {
-            tiltedElevatorSubsystem.toggleState(ElevatorState.GROUND, ElevatorState.GROUND);
+            tiltedElevatorSubsystem.toggleState(ElevatorState.GROUND, ElevatorState.CHUTE);
         }, tiltedElevatorSubsystem));
 
         mechXButton.onTrue(new InstantCommand(() -> {
