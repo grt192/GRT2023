@@ -40,7 +40,6 @@ public class SwitchableCamera {
      * Switches the source connected to this camera (toggles between front and back).
      */
     public void switchCamera() {
-
         server.setSource(frontActive ? front : back);
         frontActive = !frontActive;
     }
