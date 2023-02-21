@@ -20,7 +20,7 @@ public class MotorTestCommand extends SequentialCommandGroup {
 
     public MotorTestCommand(BaseSwerveSubsystem swerveSubsystem, TiltedElevatorSubsystem tiltedElevatorSubsystem, RollerSubsystem rollerSubsystem) {
         addRequirements(swerveSubsystem, tiltedElevatorSubsystem, rollerSubsystem);
-        
+
         addCommands(
             // Run tilted elevator to all heights
             // GROUND - CHUTE - SUBSTATION - CUBEMID - CUBEHIGH - CONEMID - CONEHIGH - SUBSTATION
@@ -52,8 +52,8 @@ public class MotorTestCommand extends SequentialCommandGroup {
             DropperChooserCommand.getSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem),
             new WaitCommand(MECH_DELAY_SECS),
 
-            // Sweep rollers from [-1.0, 1.0]
-            new RollerSweepCommand(rollerSubsystem),
+            // Sweep rollers from [-1.0, 1.0] over 2 seconds
+            new RollerSweepCommand(rollerSubsystem, 2.0),
             new WaitCommand(TEST_DELAY_SECS),
 
             // Open motor

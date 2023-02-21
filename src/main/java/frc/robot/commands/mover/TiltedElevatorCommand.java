@@ -28,7 +28,7 @@ public class TiltedElevatorCommand extends CommandBase {
     public void end(boolean interrupted) {
         System.out.println("Mover at " + targetState);
     }
-    
+
     public boolean isFinished() {
         return tiltedElevatorSubsystem.atTarget() || timer.hasElapsed(3);
     }
