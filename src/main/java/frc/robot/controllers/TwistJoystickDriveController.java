@@ -55,11 +55,11 @@ public class TwistJoystickDriveController extends BaseDriveController {
 
     @Override
     public JoystickButton getCameraSwitchButton() {
-        return leftTopLeftButton;
+        return leftTopRightButton;
     }
 
     @Override
     public JoystickButton getChargingStationLockButton() {
-        return leftMiddleLeftButton;
+        return leftTopLeftButton;
     }
 }
