@@ -1,13 +1,13 @@
 import org.junit.jupiter.api.Test;
 
-import frc.robot.commands.sequences.BalanceAutonSequence;
-import frc.robot.commands.sequences.BottomAutonSequence;
-import frc.robot.commands.sequences.TopAutonSequence;
-import frc.robot.commands.sequences.test.BoxAutonSequence;
-import frc.robot.commands.sequences.test.GRTAutonSequence;
-import frc.robot.commands.sequences.test.HighRotationLinePath;
-import frc.robot.commands.sequences.test.RotatingSCurveAutonSequence;
-import frc.robot.commands.sequences.test.StraightLinePath;
+import frc.robot.commands.auton.BalanceAutonSequence;
+import frc.robot.commands.auton.BottomAutonSequence;
+import frc.robot.commands.auton.TopAutonSequence;
+import frc.robot.commands.auton.test.BoxAutonSequence;
+import frc.robot.commands.auton.test.GRTAutonSequence;
+import frc.robot.commands.auton.test.HighRotationLinePath;
+import frc.robot.commands.auton.test.RotatingSCurveAutonSequence;
+import frc.robot.commands.auton.test.StraightLinePath;
 import frc.robot.subsystems.RollerSubsystem;
 import frc.robot.subsystems.TiltedElevatorSubsystem;
 import frc.robot.subsystems.drivetrain.SwerveSubsystem;

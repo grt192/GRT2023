@@ -1,4 +1,4 @@
-package frc.robot.commands.sequences.test;
+package frc.robot.commands.auton.test;
 
 import java.util.List;
 
