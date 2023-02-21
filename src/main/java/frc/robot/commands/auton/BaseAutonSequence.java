@@ -6,7 +6,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.dropping.DropperChooserCommand;
 import frc.robot.commands.grabber.RollerIntakeCommand;
 import frc.robot.commands.mover.TiltedElevatorCommand;
@@ -61,8 +61,8 @@ public abstract class BaseAutonSequence extends SequentialCommandGroup {
      * @return The `SequentialCommandGroup` representing running the commands in order.
      */
     protected SequentialCommandGroup goAndPlace(Pose2d initialPose, List<Pose2d> waypoints, Pose2d raisePose, PlaceState finalState) {
-        return FollowPathCommand.composedFrom(swerveSubsystem, initialPose, waypoints, raisePose)
-            .andThen(goAndPlace(raisePose, finalState));
+        return FollowPathCommand.composedFrom(swerveSubsystem, initialPose, waypoints, raisePose, false, true)
+            .andThen(goAndPlace(raisePose, finalState, true));
     }
 
     /**
@@ -72,8 +72,20 @@ public abstract class BaseAutonSequence extends SequentialCommandGroup {
      * @return The `SequentialCommandGroup` representing running the commands in order.
      */
     protected SequentialCommandGroup goAndPlace(Pose2d initialPose, PlaceState finalState) {
+        return goAndPlace(initialPose, finalState, false);
+    }
+
+    /**
+     * Goes to a position and places the currently held game piece.
+     * @param intialPose The initial pose of the robot.
+     * @param finalState The destination pose and elevator state of the robot.
+     * @param startsMoving Whether the robot starts the `FollowPathCommand` in motion.
+     * @return The `SequentialCommandGroup` representing running the commands in order.
+     */
+    protected SequentialCommandGroup goAndPlace(Pose2d initialPose, PlaceState finalState, boolean startsMoving) {
         return new TiltedElevatorCommand(tiltedElevatorSubsystem, finalState.getElevatorState())
-            .andThen(FollowPathCommand.from(swerveSubsystem, initialPose, List.of(), finalState.getPose()))
+            .alongWith(FollowPathCommand.from(swerveSubsystem, initialPose, List.of(), finalState.getPose(), startsMoving, false))
+            .andThen(new WaitCommand(0.2))
             .andThen(DropperChooserCommand.getSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, finalState.getElevatorState()));
     }
 }

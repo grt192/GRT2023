@@ -127,9 +127,29 @@ public class FollowPathCommand extends SwerveControllerCommand {
      * @return The created `Command`.
      */
     public static Command composedFrom(BaseSwerveSubsystem swerveSubsystem, Pose2d start, List<Pose2d> waypoints, Pose2d end) {
+        return composedFrom(swerveSubsystem, start, waypoints, end, false, false);
+    }
+
+    /**
+     * Composes a sequence of FollowPathCommands from a given start point, list of waypoints, and end point. The commands
+     * are composed such that the robot starts and ends moving according to the specified booleans, but does not stop in the
+     * middle between commands. The robot ill straight-line between waypoints, hitting each heading along the way.
+     * 
+     * @param swerveSubsystem The swerve subsystem.
+     * @param start The start point of the trajectory as a Pose2d.
+     * @param waypoints A list of waypoints the robot must pass through as a List<Pose2d>.
+     * @param end The end point of the trajectory as a Pose2d.
+     * @param startsMoving Whether the trajectory should start in motion.
+     * @param endsMoving Whether the trajectory should end in motion.
+     * @return The created `Command`.
+     */
+    public static Command composedFrom(
+        BaseSwerveSubsystem swerveSubsystem, Pose2d start, List<Pose2d> waypoints, Pose2d end,
+        boolean startsMoving, boolean endsMoving
+    ) {
         if (waypoints.size() == 0) return from(swerveSubsystem, start, List.of(), end);
 
-        Command sequence = from(swerveSubsystem, start, List.of(), waypoints.get(0), false, true);
+        Command sequence = from(swerveSubsystem, start, List.of(), waypoints.get(0), startsMoving, true);
         for (int i = 0; i < waypoints.size() - 1; i++) {
             sequence = sequence.andThen(from(
                 swerveSubsystem, waypoints.get(i), List.of(), waypoints.get(i + 1),
@@ -139,7 +159,7 @@ public class FollowPathCommand extends SwerveControllerCommand {
 
         return sequence.andThen(from(
             swerveSubsystem, waypoints.get(waypoints.size() - 1), List.of(), end,
-            true, false
+            true, endsMoving
         ));
     }
 
