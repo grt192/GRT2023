@@ -14,9 +14,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-<<<<<<< HEAD
 
-import frc.robot.commands.BalancerCommand;
+import frc.robot.commands.Balancing.DefaultBalancerCommand;
 import frc.robot.commands.auton.BalanceAutonSequence;
 import frc.robot.commands.auton.BottomAutonSequence;
 import frc.robot.commands.auton.TopAutonSequence;
@@ -28,10 +27,6 @@ import frc.robot.commands.auton.test.RotatingSCurveAutonSequence;
 import frc.robot.commands.auton.test.TenFeetStraightLinePath;
 import frc.robot.commands.auton.test.TwentyFeetStraightLinePath;
 import frc.robot.commands.dropping.DropperChooserCommand;
-=======
-import frc.robot.commands.Balancing.BalancerCommand;
-import frc.robot.commands.swerve.FollowPathCommand;
->>>>>>> 0d79236 (added three balancer commands)
 import frc.robot.controllers.BaseDriveController;
 import frc.robot.controllers.DualJoystickDriveController;
 import frc.robot.controllers.TwistJoystickDriveController;
@@ -60,14 +55,8 @@ import frc.robot.subsystems.TiltedElevatorSubsystem.ElevatorState;
 public class RobotContainer {
     // Subsystems
     private final BaseDrivetrain driveSubsystem;
-<<<<<<< HEAD
     private final RollerSubsystem rollerSubsystem;
     private final TiltedElevatorSubsystem tiltedElevatorSubsystem;
-=======
-    // private final GripperSubsytem gripperSubsystem;
-    // private final RollerSubsystem rollerSubsystem;
-    // private final TiltedElevatorSubsystem tiltedElevatorSubsystem;
->>>>>>> a411fce (achieved ten second balance)
 
     private final Superstructure superstructure;
     private final PhotonWrapper photonWrapper;
@@ -102,7 +91,7 @@ public class RobotContainer {
     // Commands
     private final ShuffleboardTab shuffleboardTab = Shuffleboard.getTab("Driver");
     private final SendableChooser<Command> autonChooser;
-    private final BalancerCommand balancerCommand;
+    private final DefaultBalancerCommand balancerCommand;
 
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -110,22 +99,15 @@ public class RobotContainer {
     public RobotContainer() {
         driveController = new XboxDriveController();
 
-<<<<<<< HEAD
         photonWrapper = new PhotonWrapper();
         switchableCamera = new SwitchableCamera();
 
         driveSubsystem = new SwerveSubsystem(photonWrapper);
         rollerSubsystem = new RollerSubsystem();
         tiltedElevatorSubsystem = new TiltedElevatorSubsystem();
-=======
-        driveSubsystem = new SwerveSubsystem();
-        // gripperSubsystem = new GripperSubsytem();
-        // rollerSubsystem = new RollerSubsystem();
-        // tiltedElevatorSubsystem = new TiltedElevatorSubsystem();
->>>>>>> a411fce (achieved ten second balance)
 
         superstructure = new Superstructure(rollerSubsystem, tiltedElevatorSubsystem);
-        balancerCommand = new BalancerCommand(driveSubsystem);
+        balancerCommand = new DefaultBalancerCommand(driveSubsystem);
 
         // Configure the button bindings
         configureButtonBindings();
@@ -158,12 +140,9 @@ public class RobotContainer {
             .withPosition(8, 0)
             .withSize(4, 2);
 
-<<<<<<< HEAD
         shuffleboardTab.add("Intake Camera", switchableCamera.getSource())
             .withPosition(8, 3)
             .withSize(4, 2);
-=======
->>>>>>> a411fce (achieved ten second balance)
     }
 
     /**
@@ -202,10 +181,7 @@ public class RobotContainer {
             mechAButton.onTrue(new DropperChooserCommand(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem));
 
             driveController.getFieldResetButton().onTrue(new InstantCommand(swerveSubsystem::resetFieldAngle, swerveSubsystem));
-<<<<<<< HEAD
             driveController.getChargingStationLockButton().onTrue(new InstantCommand(swerveSubsystem::toggleChargingStationLocked, swerveSubsystem));
-=======
->>>>>>> a411fce (achieved ten second balance)
         } else if (driveSubsystem instanceof TankSubsystem) {
             final TankSubsystem tankSubsystem = (TankSubsystem) driveSubsystem;
 

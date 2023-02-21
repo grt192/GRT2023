@@ -10,7 +10,7 @@ import frc.robot.subsystems.drivetrain.BaseDrivetrain;
 import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
 import edu.wpi.first.wpilibj.Timer;
 
-public class DualPIDBalancer extends CommandBase {
+public class DefaultBalancerCommand extends CommandBase {
     private final BaseDrivetrain driveSubsystem;
     private final AHRS ahrs; 
     
@@ -19,8 +19,7 @@ public class DualPIDBalancer extends CommandBase {
     private double currentPitch;
     private double deltaAngle;
 
-    PIDController anglePID;
-    PIDController deltaPID;
+    PIDController drivePID;
     PIDController turnPID;
 
     private double returnDrivePower; // drive power to be returned to DT
@@ -28,52 +27,59 @@ public class DualPIDBalancer extends CommandBase {
 
     public boolean reachedStation;
     public boolean passedCenter;
-
+    public boolean waiting;
     public boolean balanced;
 
-    public DualPIDBalancer(BaseDrivetrain driveSubsystem) {
+    private final Timer timer;
+
+    public DefaultBalancerCommand(BaseDrivetrain driveSubsystem) {
         this.driveSubsystem = driveSubsystem;
         this.ahrs = driveSubsystem.getAhrs();
 
-        anglePID = new PIDController(0.5/35, 0.0, 0.0); 
-        deltaPID = new PIDController(0.1/0.6, 0.0, 0.0); 
-
+        drivePID = new PIDController(0.3/35, 0.0, 0.0); // no deriv successful
         turnPID = new PIDController(0.1/5,0.0, 0.0); // kP = max pwr / max err
+        timer = new Timer();
         addRequirements(driveSubsystem);
     }
 
-    // Called when the command is initially scheduled.
     @Override
     public void initialize() {
         System.out.println("------------------- Balancer initialized -------------------");
         initialHeading = ahrs.getCompassHeading();
-        oldPitch = ahrs.getPitch();
-
         reachedStation = false;
+        passedCenter = false;
         balanced = false;
+        waiting = false;
+
     }
 
-    // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
         
         returnAngularPower = turnPID.calculate(ahrs.getCompassHeading(), initialHeading); // correct angle of approach
-
+        
         if(!reachedStation) {
             returnDrivePower = - 0.80;
             if(ahrs.getPitch() <= - 15.0) reachedStation = true;
+            returnDrivePower = - 0.2; //.15 successful
         }
+
         else{
             currentPitch = ahrs.getPitch();
-            deltaAngle = Math.abs(currentPitch - oldPitch);
-            
-            returnDrivePower = -1 * anglePID.calculate(currentPitch,0) + -1 * deltaPID.calculate(deltaAngle,0);
-           
-            System.out.println("DeltaAngle: " + deltaAngle);
-            
-            if(Math.abs(ahrs.getPitch()) <= 2.0 && deltaAngle <= 0.05){
-                balanced = true;
-                if(driveSubsystem instanceof BaseSwerveSubsystem) ((BaseSwerveSubsystem) driveSubsystem).lockNow();
+            deltaAngle = Math.abs(currentPitch - oldPitch); // calc magnitude of angular acceleration based on delta angle over time
+
+            if(!passedCenter){
+                returnDrivePower -= 0.1 * deltaAngle;
+                if(ahrs.getPitch() >= -5.0){
+                    passedCenter = true; // <= 1.0 worked 
+                }
+            }
+            else{
+                returnDrivePower = -1 * drivePID.calculate(ahrs.getPitch(), 0);
+                System.out.println(returnDrivePower);
+
+                if(Math.abs(ahrs.getPitch()) <= 1.0 && deltaAngle <= 0.1) balanced = true;
+                    
             }
         }
 
@@ -85,13 +91,11 @@ public class DualPIDBalancer extends CommandBase {
         oldPitch = currentPitch; // set the current angle to old angle so it is accessible for next cycle     
     }
 
-    // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
         System.out.println("------------------- Balancing process finished -------------------");
     }
 
-    // Returns true when the command should end.
     @Override
     public boolean isFinished() {
         return reachedStation && balanced;
