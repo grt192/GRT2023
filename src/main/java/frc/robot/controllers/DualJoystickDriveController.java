@@ -33,21 +33,23 @@ public class DualJoystickDriveController extends BaseDriveController {
         rightBaseRightBottomButton = new JoystickButton(rightJoystick, 10),
         rightBaseRightTopButton = new JoystickButton(rightJoystick, 11);
 
-    private final double JOYSTICK_DEADBAND = 0.08;
+    private static final double JOYSTICK_DEADBAND = 0.08;
 
     @Override
     public double getForwardPower() {
-        return MathUtil.applyDeadband(-leftJoystick.getY(), JOYSTICK_DEADBAND);
+        double scale = getDriveScaling();
+        return MathUtil.applyDeadband(-leftJoystick.getY() * scale, JOYSTICK_DEADBAND);
     }
 
     @Override
     public double getLeftPower() {
-        return MathUtil.applyDeadband(-leftJoystick.getX(), JOYSTICK_DEADBAND);
+        double scale = getDriveScaling();
+        return MathUtil.applyDeadband(-leftJoystick.getX() * scale, JOYSTICK_DEADBAND);
     }
 
     @Override
     public double getRotatePower() {
-        return MathUtil.applyDeadband(-rightJoystick.getX(), JOYSTICK_DEADBAND);
+        return MathUtil.applyDeadband(-rightJoystick.getX() * 0.75, JOYSTICK_DEADBAND);
     }
 
     @Override
@@ -57,7 +59,7 @@ public class DualJoystickDriveController extends BaseDriveController {
 
     @Override
     public JoystickButton getBalancerButton() {
-        return leftTrigger;
+        return rightStickBackButton;
     }
 
     @Override
@@ -73,5 +75,16 @@ public class DualJoystickDriveController extends BaseDriveController {
     @Override
     public JoystickButton getChargingStationLockButton() {
         return leftTopLeftButton;
+    }
+
+    /**
+     * Gets the amount to scale translational input by. When the left trigger (full throttle mode) 
+     * is not engaged, this is 0.75.
+     * 
+     * @return The scale to apply to translational input.
+     */
+    private double getDriveScaling() {
+        boolean isFullThrottle = leftJoystick.getTrigger();
+        return isFullThrottle ? 1.0 : 0.75;
     }
 }

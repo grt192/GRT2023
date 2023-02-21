@@ -20,7 +20,7 @@ public class TwistJoystickDriveController extends BaseDriveController {
         leftMiddleRightButton = new JoystickButton(joystick, 6),
         leftBackButton = new JoystickButton(joystick, 7);
 
-    private final double JOYSTICK_DEADBAND = 0.08;
+    private static final double JOYSTICK_DEADBAND = 0.08;
 
     @Override
     public double getForwardPower() {

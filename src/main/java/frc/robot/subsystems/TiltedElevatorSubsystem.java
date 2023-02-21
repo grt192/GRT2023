@@ -26,7 +26,6 @@ import frc.robot.motorcontrol.HallEffectSensor;
 import frc.robot.motorcontrol.HallEffectMagnet;
 
 import static frc.robot.Constants.TiltedElevatorConstants.*;
-import static frc.robot.Constants.IS_R1;
 
 public class TiltedElevatorSubsystem extends SubsystemBase {
     private final CANSparkMax extensionMotor;
@@ -48,7 +47,7 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
     private static final double extensionD = 0;
     private static final double extensionTolerance = 0.003;
     private static final double extensionRampRate = 0.4;
-    private double arbFeedforward = (IS_R1 ? .03 : 0);
+    private double arbFeedforward = Constants.IS_R1 ? 0.03 : 0;
 
     private ElevatorState state = ElevatorState.GROUND;
 
