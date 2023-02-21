@@ -20,6 +20,7 @@ import frc.robot.commands.auton.BalanceAutonSequence;
 import frc.robot.commands.auton.BottomAutonSequence;
 import frc.robot.commands.auton.TopAutonSequence;
 import frc.robot.commands.auton.test.BoxAutonSequence;
+import frc.robot.commands.auton.test.ContinuousBoxAutonSequence;
 import frc.robot.commands.auton.test.GRTAutonSequence;
 import frc.robot.commands.auton.test.HighRotationLinePath;
 import frc.robot.commands.auton.test.RotatingSCurveAutonSequence;
@@ -127,6 +128,7 @@ public class RobotContainer {
             autonChooser.addOption("High rotation straight-line path", new HighRotationLinePath(swerveSubsystem));
             autonChooser.addOption("Rotating S-curve", new RotatingSCurveAutonSequence(swerveSubsystem));
             autonChooser.addOption("Box auton", new BoxAutonSequence(swerveSubsystem));
+            autonChooser.addOption("No-stopping box auton", new ContinuousBoxAutonSequence(swerveSubsystem));
             autonChooser.addOption("GRT path", new GRTAutonSequence(swerveSubsystem));
         }
 

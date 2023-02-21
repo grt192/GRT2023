@@ -4,6 +4,7 @@ import frc.robot.commands.auton.BalanceAutonSequence;
 import frc.robot.commands.auton.BottomAutonSequence;
 import frc.robot.commands.auton.TopAutonSequence;
 import frc.robot.commands.auton.test.BoxAutonSequence;
+import frc.robot.commands.auton.test.ContinuousBoxAutonSequence;
 import frc.robot.commands.auton.test.GRTAutonSequence;
 import frc.robot.commands.auton.test.HighRotationLinePath;
 import frc.robot.commands.auton.test.RotatingSCurveAutonSequence;
@@ -26,6 +27,7 @@ public class AutonPathTest {
         new HighRotationLinePath(swerveSubsystem);
         new RotatingSCurveAutonSequence(swerveSubsystem);
         new BoxAutonSequence(swerveSubsystem);
+        new ContinuousBoxAutonSequence(swerveSubsystem);
         new GRTAutonSequence(swerveSubsystem);
     }
 
