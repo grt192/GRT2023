@@ -67,11 +67,11 @@ public class DualJoystickDriveController extends BaseDriveController {
 
     @Override
     public JoystickButton getCameraSwitchButton() {
-        return leftTopLeftButton;
+        return leftTopRightButton;
     }
 
     @Override
     public JoystickButton getChargingStationLockButton() {
-        return rightStickCenterButton;
+        return leftTopLeftButton;
     }
 }
