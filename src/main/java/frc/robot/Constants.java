@@ -11,6 +11,7 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.util.Units;
 
 import frc.robot.motorcontrol.HallEffectMagnet;
+import frc.robot.subsystems.leds.LEDStrip;
 
 import org.photonvision.PhotonCamera;
 
@@ -152,6 +153,10 @@ public final class Constants {
             new Translation3d(Units.inchesToMeters(7.625), Units.inchesToMeters(10.597), Units.inchesToMeters(22.638875)),
             new Rotation3d(0, 0, Math.PI)
         );
+    }
+
+    public static final class LEDConstants {
+        public static final LEDStrip SIGNAL_LED_STRIP = new LEDStrip(0, 144);
     }
 
     public static final class GripperConstants {

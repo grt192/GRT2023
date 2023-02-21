@@ -4,8 +4,6 @@
 
 package frc.robot;
 
-import java.util.Map;
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -18,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj.util.Color;
 
 import frc.robot.commands.auton.BalanceAutonSequence;
 import frc.robot.commands.auton.BottomOnePieceAutonSequence;
@@ -41,6 +40,8 @@ import frc.robot.controllers.XboxDriveController;
 import frc.robot.vision.SwitchableCamera;
 import frc.robot.vision.PhotonWrapper;
 import frc.robot.subsystems.drivetrain.TankSubsystem;
+import frc.robot.subsystems.leds.LEDStrip;
+import frc.robot.subsystems.leds.TimeoutLEDSubsystem;
 import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
 import frc.robot.subsystems.drivetrain.MissileShellSwerveSubsystem;
 import frc.robot.subsystems.drivetrain.MissileShellSwerveSweeperSubsystem;
@@ -51,6 +52,7 @@ import frc.robot.subsystems.RollerSubsystem;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.TiltedElevatorSubsystem;
 import frc.robot.subsystems.TiltedElevatorSubsystem.ElevatorState;
+import static frc.robot.Constants.LEDConstants.*;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -64,6 +66,7 @@ public class RobotContainer {
     public final BaseDrivetrain driveSubsystem;
     private final RollerSubsystem rollerSubsystem;
     private final TiltedElevatorSubsystem tiltedElevatorSubsystem;
+    private final TimeoutLEDSubsystem signalLEDSubsystem;
 
     private final Superstructure superstructure;
     private final PhotonWrapper photonWrapper;
@@ -110,6 +113,7 @@ public class RobotContainer {
         driveSubsystem = new SwerveSubsystem(photonWrapper);
         rollerSubsystem = new RollerSubsystem();
         tiltedElevatorSubsystem = new TiltedElevatorSubsystem();
+        signalLEDSubsystem = new TimeoutLEDSubsystem(SIGNAL_LED_STRIP, 10, Color.kWhite); 
 
         superstructure = new Superstructure(rollerSubsystem, tiltedElevatorSubsystem, switchableCamera);
         balancerCommand = new DefaultBalancerCommand(driveSubsystem);
@@ -250,6 +254,12 @@ public class RobotContainer {
         mechLBumper.onTrue(new InstantCommand(() -> {
             tiltedElevatorSubsystem.toggleState(ElevatorState.CONE_MID, ElevatorState.CONE_HIGH);
         }, tiltedElevatorSubsystem));
+
+        blSwitch.onTrue(new InstantCommand(() -> {
+            signalLEDSubsystem.setNewColor(Color.kYellow);
+        }, signalLEDSubsystem)).onFalse(new InstantCommand(() -> {
+            signalLEDSubsystem.setNewColor(Color.kPurple);
+        }, signalLEDSubsystem));
     }
 
     /**
