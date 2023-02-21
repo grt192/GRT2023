@@ -15,10 +15,20 @@ public class RollerPlaceCommand extends CommandBase {
     private final Timer runTimer;
     private final Timer endTimer;
 
-    public RollerPlaceCommand(RollerSubsystem rollerSubsystem){
+    private final double rollPower;
+    private final double rollDuration;
+
+    public RollerPlaceCommand(RollerSubsystem rollerSubsystem) {
+        this(rollerSubsystem, -0.1, 2.0);
+    }
+
+    public RollerPlaceCommand(RollerSubsystem rollerSubsystem, double rollPower, double rollDuration) {
         this.rollerSubsystem = rollerSubsystem;
         this.runTimer = new Timer();
         this.endTimer = new Timer();
+
+        this.rollPower = rollPower;
+        this.rollDuration = rollDuration;
 
         addRequirements(rollerSubsystem);
     }
@@ -27,13 +37,12 @@ public class RollerPlaceCommand extends CommandBase {
     public void initialize() {
         System.out.println("Roller to place");
         runTimer.start();
+        rollerSubsystem.openMotor();
     }
 
     @Override
     public void execute() {
-        //open motor to drop
-        rollerSubsystem.openMotor();
-        rollerSubsystem.setRollPower(-0.1);
+        rollerSubsystem.setRollPower(rollPower);
     }
 
     @Override
@@ -44,8 +53,11 @@ public class RollerPlaceCommand extends CommandBase {
 
     @Override
     public boolean isFinished() {
+        /*
         boolean done = runTimer.hasElapsed(2) || rollerSubsystem.getPiece() == HeldPiece.EMPTY;
         if (done) endTimer.start();
         return endTimer.hasElapsed(2);
+        */
+        return runTimer.hasElapsed(rollDuration);
     }
 }

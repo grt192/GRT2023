@@ -1,9 +1,7 @@
 package frc.robot.commands.dropping;
 
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-
 import frc.robot.subsystems.RollerSubsystem;
 import frc.robot.subsystems.TiltedElevatorSubsystem;
 import frc.robot.subsystems.TiltedElevatorSubsystem.ElevatorState;
@@ -32,12 +30,12 @@ public class DropperChooserCommand extends InstantCommand {
         return switch (state) {
             case CONE_HIGH -> new DropSequence(
                 swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem,
-                ElevatorState.CONE_HIGH_DROP, 0, 0, 0, .2, 0
+                ElevatorState.CONE_HIGH_DROP, 0, 0, 0, .2, 0.5
             );
 
             case CONE_MID -> new DropSequence(
                 swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem,
-                ElevatorState.CONE_MID_DROP, 0, 0, 0, .2, 0
+                ElevatorState.CONE_MID_DROP, 0, 0, 0, .2, 0.5
             );
 
             case CUBE_HIGH -> new DropSequence(
@@ -52,7 +50,7 @@ public class DropperChooserCommand extends InstantCommand {
 
             default -> new DropSequence(
                 swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem,
-                state, 0, 0, 0, 0, 0
+                state, 0, 0, 0, 0, 0.5
             );
         };
     }

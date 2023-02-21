@@ -6,11 +6,11 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 
+import frc.robot.commands.grabber.RollerPlaceCommand;
 import frc.robot.commands.mover.TiltedElevatorCommand;
 import frc.robot.commands.swerve.FollowPathCommand;
 import frc.robot.subsystems.RollerSubsystem;
@@ -38,8 +38,7 @@ public class DropSequence extends SequentialCommandGroup {
         addCommands(
             new TiltedElevatorCommand(tiltedElevatorSubsystem, dropHeight),
             new WaitCommand(waitTime1),
-            new InstantCommand(rollerSubsystem::openMotor, rollerSubsystem),
-            rollerSubsystem.getOuttakeCommand(-outtakePower, outtakeDuration),
+            new RollerPlaceCommand(rollerSubsystem, -outtakePower, outtakeDuration),
             new WaitCommand(waitTime2),
             new InstantCommand(() -> swerveSubsystem.setDrivePowers(-.2, 0, 0, true)),
             new WaitCommand(backTime),
