@@ -22,7 +22,7 @@ public class DropperChooserCommand extends InstantCommand {
      * @param tiltedElevatorSubsystem The tilter elevator subsystem.
      * @return The `SequentialCommandGroup` representing dropping the piece as a sequence.
      */
-    private static SequentialCommandGroup getSequence(
+    public static SequentialCommandGroup getSequence(
         BaseSwerveSubsystem swerveSubsystem, RollerSubsystem rollerSubsystem, TiltedElevatorSubsystem tiltedElevatorSubsystem
     ) {
         ElevatorState state = tiltedElevatorSubsystem.getState();

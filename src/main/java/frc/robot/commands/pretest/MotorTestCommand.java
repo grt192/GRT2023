@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 
+import frc.robot.commands.dropping.DropperChooserCommand;
 import frc.robot.commands.mover.TiltedElevatorCommand;
 import frc.robot.subsystems.RollerSubsystem;
 import frc.robot.subsystems.TiltedElevatorSubsystem;
@@ -44,7 +45,11 @@ public class MotorTestCommand extends SequentialCommandGroup {
             new TiltedElevatorCommand(tiltedElevatorSubsystem, ElevatorState.CONE_HIGH),
             new WaitCommand(TEST_DELAY_SECS),
 
-            new TiltedElevatorCommand(tiltedElevatorSubsystem, ElevatorState.SUBSTATION),
+            new TiltedElevatorCommand(tiltedElevatorSubsystem, ElevatorState.CONE_MID),
+            new WaitCommand(TEST_DELAY_SECS),
+
+            // Test dropper command from `CONE_MID`
+            DropperChooserCommand.getSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem),
             new WaitCommand(MECH_DELAY_SECS),
 
             // Sweep rollers from [-1.0, 1.0]
