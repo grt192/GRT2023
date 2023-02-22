@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
 import frc.robot.commands.swerve.FollowPathCommand;
+import frc.robot.commands.swerve.SwerveIdleCommand;
 import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
 
 public class TenFeetStraightLinePath extends SequentialCommandGroup {
@@ -21,7 +22,8 @@ public class TenFeetStraightLinePath extends SequentialCommandGroup {
                 new Pose2d(), 
                 List.of(), 
                 new Pose2d(Units.feetToMeters(10), 0, new Rotation2d())
-            )
+            ),
+            new SwerveIdleCommand(swerveSubsystem)
         );
     }
 }

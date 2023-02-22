@@ -11,7 +11,7 @@ import frc.robot.commands.dropping.DropperChooserCommand;
 import frc.robot.commands.grabber.RollerIntakeCommand;
 import frc.robot.commands.mover.TiltedElevatorCommand;
 import frc.robot.commands.swerve.FollowPathCommand;
-import frc.robot.commands.swerve.LockSwerveCommand;
+import frc.robot.commands.swerve.SwerveIdleCommand;
 import frc.robot.positions.PlacePosition.PlaceState;
 import frc.robot.subsystems.RollerSubsystem;
 import frc.robot.subsystems.TiltedElevatorSubsystem;
@@ -49,6 +49,7 @@ public abstract class BaseAutonSequence extends SequentialCommandGroup {
         return FollowPathCommand.composedFrom(swerveSubsystem, initialPose, waypoints, finalPose)
             .alongWith(new TiltedElevatorCommand(tiltedElevatorSubsystem, ElevatorState.GROUND))
             .deadlineWith(new RollerIntakeCommand(rollerSubsystem));
+            // .andThen(new SwerveIdleCommand(swerveSubsystem));
     }
 
     /**
@@ -84,6 +85,7 @@ public abstract class BaseAutonSequence extends SequentialCommandGroup {
     protected SequentialCommandGroup goAndPlace(Pose2d initialPose, PlaceState finalState, boolean startsMoving) {
         return new TiltedElevatorCommand(tiltedElevatorSubsystem, finalState.getElevatorState())
             .alongWith(FollowPathCommand.from(swerveSubsystem, initialPose, List.of(), finalState.getPose(), startsMoving, false))
+            .andThen(new SwerveIdleCommand(swerveSubsystem))
             .andThen(new WaitCommand(0.2))
             .andThen(DropperChooserCommand.getSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, finalState.getElevatorState()));
     }

@@ -42,7 +42,7 @@ public class SwerveModule implements BaseSwerveModule {
     private static final double DRIVE_ROTATIONS_TO_METERS = (1.0 / 3.0) * (13.0 / 8.0) * (1.0 / 3.0) * Math.PI * Units.inchesToMeters(4.0) * 9.0 / 9.5; // 3:1, 8:13, 3:1 gear ratios, 4.0" wheel diameter, circumference = pi * d
     private static final double STEER_VOLTS_TO_RADIANS = 2 * Math.PI / 3.3; // MA3 analog output: 3.3V -> 2pi
 
-    private static final double driveP = 0.35;
+    private static final double driveP = 0.15;
     private static final double driveI = 0;
     private static final double driveD = 0;
     private static final double driveFF = 0.176697057706;

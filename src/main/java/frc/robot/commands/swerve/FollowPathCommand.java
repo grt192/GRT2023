@@ -22,11 +22,11 @@ public class FollowPathCommand extends SwerveControllerCommand {
     private final BaseSwerveSubsystem swerveSubsystem;
     private final Rotation2d targetAngle;
 
-    private static final double xP = 0.4;
+    private static final double xP = 2.5;
     private static final double xI = 0;
     private static final double xD = 0;
 
-    private static final double yP = 0.4;
+    private static final double yP = 2.5;
     private static final double yI = 0;
     private static final double yD = 0;
 
