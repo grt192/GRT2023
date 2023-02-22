@@ -4,7 +4,7 @@ import java.util.List;
 
 import edu.wpi.first.math.geometry.Pose2d;
 
-import frc.robot.commands.BalancerCommand;
+import frc.robot.commands.Balancing.DefaultBalancerCommand;
 import frc.robot.commands.swerve.FollowPathCommand;
 import frc.robot.positions.FieldPosition;
 import frc.robot.positions.PlacePosition;
@@ -51,7 +51,7 @@ public class BalanceAutonSequence extends BaseAutonSequence {
                 midPose3
             ),
             // Go and balance on charging station
-            new BalancerCommand(swerveSubsystem)
+            new DefaultBalancerCommand(swerveSubsystem)
         );
     }
 }

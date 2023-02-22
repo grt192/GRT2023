@@ -97,7 +97,7 @@ public class RobotContainer {
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
     public RobotContainer() {
-        driveController = new XboxDriveController();
+        driveController = new DualJoystickDriveController();
 
         photonWrapper = new PhotonWrapper();
         switchableCamera = new SwitchableCamera();
