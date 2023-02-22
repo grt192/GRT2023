@@ -8,7 +8,8 @@ import frc.robot.commands.auton.test.ContinuousBoxAutonSequence;
 import frc.robot.commands.auton.test.GRTAutonSequence;
 import frc.robot.commands.auton.test.HighRotationLinePath;
 import frc.robot.commands.auton.test.RotatingSCurveAutonSequence;
-import frc.robot.commands.auton.test.StraightLinePath;
+import frc.robot.commands.auton.test.TenFeetStraightLinePath;
+import frc.robot.commands.auton.test.TwentyFeetStraightLinePath;
 import frc.robot.subsystems.RollerSubsystem;
 import frc.robot.subsystems.TiltedElevatorSubsystem;
 import frc.robot.subsystems.drivetrain.SwerveSubsystem;
@@ -23,7 +24,8 @@ public class AutonPathTest {
      */
     @Test
     public void compileTestPaths() {
-        new StraightLinePath(swerveSubsystem);
+        new TenFeetStraightLinePath(swerveSubsystem);
+        new TwentyFeetStraightLinePath(swerveSubsystem);
         new HighRotationLinePath(swerveSubsystem);
         new RotatingSCurveAutonSequence(swerveSubsystem);
         new BoxAutonSequence(swerveSubsystem);
