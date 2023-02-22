@@ -86,7 +86,7 @@ public abstract class BaseAutonSequence extends SequentialCommandGroup {
         return new TiltedElevatorCommand(tiltedElevatorSubsystem, finalState.getElevatorState())
             .alongWith(FollowPathCommand.from(swerveSubsystem, initialPose, List.of(), finalState.getPose(), startsMoving, false))
             .andThen(new SwerveIdleCommand(swerveSubsystem))
-            .andThen(new WaitCommand(0.2))
+            .andThen(new WaitCommand(0.1))
             .andThen(DropperChooserCommand.getSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, finalState.getElevatorState()));
     }
 }

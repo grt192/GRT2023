@@ -39,7 +39,7 @@ public final class Constants {
         public static final int TL_STEER = 3;
         public static final double TL_OFFSET_RADS = IS_R1 
             ? -5.704799652099609
-            : -0.4167564789480487;
+            : -2.5409997383779803;
         public static final Translation2d TL_POS = IS_R1 ? new Translation2d(
             Units.inchesToMeters(12.0),
             Units.inchesToMeters(8.75)

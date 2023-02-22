@@ -61,8 +61,8 @@ public enum FieldPosition {
         Rotation2d.fromDegrees(180)
     )),
     BOTTOM_MIDPOS_2(new Pose2d(
-        Units.inchesToMeters(196.000),
-        Units.inchesToMeters(32.000), 
+        Units.inchesToMeters(179.577),
+        Units.inchesToMeters(28.007), 
         Rotation2d.fromDegrees(180)
     )),
 
