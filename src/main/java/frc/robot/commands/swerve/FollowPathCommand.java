@@ -1,5 +1,6 @@
 package frc.robot.commands.swerve;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import edu.wpi.first.math.controller.PIDController;
@@ -150,7 +151,7 @@ public class FollowPathCommand extends SwerveControllerCommand {
         if (waypoints.size() == 0) return from(swerveSubsystem, start, List.of(), end);
 
         // List of remaining poses to hit, including the end pose
-        List<Pose2d> poses = List.copyOf(waypoints);
+        ArrayList<Pose2d> poses = new ArrayList<>(waypoints);
         poses.add(end);
 
         // Start the path with the normal straight-line wheel-headings, but make each intermediate
@@ -182,8 +183,8 @@ public class FollowPathCommand extends SwerveControllerCommand {
         }
 
         return sequence.andThen(fromWheelHeadings(
-            swerveSubsystem, poses.get(poses.size() - 1), List.of(), end,
-            endHeading, wheelHeadingFromPoints(poses.get(poses.size() - 1).getTranslation(), end.getTranslation()),
+            swerveSubsystem, poses.get(poses.size() - 2), List.of(), end,
+            endHeading, wheelHeadingFromPoints(poses.get(poses.size() - 2).getTranslation(), end.getTranslation()),
             true, endsMoving
         ));
     }
