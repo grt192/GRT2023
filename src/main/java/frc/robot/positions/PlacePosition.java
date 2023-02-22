@@ -5,234 +5,142 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 
 import frc.robot.subsystems.TiltedElevatorSubsystem.ElevatorState;
+import frc.robot.util.FieldUtil;
 
-public interface PlacePosition {
-    Pose2d getPose();
-    ElevatorState getElevatorState();
+public enum PlacePosition {
+    C3MID(new Pose2d(
+        Units.inchesToMeters(77.406),
+        Units.inchesToMeters(195.55),
+        Rotation2d.fromDegrees(180)
+    ), ElevatorState.CONE_MID),
+    C3HIGH(new Pose2d(
+        Units.inchesToMeters(77.406),
+        Units.inchesToMeters(195.55),
+        Rotation2d.fromDegrees(180)
+    ), ElevatorState.CONE_HIGH),
+    C2MID(new Pose2d(
+        Units.inchesToMeters(77.406),
+        Units.inchesToMeters(174.123),
+        Rotation2d.fromDegrees(180)
+    ), ElevatorState.CUBE_MID),
+    C2HIGH(new Pose2d(
+        Units.inchesToMeters(77.406),
+        Units.inchesToMeters(174.123),
+        Rotation2d.fromDegrees(180)
+    ), ElevatorState.CUBE_HIGH),
+    C1MID(new Pose2d(
+        Units.inchesToMeters(77.406),
+        Units.inchesToMeters(152.123),
+        Rotation2d.fromDegrees(180)
+    ), ElevatorState.CONE_MID),
+    C1HIGH(new Pose2d(
+        Units.inchesToMeters(77.406),
+        Units.inchesToMeters(152.123),
+        Rotation2d.fromDegrees(180)
+    ), ElevatorState.CONE_HIGH),
 
-    double BLUE_INIT_X_IN = 75.178; //updated
-    double BLUE_PLACE_X_IN = 77.406; //updated
+    B3MID(new Pose2d(
+        Units.inchesToMeters(77.406),
+        Units.inchesToMeters(129.75),
+        Rotation2d.fromDegrees(180)
+    ), ElevatorState.CONE_MID),
+    B3HIGH(new Pose2d(
+        Units.inchesToMeters(77.406),
+        Units.inchesToMeters(129.75),
+        Rotation2d.fromDegrees(180)
+    ), ElevatorState.CONE_HIGH),
+    B2MID(new Pose2d(
+        Units.inchesToMeters(77.406),
+        Units.inchesToMeters(107.801),
+        Rotation2d.fromDegrees(180)
+    ), ElevatorState.CUBE_MID),
+    B2HIGH(new Pose2d(
+        Units.inchesToMeters(77.406),
+        Units.inchesToMeters(107.801),
+        Rotation2d.fromDegrees(180)
+    ), ElevatorState.CUBE_HIGH),
+    B1MID(new Pose2d(
+        Units.inchesToMeters(77.406),
+        Units.inchesToMeters(86.149),
+        Rotation2d.fromDegrees(180)
+    ), ElevatorState.CUBE_MID),
+    B1HIGH(new Pose2d(
+        Units.inchesToMeters(77.406),
+        Units.inchesToMeters(86.149),
+        Rotation2d.fromDegrees(180)
+    ), ElevatorState.CUBE_HIGH),
 
-    double RED_INIT_X_IN = 573.895; //updated
-    double RED_PLACE_X_IN = 578.737; //updated
+    A3MID(new Pose2d(
+        Units.inchesToMeters(77.406),
+        Units.inchesToMeters(64.818),
+        Rotation2d.fromDegrees(180)
+    ), ElevatorState.CONE_MID),
+    A3HIGH(new Pose2d(
+        Units.inchesToMeters(77.406),
+        Units.inchesToMeters(64.818),
+        Rotation2d.fromDegrees(180)
+    ), ElevatorState.CONE_HIGH),
+    A2MID(new Pose2d(
+        Units.inchesToMeters(77.406),
+        Units.inchesToMeters(41.761),
+        Rotation2d.fromDegrees(180)
+    ),  ElevatorState.CUBE_MID),
+    A2HIGH(new Pose2d(
+        Units.inchesToMeters(77.406),
+        Units.inchesToMeters(41.761),
+        Rotation2d.fromDegrees(180)
+    ),  ElevatorState.CUBE_HIGH),
+    A1MID(new Pose2d(
+        Units.inchesToMeters(77.406),
+        Units.inchesToMeters(20.016),
+        Rotation2d.fromDegrees(180)
+    ), ElevatorState.CONE_MID), 
+    A1HIGH(new Pose2d(
+        Units.inchesToMeters(77.406),
+        Units.inchesToMeters(20.016),
+        Rotation2d.fromDegrees(180)
+    ), ElevatorState.CONE_HIGH);
 
-    public enum Red implements PlacePosition {
-        C3MID(new Pose2d(
-            Units.inchesToMeters(RED_PLACE_X_IN),
-            Units.inchesToMeters(195.55),
-            new Rotation2d()
-        ), ElevatorState.CONE_MID),
-        C3HIGH(new Pose2d(
-            Units.inchesToMeters(RED_PLACE_X_IN),
-            Units.inchesToMeters(195.55),
-            new Rotation2d()
-        ), ElevatorState.CONE_HIGH),
-        C2MID(new Pose2d(
-            Units.inchesToMeters(RED_PLACE_X_IN),
-            Units.inchesToMeters(174.123),
-            new Rotation2d()
-        ), ElevatorState.CUBE_MID),
-        C2HIGH(new Pose2d(
-            Units.inchesToMeters(RED_PLACE_X_IN),
-            Units.inchesToMeters(174.123),
-            new Rotation2d()
-        ), ElevatorState.CUBE_HIGH),
-        C1MID(new Pose2d(
-            Units.inchesToMeters(RED_PLACE_X_IN),
-            Units.inchesToMeters(152.123),
-            new Rotation2d()
-        ), ElevatorState.CONE_MID),
-        C1HIGH(new Pose2d(
-            Units.inchesToMeters(RED_PLACE_X_IN),
-            Units.inchesToMeters(152.123),
-            new Rotation2d()
-        ), ElevatorState.CONE_HIGH),
-        B3MID(new Pose2d(
-            Units.inchesToMeters(RED_PLACE_X_IN),
-            Units.inchesToMeters(129.75),
-            new Rotation2d()
-        ), ElevatorState.CONE_MID),
-        B3HIGH(new Pose2d(
-            Units.inchesToMeters(RED_PLACE_X_IN),
-            Units.inchesToMeters(129.75),
-            new Rotation2d()
-        ), ElevatorState.CONE_HIGH),
-        B2MID(new Pose2d(
-            Units.inchesToMeters(RED_PLACE_X_IN),
-            Units.inchesToMeters(107.801),
-            new Rotation2d()
-        ), ElevatorState.CUBE_MID),
-        B2HIGH(new Pose2d(
-            Units.inchesToMeters(RED_PLACE_X_IN),
-            Units.inchesToMeters(107.801),
-            new Rotation2d()
-        ), ElevatorState.CUBE_HIGH),
-        B1MID(new Pose2d(
-            Units.inchesToMeters(RED_PLACE_X_IN),
-            Units.inchesToMeters(86.149),
-            new Rotation2d()
-        ), ElevatorState.CONE_MID),
-        B1HIGH(new Pose2d(
-            Units.inchesToMeters(RED_PLACE_X_IN),
-            Units.inchesToMeters(86.149),
-            new Rotation2d()
-        ), ElevatorState.CONE_HIGH),
-        A3MID(new Pose2d(
-            Units.inchesToMeters(RED_PLACE_X_IN),
-            Units.inchesToMeters(64.818),
-            new Rotation2d()
-        ), ElevatorState.CONE_MID),
-        A3HIGH(new Pose2d(
-            Units.inchesToMeters(RED_PLACE_X_IN),
-            Units.inchesToMeters(64.818),
-            new Rotation2d()
-        ), ElevatorState.CONE_HIGH),
-        A2MID(new Pose2d(
-            Units.inchesToMeters(RED_PLACE_X_IN),
-            Units.inchesToMeters(41.761),
-            new Rotation2d()
-        ), ElevatorState.CUBE_MID),
-        A2HIGH(new Pose2d(
-            Units.inchesToMeters(RED_PLACE_X_IN),
-            Units.inchesToMeters(41.761),
-            new Rotation2d()
-        ), ElevatorState.CUBE_HIGH),
-        A1MID(new Pose2d(
-            Units.inchesToMeters(RED_PLACE_X_IN),
-            Units.inchesToMeters(20.016),
-            new Rotation2d()
-        ), ElevatorState.CONE_MID),
-        A1HIGH(new Pose2d(
-            Units.inchesToMeters(RED_PLACE_X_IN),
-            Units.inchesToMeters(20.016),
-            new Rotation2d()
-        ), ElevatorState.CONE_HIGH);
+    public final PlaceState BLUE;
+    public final PlaceState RED;
 
-        private Pose2d pose;
-        private ElevatorState elevatorState;
-
-        private Red(Pose2d pose, ElevatorState elevatorState) {
-            this.pose = pose;
-            this.elevatorState = elevatorState;
-        }
-
-        @Override
-        public Pose2d getPose() {
-            return pose;
-        }
-
-        @Override
-        public ElevatorState getElevatorState() {
-            return elevatorState;
-        }
+    /**
+     * Constructs a `PlacePosition` from a blue-team pose and elevator state. The red-team pose is automatically
+     * generated by mirroring the blue.
+     * 
+     * @param pose The blue-team pose.
+     * @param elevatorState The elevator state.
+     */
+    private PlacePosition(Pose2d pose, ElevatorState elevatorState) {
+        this.BLUE = new PlaceState(pose, elevatorState);
+        this.RED = new PlaceState(
+            FieldUtil.mirrorPoseAcrossField(pose),
+            elevatorState
+        );
     }
 
-    public enum Blue implements PlacePosition {
-        C3MID(new Pose2d(
-            Units.inchesToMeters(BLUE_PLACE_X_IN),
-            Units.inchesToMeters(195.55),
-            Rotation2d.fromDegrees(180)
-        ), ElevatorState.CONE_MID),
-        C3HIGH(new Pose2d(
-            Units.inchesToMeters(BLUE_PLACE_X_IN),
-            Units.inchesToMeters(195.55),
-            Rotation2d.fromDegrees(180)
-        ), ElevatorState.CONE_HIGH),
-        C2MID(new Pose2d(
-            Units.inchesToMeters(BLUE_PLACE_X_IN),
-            Units.inchesToMeters(174.123),
-            Rotation2d.fromDegrees(180)
-        ), ElevatorState.CUBE_MID),
-        C2HIGH(new Pose2d(
-            Units.inchesToMeters(BLUE_PLACE_X_IN),
-            Units.inchesToMeters(174.123),
-            Rotation2d.fromDegrees(180)
-        ), ElevatorState.CUBE_HIGH),
-        C1MID(new Pose2d(
-            Units.inchesToMeters(BLUE_PLACE_X_IN),
-            Units.inchesToMeters(152.123),
-            Rotation2d.fromDegrees(180)
-        ), ElevatorState.CONE_MID),
-        C1HIGH(new Pose2d(
-            Units.inchesToMeters(BLUE_PLACE_X_IN),
-            Units.inchesToMeters(152.123),
-            Rotation2d.fromDegrees(180)
-        ), ElevatorState.CONE_HIGH),
-        B3MID(new Pose2d(
-            Units.inchesToMeters(BLUE_PLACE_X_IN),
-            Units.inchesToMeters(129.75),
-            Rotation2d.fromDegrees(180)
-        ), ElevatorState.CONE_MID),
-        B3HIGH(new Pose2d(
-            Units.inchesToMeters(BLUE_PLACE_X_IN),
-            Units.inchesToMeters(129.75),
-            Rotation2d.fromDegrees(180)
-        ), ElevatorState.CONE_HIGH),
-        B2MID(new Pose2d(
-            Units.inchesToMeters(BLUE_PLACE_X_IN),
-            Units.inchesToMeters(107.801),
-            Rotation2d.fromDegrees(180)
-        ), ElevatorState.CUBE_MID),
-        B2HIGH(new Pose2d(
-            Units.inchesToMeters(BLUE_PLACE_X_IN),
-            Units.inchesToMeters(107.801),
-            Rotation2d.fromDegrees(180)
-        ), ElevatorState.CUBE_HIGH),
-        B1MID(new Pose2d(
-            Units.inchesToMeters(BLUE_PLACE_X_IN),
-            Units.inchesToMeters(86.149),
-            Rotation2d.fromDegrees(180)
-        ), ElevatorState.CUBE_MID),
-        B1HIGH(new Pose2d(
-            Units.inchesToMeters(BLUE_PLACE_X_IN),
-            Units.inchesToMeters(86.149),
-            Rotation2d.fromDegrees(180)
-        ), ElevatorState.CUBE_HIGH),
-        A3MID(new Pose2d(
-            Units.inchesToMeters(BLUE_PLACE_X_IN),
-            Units.inchesToMeters(64.818),
-            Rotation2d.fromDegrees(180)
-        ), ElevatorState.CONE_MID),
-        A3HIGH(new Pose2d(
-            Units.inchesToMeters(BLUE_PLACE_X_IN),
-            Units.inchesToMeters(64.818),
-            Rotation2d.fromDegrees(180)
-        ), ElevatorState.CONE_HIGH),
-        A2MID(new Pose2d(
-            Units.inchesToMeters(BLUE_PLACE_X_IN),
-            Units.inchesToMeters(41.761),
-            Rotation2d.fromDegrees(180)
-        ),  ElevatorState.CUBE_MID),
-        A2HIGH(new Pose2d(
-            Units.inchesToMeters(BLUE_PLACE_X_IN),
-            Units.inchesToMeters(41.761),
-            Rotation2d.fromDegrees(180)
-        ),  ElevatorState.CUBE_HIGH),
-        A1MID(new Pose2d(
-            Units.inchesToMeters(BLUE_PLACE_X_IN),
-            Units.inchesToMeters(20.016),
-            Rotation2d.fromDegrees(180)
-        ), ElevatorState.CONE_MID), 
-        A1HIGH(new Pose2d(
-            Units.inchesToMeters(BLUE_PLACE_X_IN),
-            Units.inchesToMeters(20.016),
-            Rotation2d.fromDegrees(180)
-        ), ElevatorState.CONE_HIGH);
+    /**
+     * Gets the team-specific `PlaceState` represented by this place position.
+     * @param isRed Whether to return the RED state. If false, returns BLUE.
+     * @return The team-specific state.
+     */
+    public PlaceState getPlaceState(boolean isRed) {
+        return isRed ? RED : BLUE;
+    }
 
+    public class PlaceState {
         private Pose2d pose;
         private ElevatorState elevatorState;
 
-        private Blue(Pose2d pose, ElevatorState elevatorState) {
+        public PlaceState(Pose2d pose, ElevatorState elevatorState) {
             this.pose = pose;
             this.elevatorState = elevatorState;
         }
-
-        @Override
+    
         public Pose2d getPose() {
             return pose;
         }
-
-        @Override
+    
         public ElevatorState getElevatorState() {
             return elevatorState;
         }

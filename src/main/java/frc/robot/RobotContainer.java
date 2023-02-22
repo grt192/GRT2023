@@ -16,18 +16,17 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 import frc.robot.commands.BalancerCommand;
+import frc.robot.commands.auton.BalanceAutonSequence;
+import frc.robot.commands.auton.BottomAutonSequence;
+import frc.robot.commands.auton.TopAutonSequence;
+import frc.robot.commands.auton.test.BoxAutonSequence;
+import frc.robot.commands.auton.test.ContinuousBoxAutonSequence;
+import frc.robot.commands.auton.test.GRTAutonSequence;
+import frc.robot.commands.auton.test.HighRotationLinePath;
+import frc.robot.commands.auton.test.RotatingSCurveAutonSequence;
+import frc.robot.commands.auton.test.TenFeetStraightLinePath;
+import frc.robot.commands.auton.test.TwentyFeetStraightLinePath;
 import frc.robot.commands.dropping.DropperChooserCommand;
-import frc.robot.commands.sequences.BlueBalanceAuton;
-import frc.robot.commands.sequences.BlueBottomAuton;
-import frc.robot.commands.sequences.BlueTopAuton;
-import frc.robot.commands.sequences.RedBalanceAuton;
-import frc.robot.commands.sequences.RedBottomAuton;
-import frc.robot.commands.sequences.RedTopAuton;
-import frc.robot.commands.sequences.test.BoxAutonSequence;
-import frc.robot.commands.sequences.test.GRTAutonSequence;
-import frc.robot.commands.sequences.test.HighRotationLinePath;
-import frc.robot.commands.sequences.test.RotatingSCurveAutonSequence;
-import frc.robot.commands.sequences.test.StraightLinePath;
 import frc.robot.controllers.BaseDriveController;
 import frc.robot.controllers.DualJoystickDriveController;
 import frc.robot.controllers.TwistJoystickDriveController;
@@ -118,19 +117,21 @@ public class RobotContainer {
         if (driveSubsystem instanceof BaseSwerveSubsystem) {
             final BaseSwerveSubsystem swerveSubsystem = (BaseSwerveSubsystem) driveSubsystem;
 
-            autonChooser.addOption("Straight-line path", new StraightLinePath(swerveSubsystem));
+            autonChooser.addOption("Red top auton", new TopAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, true));
+            autonChooser.addOption("Red balance auton", new BalanceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, true));
+            autonChooser.addOption("Red bottom auton", new BottomAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, true));
+
+            autonChooser.addOption("Blue top auton", new TopAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, false));
+            autonChooser.addOption("Blue balance auton", new BalanceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, false));
+            autonChooser.addOption("Blue bottom auton", new BottomAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, false));
+
+            autonChooser.addOption("10\" straight-line path", new TenFeetStraightLinePath(swerveSubsystem));
+            autonChooser.addOption("20\" straight-line path", new TwentyFeetStraightLinePath(swerveSubsystem));
             autonChooser.addOption("High rotation straight-line path", new HighRotationLinePath(swerveSubsystem));
             autonChooser.addOption("Rotating S-curve", new RotatingSCurveAutonSequence(swerveSubsystem));
             autonChooser.addOption("Box auton", new BoxAutonSequence(swerveSubsystem));
+            autonChooser.addOption("No-stopping box auton", new ContinuousBoxAutonSequence(swerveSubsystem));
             autonChooser.addOption("GRT path", new GRTAutonSequence(swerveSubsystem));
-
-            autonChooser.addOption("Red top auton", new RedTopAuton(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem));
-            autonChooser.addOption("Red balance auton", new RedBalanceAuton(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem));
-            autonChooser.addOption("Red bottom auton", new RedBottomAuton(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem));
-
-            autonChooser.addOption("Blue top auton", new BlueTopAuton(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem));
-            // autonChooser.addOption("Blue balance auton", new BlueBalanceAuton(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem));
-            autonChooser.addOption("Blue bottom auton", new BlueBottomAuton(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem));
         }
 
         shuffleboardTab.add("Auton", autonChooser)
