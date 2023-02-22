@@ -149,16 +149,41 @@ public class FollowPathCommand extends SwerveControllerCommand {
     ) {
         if (waypoints.size() == 0) return from(swerveSubsystem, start, List.of(), end);
 
-        Command sequence = from(swerveSubsystem, start, List.of(), waypoints.get(0), startsMoving, true);
-        for (int i = 0; i < waypoints.size() - 1; i++) {
-            sequence = sequence.andThen(from(
-                swerveSubsystem, waypoints.get(i), List.of(), waypoints.get(i + 1),
-                true, true
+        // List of remaining poses to hit, including the end pose
+        List<Pose2d> poses = List.copyOf(waypoints);
+        poses.add(end);
+
+        // Start the path with the normal straight-line wheel-headings, but make each intermediate
+        // waypoint's heading the average of the previous and next headings.
+        Rotation2d currentWheelHeading = wheelHeadingFromPoints(start.getTranslation(), poses.get(0).getTranslation());
+        Rotation2d nextWheelHeading = wheelHeadingFromPoints(poses.get(0).getTranslation(), poses.get(1).getTranslation());
+
+        Rotation2d startHeading = currentWheelHeading;
+        Rotation2d endHeading = currentWheelHeading.plus(nextWheelHeading).div(2.0);
+
+        Command sequence = fromWheelHeadings(
+            swerveSubsystem, start, List.of(), poses.get(0),
+            startHeading, endHeading, startsMoving, true
+        );
+
+        for (int i = 0; i < poses.size() - 2; i++) {
+            // For intermediate segments, the start heading is the previous end heading.
+            // The end heading is still the average of the current and next wheel headings.
+            currentWheelHeading = nextWheelHeading;
+            nextWheelHeading = wheelHeadingFromPoints(poses.get(i + 1).getTranslation(), poses.get(i + 2).getTranslation());
+
+            startHeading = endHeading;
+            endHeading = currentWheelHeading.plus(nextWheelHeading).div(2.0);
+
+            sequence = sequence.andThen(fromWheelHeadings(
+                swerveSubsystem, poses.get(i), List.of(), poses.get(i + 1),
+                startHeading, endHeading, true, true
             ));
         }
 
-        return sequence.andThen(from(
-            swerveSubsystem, waypoints.get(waypoints.size() - 1), List.of(), end,
+        return sequence.andThen(fromWheelHeadings(
+            swerveSubsystem, poses.get(poses.size() - 1), List.of(), end,
+            endHeading, wheelHeadingFromPoints(poses.get(poses.size() - 1).getTranslation(), end.getTranslation()),
             true, endsMoving
         ));
     }
@@ -179,12 +204,35 @@ public class FollowPathCommand extends SwerveControllerCommand {
         BaseSwerveSubsystem swerveSubsystem, Pose2d start, List<Translation2d> waypoints, Pose2d end,
         Rotation2d startHeading, Rotation2d endHeading
     ) {
+        return fromWheelHeadings(swerveSubsystem, start, waypoints, end, startHeading, endHeading, false, false);
+    }
+
+    /**
+     * Creates a FollowPathCommand from a given start point, list of waypoints, end point, and wheel headings at
+     * the start and end of the path.
+     * 
+     * @param swerveSubsystem The swerve subsystem.
+     * @param start The start point of the trajectory as a Pose2d.
+     * @param waypoints A list of waypoints the robot must pass through as a List<Translation2d>.
+     * @param end The end point of the trajectory as a Pose2d.
+     * @param startHeading The wheel heading at the start of the path.
+     * @param endHeading The wheel heading at the end of the path.
+     * @param startsMoving Whether the trajectory should start in motion.
+     * @param endsMoving Whether the trajectory should end in motion.
+     * @return The created `FollowPathCommand`.
+     */
+    public static FollowPathCommand fromWheelHeadings(
+        BaseSwerveSubsystem swerveSubsystem, Pose2d start, List<Translation2d> waypoints, Pose2d end,
+        Rotation2d startHeading, Rotation2d endHeading, boolean startsMoving, boolean endsMoving
+    ) {
         return new FollowPathCommand(
             swerveSubsystem,
             createWheelHeadingTrajectory(
                 start, waypoints, end,
                 startHeading, endHeading,
                 createDefaultConfig(swerveSubsystem)
+                    .setStartVelocity(startsMoving ? swerveSubsystem.MAX_VEL : 0.0)
+                    .setEndVelocity(endsMoving ? swerveSubsystem.MAX_VEL : 0.0)
             ),
             end.getRotation()
         );
