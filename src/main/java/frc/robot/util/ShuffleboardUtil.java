@@ -22,6 +22,15 @@ public class ShuffleboardUtil {
     }
 
     /**
+     * Sets up a listener on a Shuffleboard entry for a `boolean` change, calling the provided callback on new values.
+     * @param entry The shuffleboard entry to poll.
+     * @param callback The callback to run on a new `boolean` value.
+     */
+    public static void addBooleanListener(GenericEntry entry, Consumer<Boolean> callback) {
+        addValueListener(entry, (value) -> callback.accept(value.getBoolean()));
+    }
+
+    /**
      * Sets up a listener on a Shuffleboard entry for a value change, calling the provided callback on new values.
      * @param entry The shuffleboard entry to poll.
      * @param callback The callback to run on a new `NetworkTableValue` value.
@@ -41,6 +50,15 @@ public class ShuffleboardUtil {
      */
     public static void pollShuffleboardDouble(GenericEntry entry, Consumer<Double> callback) {
         pollShuffleboardValue(entry, (value) -> callback.accept(value.getDouble()));
+    }
+
+    /**
+     * Polls a Shuffleboard entry for a `boolean` change, calling the provided callback if it is found.
+     * @param entry The shuffleboard entry to poll.
+     * @param callback The callback to run on a new `boolean` value.
+     */
+    public static void pollShuffleboardBoolean(GenericEntry entry, Consumer<Boolean> callback) {
+        pollShuffleboardValue(entry, (value) -> callback.accept(value.getBoolean()));
     }
 
     /**

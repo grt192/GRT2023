@@ -12,10 +12,11 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
-
+import frc.robot.util.ShuffleboardUtil;
 import frc.robot.vision.PhotonWrapper;
 
 /**
@@ -52,7 +53,7 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
     private final Field2d fieldWidget = new Field2d();
 
     private static final boolean SHUFFLEBOARD_ENABLE = true;
-    private static final boolean VISION_ENABLE = true;
+    private volatile boolean VISION_ENABLE = true;
 
     // The driver or auton commanded `SwerveModuleState` setpoints for each module;
     // states are given in a tuple of [top left, top right, bottom left, bottom right].
@@ -111,6 +112,12 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
         chargingStationLockedEntry = shuffleboardTab.add("Charging station locking", chargingStationLocked)
             .withPosition(4, 5)
             .getEntry();
+
+        GenericEntry visionEnableEntry = Shuffleboard.getTab("PhotonVision").add("Vision enable", VISION_ENABLE)
+            .withPosition(4, 0)
+            .withWidget(BuiltInWidgets.kToggleSwitch)
+            .getEntry();
+        ShuffleboardUtil.addBooleanListener(visionEnableEntry, (value) -> VISION_ENABLE = value);
 
         lockTimer = new Timer();
     }
