@@ -46,7 +46,18 @@ public abstract class BaseAutonSequence extends SequentialCommandGroup {
      * @return The `SequentialCommandGroup` representing running the commands in order.
      */
     protected Command goAndGrab(Pose2d initialPose, List<Pose2d> waypoints, Pose2d finalPose) {
-        return FollowPathCommand.composedFrom(swerveSubsystem, initialPose, waypoints, finalPose)
+        return goAndGrab(initialPose, waypoints, finalPose, false, false);
+    }
+
+    /**
+     * Goes to a position and intakes a game piece.
+     * @param intialPose The initial pose of the robot.
+     * @param waypoints The waypoints to hit along the path.
+     * @param finalPose The destination pose of the robot.
+     * @return The `SequentialCommandGroup` representing running the commands in order.
+     */
+    protected Command goAndGrab(Pose2d initialPose, List<Pose2d> waypoints, Pose2d finalPose, boolean startsMoving, boolean endsMoving) {
+        return FollowPathCommand.composedFrom(swerveSubsystem, initialPose, waypoints, finalPose, startsMoving, endsMoving)
             .alongWith(new TiltedElevatorCommand(tiltedElevatorSubsystem, ElevatorState.GROUND))
             .deadlineWith(new RollerIntakeCommand(rollerSubsystem));
             // .andThen(new SwerveIdleCommand(swerveSubsystem));

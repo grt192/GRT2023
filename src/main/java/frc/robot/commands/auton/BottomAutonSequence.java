@@ -4,6 +4,7 @@ import java.util.List;
 
 import edu.wpi.first.math.geometry.Pose2d;
 
+import frc.robot.commands.swerve.FollowPathCommand;
 import frc.robot.positions.FieldPosition;
 import frc.robot.positions.PlacePosition;
 import frc.robot.positions.PlacePosition.PlaceState;
@@ -44,12 +45,17 @@ public class BottomAutonSequence extends BaseAutonSequence {
         Pose2d grabPose = GRAB_POSE.getPose(isRed);
 
         addCommands(
-            //place preloaded gamepiece
+            // Place preloaded gamepiece
             goAndPlace(initialPose, placeState1),
+            // Spline through midpose 1 to avoid overshoot
+            FollowPathCommand.from(swerveSubsystem, initialPose, List.of(midPose1.getTranslation()), midPose2, false, true),
             // Go and grab 2nd piece
-            goAndGrab(initialPose, List.of(midPose1, midPose2), grabPose),
+            goAndGrab(midPose2, List.of(), grabPose, true, false),
+            // Go directly to midpose 2 to avoid angle wrap heading error
+            FollowPathCommand.from(swerveSubsystem, grabPose, List.of(), midPose2),
             // Go and place grabbed piece
-            goAndPlace(grabPose, List.of(midPose2), midPose1, placeState2)
+            goAndPlace(midPose2, List.of(), midPose1, placeState2)
+            // goAndPlace(grabPose, List.of(midPose2), midPose1, placeState2)
         );
     }
 }
