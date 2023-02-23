@@ -68,7 +68,6 @@ public class WheelHeadingAngleTest {
             Rotation2d.fromDegrees(-120),
             Rotation2d.fromDegrees(180)
         );
-        System.out.println(average.getDegrees());
         assertEquals(average.getRadians(), -Math.PI / 3, ACCEPTABLE_ANGLE_DELTA);
     }
 }

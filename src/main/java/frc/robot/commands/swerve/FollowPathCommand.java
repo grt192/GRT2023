@@ -145,10 +145,10 @@ public class FollowPathCommand extends SwerveControllerCommand {
         Rotation2d startHeading = currentWheelHeading;
         Rotation2d endHeading = averageWheelHeadings(currentWheelHeading, nextWheelHeading);
 
-        Command sequence = fromWheelHeadings(
+        SequentialCommandGroup sequence = new SequentialCommandGroup(fromWheelHeadings(
             swerveSubsystem, start, List.of(), poses.get(0),
             startHeading, endHeading, startsMoving, true
-        );
+        ));
 
         for (int i = 0; i < poses.size() - 2; i++) {
             // For intermediate segments, the start heading is the previous end heading.
@@ -159,17 +159,18 @@ public class FollowPathCommand extends SwerveControllerCommand {
             startHeading = endHeading;
             endHeading = averageWheelHeadings(currentWheelHeading, nextWheelHeading);
 
-            sequence = sequence.andThen(fromWheelHeadings(
+            sequence.addCommands(fromWheelHeadings(
                 swerveSubsystem, poses.get(i), List.of(), poses.get(i + 1),
                 startHeading, endHeading, true, true
             ));
         }
 
-        return sequence.andThen(fromWheelHeadings(
+        sequence.addCommands(fromWheelHeadings(
             swerveSubsystem, poses.get(poses.size() - 2), List.of(), end,
             endHeading, wheelHeadingFromPoints(poses.get(poses.size() - 2).getTranslation(), end.getTranslation()),
             true, endsMoving
         ));
+        return sequence;
     }
 
     /**
