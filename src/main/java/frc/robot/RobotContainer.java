@@ -97,7 +97,7 @@ public class RobotContainer {
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
     public RobotContainer() {
-        driveController = new DualJoystickDriveController();
+        driveController = new XboxDriveController();
 
         photonWrapper = new PhotonWrapper();
         switchableCamera = new SwitchableCamera();
@@ -236,9 +236,9 @@ public class RobotContainer {
             tiltedElevatorSubsystem.setState(ElevatorState.HOME);
         }, tiltedElevatorSubsystem));
 
-        // mechRBumper.onTrue(new InstantCommand(() -> {
-        //     tiltedElevatorSubsystem.toggleState(ElevatorState.CUBE_MID, ElevatorState.CUBE_HIGH);
-        // }, tiltedElevatorSubsystem));
+        mechRBumper.onTrue(new InstantCommand(() -> {
+            tiltedElevatorSubsystem.toggleState(ElevatorState.CUBE_MID, ElevatorState.CUBE_HIGH);
+        }, tiltedElevatorSubsystem));
 
         mechLBumper.onTrue(new InstantCommand(() -> {
             tiltedElevatorSubsystem.toggleState(ElevatorState.CONE_MID, ElevatorState.CONE_HIGH);

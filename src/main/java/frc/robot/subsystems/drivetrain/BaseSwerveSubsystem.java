@@ -132,14 +132,6 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
             getModuleStates()
         );
 
-        // Update Shuffleboard
-        if (SHUFFLEBOARD_ENABLE) {
-            xEntry.setValue(Units.metersToInches(estimate.getX()));
-            yEntry.setValue(Units.metersToInches(estimate.getY()));
-            thetaEntry.setValue(estimate.getRotation().getDegrees());
-            fieldWidget.setRobotPose(estimate);
-        }
-
         // Add vision pose estimate to pose estimator
         if (VISION_ENABLE) photonWrapper.getRobotPoses(estimate).forEach((visionPose) -> {
             poseEstimator.addVisionMeasurement(
@@ -147,6 +139,14 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
                 visionPose.timestampSeconds
             );
         });
+
+        // Update Shuffleboard
+        if (SHUFFLEBOARD_ENABLE) {
+            xEntry.setValue(Units.metersToInches(estimate.getX()));
+            yEntry.setValue(Units.metersToInches(estimate.getY()));
+            thetaEntry.setValue(estimate.getRotation().getDegrees());
+            fieldWidget.setRobotPose(estimate);
+        }
 
         // If all commanded velocities are 0, the system is idle (drivers / commands are
         // not supplying input).
@@ -165,7 +165,18 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
 
         // Lock the swerve modules in an X (or parallel to the charging station if the state is set) if the lock timeout has elapsed,
         // or set them to their setpoints if drivers are supplying non-idle input.
-        if (chargingStationLocked && lockTimer.hasElapsed(LOCK_TIMEOUT_SECONDS)) {
+        if (lockTimer.hasElapsed(LOCK_TIMEOUT_SECONDS)) {
+            applyLock();
+        } else {
+            topLeftModule.setDesiredState(states[0]);
+            topRightModule.setDesiredState(states[1]);
+            bottomLeftModule.setDesiredState(states[2]);
+            bottomRightModule.setDesiredState(states[3]);
+        }
+    }
+
+    private void applyLock() {
+        if (chargingStationLocked) {
             // Lock modules parallel to the charging station, accounting for the orientation of the robot.
             Rotation2d lockAngle = Rotation2d.fromDegrees(90).minus(getFieldHeading());
 
@@ -173,16 +184,11 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
             topRightModule.setDesiredState(new SwerveModuleState(0.0, lockAngle));
             bottomLeftModule.setDesiredState(new SwerveModuleState(0.0, lockAngle));
             bottomRightModule.setDesiredState(new SwerveModuleState(0.0, lockAngle));
-        } else if (LOCKING_ENABLE && lockTimer.hasElapsed(LOCK_TIMEOUT_SECONDS)) {
+        } else if (LOCKING_ENABLE) {
             topLeftModule.setDesiredState(new SwerveModuleState(0.0, new Rotation2d(Math.PI / 4.0)));
             topRightModule.setDesiredState(new SwerveModuleState(0.0, new Rotation2d(-Math.PI / 4.0)));
             bottomLeftModule.setDesiredState(new SwerveModuleState(0.0, new Rotation2d(-Math.PI / 4.0)));
             bottomRightModule.setDesiredState(new SwerveModuleState(0.0, new Rotation2d(Math.PI / 4.0)));
-        } else {
-            topLeftModule.setDesiredState(states[0]);
-            topRightModule.setDesiredState(states[1]);
-            bottomLeftModule.setDesiredState(states[2]);
-            bottomRightModule.setDesiredState(states[3]);
         }
     }
 
@@ -354,9 +360,6 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
     }
 
     public void lockNow(){
-        topLeftModule.setDesiredState(new SwerveModuleState(0.0, new Rotation2d(Math.PI / 4.0)));
-        topRightModule.setDesiredState(new SwerveModuleState(0.0, new Rotation2d(-Math.PI / 4.0)));
-        bottomLeftModule.setDesiredState(new SwerveModuleState(0.0, new Rotation2d(-Math.PI / 4.0)));
-        bottomRightModule.setDesiredState(new SwerveModuleState(0.0, new Rotation2d(Math.PI / 4.0)));
+        applyLock();
     }
 }

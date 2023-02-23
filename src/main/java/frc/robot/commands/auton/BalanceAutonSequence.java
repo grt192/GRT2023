@@ -14,8 +14,8 @@ import frc.robot.subsystems.TiltedElevatorSubsystem;
 import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
 
 public class BalanceAutonSequence extends BaseAutonSequence {
-    private static final FieldPosition INITIAL_POSE = FieldPosition.B1_INIT;
-    private static final PlacePosition PLACE_POSE = PlacePosition.B1MID;
+    private static final FieldPosition INITIAL_POSE = FieldPosition.B2_INIT;
+    private static final PlacePosition PLACE_POSE = PlacePosition.B2HIGH;
 
     private static final FieldPosition MID_POSE_1 = FieldPosition.BALANCE_MIDPOS_1;
     private static final FieldPosition MID_POSE_2 = FieldPosition.BALANCE_MIDPOS_2;
@@ -44,12 +44,12 @@ public class BalanceAutonSequence extends BaseAutonSequence {
             //place preloaded gamepiece
             goAndPlace(initialPose, placeState),
             // Go out of community and do 180
-            FollowPathCommand.composedFrom(
-                swerveSubsystem,
-                initialPose,
-                List.of(midPose1, midPose2),
-                midPose3
-            ),
+            // FollowPathCommand.composedFrom(
+            //     swerveSubsystem,
+            //     initialPose,
+            //     List.of(midPose1, midPose2),
+            //     midPose3
+            // ),
             // Go and balance on charging station
             new DefaultBalancerCommand(swerveSubsystem)
         );

@@ -90,6 +90,11 @@ public class DefaultBalancerCommand extends CommandBase {
     @Override
     public void end(boolean interrupted) {
         System.out.println("------------------- Balancing process finished -------------------");
+        if (driveSubsystem instanceof BaseSwerveSubsystem) {
+            BaseSwerveSubsystem swerve = (BaseSwerveSubsystem) driveSubsystem;
+            swerve.setChargingStationLocked(true);
+            swerve.lockNow();
+        }
     }
 
     @Override
