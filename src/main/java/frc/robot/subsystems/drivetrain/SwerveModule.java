@@ -52,6 +52,8 @@ public class SwerveModule implements BaseSwerveModule {
     private static final double steerD = 0;
     private static final double steerFF = 0;
 
+    private boolean VERBOSE_SHUFFLEBOARD;
+
     private final ShuffleboardTab shuffleboardTab;
     private final GenericEntry 
         targetVelEntry, currentVelEntry, velErrorEntry,
@@ -66,7 +68,7 @@ public class SwerveModule implements BaseSwerveModule {
      * @param steerPort The steer SparkMax CAN ID.
      * @param offsetRads The angle offset, in radians.
      */
-    public SwerveModule(int drivePort, int steerPort, double offsetRads) {
+    public SwerveModule(int drivePort, int steerPort, double offsetRads, boolean VERBOSE_SHUFFLEBOARD) {
         /*
          * driveMotor = MotorUtil.createTalonFX(drivePort);
          * driveMotor.setNeutralMode(NeutralMode.Brake);
@@ -109,35 +111,49 @@ public class SwerveModule implements BaseSwerveModule {
             steerPidController.setPositionPIDWrappingMinInput(0.0);
             steerPidController.setPositionPIDWrappingMaxInput(2 * Math.PI);
         });
+        
+        this.VERBOSE_SHUFFLEBOARD = VERBOSE_SHUFFLEBOARD;
 
-        shuffleboardTab = Shuffleboard.getTab("Swerve " + drivePort + " " + steerPort);
-        targetVelEntry = shuffleboardTab.add("Target velocity (mps)", 0.0)
-            .withPosition(0, 0)
-            .withSize(2, 1)
-            .getEntry();
-        currentVelEntry = shuffleboardTab.add("Current velocity (mps)", 0.0)
-            .withPosition(2, 0)
-            .withSize(2, 1)
-            .getEntry();
-        velErrorEntry = shuffleboardTab.add("Velocity error (mps)", 0.0)
-            .withPosition(0, 1)
-            .withSize(5, 3)
-            // .withWidget(BuiltInWidgets.kGraph)
-            .getEntry();
+        if(VERBOSE_SHUFFLEBOARD) {
+            shuffleboardTab = Shuffleboard.getTab("Swerve " + drivePort + " " + steerPort);
 
-        targetAngleEntry = shuffleboardTab.add("Target angle (degs)", 0.0)
-            .withPosition(6, 0)
-            .withSize(2, 1)
-            .getEntry();
-        currentAngleEntry = shuffleboardTab.add("Current angle (degs)", 0.0)
-            .withPosition(8, 0)
-            .withSize(2, 1)
-            .getEntry();
-        angleErrorEntry = shuffleboardTab.add("Angle error (rads)", 0.0)
-            .withPosition(6, 1)
-            .withSize(5, 3)
-            // .withWidget(BuiltInWidgets.kGraph)
-            .getEntry();
+            targetVelEntry = shuffleboardTab.add("Target velocity (mps)", 0.0)
+                .withPosition(0, 0)
+                .withSize(2, 1)
+                .getEntry();
+            currentVelEntry = shuffleboardTab.add("Current velocity (mps)", 0.0)
+                .withPosition(2, 0)
+                .withSize(2, 1)
+                .getEntry();
+            velErrorEntry = shuffleboardTab.add("Velocity error (mps)", 0.0)
+                .withPosition(0, 1)
+                .withSize(5, 3)
+                // .withWidget(BuiltInWidgets.kGraph)
+                .getEntry();
+
+            targetAngleEntry = shuffleboardTab.add("Target angle (degs)", 0.0)
+                .withPosition(6, 0)
+                .withSize(2, 1)
+                .getEntry();
+            currentAngleEntry = shuffleboardTab.add("Current angle (degs)", 0.0)
+                .withPosition(8, 0)
+                .withSize(2, 1)
+                .getEntry();
+            angleErrorEntry = shuffleboardTab.add("Angle error (rads)", 0.0)
+                .withPosition(6, 1)
+                .withSize(5, 3)
+                // .withWidget(BuiltInWidgets.kGraph)
+                .getEntry();
+        }
+        else{
+            shuffleboardTab = null;
+            targetVelEntry = null;
+            currentVelEntry = null;
+            velErrorEntry = null; 
+            targetAngleEntry = null;
+            currentAngleEntry = null;
+            angleErrorEntry = null;
+        }
 
         this.offsetRads = offsetRads;
     }
@@ -149,8 +165,8 @@ public class SwerveModule implements BaseSwerveModule {
      * @param drivePort The drive TalonFX CAN ID.
      * @param steerPort The steer SparkMax CAN ID.
      */
-    public SwerveModule(int drivePort, int steerPort) {
-        this(drivePort, steerPort, 0.0);
+    public SwerveModule(int drivePort, int steerPort, boolean VERBOSE_SHUFFLEBOARD) {
+        this(drivePort, steerPort, 0.0, VERBOSE_SHUFFLEBOARD);
     }
 
     /**
@@ -176,6 +192,7 @@ public class SwerveModule implements BaseSwerveModule {
         double currentVelocity = driveEncoder.getVelocity();
         double targetAngle = optimized.angle.getRadians() - offsetRads;
 
+        
         // Set shuffleboard debug info
         targetVelEntry.setDouble(optimized.speedMetersPerSecond);
         currentVelEntry.setDouble(currentVelocity);
@@ -225,12 +242,12 @@ public class SwerveModule implements BaseSwerveModule {
      * The offset to align the pin with the front of the robot is automatically applied.
      */
     public static class TopLeft extends SwerveModule {
-        public TopLeft(int drivePort, int steerPort) {
-            super(drivePort, steerPort, 0.0);
+        public TopLeft(int drivePort, int steerPort, boolean VERBOSE_SHUFFLEBOARD) {
+            super(drivePort, steerPort, 0.0, VERBOSE_SHUFFLEBOARD);
         }
 
-        public TopLeft(int drivePort, int steerPort, double offsetRads) {
-            super(drivePort, steerPort, offsetRads);
+        public TopLeft(int drivePort, int steerPort, double offsetRads, boolean VERBOSE_SHUFFLEBOARD) {
+            super(drivePort, steerPort, offsetRads, VERBOSE_SHUFFLEBOARD);
         }
     }
 
@@ -241,12 +258,12 @@ public class SwerveModule implements BaseSwerveModule {
     public static class TopRight extends SwerveModule {
         private static final double POS_OFFSET = -Math.PI / 2.0;
 
-        public TopRight(int drivePort, int steerPort) {
-            super(drivePort, steerPort, POS_OFFSET);
+        public TopRight(int drivePort, int steerPort, boolean VERBOSE_SHUFFLEBOARD) {
+            super(drivePort, steerPort, POS_OFFSET, VERBOSE_SHUFFLEBOARD);
         }
 
-        public TopRight(int drivePort, int steerPort, double offsetRads) {
-            super(drivePort, steerPort, offsetRads + POS_OFFSET);
+        public TopRight(int drivePort, int steerPort, double offsetRads, boolean VERBOSE_SHUFFLEBOARD) {
+            super(drivePort, steerPort, offsetRads + POS_OFFSET, VERBOSE_SHUFFLEBOARD);
         }
 
         @Override
@@ -262,12 +279,12 @@ public class SwerveModule implements BaseSwerveModule {
     public static class BottomLeft extends SwerveModule {
         private static final double POS_OFFSET = Math.PI / 2.0;
 
-        public BottomLeft(int drivePort, int steerPort) {
-            super(drivePort, steerPort, POS_OFFSET);
+        public BottomLeft(int drivePort, int steerPort, boolean VERBOSE_SHUFFLEBOARD) {
+            super(drivePort, steerPort, POS_OFFSET, VERBOSE_SHUFFLEBOARD);
         }
 
-        public BottomLeft(int drivePort, int steerPort, double offsetRads) {
-            super(drivePort, steerPort, offsetRads + POS_OFFSET);
+        public BottomLeft(int drivePort, int steerPort, double offsetRads, boolean VERBOSE_SHUFFLEBOARD) {
+            super(drivePort, steerPort, offsetRads + POS_OFFSET, VERBOSE_SHUFFLEBOARD);
         }
 
         @Override
@@ -283,12 +300,12 @@ public class SwerveModule implements BaseSwerveModule {
     public static class BottomRight extends SwerveModule {
         private static final double POS_OFFSET = Math.PI;
 
-        public BottomRight(int drivePort, int steerPort) {
-            super(drivePort, steerPort, POS_OFFSET);
+        public BottomRight(int drivePort, int steerPort, boolean VERBOSE_SHUFFLEBOARD) {
+            super(drivePort, steerPort, POS_OFFSET, VERBOSE_SHUFFLEBOARD);
         }
 
-        public BottomRight(int drivePort, int steerPort, double offsetRads) {
-            super(drivePort, steerPort, offsetRads + POS_OFFSET);
+        public BottomRight(int drivePort, int steerPort, double offsetRads, boolean VERBOSE_SHUFFLEBOARD) {
+            super(drivePort, steerPort, offsetRads + POS_OFFSET, VERBOSE_SHUFFLEBOARD);
         }
 
         @Override

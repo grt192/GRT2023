@@ -101,7 +101,7 @@ public class RobotContainer {
         photonWrapper = new PhotonWrapper();
         switchableCamera = new SwitchableCamera();
 
-        driveSubsystem = new SwerveSubsystem(photonWrapper);
+        driveSubsystem = new SwerveSubsystem(photonWrapper, false);
         rollerSubsystem = new RollerSubsystem();
         tiltedElevatorSubsystem = new TiltedElevatorSubsystem();
 
