@@ -50,7 +50,6 @@ public class DefaultBalancerCommand extends CommandBase {
         passedCenter = false;
         balanced = false;
         waiting = false;
-
     }
 
     @Override
@@ -60,33 +59,30 @@ public class DefaultBalancerCommand extends CommandBase {
         
         if(!reachedStation) {
             returnDrivePower = - 0.80;
-            if(ahrs.getPitch() <= - 15.0) reachedStation = true;
-            returnDrivePower = - 0.2; //.15 successful
-        }
-
-        else{
+            if(ahrs.getPitch() <= - 15.0){
+                reachedStation = true;
+                returnDrivePower = - 0.2;
+            } //.15 successful
+        } else {
             currentPitch = ahrs.getPitch();
             deltaAngle = Math.abs(currentPitch - oldPitch); // calc magnitude of angular acceleration based on delta angle over time
 
             if(!passedCenter){
-                returnDrivePower -= 0.1 * deltaAngle;
                 if(ahrs.getPitch() >= -5.0){
                     passedCenter = true; // <= 1.0 worked 
                 }
-            }
-            else{
+            } else {
                 returnDrivePower = -1 * drivePID.calculate(ahrs.getPitch(), 0);
                 System.out.println(returnDrivePower);
-
                 if(Math.abs(ahrs.getPitch()) <= 1.0 && deltaAngle <= 0.1) balanced = true;
-                    
             }
         }
 
         if(driveSubsystem instanceof BaseSwerveSubsystem){
             ((BaseSwerveSubsystem) driveSubsystem).setDrivePowers(returnDrivePower, 0.0);
+        } else {
+            driveSubsystem.setDrivePowers(returnDrivePower);
         }
-        else driveSubsystem.setDrivePowers(returnDrivePower);
 
         oldPitch = currentPitch; // set the current angle to old angle so it is accessible for next cycle     
     }
