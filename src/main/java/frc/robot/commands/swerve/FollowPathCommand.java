@@ -20,22 +20,17 @@ import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
 
 public class FollowPathCommand extends SwerveControllerCommand {
-    private final BaseSwerveSubsystem swerveSubsystem;
-    private final Rotation2d targetAngle;
-
-    private static final double xP = 2.5;
+    private static final double xP = 1.5;
     private static final double xI = 0;
     private static final double xD = 0;
 
-    private static final double yP = 2.5;
+    private static final double yP = 1.5;
     private static final double yI = 0;
     private static final double yD = 0;
 
     private static final double thetaP = 1.5;
     private static final double thetaI = 0;
     private static final double thetaD = 0;
-
-    private static final double ACCEPTABLE_ANGLE_ERROR_RADS = Math.toRadians(3.0);
 
     /**
      * Creates a FollowPathCommand from a given trajectory and target robot angle.
@@ -62,9 +57,6 @@ public class FollowPathCommand extends SwerveControllerCommand {
             swerveSubsystem::setSwerveModuleStates,
             swerveSubsystem
         );
-
-        this.swerveSubsystem = swerveSubsystem;
-        this.targetAngle = targetAngle;
     }
 
     /**
@@ -78,14 +70,7 @@ public class FollowPathCommand extends SwerveControllerCommand {
      * @return The created `FollowPathCommand`.
      */
     public static FollowPathCommand from(BaseSwerveSubsystem swerveSubsystem, Pose2d start, List<Translation2d> waypoints, Pose2d end) {
-        return new FollowPathCommand(
-            swerveSubsystem,
-            createWheelHeadingTrajectory(
-                start, waypoints, end,
-                createDefaultConfig(swerveSubsystem)
-            ),
-            end.getRotation()
-        );
+        return from(swerveSubsystem, start, waypoints, end, false, false);
     }
 
     /**
@@ -108,9 +93,7 @@ public class FollowPathCommand extends SwerveControllerCommand {
             swerveSubsystem,
             createWheelHeadingTrajectory(
                 start, waypoints, end,
-                createDefaultConfig(swerveSubsystem)
-                    .setStartVelocity(startsMoving ? swerveSubsystem.MAX_VEL : 0.0)
-                    .setEndVelocity(endsMoving ? swerveSubsystem.MAX_VEL : 0.0)
+                createConfig(swerveSubsystem, startsMoving, endsMoving)
             ),
             end.getRotation()
         );
@@ -160,12 +143,12 @@ public class FollowPathCommand extends SwerveControllerCommand {
         Rotation2d nextWheelHeading = wheelHeadingFromPoints(poses.get(0).getTranslation(), poses.get(1).getTranslation());
 
         Rotation2d startHeading = currentWheelHeading;
-        Rotation2d endHeading = currentWheelHeading.plus(nextWheelHeading).div(2.0);
+        Rotation2d endHeading = averageWheelHeadings(currentWheelHeading, nextWheelHeading);
 
-        Command sequence = fromWheelHeadings(
+        SequentialCommandGroup sequence = new SequentialCommandGroup(fromWheelHeadings(
             swerveSubsystem, start, List.of(), poses.get(0),
             startHeading, endHeading, startsMoving, true
-        );
+        ));
 
         for (int i = 0; i < poses.size() - 2; i++) {
             // For intermediate segments, the start heading is the previous end heading.
@@ -174,19 +157,20 @@ public class FollowPathCommand extends SwerveControllerCommand {
             nextWheelHeading = wheelHeadingFromPoints(poses.get(i + 1).getTranslation(), poses.get(i + 2).getTranslation());
 
             startHeading = endHeading;
-            endHeading = currentWheelHeading.plus(nextWheelHeading).div(2.0);
+            endHeading = averageWheelHeadings(currentWheelHeading, nextWheelHeading);
 
-            sequence = sequence.andThen(fromWheelHeadings(
+            sequence.addCommands(fromWheelHeadings(
                 swerveSubsystem, poses.get(i), List.of(), poses.get(i + 1),
                 startHeading, endHeading, true, true
             ));
         }
 
-        return sequence.andThen(fromWheelHeadings(
+        sequence.addCommands(fromWheelHeadings(
             swerveSubsystem, poses.get(poses.size() - 2), List.of(), end,
             endHeading, wheelHeadingFromPoints(poses.get(poses.size() - 2).getTranslation(), end.getTranslation()),
             true, endsMoving
         ));
+        return sequence;
     }
 
     /**
@@ -231,9 +215,7 @@ public class FollowPathCommand extends SwerveControllerCommand {
             createWheelHeadingTrajectory(
                 start, waypoints, end,
                 startHeading, endHeading,
-                createDefaultConfig(swerveSubsystem)
-                    .setStartVelocity(startsMoving ? swerveSubsystem.MAX_VEL : 0.0)
-                    .setEndVelocity(endsMoving ? swerveSubsystem.MAX_VEL : 0.0)
+                createConfig(swerveSubsystem, startsMoving, endsMoving)
             ),
             end.getRotation()
         );
@@ -251,6 +233,20 @@ public class FollowPathCommand extends SwerveControllerCommand {
         double dy = b.getY() - a.getY();
 
         return new Rotation2d(dx, dy);
+    }
+
+    /**
+     * Gets the average angle between two wheel headings, accounting for angle wraparound at 180 degrees.
+     * 
+     * @param headingA The first wheel heading.
+     * @param headingB The second wheel heading.
+     * @return The `Rotation2d` representing the angle between A and B.
+     */
+    public static Rotation2d averageWheelHeadings(Rotation2d headingA, Rotation2d headingB) {
+        if (Math.abs(headingA.getRadians() - headingB.getRadians()) < Math.PI)
+            return headingA.plus(headingB).div(2.0);
+
+        return headingA.plus(headingB).plus(Rotation2d.fromDegrees(180)).div(2.0);
     }
 
     /**
@@ -305,13 +301,21 @@ public class FollowPathCommand extends SwerveControllerCommand {
     }
 
     /**
-     * Creates a default `TrajectoryConfig` from a `BaseSwerveSubsystem`'s constraints.
+     * Creates a `TrajectoryConfig` from a `BaseSwerveSubsystem`'s constraints and provided starts- and
+     * ends-moving parameters.
+     * 
      * @param swerveSubsystem The `BaseSwerveSubsystem` to create a trajectory for.
+     * @param startsMoving Whether the trajectory should start in motion.
+     * @param endsMoving Whether the trajectory should end in motion.
      * @return The generated `TrajectoryConfig`.
      */
-    private static TrajectoryConfig createDefaultConfig(BaseSwerveSubsystem swerveSubsystem) {
+    private static TrajectoryConfig createConfig(
+        BaseSwerveSubsystem swerveSubsystem, boolean startsMoving, boolean endsMoving
+    ) {
         return new TrajectoryConfig(swerveSubsystem.MAX_VEL, swerveSubsystem.MAX_ACCEL)
             .setKinematics(swerveSubsystem.getKinematics())
+            .setStartVelocity(startsMoving ? swerveSubsystem.MAX_VEL : 0.0)
+            .setEndVelocity(endsMoving ? swerveSubsystem.MAX_VEL : 0.0)
             .addConstraint(
                 new SwerveDriveKinematicsConstraint(
                     swerveSubsystem.getKinematics(), 
@@ -319,16 +323,4 @@ public class FollowPathCommand extends SwerveControllerCommand {
                 )
             );
     }
-
-    /*
-    @Override
-    public boolean isFinished() {
-        // End the command if the trajectory has finished and we are within tolerance of our final angle.
-        // While the trajectory is finished but the robot is not at the target angle, the command will
-        // continually pass the final (stationary) trajectory state and our target angle to the holonomic
-        // controller to slowly bring the robot to the correct heading.
-        double absAngleError = Math.abs(swerveSubsystem.getRobotPosition().getRotation().minus(targetAngle).getRadians());
-        return super.isFinished() && absAngleError <= ACCEPTABLE_ANGLE_ERROR_RADS;
-    }
-    */
 }

@@ -8,61 +8,61 @@ import frc.robot.util.FieldUtil;
 
 public enum FieldPosition {
     C3_INIT(new Pose2d(
-        Units.inchesToMeters(86.855),
+        Units.inchesToMeters(86.885),
         Units.inchesToMeters(195.55),
         Rotation2d.fromDegrees(180)
     )),
     C2_INIT(new Pose2d(
-        Units.inchesToMeters(86.855),
+        Units.inchesToMeters(86.885),
         Units.inchesToMeters(174.123),
         Rotation2d.fromDegrees(180)
     )),
     C1_INIT(new Pose2d(
-        Units.inchesToMeters(86.855),
+        Units.inchesToMeters(86.885),
         Units.inchesToMeters(152.123),
         Rotation2d.fromDegrees(180)
     )),
 
     B3_INIT(new Pose2d(
-        Units.inchesToMeters(86.855),
+        Units.inchesToMeters(86.885),
         Units.inchesToMeters(129.75),
         Rotation2d.fromDegrees(180)
     )),
     B2_INIT(new Pose2d(
-        Units.inchesToMeters(86.855),
+        Units.inchesToMeters(86.885),
         Units.inchesToMeters(107.801),
         Rotation2d.fromDegrees(180)
     )),
     B1_INIT(new Pose2d(
-        Units.inchesToMeters(86.855),
+        Units.inchesToMeters(86.885),
         Units.inchesToMeters(86.149),
         Rotation2d.fromDegrees(180)
     )),
 
     A3_INIT(new Pose2d(
-        Units.inchesToMeters(86.855),
+        Units.inchesToMeters(86.885),
         Units.inchesToMeters(64.818),
         Rotation2d.fromDegrees(180)
     )),
     A2_INIT(new Pose2d(
-        Units.inchesToMeters(86.855),
+        Units.inchesToMeters(86.885),
         Units.inchesToMeters(41.761),
         Rotation2d.fromDegrees(180)
     )),
     A1_INIT(new Pose2d(
-        Units.inchesToMeters(86.855),
+        Units.inchesToMeters(86.885),
         Units.inchesToMeters(20.016),
         Rotation2d.fromDegrees(180)
     )),
 
     BOTTOM_MIDPOS_1(new Pose2d(
         Units.inchesToMeters(94.373),
-        Units.inchesToMeters(28.007),
+        Units.inchesToMeters(29),
         Rotation2d.fromDegrees(180)
     )),
     BOTTOM_MIDPOS_2(new Pose2d(
-        Units.inchesToMeters(179.577),
-        Units.inchesToMeters(28.007), 
+        Units.inchesToMeters(170),
+        Units.inchesToMeters(29), 
         Rotation2d.fromDegrees(180)
     )),
 
