@@ -51,14 +51,16 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
 
     private ElevatorState state = ElevatorState.GROUND;
 
-    private static final boolean IS_MANUAL = false;
+    private volatile boolean IS_MANUAL = false;
     private double manualPower = 0;
 
     private static final double OFFSET_FACTOR = 0.01; // The factor to multiply driver input by when changing the offset.
     private double offsetDistMeters = 0;
 
     public boolean pieceGrabbed = false;
+
     private boolean hallPressed = false;
+    private HallEffectMagnet lastHallPos = null;
 
     private final ShuffleboardTab shuffleboardTab;
     private final GenericEntry 
@@ -68,8 +70,7 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
     private final GenericEntry currentExtensionEntry, currentVelEntry, currentStateEntry, offsetDistEntry;
     private final GenericEntry limitSwitchEntry, hallEntry;
 
-    private HallEffectMagnet lastHallPos = null;
-
+    private volatile boolean SHUFFLEBOARD_ENABLE = false; // Whether to read and update shuffleboard values.
 
     public enum ElevatorState {
         GROUND(0) {
@@ -174,9 +175,19 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
         if (!Constants.IS_R1)
             leftHallSensor.addToShuffleboard(shuffleboardTab, 4, 1);
 
+        GenericEntry isManualEntry = shuffleboardTab.add("Is manual", IS_MANUAL)
+            .withPosition(6, 0)
+            .withWidget(BuiltInWidgets.kToggleSwitch)
+            .getEntry();
+        GenericEntry shuffleboardEnableEntry = shuffleboardTab.add("Shuffleboard enable", SHUFFLEBOARD_ENABLE)
+            .withPosition(7, 0)
+            .withWidget(BuiltInWidgets.kToggleSwitch)
+            .getEntry();
+
+        ShuffleboardUtil.addBooleanListener(isManualEntry, (value) -> IS_MANUAL = value);
+        ShuffleboardUtil.addBooleanListener(shuffleboardEnableEntry, (value) -> SHUFFLEBOARD_ENABLE = value);
     }
 
-    
     @Override
     public void periodic() {
         // When limit switch is pressed, reset encoder
@@ -217,22 +228,23 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
         } else {
             extensionMotor.enableSoftLimit(SoftLimitDirection.kReverse, true);
         }
-        
+
         // Temporarily store mechanism state during single periodic loop
         double currentPos = extensionEncoder.getPosition();
         double currentVel = extensionEncoder.getVelocity();
 
-        ShuffleboardUtil.pollShuffleboardDouble(extensionPEntry, extensionPidController::setP);
-        ShuffleboardUtil.pollShuffleboardDouble(extensionIEntry, extensionPidController::setI);
-        ShuffleboardUtil.pollShuffleboardDouble(extensionDEntry, extensionPidController::setD);
-        ShuffleboardUtil.pollShuffleboardDouble(extensionToleranceEntry, (value) -> extensionPidController.setSmartMotionAllowedClosedLoopError(value, 0));
-        ShuffleboardUtil.pollShuffleboardDouble(rampEntry, (value) -> extensionMotor.setClosedLoopRampRate(value));
-        arbFeedforward = arbFFEntry.getDouble(arbFeedforward);
-        double targetExtension = getTargetExtension();
-
+        if (SHUFFLEBOARD_ENABLE) {
+            ShuffleboardUtil.pollShuffleboardDouble(extensionPEntry, extensionPidController::setP);
+            ShuffleboardUtil.pollShuffleboardDouble(extensionIEntry, extensionPidController::setI);
+            ShuffleboardUtil.pollShuffleboardDouble(extensionDEntry, extensionPidController::setD);
+            ShuffleboardUtil.pollShuffleboardDouble(extensionToleranceEntry, (value) -> extensionPidController.setSmartMotionAllowedClosedLoopError(value, 0));
+            ShuffleboardUtil.pollShuffleboardDouble(rampEntry, (value) -> extensionMotor.setClosedLoopRampRate(value));
+            arbFeedforward = arbFFEntry.getDouble(arbFeedforward);
+        }
 
         // If we're trying to get to 0, set the motor to 0 power so the carriage drops with gravity
         // and hits the hard stop / limit switch.
+        double targetExtension = getTargetExtension();
         if (targetExtension == 0 && currentPos < Units.inchesToMeters(1) && zeroLimitSwitch.get()) {
             extensionMotor.set(-0.075);
         }
@@ -249,13 +261,15 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
             );
         // }
 
-        currentExtensionEntry.setDouble(Units.metersToInches(currentPos));
-        currentVelEntry.setDouble(currentVel);
-        currentStateEntry.setString(state.toString());
-        targetExtensionEntry.setDouble(Units.metersToInches(targetExtension));
-        offsetDistEntry.setDouble(Units.metersToInches(offsetDistMeters));
-        limitSwitchEntry.setBoolean(!zeroLimitSwitch.get());
-        hallEntry.setBoolean(leftHallSensor.getHallEffectState(extensionEncoder.getPosition()) != null);
+        if (SHUFFLEBOARD_ENABLE) {
+            currentExtensionEntry.setDouble(Units.metersToInches(currentPos));
+            currentVelEntry.setDouble(currentVel);
+            currentStateEntry.setString(state.toString());
+            targetExtensionEntry.setDouble(Units.metersToInches(targetExtension));
+            offsetDistEntry.setDouble(Units.metersToInches(offsetDistMeters));
+            limitSwitchEntry.setBoolean(!zeroLimitSwitch.get());
+            hallEntry.setBoolean(leftHallSensor.getHallEffectState(extensionEncoder.getPosition()) != null);
+        }
     }
 
     /**
