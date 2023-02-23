@@ -51,10 +51,8 @@ public class BottomAutonSequence extends BaseAutonSequence {
             FollowPathCommand.from(swerveSubsystem, initialPose, List.of(midPose1.getTranslation()), midPose2, false, true),
             // Go and grab 2nd piece
             goAndGrab(midPose2, List.of(), grabPose, true, false),
-            // Go directly to midpose 2 to avoid angle wrap heading error
-            FollowPathCommand.from(swerveSubsystem, grabPose, List.of(), midPose2),
             // Go and place grabbed piece
-            goAndPlace(midPose2, List.of(), midPose1, placeState2)
+            goAndPlace(grabPose, List.of(midPose2), midPose1, placeState2)
             // goAndPlace(grabPose, List.of(midPose2), midPose1, placeState2)
         );
     }

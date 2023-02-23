@@ -143,7 +143,7 @@ public class FollowPathCommand extends SwerveControllerCommand {
         Rotation2d nextWheelHeading = wheelHeadingFromPoints(poses.get(0).getTranslation(), poses.get(1).getTranslation());
 
         Rotation2d startHeading = currentWheelHeading;
-        Rotation2d endHeading = currentWheelHeading.plus(nextWheelHeading).div(2.0);
+        Rotation2d endHeading = averageWheelHeadings(currentWheelHeading, nextWheelHeading);
 
         Command sequence = fromWheelHeadings(
             swerveSubsystem, start, List.of(), poses.get(0),
@@ -157,7 +157,7 @@ public class FollowPathCommand extends SwerveControllerCommand {
             nextWheelHeading = wheelHeadingFromPoints(poses.get(i + 1).getTranslation(), poses.get(i + 2).getTranslation());
 
             startHeading = endHeading;
-            endHeading = currentWheelHeading.plus(nextWheelHeading).div(2.0);
+            endHeading = averageWheelHeadings(currentWheelHeading, nextWheelHeading);
 
             sequence = sequence.andThen(fromWheelHeadings(
                 swerveSubsystem, poses.get(i), List.of(), poses.get(i + 1),
@@ -232,6 +232,20 @@ public class FollowPathCommand extends SwerveControllerCommand {
         double dy = b.getY() - a.getY();
 
         return new Rotation2d(dx, dy);
+    }
+
+    /**
+     * Gets the average angle between two wheel headings, accounting for angle wraparound at 180 degrees.
+     * 
+     * @param headingA The first wheel heading.
+     * @param headingB The second wheel heading.
+     * @return The `Rotation2d` representing the angle between A and B.
+     */
+    public static Rotation2d averageWheelHeadings(Rotation2d headingA, Rotation2d headingB) {
+        if (Math.abs(headingA.getRadians() - headingB.getRadians()) < Math.PI)
+            return headingA.plus(headingB).div(2.0);
+
+        return headingA.plus(headingB).plus(Rotation2d.fromDegrees(180)).div(2.0);
     }
 
     /**
