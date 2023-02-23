@@ -26,6 +26,7 @@ import org.photonvision.PhotonCamera;
  */
 public final class Constants {
     public static final boolean IS_R1 = false;
+    public static final boolean GLOBAL_SHUFFLEBOARD_ENABLE = false;
 
     public static final class TankConstants{
         public static final int LEFT_MAIN = 19;

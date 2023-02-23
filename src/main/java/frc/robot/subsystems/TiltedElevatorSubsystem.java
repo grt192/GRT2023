@@ -70,7 +70,9 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
     private final GenericEntry currentExtensionEntry, currentVelEntry, currentStateEntry, offsetDistEntry;
     private final GenericEntry limitSwitchEntry, hallEntry;
 
-    private volatile boolean SHUFFLEBOARD_ENABLE = false; // Whether to read and update shuffleboard values.
+    // Whether to read and update shuffleboard values
+    private static final boolean OVERRIDE_SHUFFLEBOARD_ENABLE = false;
+    private volatile boolean SHUFFLEBOARD_ENABLE = OVERRIDE_SHUFFLEBOARD_ENABLE || Constants.GLOBAL_SHUFFLEBOARD_ENABLE;
 
     public enum ElevatorState {
         GROUND(0) {

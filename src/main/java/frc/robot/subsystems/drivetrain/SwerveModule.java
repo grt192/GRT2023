@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 
+import frc.robot.Constants;
 import frc.robot.util.MotorUtil;
 import frc.robot.util.ShuffleboardUtil;
 
@@ -58,7 +59,9 @@ public class SwerveModule implements BaseSwerveModule {
         targetVelEntry, currentVelEntry, velErrorEntry,
         targetAngleEntry, currentAngleEntry, angleErrorEntry;
 
-    private volatile boolean SHUFFLEBOARD_ENABLE = false;
+    // Whether to read and update shuffleboard values
+    private static final boolean OVERRIDE_SHUFFLEBOARD_ENABLE = false;
+    private volatile boolean SHUFFLEBOARD_ENABLE = OVERRIDE_SHUFFLEBOARD_ENABLE || Constants.GLOBAL_SHUFFLEBOARD_ENABLE;
 
     /**
      * Constructs a SwerveModule from a drive and steer motor CAN ID and an angle offset.
