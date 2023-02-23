@@ -1,8 +1,9 @@
 package frc.robot.subsystems.leds;
 
+import java.awt.Color;
+
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
-import edu.wpi.first.wpilibj.util.Color;
 
 public class LEDStrip {
 
@@ -23,7 +24,7 @@ public class LEDStrip {
 
     public void setSolidColor(Color color) {
         for (int i = 0; i < ledLength; i++) {
-            ledBuffer.setRGB(i, (int) color.red, (int) color.green, (int) color.blue);
+            ledBuffer.setRGB(i, color.getRed(), color.getGreen(), color.getBlue());
         }
         led.setData(ledBuffer);
         led.start();

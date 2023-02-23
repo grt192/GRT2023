@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import java.awt.Color;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -16,7 +18,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import edu.wpi.first.wpilibj.util.Color;
 
 import frc.robot.commands.auton.BalanceAutonSequence;
 import frc.robot.commands.auton.BottomOnePieceAutonSequence;
@@ -113,7 +114,7 @@ public class RobotContainer {
         driveSubsystem = new SwerveSubsystem(photonWrapper);
         rollerSubsystem = new RollerSubsystem();
         tiltedElevatorSubsystem = new TiltedElevatorSubsystem();
-        signalLEDSubsystem = new TimeoutLEDSubsystem(SIGNAL_LED_STRIP, 10, Color.kWhite); 
+        signalLEDSubsystem = new TimeoutLEDSubsystem(SIGNAL_LED_STRIP, 10, Color.WHITE); 
 
         superstructure = new Superstructure(rollerSubsystem, tiltedElevatorSubsystem, switchableCamera);
         balancerCommand = new DefaultBalancerCommand(driveSubsystem);
@@ -256,9 +257,10 @@ public class RobotContainer {
         }, tiltedElevatorSubsystem));
 
         blSwitch.onTrue(new InstantCommand(() -> {
-            signalLEDSubsystem.setNewColor(Color.kYellow);
+            System.out.println("yellow");
+            signalLEDSubsystem.setNewColor(new Color(255, 0, 200));
         }, signalLEDSubsystem)).onFalse(new InstantCommand(() -> {
-            signalLEDSubsystem.setNewColor(Color.kPurple);
+            signalLEDSubsystem.setNewColor(new Color(0, 255, 255));
         }, signalLEDSubsystem));
     }
 

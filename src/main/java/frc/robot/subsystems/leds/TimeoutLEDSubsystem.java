@@ -1,7 +1,8 @@
 package frc.robot.subsystems.leds;
 
+import java.awt.Color;
+
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class TimeoutLEDSubsystem extends SubsystemBase {
@@ -24,16 +25,20 @@ public class TimeoutLEDSubsystem extends SubsystemBase {
     }
 
     public void periodic() {
-        if (timer.hasElapsed(durationSeconds)) {
-            ledStrip.setSolidColor(defaultColor);
-            timer.stop();
-            timer.reset();
-        }
+        // ledStrip.setSolidColor(defaultColor);
+        
+        // if (timer.hasElapsed(durationSeconds)) {
+            // ledStrip.setSolidColor(defaultColor);
+            // timer.stop();
+            // timer.reset();
+        // }
+        
     }
 
     public void setNewColor(Color color) {
+        System.out.println("seting new color");
         ledStrip.setSolidColor(color);
-        timer.start();
+        // timer.start();
     }
     
 }
