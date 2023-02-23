@@ -4,8 +4,6 @@
 
 package frc.robot;
 
-import java.awt.Color;
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -14,6 +12,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ComplexWidget;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -53,6 +52,7 @@ import frc.robot.subsystems.RollerSubsystem;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.TiltedElevatorSubsystem;
 import frc.robot.subsystems.TiltedElevatorSubsystem.ElevatorState;
+
 import static frc.robot.Constants.LEDConstants.*;
 
 /**
@@ -114,7 +114,7 @@ public class RobotContainer {
         driveSubsystem = new SwerveSubsystem(photonWrapper);
         rollerSubsystem = new RollerSubsystem();
         tiltedElevatorSubsystem = new TiltedElevatorSubsystem();
-        signalLEDSubsystem = new TimeoutLEDSubsystem(SIGNAL_LED_STRIP, 10, Color.WHITE); 
+        signalLEDSubsystem = new TimeoutLEDSubsystem(SIGNAL_LED_STRIP, 10, Color.kFirstRed); 
 
         superstructure = new Superstructure(rollerSubsystem, tiltedElevatorSubsystem, switchableCamera);
         balancerCommand = new DefaultBalancerCommand(driveSubsystem);
@@ -258,9 +258,9 @@ public class RobotContainer {
 
         blSwitch.onTrue(new InstantCommand(() -> {
             System.out.println("yellow");
-            signalLEDSubsystem.setNewColor(new Color(255, 0, 200));
+            signalLEDSubsystem.setNewColor(new Color(255, 150, 0));
         }, signalLEDSubsystem)).onFalse(new InstantCommand(() -> {
-            signalLEDSubsystem.setNewColor(new Color(0, 255, 255));
+            signalLEDSubsystem.setNewColor(new Color(192, 8, 254));
         }, signalLEDSubsystem));
     }
 
