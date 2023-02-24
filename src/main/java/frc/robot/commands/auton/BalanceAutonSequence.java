@@ -4,7 +4,7 @@ import java.util.List;
 
 import edu.wpi.first.math.geometry.Pose2d;
 
-import frc.robot.commands.Balancing.DefaultBalancerCommand;
+import frc.robot.commands.balancing.DefaultBalancerCommand;
 import frc.robot.commands.swerve.FollowPathCommand;
 import frc.robot.positions.FieldPosition;
 import frc.robot.positions.PlacePosition;
@@ -41,7 +41,7 @@ public class BalanceAutonSequence extends BaseAutonSequence {
         Pose2d midPose3 = MID_POSE_3.getPose(isRed);
 
         addCommands(
-            //place preloaded gamepiece
+            // Place preloaded gamepiece
             goAndPlace(initialPose, placeState),
             // Go out of community and do 180
             // FollowPathCommand.composedFrom(

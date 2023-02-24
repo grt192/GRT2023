@@ -1,11 +1,11 @@
-package frc.robot.commands.Balancing;
+package frc.robot.commands.balancing;
 
 import com.kauailabs.navx.frc.AHRS;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 import frc.robot.subsystems.drivetrain.BaseDrivetrain;
-import edu.wpi.first.wpilibj.Timer;
 
 public class GoOverCommand extends CommandBase {
     private final BaseDrivetrain driveSubsystem;
@@ -14,10 +14,10 @@ public class GoOverCommand extends CommandBase {
     private double returnDrivePower; // drive power to be returned to DT
     private double returnAngularPower; // angular power to return to DT (for heading correction)
 
-    public boolean reachedStation;
-    public boolean passedCenter;
-    public boolean overStation;
-    public boolean waiting;
+    private boolean reachedStation;
+    private boolean passedCenter;
+    private boolean overStation;
+    private boolean waiting;
 
     private final Timer timer;
 
@@ -35,32 +35,30 @@ public class GoOverCommand extends CommandBase {
         passedCenter = false;
         overStation = false;
         waiting = false;
-
     }
 
     @Override
     public void execute() {
-        
-        if(!reachedStation) {
+        if (!reachedStation) {
             returnDrivePower = - 0.80;
-            if(ahrs.getPitch() <= - 15.0) reachedStation = true;
+            reachedStation = ahrs.getPitch() <= - 15.0;
         }
 
-        if(reachedStation && !passedCenter){
+        if (reachedStation && !passedCenter) {
             returnDrivePower = 0.5;
-            if(ahrs.getPitch() >= -0.0){
+            if (ahrs.getPitch() >= -0.0){
                 returnDrivePower = 0.4;
                 passedCenter = true;
             } 
         }
-        if(reachedStation && passedCenter && !overStation){
-            if(Math.abs(ahrs.getPitch()) <= 0.5) {
+        if (reachedStation && passedCenter && !overStation) {
+            if (Math.abs(ahrs.getPitch()) <= 0.5) {
                 overStation = true;
             }
             else returnDrivePower = 0.4;
         }
 
-        if(overStation && !waiting){
+        if (overStation && !waiting) {
             timer.reset();
             timer.start();
             returnDrivePower = 0.4;

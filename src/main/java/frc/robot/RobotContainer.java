@@ -15,7 +15,6 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
-import frc.robot.commands.Balancing.DefaultBalancerCommand;
 import frc.robot.commands.auton.BalanceAutonSequence;
 import frc.robot.commands.auton.BottomAutonSequence;
 import frc.robot.commands.auton.TopAutonSequence;
@@ -26,6 +25,7 @@ import frc.robot.commands.auton.test.HighRotationLinePath;
 import frc.robot.commands.auton.test.RotatingSCurveAutonSequence;
 import frc.robot.commands.auton.test.TenFeetStraightLinePath;
 import frc.robot.commands.auton.test.TwentyFeetStraightLinePath;
+import frc.robot.commands.balancing.DefaultBalancerCommand;
 import frc.robot.commands.dropping.DropperChooserCommand;
 import frc.robot.controllers.BaseDriveController;
 import frc.robot.controllers.DualJoystickDriveController;
@@ -85,8 +85,6 @@ public class RobotContainer {
         mechYButton = new JoystickButton(mechController, XboxController.Button.kY.value),
         mechLBumper = new JoystickButton(mechController, XboxController.Button.kLeftBumper.value),
         mechRBumper = new JoystickButton(mechController, XboxController.Button.kRightBumper.value);
-
-        
 
     // Commands
     private final ShuffleboardTab shuffleboardTab = Shuffleboard.getTab("Driver");
@@ -152,19 +150,9 @@ public class RobotContainer {
      * passing it to a {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
      */
     private void configureButtonBindings() {
-
         driveController.getCameraSwitchButton().onTrue(new InstantCommand(switchableCamera::switchCamera));
+        driveController.getBalancerButton().whileTrue(balancerCommand);
 
-        driveController.getBalancerButton()
-            .onTrue(new InstantCommand(() -> {
-                balancerCommand.reachedStation = false;
-                balancerCommand.passedCenter = false;
-                balancerCommand.balanced = false;
-                balancerCommand.waiting = false;
-
-            }))
-            .whileTrue(balancerCommand);
-        
         if (driveSubsystem instanceof BaseSwerveSubsystem) {
             final BaseSwerveSubsystem swerveSubsystem = (BaseSwerveSubsystem) driveSubsystem;
 
@@ -174,8 +162,6 @@ public class RobotContainer {
                 double angularPower = driveController.getRotatePower();
                 boolean relative = driveController.getSwerveRelative();
                 swerveSubsystem.setDrivePowers(xPower, yPower, angularPower, relative);
-        
-        
             }, swerveSubsystem));
 
             mechAButton.onTrue(new DropperChooserCommand(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem));
