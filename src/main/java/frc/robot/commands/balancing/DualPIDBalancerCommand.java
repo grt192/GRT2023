@@ -61,7 +61,7 @@ public class DualPIDBalancerCommand extends BaseBalancerCommand {
         }
 
         if (driveSubsystem instanceof BaseSwerveSubsystem) {
-            ((BaseSwerveSubsystem) driveSubsystem).setDrivePowers(returnDrivePower, 0.0);
+            ((BaseSwerveSubsystem) driveSubsystem).setDrivePowers(returnDrivePower, 0.0, 0.0, true);
         } else driveSubsystem.setDrivePowers(returnDrivePower);
 
         oldPitch = currentPitch; // set the current angle to old angle so it is accessible for next cycle     

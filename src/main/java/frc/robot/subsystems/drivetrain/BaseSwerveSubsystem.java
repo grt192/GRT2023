@@ -132,14 +132,6 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
             getModuleStates()
         );
 
-        // Add vision pose estimate to pose estimator
-        if (VISION_ENABLE) photonWrapper.getRobotPoses(estimate).forEach((visionPose) -> {
-            poseEstimator.addVisionMeasurement(
-                visionPose.estimatedPose.toPose2d(),
-                visionPose.timestampSeconds
-            );
-        });
-
         // Update Shuffleboard
         if (SHUFFLEBOARD_ENABLE) {
             xEntry.setValue(Units.metersToInches(estimate.getX()));
@@ -147,6 +139,14 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
             thetaEntry.setValue(estimate.getRotation().getDegrees());
             fieldWidget.setRobotPose(estimate);
         }
+
+        // Add vision pose estimate to pose estimator
+        if (VISION_ENABLE) photonWrapper.getRobotPoses(estimate).forEach((visionPose) -> {
+            poseEstimator.addVisionMeasurement(
+                visionPose.estimatedPose.toPose2d(),
+                visionPose.timestampSeconds
+            );
+        });
 
         // If all commanded velocities are 0, the system is idle (drivers / commands are
         // not supplying input).
@@ -163,8 +163,8 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
             lockTimer.reset();
         }
 
-        // Lock the swerve modules in an X (or parallel to the charging station if the state is set) if the lock timeout has elapsed,
-        // or set them to their setpoints if drivers are supplying non-idle input.
+        // Lock the swerve module if the lock timeout has elapsed, or set them to their 
+        // setpoints if drivers are supplying non-idle input.
         if (lockTimer.hasElapsed(LOCK_TIMEOUT_SECONDS)) {
             applyLock();
         } else {
@@ -175,7 +175,11 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
         }
     }
 
-    private void applyLock() {
+    /**
+     * Locks the swerve. This sets the wheels parallel to the charging station if the charging
+     * station lock mode is enabled, or in an X otherwise.
+     */
+    public void applyLock() {
         if (chargingStationLocked) {
             // Lock modules parallel to the charging station, accounting for the orientation of the robot.
             Rotation2d lockAngle = Rotation2d.fromDegrees(90).minus(getFieldHeading());
@@ -229,15 +233,6 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
     @Override
     public void setDrivePowers(double xPower) {
         setDrivePowers(xPower, 0.0, 0.0, true);
-    }
-
-    /**
-     * Sets the swerve module states of this subsystem from provided relative drive powers.
-     * @param xPower The power [-1.0, 1.0] in the x (forward) direction, relative to the robot.
-     * @param angularPower The power [-1.0, 1.0] representing the rotational power.
-     */
-    public void setDrivePowers(double xPower, double angularPower) {
-        setDrivePowers(xPower, 0.0, angularPower, true);
     }
 
     /**
@@ -357,9 +352,5 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
         return ahrs.isConnected()
             ? getGyroHeading().minus(angleOffset)
             : getRobotPosition().getRotation();
-    }
-
-    public void lockNow(){
-        applyLock();
     }
 }

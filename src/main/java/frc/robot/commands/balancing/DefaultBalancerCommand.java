@@ -66,7 +66,7 @@ public class DefaultBalancerCommand extends BaseBalancerCommand {
         }
 
         if (driveSubsystem instanceof BaseSwerveSubsystem) {
-            ((BaseSwerveSubsystem) driveSubsystem).setDrivePowers(returnDrivePower, 0.0);
+            ((BaseSwerveSubsystem) driveSubsystem).setDrivePowers(returnDrivePower, 0.0, 0.0, true);
         } else {
             driveSubsystem.setDrivePowers(returnDrivePower);
         }

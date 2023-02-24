@@ -23,7 +23,7 @@ public abstract class BaseBalancerCommand extends CommandBase {
         if (driveSubsystem instanceof BaseSwerveSubsystem) {
             BaseSwerveSubsystem swerveSubsystem = (BaseSwerveSubsystem) driveSubsystem;
             swerveSubsystem.setChargingStationLocked(true);
-            swerveSubsystem.lockNow();
+            swerveSubsystem.applyLock();
         }
     }
 }

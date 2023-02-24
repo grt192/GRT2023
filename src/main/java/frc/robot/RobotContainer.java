@@ -26,6 +26,7 @@ import frc.robot.commands.auton.test.HighRotationLinePath;
 import frc.robot.commands.auton.test.RotatingSCurveAutonSequence;
 import frc.robot.commands.auton.test.TenFeetStraightLinePath;
 import frc.robot.commands.auton.test.TwentyFeetStraightLinePath;
+import frc.robot.commands.balancing.BaseBalancerCommand;
 import frc.robot.commands.balancing.DefaultBalancerCommand;
 import frc.robot.commands.dropping.DropperChooserCommand;
 import frc.robot.controllers.BaseDriveController;
@@ -90,13 +91,13 @@ public class RobotContainer {
     // Commands
     private final ShuffleboardTab shuffleboardTab = Shuffleboard.getTab("Driver");
     private final SendableChooser<Command> autonChooser;
-    private final DefaultBalancerCommand balancerCommand;
+    private final BaseBalancerCommand balancerCommand;
 
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
     public RobotContainer() {
-        driveController = new XboxDriveController();
+        driveController = new DualJoystickDriveController();
 
         photonWrapper = new PhotonWrapper();
         switchableCamera = new SwitchableCamera();
@@ -153,8 +154,8 @@ public class RobotContainer {
      * passing it to a {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
      */
     private void configureButtonBindings() {
-        driveController.getCameraSwitchButton().onTrue(new InstantCommand(switchableCamera::switchCamera));
         driveController.getBalancerButton().whileTrue(balancerCommand);
+        driveController.getCameraSwitchButton().onTrue(new InstantCommand(switchableCamera::switchCamera));
 
         if (driveSubsystem instanceof BaseSwerveSubsystem) {
             final BaseSwerveSubsystem swerveSubsystem = (BaseSwerveSubsystem) driveSubsystem;
@@ -189,12 +190,10 @@ public class RobotContainer {
             }, swerveSubsystem));
         }
 
-        /*
         rollerSubsystem.setDefaultCommand(new RunCommand(() -> {
             double rollPower = mechController.getRightTriggerAxis() - mechController.getLeftTriggerAxis();
             rollerSubsystem.setRollPower(rollPower);
         }, rollerSubsystem));
-        */
 
         mechYButton.onTrue(new InstantCommand(() -> {
             rollerSubsystem.openMotor();;
