@@ -26,7 +26,7 @@ public class SwitchableCamera {
     private final VideoSink server;
     private final ComplexWidget widget;
 
-    private boolean frontActive = true;
+    private boolean topActive = true;
 
     public SwitchableCamera(ShuffleboardTab shuffleboardTab){
         front = CameraServer.startAutomaticCapture(0);
@@ -54,7 +54,6 @@ public class SwitchableCamera {
 
         server = CameraServer.getServer();
 
-        
         widget = shuffleboardTab.add("Intake Camera", getSource())
             .withPosition(8, 3)
             .withSize(4, 2);
@@ -64,14 +63,13 @@ public class SwitchableCamera {
      * Switches the source connected to this camera (toggles between front and back).
      */
     public void switchCamera() {
-        if (frontActive){
-            server.setSource(front);
-            widget.withProperties(Map.of("Rotation", "NONE"));
-        } else {
-            server.setSource(back);
-            widget.withProperties(Map.of("Rotation", "QUARTER_CW"));
-        }
-        frontActive = !frontActive;
+        setCamera(!this.topActive);
+    }
+
+    public void setCamera(boolean useTop) {
+        this.topActive = useTop;
+        server.setSource(this.topActive ? front : back);
+        widget.withProperties(Map.of("Rotation", this.topActive ? "NONE" : "QUARTER_CW"));
     }
 
     /**
