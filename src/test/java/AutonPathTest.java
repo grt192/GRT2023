@@ -1,7 +1,8 @@
 import org.junit.jupiter.api.Test;
 
 import frc.robot.commands.auton.BalanceAutonSequence;
-import frc.robot.commands.auton.BottomAutonSequence;
+import frc.robot.commands.auton.BottomOnePieceAutonSequence;
+import frc.robot.commands.auton.BottomTwoPieceAutonSequence;
 import frc.robot.commands.auton.TopAutonSequence;
 import frc.robot.commands.auton.test.BoxAutonSequence;
 import frc.robot.commands.auton.test.ContinuousBoxAutonSequence;
@@ -40,7 +41,8 @@ public class AutonPathTest {
     public void compileRedPaths() {
         new TopAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, true);
         new BalanceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, true);
-        new BottomAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, true);
+        new BottomOnePieceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, true);
+        new BottomTwoPieceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, true);
     }
 
     /**
@@ -50,6 +52,7 @@ public class AutonPathTest {
     public void compileBluePaths() {
         new TopAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, false);
         new BalanceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, false);
-        new BottomAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, false);
+        new BottomOnePieceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, false);
+        new BottomTwoPieceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, false);
     }
 }

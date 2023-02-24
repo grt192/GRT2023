@@ -17,9 +17,9 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
-import frc.robot.commands.BalancerCommand;
 import frc.robot.commands.auton.BalanceAutonSequence;
-import frc.robot.commands.auton.BottomAutonSequence;
+import frc.robot.commands.auton.BottomOnePieceAutonSequence;
+import frc.robot.commands.auton.BottomTwoPieceAutonSequence;
 import frc.robot.commands.auton.TopAutonSequence;
 import frc.robot.commands.auton.test.BoxAutonSequence;
 import frc.robot.commands.auton.test.ContinuousBoxAutonSequence;
@@ -28,6 +28,8 @@ import frc.robot.commands.auton.test.HighRotationLinePath;
 import frc.robot.commands.auton.test.RotatingSCurveAutonSequence;
 import frc.robot.commands.auton.test.TenFeetStraightLinePath;
 import frc.robot.commands.auton.test.TwentyFeetStraightLinePath;
+import frc.robot.commands.balancing.BaseBalancerCommand;
+import frc.robot.commands.balancing.DefaultBalancerCommand;
 import frc.robot.commands.dropping.DropperChooserCommand;
 import frc.robot.controllers.BaseDriveController;
 import frc.robot.controllers.DualJoystickDriveController;
@@ -91,7 +93,7 @@ public class RobotContainer {
     // Commands
     private final ShuffleboardTab shuffleboardTab = Shuffleboard.getTab("Driver");
     private final SendableChooser<Command> autonChooser;
-    private final BalancerCommand balancerCommand;
+    private final BaseBalancerCommand balancerCommand;
 
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -107,7 +109,7 @@ public class RobotContainer {
         tiltedElevatorSubsystem = new TiltedElevatorSubsystem();
 
         superstructure = new Superstructure(rollerSubsystem, tiltedElevatorSubsystem);
-        balancerCommand = new BalancerCommand(driveSubsystem);
+        balancerCommand = new DefaultBalancerCommand(driveSubsystem);
 
         // Configure the button bindings
         configureButtonBindings();
@@ -121,11 +123,13 @@ public class RobotContainer {
 
             autonChooser.addOption("Red top auton", new TopAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, true));
             autonChooser.addOption("Red balance auton", new BalanceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, true));
-            autonChooser.addOption("Red bottom auton", new BottomAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, true));
+            autonChooser.addOption("Red bottom auton (1-piece)", new BottomOnePieceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, true));
+            autonChooser.addOption("Red bottom auton (2-piece)", new BottomTwoPieceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, true));
 
             autonChooser.addOption("Blue top auton", new TopAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, false));
             autonChooser.addOption("Blue balance auton", new BalanceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, false));
-            autonChooser.addOption("Blue bottom auton", new BottomAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, false));
+            autonChooser.addOption("Blue bottom auton (1-piece)", new BottomOnePieceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, false));
+            autonChooser.addOption("Blue bottom auton (2-piece)", new BottomTwoPieceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, false));
 
             autonChooser.addOption("10\" straight-line path", new TenFeetStraightLinePath(swerveSubsystem));
             autonChooser.addOption("20\" straight-line path", new TwentyFeetStraightLinePath(swerveSubsystem));
