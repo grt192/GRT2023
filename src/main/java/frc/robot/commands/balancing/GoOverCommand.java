@@ -40,8 +40,8 @@ public class GoOverCommand extends CommandBase {
     @Override
     public void execute() {
         if (!reachedStation) {
-            returnDrivePower = - 0.80;
-            reachedStation = ahrs.getPitch() <= - 15.0;
+            returnDrivePower = -0.80;
+            reachedStation = ahrs.getPitch() <= -15.0;
         }
 
         if (reachedStation && !passedCenter) {

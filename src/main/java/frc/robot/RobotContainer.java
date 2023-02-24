@@ -20,7 +20,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.auton.BalanceAutonSequence;
 import frc.robot.commands.auton.BottomOnePieceAutonSequence;
 import frc.robot.commands.auton.BottomTwoPieceAutonSequence;
-import frc.robot.commands.auton.TopAutonSequence;
+import frc.robot.commands.auton.TopTwoPieceAutonSequence;
 import frc.robot.commands.auton.test.BoxAutonSequence;
 import frc.robot.commands.auton.test.ContinuousBoxAutonSequence;
 import frc.robot.commands.auton.test.GRTAutonSequence;
@@ -121,12 +121,12 @@ public class RobotContainer {
         if (driveSubsystem instanceof BaseSwerveSubsystem) {
             final BaseSwerveSubsystem swerveSubsystem = (BaseSwerveSubsystem) driveSubsystem;
 
-            autonChooser.addOption("Red top auton", new TopAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, true));
+            autonChooser.addOption("Red top auton", new TopTwoPieceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, true));
             autonChooser.addOption("Red balance auton", new BalanceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, true));
             autonChooser.addOption("Red bottom auton (1-piece)", new BottomOnePieceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, true));
             autonChooser.addOption("Red bottom auton (2-piece)", new BottomTwoPieceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, true));
 
-            autonChooser.addOption("Blue top auton", new TopAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, false));
+            autonChooser.addOption("Blue top auton", new TopTwoPieceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, false));
             autonChooser.addOption("Blue balance auton", new BalanceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, false));
             autonChooser.addOption("Blue bottom auton (1-piece)", new BottomOnePieceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, false));
             autonChooser.addOption("Blue bottom auton (2-piece)", new BottomTwoPieceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, false));

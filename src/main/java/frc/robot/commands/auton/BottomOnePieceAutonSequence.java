@@ -3,7 +3,6 @@ package frc.robot.commands.auton;
 import java.util.List;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 
 import frc.robot.commands.swerve.FollowPathCommand;
 import frc.robot.positions.FieldPosition;
@@ -43,14 +42,14 @@ public class BottomOnePieceAutonSequence extends BaseAutonSequence {
         Pose2d grabPose = GRAB_POSE.getPose(isRed);
 
         addCommands(
-            // Place preloaded gamepiece
+            // Place preloaded game piece
             goAndPlace(initialPose, placeState1),
             // Pathfollow outside community (to grab pose) but don't turn
             FollowPathCommand.from(
                 swerveSubsystem,
                 initialPose,
                 List.of(midPose1.getTranslation(), midPose2.getTranslation()),
-                new Pose2d(grabPose.getTranslation(), Rotation2d.fromDegrees(180))
+                new Pose2d(grabPose.getTranslation(), initialPose.getRotation())
             )
         );
     }

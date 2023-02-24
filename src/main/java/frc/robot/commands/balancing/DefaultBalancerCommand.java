@@ -27,8 +27,8 @@ public class DefaultBalancerCommand extends BaseBalancerCommand {
     public DefaultBalancerCommand(BaseDrivetrain driveSubsystem) {
         super(driveSubsystem);
 
-        drivePID = new PIDController(0.3/35, 0.0, 0.0); // no deriv successful
-        turnPID = new PIDController(0.1/5,0.0, 0.0); // kP = max pwr / max err
+        drivePID = new PIDController(0.3 / 35, 0.0, 0.0); // no deriv successful
+        turnPID = new PIDController(0.1 / 5,0.0, 0.0); // kP = max pwr / max err
         timer = new Timer();
     }
 
