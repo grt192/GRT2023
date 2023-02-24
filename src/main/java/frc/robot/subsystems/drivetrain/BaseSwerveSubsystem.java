@@ -115,7 +115,7 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
             .getEntry();
 
         GenericEntry visionEnableEntry = Shuffleboard.getTab("PhotonVision").add("Vision enable", VISION_ENABLE)
-            .withPosition(4, 0)
+            .withPosition(3, 0)
             .withWidget(BuiltInWidgets.kToggleSwitch)
             .getEntry();
         ShuffleboardUtil.addBooleanListener(visionEnableEntry, (value) -> VISION_ENABLE = value);

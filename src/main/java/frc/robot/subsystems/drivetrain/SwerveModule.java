@@ -146,7 +146,7 @@ public class SwerveModule implements BaseSwerveModule {
             .getEntry();
 
         GenericEntry shuffleboardEnableEntry = shuffleboardTab.add("Shuffleboard enable", SHUFFLEBOARD_ENABLE)
-            .withPosition(8, 1)
+            .withPosition(5, 0)
             .withWidget(BuiltInWidgets.kToggleSwitch)
             .getEntry();
         ShuffleboardUtil.addBooleanListener(shuffleboardEnableEntry, (value) -> SHUFFLEBOARD_ENABLE = value);

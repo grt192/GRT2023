@@ -171,9 +171,9 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
         currentExtensionEntry = shuffleboardTab.add("Current Ext (in)", 0.0).withPosition(1, 3).getEntry();
         currentVelEntry = shuffleboardTab.add("Current Vel (mps)", 0.0).withPosition(2, 3).getEntry();
         offsetDistEntry = shuffleboardTab.add("Offset (in)", offsetDistMeters).withPosition(2, 2).getEntry();
-        
+
         limitSwitchEntry = shuffleboardTab.add("Zero limit switch", false).withPosition(4, 0).withWidget(BuiltInWidgets.kBooleanBox).getEntry();
-            
+
         if (!Constants.IS_R1)
             leftHallSensor.addToShuffleboard(shuffleboardTab, 4, 1);
 

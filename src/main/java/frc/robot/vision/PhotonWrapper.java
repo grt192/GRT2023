@@ -78,7 +78,7 @@ public class PhotonWrapper {
         timestampBackEntry = shuffleboardTab.add("Back timestamp", 0).withPosition(2, 3).getEntry();
 
         GenericEntry shuffleboardEnableEntry = shuffleboardTab.add("Shuffleboard enable", SHUFFLEBOARD_ENABLE)
-            .withPosition(5, 0)
+            .withPosition(4, 0)
             .withWidget(BuiltInWidgets.kToggleSwitch)
             .getEntry();
         ShuffleboardUtil.addBooleanListener(shuffleboardEnableEntry, (value) -> SHUFFLEBOARD_ENABLE = value);
