@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import java.util.Map;
+
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.ComplexWidget;
@@ -98,7 +100,7 @@ public class RobotContainer {
         driveController = new DualJoystickDriveController();
 
         photonWrapper = new PhotonWrapper();
-        switchableCamera = new SwitchableCamera();
+        switchableCamera = new SwitchableCamera(shuffleboardTab);
 
         driveSubsystem = new SwerveSubsystem(photonWrapper);
         rollerSubsystem = new RollerSubsystem();
@@ -136,10 +138,6 @@ public class RobotContainer {
 
         shuffleboardTab.add("Auton", autonChooser)
             .withPosition(8, 0)
-            .withSize(4, 2);
-
-        shuffleboardTab.add("Intake Camera", switchableCamera.getSource())
-            .withPosition(8, 3)
             .withSize(4, 2);
     }
 
