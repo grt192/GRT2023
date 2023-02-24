@@ -15,8 +15,12 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+
+import frc.robot.Constants;
+import frc.robot.util.ShuffleboardUtil;
 
 import static frc.robot.Constants.VisionConstants.*;
 
@@ -31,7 +35,9 @@ public class PhotonWrapper {
     private final GenericEntry frontStatusEntry, xPosFrontEntry, yPosFrontEntry, timestampFrontEntry;
     private final GenericEntry backStatusEntry, xPosBackEntry, yPosBackEntry, timestampBackEntry;
 
-    private static final boolean SHUFFLEBOARD_ENABLE = true;
+    // Whether to read and update shuffleboard values
+    private static final boolean OVERRIDE_SHUFFLEBOARD_ENABLE = false;
+    private volatile boolean SHUFFLEBOARD_ENABLE = OVERRIDE_SHUFFLEBOARD_ENABLE || Constants.GLOBAL_SHUFFLEBOARD_ENABLE;
 
     /**
      * Constructs a PhotonVision connection to the coprocessor.
@@ -70,6 +76,12 @@ public class PhotonWrapper {
         xPosBackEntry = shuffleboardTab.add("Back x-pos", 0).withPosition(0, 3).getEntry();
         yPosBackEntry = shuffleboardTab.add("Back y-pos", 0).withPosition(1, 3).getEntry();
         timestampBackEntry = shuffleboardTab.add("Back timestamp", 0).withPosition(2, 3).getEntry();
+
+        GenericEntry shuffleboardEnableEntry = shuffleboardTab.add("Shuffleboard enable", SHUFFLEBOARD_ENABLE)
+            .withPosition(5, 0)
+            .withWidget(BuiltInWidgets.kToggleSwitch)
+            .getEntry();
+        ShuffleboardUtil.addBooleanListener(shuffleboardEnableEntry, (value) -> SHUFFLEBOARD_ENABLE = value);
     }
 
     /**

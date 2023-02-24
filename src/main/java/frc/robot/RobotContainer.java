@@ -227,8 +227,6 @@ public class RobotContainer {
         mechLBumper.onTrue(new InstantCommand(() -> {
             tiltedElevatorSubsystem.toggleState(ElevatorState.CONE_MID, ElevatorState.CONE_HIGH);
         }, tiltedElevatorSubsystem));
-
-        
     }
 
     /**

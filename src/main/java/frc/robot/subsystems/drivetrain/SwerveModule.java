@@ -22,7 +22,9 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 
+import frc.robot.Constants;
 import frc.robot.util.MotorUtil;
+import frc.robot.util.ShuffleboardUtil;
 
 /**
  * A swerve module with a Falcon drive motor and a NEO steer motor.
@@ -56,6 +58,10 @@ public class SwerveModule implements BaseSwerveModule {
     private final GenericEntry 
         targetVelEntry, currentVelEntry, velErrorEntry,
         targetAngleEntry, currentAngleEntry, angleErrorEntry;
+
+    // Whether to read and update shuffleboard values
+    private static final boolean OVERRIDE_SHUFFLEBOARD_ENABLE = false;
+    private volatile boolean SHUFFLEBOARD_ENABLE = OVERRIDE_SHUFFLEBOARD_ENABLE || Constants.GLOBAL_SHUFFLEBOARD_ENABLE;
 
     /**
      * Constructs a SwerveModule from a drive and steer motor CAN ID and an angle offset.
@@ -139,6 +145,12 @@ public class SwerveModule implements BaseSwerveModule {
             // .withWidget(BuiltInWidgets.kGraph)
             .getEntry();
 
+        GenericEntry shuffleboardEnableEntry = shuffleboardTab.add("Shuffleboard enable", SHUFFLEBOARD_ENABLE)
+            .withPosition(8, 1)
+            .withWidget(BuiltInWidgets.kToggleSwitch)
+            .getEntry();
+        ShuffleboardUtil.addBooleanListener(shuffleboardEnableEntry, (value) -> SHUFFLEBOARD_ENABLE = value);
+
         this.offsetRads = offsetRads;
     }
 
@@ -177,13 +189,15 @@ public class SwerveModule implements BaseSwerveModule {
         double targetAngle = optimized.angle.getRadians() - offsetRads;
 
         // Set shuffleboard debug info
-        targetVelEntry.setDouble(optimized.speedMetersPerSecond);
-        currentVelEntry.setDouble(currentVelocity);
-        velErrorEntry.setDouble(optimized.speedMetersPerSecond - currentVelocity);
+        if (SHUFFLEBOARD_ENABLE) {
+            targetVelEntry.setDouble(optimized.speedMetersPerSecond);
+            currentVelEntry.setDouble(currentVelocity);
+            velErrorEntry.setDouble(optimized.speedMetersPerSecond - currentVelocity);
 
-        targetAngleEntry.setDouble(Math.toDegrees(MathUtil.angleModulus(targetAngle)));
-        currentAngleEntry.setDouble(currentAngle.minus(new Rotation2d(offsetRads)).getDegrees());
-        angleErrorEntry.setDouble(MathUtil.angleModulus(targetAngle - currentAngle.getRadians() + offsetRads));
+            targetAngleEntry.setDouble(Math.toDegrees(MathUtil.angleModulus(targetAngle)));
+            currentAngleEntry.setDouble(currentAngle.minus(new Rotation2d(offsetRads)).getDegrees());
+            angleErrorEntry.setDouble(MathUtil.angleModulus(targetAngle - currentAngle.getRadians() + offsetRads));
+        }
 
         // driveMotor.set(ControlMode.Velocity, optimized.getFirst() / (DRIVE_TICKS_TO_METERS * 10.0));
         drivePidController.setReference(optimized.speedMetersPerSecond, ControlType.kVelocity);

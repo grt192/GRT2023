@@ -12,10 +12,12 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 
+import frc.robot.util.ShuffleboardUtil;
 import frc.robot.vision.PhotonWrapper;
 
 /**
@@ -48,10 +50,11 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
 
     private final ShuffleboardTab shuffleboardTab;
     private final GenericEntry xEntry, yEntry, thetaEntry;
+    private final GenericEntry swerveRelativeEntry, chargingStationLockedEntry;
     private final Field2d fieldWidget = new Field2d();
 
     private static final boolean SHUFFLEBOARD_ENABLE = true;
-    private static final boolean VISION_ENABLE = true;
+    private volatile boolean VISION_ENABLE = true;
 
     // The driver or auton commanded `SwerveModuleState` setpoints for each module;
     // states are given in a tuple of [top left, top right, bottom left, bottom right].
@@ -103,6 +106,19 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
         xEntry = shuffleboardTab.add("x pos (in)", 0).withPosition(0, 5).getEntry();
         yEntry = shuffleboardTab.add("y pos (in)", 0).withPosition(1, 5).getEntry();
         thetaEntry = shuffleboardTab.add("theta pos (deg)", 0).withPosition(2, 5).getEntry();
+
+        swerveRelativeEntry = shuffleboardTab.add("Swerve relative", false)
+            .withPosition(3, 5)
+            .getEntry();
+        chargingStationLockedEntry = shuffleboardTab.add("Charging station locking", chargingStationLocked)
+            .withPosition(4, 5)
+            .getEntry();
+
+        GenericEntry visionEnableEntry = Shuffleboard.getTab("PhotonVision").add("Vision enable", VISION_ENABLE)
+            .withPosition(4, 0)
+            .withWidget(BuiltInWidgets.kToggleSwitch)
+            .getEntry();
+        ShuffleboardUtil.addBooleanListener(visionEnableEntry, (value) -> VISION_ENABLE = value);
 
         lockTimer = new Timer();
     }
@@ -196,6 +212,8 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
             this.states, speeds, 
             MAX_VEL, MAX_VEL, MAX_OMEGA
         );
+
+        swerveRelativeEntry.setBoolean(relative);
     }
 
     /**
@@ -214,6 +232,7 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
      * @param states The swerve module states to set.
      */
     public void setSwerveModuleStates(SwerveModuleState... states) {
+        swerveRelativeEntry.setBoolean(false); // TODO: better way of setting this to false during auton
         this.states = states;
     }
 
@@ -236,6 +255,7 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
      */
     public void setChargingStationLocked(boolean locked) {
         this.chargingStationLocked = locked;
+        chargingStationLockedEntry.setBoolean(chargingStationLocked);
     }
 
     /**
@@ -243,6 +263,7 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
      */
     public void toggleChargingStationLocked() {
         this.chargingStationLocked = !chargingStationLocked;
+        chargingStationLockedEntry.setBoolean(chargingStationLocked);
     }
 
     /**
