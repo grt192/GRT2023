@@ -49,7 +49,7 @@ public class DualJoystickDriveController extends BaseDriveController {
 
     @Override
     public double getRotatePower() {
-        return MathUtil.applyDeadband(-rightJoystick.getX() * 0.75, JOYSTICK_DEADBAND);
+        return MathUtil.applyDeadband(-rightJoystick.getX() * getTurnScaling(), JOYSTICK_DEADBAND);
     }
 
     @Override
@@ -84,7 +84,14 @@ public class DualJoystickDriveController extends BaseDriveController {
      * @return The scale to apply to translational input.
      */
     private double getDriveScaling() {
-        boolean isFullThrottle = leftJoystick.getTrigger();
-        return isFullThrottle ? 1.0 : 0.75;
+        boolean isSlowMode = leftJoystick.getTrigger();
+        return isSlowMode ? 0.3 : 1.0;
+    }
+
+    private double getTurnScaling() {
+        // boolean isSlowMode = leftJoystick.getTrigger();
+        // return isSlowMode ? 0.6 : 0.6;
+
+        return 0.6;
     }
 }

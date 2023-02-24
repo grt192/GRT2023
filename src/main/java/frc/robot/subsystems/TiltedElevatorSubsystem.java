@@ -80,12 +80,12 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
             public double getExtension(boolean hasPiece) {
                 // If a piece is being held, raise it slightly so that it doesn't drag across the floor.
                 return hasPiece 
-                    ? extendDistanceMeters + Units.inchesToMeters(5)
+                    ? extendDistanceMeters + Units.inchesToMeters(4)
                     : extendDistanceMeters;
             }
         },
         CHUTE(Units.inchesToMeters(40)),
-        SUBSTATION(Units.inchesToMeters(50)), // absolute height = 37.375 in
+        SUBSTATION(Units.inchesToMeters(45)), // absolute height = 37.375 in
         CUBE_MID(Units.inchesToMeters(Constants.IS_R1 ? 33 : 40)), // absolute height = 14.25 in
         CUBE_HIGH(Units.inchesToMeters(Constants.IS_R1 ? 53 : 55)), // absolute height = 31.625 in
         CONE_MID(Units.inchesToMeters(Constants.IS_R1 ? 50 : 48)), // absolute height = 34 in
@@ -216,7 +216,7 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
 
         if(state == ElevatorState.HOME){
             if(zeroLimitSwitch != null && zeroLimitSwitch.get()){
-                extensionMotor.set(-.1);
+                extensionMotor.set(-.2);
                 extensionMotor.enableSoftLimit(SoftLimitDirection.kReverse, false);
                 return;
             } else if(!zeroLimitSwitch.get()){

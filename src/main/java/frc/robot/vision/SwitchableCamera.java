@@ -32,11 +32,11 @@ public class SwitchableCamera {
         front.setFPS(30);
         back.setFPS(30);
 
-        front.setExposureManual(40);
+        front.setExposureManual(20);
         back.setExposureManual(40);
 
-        front.setBrightness(50);
-        back.setBrightness(50);
+        front.setBrightness(40);
+        back.setBrightness(60);
 
         server = CameraServer.getServer();
 
