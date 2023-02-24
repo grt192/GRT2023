@@ -40,7 +40,7 @@ public final class Constants {
         public static final int TL_STEER = 3;
         public static final double TL_OFFSET_RADS = IS_R1 
             ? -5.704799652099609
-            : -2.5409997383779803;
+            : -0.3193925619125366;
         public static final Translation2d TL_POS = IS_R1 ? new Translation2d(
             Units.inchesToMeters(12.0),
             Units.inchesToMeters(8.75)
@@ -53,7 +53,7 @@ public final class Constants {
         public static final int TR_STEER = 17;
         public static final double TR_OFFSET_RADS = IS_R1 
             ? -0.842838776116
-            : 1.59672083457;
+            : -0.4968042492906033;
         public static final Translation2d TR_POS = IS_R1 ? new Translation2d(
             Units.inchesToMeters(12.0),
             Units.inchesToMeters(-8.75)

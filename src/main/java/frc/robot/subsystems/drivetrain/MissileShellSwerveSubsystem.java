@@ -24,10 +24,10 @@ public class MissileShellSwerveSubsystem extends BaseDrivetrain {
     };
 
     public MissileShellSwerveSubsystem() {
-        module = new SwerveModule.TopLeft(
-            SwerveConstants.TL_DRIVE,
-            SwerveConstants.TL_STEER,
-            SwerveConstants.TL_OFFSET_RADS
+        module = new SwerveModule.TopRight(
+            SwerveConstants.TR_DRIVE,
+            SwerveConstants.TR_STEER,
+            SwerveConstants.TR_OFFSET_RADS
         );
 
         // One module at the center of the robot
