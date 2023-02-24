@@ -27,6 +27,7 @@ import frc.robot.commands.auton.test.RotatingSCurveAutonSequence;
 import frc.robot.commands.auton.test.TenFeetStraightLinePath;
 import frc.robot.commands.auton.test.TwentyFeetStraightLinePath;
 import frc.robot.commands.dropping.DropperChooserCommand;
+import frc.robot.commands.grabber.VisionAlignmentCommand;
 import frc.robot.controllers.BaseDriveController;
 import frc.robot.controllers.DualJoystickDriveController;
 import frc.robot.controllers.TwistJoystickDriveController;
@@ -132,6 +133,7 @@ public class RobotContainer {
             autonChooser.addOption("Box auton", new BoxAutonSequence(swerveSubsystem));
             autonChooser.addOption("No-stopping box auton", new ContinuousBoxAutonSequence(swerveSubsystem));
             autonChooser.addOption("GRT path", new GRTAutonSequence(swerveSubsystem));
+            autonChooser.addOption("Vision align auton", new VisionAlignmentCommand(swerveSubsystem));
         }
 
         shuffleboardTab.add("Auton", autonChooser)
