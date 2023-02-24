@@ -43,8 +43,8 @@ public class SwitchableCamera {
 
         //https://github.com/wpilibsuite/allwpilib/blob/main/cscore/src/main/native/linux/UsbCameraImpl.cpp#L108-L124
         // https://www.chiefdelphi.com/t/usb-camera-exposure-too-high-with-setexposuremanual/353630/8
-        front.getProperty("raw_exposure_absolute").set(10);
-        back.getProperty("raw_exposure_absolute").set(10);
+        front.getProperty("raw_exposure_absolute").set(156);
+        back.getProperty("raw_exposure_absolute").set(156);
 
         // front.getProperty("raw_brightness").set(40);
         // back.getProperty("raw_exposure_absolute").set(40);
