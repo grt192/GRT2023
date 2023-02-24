@@ -1,18 +1,12 @@
 package frc.robot.commands.balancing;
 
-import com.kauailabs.navx.frc.AHRS;
-
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.wpilibj2.command.CommandBase;
 
 import frc.robot.subsystems.drivetrain.BaseDrivetrain;
 import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
 
-public class PIDSwitchBalancerCommand extends CommandBase {
-    private final BaseDrivetrain driveSubsystem;
-    private final AHRS ahrs; 
-
+public class PIDSwitchBalancerCommand extends BaseBalancerCommand {
     private final PIDController roughPID;
     private final PIDController finePID;
     private final PIDController turnPID;
@@ -34,15 +28,13 @@ public class PIDSwitchBalancerCommand extends CommandBase {
     private boolean balanced;
 
     public PIDSwitchBalancerCommand(BaseDrivetrain driveSubsystem) {
-        this.driveSubsystem = driveSubsystem;
-        this.ahrs = driveSubsystem.getAhrs();
+        super(driveSubsystem);
 
         roughPID = new PIDController(0.5/35, 0.0, 0.0); 
         finePID = new PIDController(0.25/22, 0.0, 0.0); 
-
         turnPID = new PIDController(0.1/5,0.0, 0.0); // kP = max pwr / max err
+
         timer = new Timer();
-        addRequirements(driveSubsystem);
     }
 
     @Override
@@ -74,7 +66,6 @@ public class PIDSwitchBalancerCommand extends CommandBase {
 
             if (Math.abs(ahrs.getPitch()) <= 2.0 && deltaAngle <= 0.05) {
                 balanced = true;
-                if (driveSubsystem instanceof BaseSwerveSubsystem) ((BaseSwerveSubsystem) driveSubsystem).lockNow();
             }
         }
 
@@ -83,11 +74,6 @@ public class PIDSwitchBalancerCommand extends CommandBase {
         } else driveSubsystem.setDrivePowers(returnDrivePower);
 
         oldPitch = currentPitch; // set the current angle to old angle so it is accessible for next cycle     
-    }
-
-    @Override
-    public void end(boolean interrupted) {
-        System.out.println("------------------- Balancing process finished -------------------");
     }
 
     @Override

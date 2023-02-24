@@ -69,10 +69,6 @@ public class GoOverCommand extends CommandBase {
     }
 
     @Override
-    public void end(boolean interrupted) {
-    }
-
-    @Override
     public boolean isFinished() {
         return overStation && timer.hasElapsed(0.5);
     }

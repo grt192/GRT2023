@@ -1,17 +1,11 @@
 package frc.robot.commands.balancing;
 
-import com.kauailabs.navx.frc.AHRS;
-
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.wpilibj2.command.CommandBase;
 
 import frc.robot.subsystems.drivetrain.BaseDrivetrain;
 import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
 
-public class DualPIDBalancerCommand extends CommandBase {
-    private final BaseDrivetrain driveSubsystem;
-    private final AHRS ahrs; 
-
+public class DualPIDBalancerCommand extends BaseBalancerCommand {
     private final PIDController anglePID;
     private final PIDController deltaPID;
     private final PIDController turnPID;
@@ -29,14 +23,11 @@ public class DualPIDBalancerCommand extends CommandBase {
     private boolean balanced;
 
     public DualPIDBalancerCommand(BaseDrivetrain driveSubsystem) {
-        this.driveSubsystem = driveSubsystem;
-        this.ahrs = driveSubsystem.getAhrs();
+        super(driveSubsystem);
 
         anglePID = new PIDController(0.5/35, 0.0, 0.0); 
         deltaPID = new PIDController(0.1/0.6, 0.0, 0.0); 
-
         turnPID = new PIDController(0.1/5,0.0, 0.0); // kP = max pwr / max err
-        addRequirements(driveSubsystem);
     }
 
     @Override
@@ -66,7 +57,6 @@ public class DualPIDBalancerCommand extends CommandBase {
 
             if (Math.abs(ahrs.getPitch()) <= 2.0 && deltaAngle <= 0.05) {
                 balanced = true;
-                if (driveSubsystem instanceof BaseSwerveSubsystem) ((BaseSwerveSubsystem) driveSubsystem).lockNow();
             }
         }
 
@@ -75,11 +65,6 @@ public class DualPIDBalancerCommand extends CommandBase {
         } else driveSubsystem.setDrivePowers(returnDrivePower);
 
         oldPitch = currentPitch; // set the current angle to old angle so it is accessible for next cycle     
-    }
-
-    @Override
-    public void end(boolean interrupted) {
-        System.out.println("------------------- Balancing process finished -------------------");
     }
 
     @Override

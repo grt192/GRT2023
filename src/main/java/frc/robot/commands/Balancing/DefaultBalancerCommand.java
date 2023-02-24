@@ -1,18 +1,12 @@
 package frc.robot.commands.balancing;
 
-import com.kauailabs.navx.frc.AHRS;
-
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.wpilibj2.command.CommandBase;
 
 import frc.robot.subsystems.drivetrain.BaseDrivetrain;
 import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
 
-public class DefaultBalancerCommand extends CommandBase {
-    private final BaseDrivetrain driveSubsystem;
-    private final AHRS ahrs; 
-
+public class DefaultBalancerCommand extends BaseBalancerCommand {
     private final PIDController drivePID;
     private final PIDController turnPID;
     private final Timer timer;
@@ -31,13 +25,11 @@ public class DefaultBalancerCommand extends CommandBase {
     private double deltaAngle;
 
     public DefaultBalancerCommand(BaseDrivetrain driveSubsystem) {
-        this.driveSubsystem = driveSubsystem;
-        this.ahrs = driveSubsystem.getAhrs();
+        super(driveSubsystem);
 
         drivePID = new PIDController(0.3/35, 0.0, 0.0); // no deriv successful
         turnPID = new PIDController(0.1/5,0.0, 0.0); // kP = max pwr / max err
         timer = new Timer();
-        addRequirements(driveSubsystem);
     }
 
     @Override
@@ -80,16 +72,6 @@ public class DefaultBalancerCommand extends CommandBase {
         }
 
         oldPitch = currentPitch; // set the current angle to old angle so it is accessible for next cycle     
-    }
-
-    @Override
-    public void end(boolean interrupted) {
-        System.out.println("------------------- Balancing process finished -------------------");
-        if (driveSubsystem instanceof BaseSwerveSubsystem) {
-            BaseSwerveSubsystem swerveSubsystem = (BaseSwerveSubsystem) driveSubsystem;
-            swerveSubsystem.setChargingStationLocked(true);
-            swerveSubsystem.lockNow();
-        }
     }
 
     @Override
