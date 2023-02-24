@@ -3,6 +3,7 @@ package frc.robot.commands.auton;
 import java.util.List;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 
 import frc.robot.commands.balancing.DefaultBalancerCommand;
 import frc.robot.commands.swerve.FollowPathCommand;
@@ -42,8 +43,15 @@ public class BalanceAutonSequence extends BaseAutonSequence {
         Pose2d midPose3 = MID_POSE_3.getPose(isRed);
 
         addCommands(
-            // Place preloaded gamepiece
-            goAndPlace(initialPose, placeState),
+            // Interrupt balancer after 14.5 seconds have elapsed in the sequence.
+            // TODO: very ugly way of implementing this at the moment.
+            new WaitCommand(14.5).deadlineWith(
+                // Place preloaded gamepiece
+                goAndPlace(initialPose, placeState).andThen(
+                    // Go and balance on charging station
+                    new DefaultBalancerCommand(swerveSubsystem)
+                )
+            )
             // Go out of community and do 180
             // FollowPathCommand.composedFrom(
             //     swerveSubsystem,
@@ -51,8 +59,6 @@ public class BalanceAutonSequence extends BaseAutonSequence {
             //     List.of(midPose1, midPose2),
             //     midPose3
             // ),
-            // Go and balance on charging station
-            new DefaultBalancerCommand(swerveSubsystem)
         );
     }
 }
