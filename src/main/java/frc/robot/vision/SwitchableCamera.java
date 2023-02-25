@@ -16,11 +16,11 @@ public class SwitchableCamera {
     private final UsbCamera top;
     private final UsbCamera bottom;
 
-    private static final int TOP_EXPOSURE = 20;
-    private static final int TOP_BRIGHTNESS = 80;
+    private int TOP_EXPOSURE = 39;
+    private int TOP_BRIGHTNESS = 5;
 
-    private static final int BOTTOM_EXPOSURE = 40;
-    private static final int BOTTOM_BRIGHTNESS = 80;
+    private int BOTTOM_EXPOSURE = 40;
+    private int BOTTOM_BRIGHTNESS = 80;
 
     private final VideoSink server;
     private final ComplexWidget widget;
@@ -46,8 +46,8 @@ public class SwitchableCamera {
         // back.getProperty("raw_exposure_absolute").set(156);
 
         // top.getProperty("raw_brightness").set(40);
-        // back.getProperty("raw_exposure_absolute").set(40);
-
+        // back.getProperty("raw_brightness").set(40);
+        
         server = CameraServer.getServer();
 
         widget = shuffleboardTab.add("Intake Camera", getSource())
