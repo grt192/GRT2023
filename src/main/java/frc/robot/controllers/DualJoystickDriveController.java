@@ -58,6 +58,11 @@ public class DualJoystickDriveController extends BaseDriveController {
     }
 
     @Override
+    public boolean getSwerveHeadingLock() {
+        return rightStickCenterButton.getAsBoolean();
+    }
+
+    @Override
     public JoystickButton getBalancerButton() {
         return rightStickBackButton;
     }
@@ -77,14 +82,9 @@ public class DualJoystickDriveController extends BaseDriveController {
         return leftTopLeftButton;
     }
 
-    @Override
-    public boolean getHeadingLock() {
-        return rightStickCenterButton.getAsBoolean();
-    }
-
     /**
-     * Gets the amount to scale translational input by. When the left trigger (full throttle mode) 
-     * is not engaged, this is 0.75.
+     * Gets the amount to scale translational input by. When the left trigger (slow mode) 
+     * is engaged, this is 0.3.
      * 
      * @return The scale to apply to translational input.
      */
@@ -93,6 +93,10 @@ public class DualJoystickDriveController extends BaseDriveController {
         return isSlowMode ? 0.3 : 1.0;
     }
 
+    /**
+     * Gets the amount to scale rotational input by.
+     * @return The scale to apply to rotational input.
+     */
     private double getTurnScaling() {
         // boolean isSlowMode = leftJoystick.getTrigger();
         // return isSlowMode ? 0.6 : 0.6;

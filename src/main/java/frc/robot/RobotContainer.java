@@ -110,7 +110,7 @@ public class RobotContainer {
         driveSubsystem = new SwerveSubsystem(photonWrapper);
         rollerSubsystem = new RollerSubsystem();
         tiltedElevatorSubsystem = new TiltedElevatorSubsystem();
-        
+
         superstructure = new Superstructure(rollerSubsystem, tiltedElevatorSubsystem, switchableCamera);
         balancerCommand = new DefaultBalancerCommand(driveSubsystem);
 
@@ -174,7 +174,7 @@ public class RobotContainer {
                 double angularPower = driveController.getRotatePower();
                 boolean relative = driveController.getSwerveRelative();
 
-                if (driveController.getHeadingLock()) {
+                if (driveController.getSwerveHeadingLock()) {
                     double currentHeading = swerveSubsystem.getRobotPosition().getRotation().getRadians();
                     double lockHeading = (Math.abs(MathUtil.angleModulus(currentHeading)) > (Math.PI / 2)) ? Math.PI : 0;
 

@@ -19,7 +19,7 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
-import frc.robot.commands.swerve.FollowPathCommand;
+
 import frc.robot.util.ShuffleboardUtil;
 import frc.robot.vision.PhotonWrapper;
 
@@ -42,6 +42,8 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
     public final double MAX_ACCEL; // Max robot tangential acceleration, in m/s^2
     public final double MAX_OMEGA; // Max robot angular velocity, in rads/s
     public final double MAX_ALPHA; // Max robot angular acceleration, in rads/s^2
+
+    private final ProfiledPIDController thetaController;
 
     private final Timer lockTimer;
     private static final double LOCK_TIMEOUT_SECONDS = 1.0; // The elapsed idle time to wait before locking
@@ -81,6 +83,15 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
         MAX_ACCEL = maxAccel;
         MAX_OMEGA = maxOmega;
         MAX_ALPHA = maxAlpha;
+
+        // Initialize heading-lock PID controller
+        thetaController = new ProfiledPIDController(
+            0.5, 0, 0, 
+            new TrapezoidProfile.Constraints(
+                MAX_OMEGA / 2.,
+                MAX_ALPHA / 2.
+            )
+        );
 
         this.topLeftModule = topLeftModule;
         this.topRightModule = topRightModule;
@@ -238,14 +249,16 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
         setDrivePowers(xPower, 0.0, 0.0, true);
     }
 
-    private ProfiledPIDController thetaController = new ProfiledPIDController(
-        0.5, 0, 0, 
-        new TrapezoidProfile.Constraints(
-            SwerveSubsystem.MAX_OMEGA / 2.,
-            SwerveSubsystem.MAX_ALPHA / 2.
-        )
-    );; // VERY MESSY!
-    public void setDrivePowersWithHeadingLock(double xPower, double yPower, Rotation2d heading, boolean relative) { // idk when to use Rotation2d and when to use a double
+    /**
+     * Sets the swerve module states of this subsystem from provided field-centric
+     * swerve drive powers, locking the swerve to a given heading.
+     * 
+     * @param xPower The power [-1.0, 1.0] in the x (forward) direction.
+     * @param yPower The power [-1.0, 1.0] in the y (left) direction.
+     * @param heading The `Rotation2d` angle to lock the swerve to.
+     * @param relative Whether to use relative powers instead of field-oriented control.
+     */
+    public void setDrivePowersWithHeadingLock(double xPower, double yPower, Rotation2d heading, boolean relative) {
         Rotation2d currentRotation = getRobotPosition().getRotation();
         double error = MathUtil.angleModulus(heading.minus(currentRotation).getRadians());
         double turnSpeed = thetaController.calculate(error);

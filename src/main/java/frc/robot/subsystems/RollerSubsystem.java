@@ -28,8 +28,9 @@ public class RollerSubsystem extends SubsystemBase {
     }
 
     private HeldPiece heldPiece = HeldPiece.EMPTY;
+
     public boolean allowOpen = true;
-    private boolean wasAllowedOpen = true;
+    private boolean prevAllowedOpen = true;
 
     private final Timer openTimer = new Timer();
     private final Timer closeTimer = new Timer();
@@ -111,8 +112,8 @@ public class RollerSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        boolean stopOpening = !allowOpen && wasAllowedOpen; // only heed falling edge of allowed open so we can open from ground position
-        wasAllowedOpen = allowOpen;
+        boolean stopOpening = !allowOpen && prevAllowedOpen; // only heed falling edge of allowed open so we can open from ground position
+        prevAllowedOpen = allowOpen;
 
         boolean opening = openTimer.get() > 0 && !openTimer.hasElapsed(OPEN_TIME_SECONDS);
         boolean closing = !opening || stopOpening;

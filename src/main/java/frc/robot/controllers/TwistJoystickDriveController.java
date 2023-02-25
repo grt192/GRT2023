@@ -44,6 +44,11 @@ public class TwistJoystickDriveController extends BaseDriveController {
     }
 
     @Override
+    public boolean getSwerveHeadingLock() {
+        return joystick.getZ() > 0.75;
+    }
+
+    @Override
     public JoystickButton getBalancerButton() {
         return leftMiddleRightButton;
     }

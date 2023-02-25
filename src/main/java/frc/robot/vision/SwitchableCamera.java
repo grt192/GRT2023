@@ -16,11 +16,11 @@ public class SwitchableCamera {
     private final UsbCamera top;
     private final UsbCamera bottom;
 
-    private int TOP_EXPOSURE = 20;
-    private int TOP_BRIGHTNESS = 80;
+    private static final int TOP_EXPOSURE = 20;
+    private static final int TOP_BRIGHTNESS = 80;
 
-    private int BOTTOM_EXPOSURE = 40;
-    private int BOTTOM_BRIGHTNESS = 80;
+    private static final int BOTTOM_EXPOSURE = 40;
+    private static final int BOTTOM_BRIGHTNESS = 80;
 
     private final VideoSink server;
     private final ComplexWidget widget;
@@ -29,16 +29,16 @@ public class SwitchableCamera {
 
     public SwitchableCamera(ShuffleboardTab shuffleboardTab) {
         top = CameraServer.startAutomaticCapture(0);
-        bottom = CameraServer.startAutomaticCapture(1);
-
         top.setResolution(140, 120);
-        bottom.setResolution(140, 120);
-
+        top.setExposureManual(TOP_EXPOSURE);
+        top.setBrightness(TOP_BRIGHTNESS);
         top.setFPS(30);
-        bottom.setFPS(30);
 
-        // top.setExposureManual(TOP_EXPOSURE);
-        // back.setExposureManual(BOTTOM_EXPOSURE);
+        bottom = CameraServer.startAutomaticCapture(1);
+        bottom.setResolution(140, 120);
+        bottom.setExposureManual(BOTTOM_EXPOSURE);
+        bottom.setBrightness(BOTTOM_BRIGHTNESS);
+        bottom.setFPS(30);
 
         // https://github.com/wpilibsuite/allwpilib/blob/main/cscore/src/main/native/linux/UsbCameraImpl.cpp#L108-L124
         // https://www.chiefdelphi.com/t/usb-camera-exposure-too-high-with-setexposuremanual/353630/8
@@ -48,26 +48,25 @@ public class SwitchableCamera {
         // top.getProperty("raw_brightness").set(40);
         // back.getProperty("raw_exposure_absolute").set(40);
 
-        top.setExposureManual(TOP_EXPOSURE);
-        bottom.setExposureManual(BOTTOM_EXPOSURE);
-        top.setBrightness(TOP_BRIGHTNESS);
-        bottom.setBrightness(BOTTOM_BRIGHTNESS);
-
         server = CameraServer.getServer();
 
         widget = shuffleboardTab.add("Intake Camera", getSource())
-                .withPosition(8, 3)
-                .withSize(4, 2);
+            .withPosition(8, 3)
+            .withSize(4, 2);
     }
 
     /**
-     * Switches the source connected to this camera (toggles between front and
-     * back).
+     * Switches the source connected to this camera (toggles between
+     * top and bottom).
      */
     public void switchCamera() {
         setCamera(!this.topActive);
     }
 
+    /**
+     * Sets the source connected to this camera.
+     * @param useTop Whether to set it to the top camera. If false, sets it to the bottom instead.
+     */
     public void setCamera(boolean useTop) {
         this.topActive = useTop;
         server.setSource(this.topActive ? top : bottom);
@@ -76,7 +75,6 @@ public class SwitchableCamera {
 
     /**
      * Gets the `VideoSource` of the camera.
-     * 
      * @return The connected `VideoSource`.
      */
     public VideoSource getSource() {

@@ -214,22 +214,19 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
             return;
         }
 
-        if(state == ElevatorState.HOME){
-            if(zeroLimitSwitch != null && zeroLimitSwitch.get()){
-                extensionMotor.set(-.2);
+        if (state == ElevatorState.HOME) {
+            if (zeroLimitSwitch.get()) {
+                extensionMotor.set(-0.2);
                 extensionMotor.enableSoftLimit(SoftLimitDirection.kReverse, false);
-                return;
-            } else if(!zeroLimitSwitch.get()){
+            } else {
                 extensionMotor.set(0);
                 extensionMotor.enableSoftLimit(SoftLimitDirection.kReverse, true);
                 state = ElevatorState.GROUND;
-                return;
-            } else {
-                extensionMotor.set(0);
             }
-        } else {
-            extensionMotor.enableSoftLimit(SoftLimitDirection.kReverse, true);
+            return;
         }
+
+        extensionMotor.enableSoftLimit(SoftLimitDirection.kReverse, true);
 
         // Temporarily store mechanism state during single periodic loop
         double currentPos = extensionEncoder.getPosition();

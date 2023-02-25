@@ -27,9 +27,11 @@ public abstract class BaseDriveController {
      */
     public abstract boolean getSwerveRelative();
 
-    public boolean getHeadingLock() {
-        return false;
-    }
+    /**
+     * Gets whether swerve should heading-lock to aim towards the grid.
+     * @return Whether swerve should heading-lock towards the grid.
+     */
+    public abstract boolean getSwerveHeadingLock();
 
     public abstract JoystickButton getBalancerButton();
     public abstract JoystickButton getFieldResetButton();

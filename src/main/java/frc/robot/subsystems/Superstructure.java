@@ -1,18 +1,20 @@
 package frc.robot.subsystems;
 
-import static frc.robot.Constants.RollerConstants.ALLOW_OPEN_HEIGHT;
-
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
 import frc.robot.subsystems.RollerSubsystem.HeldPiece;
 import frc.robot.subsystems.TiltedElevatorSubsystem.ElevatorState;
 import frc.robot.vision.SwitchableCamera;
 
+import static frc.robot.Constants.RollerConstants.*;
+
 public class Superstructure extends SubsystemBase {
     private final RollerSubsystem rollerSubsystem;
     private final TiltedElevatorSubsystem tiltedElevatorSubsystem;
+
     private final SwitchableCamera switchableCamera;
 
-    private ElevatorState lastState;
+    private ElevatorState lastElevatorState;
 
     public Superstructure(RollerSubsystem rollerSubsystem, TiltedElevatorSubsystem tiltedElevatorSubsystem, SwitchableCamera switchableCamera) {
         this.rollerSubsystem = rollerSubsystem;
@@ -26,22 +28,16 @@ public class Superstructure extends SubsystemBase {
         tiltedElevatorSubsystem.pieceGrabbed = hasPiece;
 
         ElevatorState currentState = tiltedElevatorSubsystem.getState();
-        if (currentState != lastState) {
+        if (currentState != lastElevatorState) {
             switch (currentState) {
-                case CONE_HIGH:
-                case CONE_MID:
-                case CUBE_MID:
-                case CUBE_HIGH:
+                case CONE_HIGH, CONE_MID, CUBE_MID, CUBE_HIGH ->
                     switchableCamera.setCamera(false);
-                    break;
-                case GROUND:
+                case GROUND ->
                     switchableCamera.setCamera(true);
-                    break;
-                default:
-                    break;
+                default -> {}
             }
         }
-        lastState = currentState;
+        lastElevatorState = currentState;
 
         rollerSubsystem.allowOpen = tiltedElevatorSubsystem.getExtension() >= ALLOW_OPEN_HEIGHT;
     }

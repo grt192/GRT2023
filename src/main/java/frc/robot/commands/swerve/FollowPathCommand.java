@@ -18,7 +18,6 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 
 import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
-import frc.robot.subsystems.drivetrain.SwerveSubsystem;
 
 public class FollowPathCommand extends SwerveControllerCommand {
     private static final double xP = 1.5;

@@ -38,7 +38,7 @@ public class XboxDriveController extends BaseDriveController {
     }
 
     @Override
-    public boolean getHeadingLock() {
+    public boolean getSwerveHeadingLock() {
         return driveController.getLeftTriggerAxis() > 0.75;
     }
 
