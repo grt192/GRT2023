@@ -17,11 +17,11 @@ public class SwitchableCamera {
     private final UsbCamera front;
     private final UsbCamera back;
 
-    private static final int FRONT_EXPOSURE = 20;
-    private static final int FRONT_BRIGHTNESS = 80;
+    private int FRONT_EXPOSURE = 20;
+    private int FRONT_BRIGHTNESS = 80;
 
-    private static final int BACK_EXPOSURE = 40;
-    private static final int BACK_BRIGHTNESS = 80;
+    private int BACK_EXPOSURE = 40;
+    private int BACK_BRIGHTNESS = 80;
 
     private final VideoSink server;
     private final ComplexWidget widget;
@@ -49,6 +49,8 @@ public class SwitchableCamera {
         // front.getProperty("raw_brightness").set(40);
         // back.getProperty("raw_exposure_absolute").set(40);
 
+        front.setExposureManual(FRONT_EXPOSURE);
+        back.setExposureManual(BACK_EXPOSURE);
         front.setBrightness(FRONT_BRIGHTNESS);
         back.setBrightness(BACK_BRIGHTNESS);
 

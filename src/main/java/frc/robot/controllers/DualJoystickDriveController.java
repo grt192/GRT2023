@@ -92,6 +92,6 @@ public class DualJoystickDriveController extends BaseDriveController {
         // boolean isSlowMode = leftJoystick.getTrigger();
         // return isSlowMode ? 0.6 : 0.6;
 
-        return 0.6;
+        return 0.5;
     }
 }
