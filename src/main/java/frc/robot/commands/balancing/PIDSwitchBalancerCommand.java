@@ -30,9 +30,9 @@ public class PIDSwitchBalancerCommand extends BaseBalancerCommand {
     public PIDSwitchBalancerCommand(BaseDrivetrain driveSubsystem) {
         super(driveSubsystem);
 
-        roughPID = new PIDController(0.5/35, 0.0, 0.0); 
-        finePID = new PIDController(0.25/22, 0.0, 0.0); 
-        turnPID = new PIDController(0.1/5,0.0, 0.0); // kP = max pwr / max err
+        roughPID = new PIDController(0.5 / 35, 0.0, 0.0); 
+        finePID = new PIDController(0.25 / 22, 0.0, 0.0); 
+        turnPID = new PIDController(0.1 / 5,0.0, 0.0); // kP = max pwr / max err
 
         timer = new Timer();
     }
@@ -53,7 +53,7 @@ public class PIDSwitchBalancerCommand extends BaseBalancerCommand {
 
         if (!reachedStation) {
             returnDrivePower = -0.80;
-            reachedStation = ahrs.getPitch() <= - 15.0;
+            reachedStation = ahrs.getPitch() <= -15.0;
         } else {
             currentPitch = ahrs.getPitch();
             deltaAngle = Math.abs(currentPitch - oldPitch);

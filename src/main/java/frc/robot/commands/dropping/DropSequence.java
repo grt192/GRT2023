@@ -1,18 +1,11 @@
 package frc.robot.commands.dropping;
 
-import java.util.List;
-
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 
 import frc.robot.commands.grabber.RollerPlaceCommand;
 import frc.robot.commands.mover.TiltedElevatorCommand;
-import frc.robot.commands.swerve.FollowPathCommand;
 import frc.robot.subsystems.RollerSubsystem;
 import frc.robot.subsystems.TiltedElevatorSubsystem;
 import frc.robot.subsystems.TiltedElevatorSubsystem.ElevatorState;
@@ -40,7 +33,7 @@ public class DropSequence extends SequentialCommandGroup {
             new WaitCommand(waitTime1),
             new RollerPlaceCommand(rollerSubsystem, -outtakePower, outtakeDuration),
             new WaitCommand(waitTime2),
-            new InstantCommand(() -> swerveSubsystem.setDrivePowers(-.2, 0, 0, true)),
+            new InstantCommand(() -> swerveSubsystem.setDrivePowers(-0.2, 0, 0, true)),
             new WaitCommand(backTime),
             new InstantCommand(() -> swerveSubsystem.setDrivePowers(0, 0, 0, true)),
             new InstantCommand(() -> tiltedElevatorSubsystem.setState(ElevatorState.GROUND))

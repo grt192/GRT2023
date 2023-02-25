@@ -3,7 +3,8 @@ import org.junit.jupiter.api.Test;
 import frc.robot.commands.auton.BalanceAutonSequence;
 import frc.robot.commands.auton.BottomOnePieceAutonSequence;
 import frc.robot.commands.auton.BottomTwoPieceAutonSequence;
-import frc.robot.commands.auton.TopAutonSequence;
+import frc.robot.commands.auton.TopOnePieceAutonSequence;
+import frc.robot.commands.auton.TopTwoPieceAutonSequence;
 import frc.robot.commands.auton.test.BoxAutonSequence;
 import frc.robot.commands.auton.test.ContinuousBoxAutonSequence;
 import frc.robot.commands.auton.test.GRTAutonSequence;
@@ -39,7 +40,8 @@ public class AutonPathTest {
      */
     @Test
     public void compileRedPaths() {
-        new TopAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, true);
+        new TopOnePieceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, true);
+        new TopTwoPieceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, true);
         new BalanceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, true);
         new BottomOnePieceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, true);
         new BottomTwoPieceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, true);
@@ -50,7 +52,8 @@ public class AutonPathTest {
      */
     @Test
     public void compileBluePaths() {
-        new TopAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, false);
+        new TopOnePieceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, false);
+        new TopTwoPieceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, false);
         new BalanceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, false);
         new BottomOnePieceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, false);
         new BottomTwoPieceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, false);
