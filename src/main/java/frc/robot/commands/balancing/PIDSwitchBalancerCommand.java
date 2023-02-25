@@ -81,4 +81,11 @@ public class PIDSwitchBalancerCommand extends BaseBalancerCommand {
         return reachedStation && balanced;
         // return reachedStation && Math.abs(ahrs.getPitch()) <= 2.0 && stoptimer.hasElapsed(0.20);
     }
+
+    double getPower(){
+        return returnDrivePower;
+    }
+    double getPitch(){
+        return ahrs.getPitch();
+    }
 }
