@@ -32,6 +32,7 @@ import frc.robot.commands.auton.test.TwentyFeetStraightLinePath;
 import frc.robot.commands.balancing.BaseBalancerCommand;
 import frc.robot.commands.balancing.DefaultBalancerCommand;
 import frc.robot.commands.dropping.DropperChooserCommand;
+import frc.robot.commands.grabber.VisionAlignmentCommand;
 import frc.robot.controllers.BaseDriveController;
 import frc.robot.controllers.DualJoystickDriveController;
 import frc.robot.controllers.TwistJoystickDriveController;
@@ -100,7 +101,7 @@ public class RobotContainer {
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
     public RobotContainer() {
-        driveController = new DualJoystickDriveController();
+        driveController = new XboxDriveController();
 
         photonWrapper = new PhotonWrapper();
         switchableCamera = new SwitchableCamera(shuffleboardTab);
@@ -141,6 +142,7 @@ public class RobotContainer {
             autonChooser.addOption("Box auton", new BoxAutonSequence(swerveSubsystem));
             autonChooser.addOption("No-stopping box auton", new ContinuousBoxAutonSequence(swerveSubsystem));
             autonChooser.addOption("GRT path", new GRTAutonSequence(swerveSubsystem));
+            autonChooser.addOption("Vision align auton", new VisionAlignmentCommand(swerveSubsystem));
         }
 
         shuffleboardTab.add("Auton", autonChooser)
