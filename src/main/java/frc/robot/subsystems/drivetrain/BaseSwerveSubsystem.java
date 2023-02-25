@@ -86,10 +86,10 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
 
         // Initialize heading-lock PID controller
         thetaController = new ProfiledPIDController(
-            0.5, 0, 0, 
+            1.1, 0, 0, 
             new TrapezoidProfile.Constraints(
-                MAX_OMEGA / 2.,
-                MAX_ALPHA / 2.
+                MAX_OMEGA * .7,
+                MAX_ALPHA * .7
             )
         );
 
