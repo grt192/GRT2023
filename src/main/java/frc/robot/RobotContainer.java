@@ -114,7 +114,7 @@ public class RobotContainer {
         tiltedElevatorSubsystem = new TiltedElevatorSubsystem();
         signalLEDSubsystem = new LEDSubsystem(); 
 
-        superstructure = new Superstructure(rollerSubsystem, tiltedElevatorSubsystem, switchableCamera);
+        superstructure = new Superstructure(rollerSubsystem, tiltedElevatorSubsystem, signalLEDSubsystem, switchableCamera);
         balancerCommand = new DefaultBalancerCommand(driveSubsystem);
 
         // Configure the button bindings

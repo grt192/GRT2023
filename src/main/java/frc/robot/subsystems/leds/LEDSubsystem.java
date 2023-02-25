@@ -9,26 +9,35 @@ import static frc.robot.Constants.LEDConstants.*;
 public class LEDSubsystem extends SubsystemBase {
     private final LEDStrip ledStrip;
 
-    private final Timer timer;
+    private final Timer blinkTimer;
     private static final double BLINK_DURATION_SECONDS = 1.0;
     private static final Color BLINK_COLOR = new Color(0, 255, 0);
 
     private Color color = Color.kFirstRed;
+    private boolean blinking = false;
+
+    public boolean pieceGrabbed = false;
 
     public LEDSubsystem() {
         ledStrip = SIGNAL_LED_STRIP;
-        timer = new Timer();
+        blinkTimer = new Timer();
     }
 
     @Override
     public void periodic() {
-        ledStrip.setSolidColor(color);
+        // Start blink timer loop if we are holding a piece
+        if (pieceGrabbed) {
+            blinkTimer.start();
+        } else {
+            blinking = false;
+            blinkTimer.stop();
+            blinkTimer.reset();
+        }
 
-        // if (timer.hasElapsed(durationSeconds)) {
-            // ledStrip.setSolidColor(defaultColor);
-            // timer.stop();
-            // timer.reset();
-        // }
+        // Toggle the blink boolean every duration to swap the LEDs between the driver piece color
+        // and the blink color.
+        if (blinkTimer.advanceIfElapsed(BLINK_DURATION_SECONDS)) blinking = !blinking;
+        ledStrip.setSolidColor(blinking ? BLINK_COLOR : color);
     }
 
     public void setColor(Color color) {
