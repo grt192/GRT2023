@@ -18,10 +18,6 @@ public class TopOnePieceAutonSequence extends BaseAutonSequence {
 
     private static final FieldPosition MID_POSE_1 = FieldPosition.TOP_MIDPOS_1;
     private static final FieldPosition MID_POSE_2 = FieldPosition.TOP_MIDPOS_2;
-    private static final FieldPosition MID_POSE_3 = FieldPosition.TOP_MIDPOS_3;
-    private static final FieldPosition MID_POSE_4 = FieldPosition.TOP_MIDPOS_4;
-
-    private static final FieldPosition GRAB_POSE = FieldPosition.PIECE1;
 
     /**
      * Non-balancing top auton sequence.
@@ -40,10 +36,6 @@ public class TopOnePieceAutonSequence extends BaseAutonSequence {
 
         Pose2d midPose1 = MID_POSE_1.getPose(isRed);
         Pose2d midPose2 = MID_POSE_2.getPose(isRed);
-        Pose2d midPose3 = MID_POSE_3.getPose(isRed);
-        Pose2d midPose4 = MID_POSE_4.getPose(isRed);
-
-        Pose2d grabPose = GRAB_POSE.getPose(isRed);
 
         addCommands(
             // Place preloaded game piece
@@ -53,12 +45,9 @@ public class TopOnePieceAutonSequence extends BaseAutonSequence {
                 swerveSubsystem,
                 initialPose,
                 List.of(
-                    midPose1.getTranslation(),
-                    midPose2.getTranslation(),
-                    midPose3.getTranslation(),
-                    midPose4.getTranslation()
+                    midPose1.getTranslation()
                 ),
-                new Pose2d(grabPose.getTranslation(), initialPose.getRotation())
+                midPose2
             )
         );
     }
