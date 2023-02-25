@@ -3,7 +3,6 @@ package frc.robot.vision;
 import java.util.Map;
 
 import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.cscore.CvSink;
 import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.cscore.VideoSink;
 import edu.wpi.first.cscore.VideoSource;
@@ -14,55 +13,56 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
  * A `VideoSource` that toggles between a front and back camera.
  */
 public class SwitchableCamera {
-    private final UsbCamera front;
-    private final UsbCamera back;
+    private final UsbCamera top;
+    private final UsbCamera bottom;
 
-    private int FRONT_EXPOSURE = 20;
-    private int FRONT_BRIGHTNESS = 80;
+    private int TOP_EXPOSURE = 20;
+    private int TOP_BRIGHTNESS = 80;
 
-    private int BACK_EXPOSURE = 40;
-    private int BACK_BRIGHTNESS = 80;
+    private int BOTTOM_EXPOSURE = 40;
+    private int BOTTOM_BRIGHTNESS = 80;
 
     private final VideoSink server;
     private final ComplexWidget widget;
 
     private boolean topActive = true;
 
-    public SwitchableCamera(ShuffleboardTab shuffleboardTab){
-        front = CameraServer.startAutomaticCapture(0);
-        back = CameraServer.startAutomaticCapture(1);
+    public SwitchableCamera(ShuffleboardTab shuffleboardTab) {
+        top = CameraServer.startAutomaticCapture(0);
+        bottom = CameraServer.startAutomaticCapture(1);
 
-        front.setResolution(140, 120);
-        back.setResolution(140, 120);
+        top.setResolution(140, 120);
+        bottom.setResolution(140, 120);
 
-        front.setFPS(30);
-        back.setFPS(30);
+        top.setFPS(30);
+        bottom.setFPS(30);
 
-        // front.setExposureManual(FRONT_EXPOSURE);
-        // back.setExposureManual(BACK_EXPOSURE);
+        // top.setExposureManual(TOP_EXPOSURE);
+        // back.setExposureManual(BOTTOM_EXPOSURE);
 
-        //https://github.com/wpilibsuite/allwpilib/blob/main/cscore/src/main/native/linux/UsbCameraImpl.cpp#L108-L124
+        // https://github.com/wpilibsuite/allwpilib/blob/main/cscore/src/main/native/linux/UsbCameraImpl.cpp#L108-L124
         // https://www.chiefdelphi.com/t/usb-camera-exposure-too-high-with-setexposuremanual/353630/8
-        // front.getProperty("raw_exposure_absolute").set(156);
+        // top.getProperty("raw_exposure_absolute").set(156);
         // back.getProperty("raw_exposure_absolute").set(156);
 
-        // front.getProperty("raw_brightness").set(40);
+        // top.getProperty("raw_brightness").set(40);
         // back.getProperty("raw_exposure_absolute").set(40);
 
-        front.setExposureManual(FRONT_EXPOSURE);
-        back.setExposureManual(BACK_EXPOSURE);
-        front.setBrightness(FRONT_BRIGHTNESS);
-        back.setBrightness(BACK_BRIGHTNESS);
+        top.setExposureManual(TOP_EXPOSURE);
+        bottom.setExposureManual(BOTTOM_EXPOSURE);
+        top.setBrightness(TOP_BRIGHTNESS);
+        bottom.setBrightness(BOTTOM_BRIGHTNESS);
 
         server = CameraServer.getServer();
 
         widget = shuffleboardTab.add("Intake Camera", getSource())
-            .withPosition(8, 3)
-            .withSize(4, 2);
+                .withPosition(8, 3)
+                .withSize(4, 2);
     }
 
     /**
-     * Switches the source connected to this camera (toggles between front and back).
+     * Switches the source connected to this camera (toggles between front and
+     * back).
      */
     public void switchCamera() {
         setCamera(!this.topActive);
@@ -70,12 +70,13 @@ public class SwitchableCamera {
 
     public void setCamera(boolean useTop) {
         this.topActive = useTop;
-        server.setSource(this.topActive ? front : back);
+        server.setSource(this.topActive ? top : bottom);
         widget.withProperties(Map.of("Rotation", this.topActive ? "NONE" : "QUARTER_CW"));
     }
 
     /**
      * Gets the `VideoSource` of the camera.
+     * 
      * @return The connected `VideoSource`.
      */
     public VideoSource getSource() {
