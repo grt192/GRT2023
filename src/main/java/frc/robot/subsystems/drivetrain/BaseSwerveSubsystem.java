@@ -263,7 +263,7 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
         double error = MathUtil.angleModulus(heading.minus(currentRotation).getRadians());
         double turnSpeed = thetaController.calculate(error);
 
-        setDrivePowers(xPower, yPower, turnSpeed, relative);
+        setDrivePowers(xPower, yPower, turnSpeed / MAX_VEL, relative);
     }
 
     /**
