@@ -27,6 +27,10 @@ public abstract class BaseDriveController {
      */
     public abstract boolean getSwerveRelative();
 
+    public boolean getHeadingLock() {
+        return false;
+    }
+
     public abstract JoystickButton getBalancerButton();
     public abstract JoystickButton getFieldResetButton();
     public abstract JoystickButton getCameraSwitchButton();

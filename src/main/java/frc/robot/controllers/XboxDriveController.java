@@ -38,6 +38,11 @@ public class XboxDriveController extends BaseDriveController {
     }
 
     @Override
+    public boolean getHeadingLock() {
+        return driveController.getLeftTriggerAxis() > 0.75;
+    }
+
+    @Override
     public JoystickButton getBalancerButton() {
         return driveRBumper;
     }

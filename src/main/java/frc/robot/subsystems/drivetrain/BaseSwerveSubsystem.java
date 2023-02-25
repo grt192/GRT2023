@@ -1,7 +1,9 @@
 package frc.robot.subsystems.drivetrain;
 
 import edu.wpi.first.math.MatBuilder;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Nat;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -9,6 +11,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.Timer;
@@ -16,7 +19,7 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
-
+import frc.robot.commands.swerve.FollowPathCommand;
 import frc.robot.util.ShuffleboardUtil;
 import frc.robot.vision.PhotonWrapper;
 
@@ -233,6 +236,21 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
     @Override
     public void setDrivePowers(double xPower) {
         setDrivePowers(xPower, 0.0, 0.0, true);
+    }
+
+    private ProfiledPIDController thetaController = new ProfiledPIDController(
+        0.5, 0, 0, 
+        new TrapezoidProfile.Constraints(
+            SwerveSubsystem.MAX_OMEGA / 2.,
+            SwerveSubsystem.MAX_ALPHA / 2.
+        )
+    );; // VERY MESSY!
+    public void setDrivePowersWithHeadingLock(double xPower, double yPower, Rotation2d heading, boolean relative) { // idk when to use Rotation2d and when to use a double
+        Rotation2d currentRotation = getRobotPosition().getRotation();
+        double error = MathUtil.angleModulus(heading.minus(currentRotation).getRadians());
+        double turnSpeed = thetaController.calculate(error);
+
+        setDrivePowers(xPower, yPower, turnSpeed, relative);
     }
 
     /**

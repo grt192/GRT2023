@@ -90,7 +90,7 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
         CUBE_HIGH(Units.inchesToMeters(Constants.IS_R1 ? 53 : 55)), // absolute height = 31.625 in
         CONE_MID(Units.inchesToMeters(Constants.IS_R1 ? 50 : 48)), // absolute height = 34 in
         CONE_MID_DROP(CONE_MID.getExtension(false) - Units.inchesToMeters(10)),
-        CONE_HIGH(Units.inchesToMeters(Constants.IS_R1 ? 53 : 62.5)), // absolute height = 46 in
+        CONE_HIGH(Units.inchesToMeters(Constants.IS_R1 ? 53 : 62)), // absolute height = 46 in
         CONE_HIGH_DROP(CONE_HIGH.getExtension(false) - Units.inchesToMeters(0)),
         HYBRID(Units.inchesToMeters(20)),//NEEDS TUNING
         HOME(Units.inchesToMeters(0));
