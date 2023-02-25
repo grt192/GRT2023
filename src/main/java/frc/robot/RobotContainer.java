@@ -61,7 +61,7 @@ import frc.robot.subsystems.TiltedElevatorSubsystem.ElevatorState;
  */
 public class RobotContainer {
     // Subsystems
-    private final BaseDrivetrain driveSubsystem;
+    public final BaseDrivetrain driveSubsystem;
     private final RollerSubsystem rollerSubsystem;
     private final TiltedElevatorSubsystem tiltedElevatorSubsystem;
 

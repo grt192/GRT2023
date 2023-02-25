@@ -59,7 +59,7 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
     private final Field2d fieldWidget = new Field2d();
 
     private static final boolean SHUFFLEBOARD_ENABLE = true;
-    private volatile boolean VISION_ENABLE = true;
+    public volatile boolean VISION_ENABLE = true;
 
     // The driver or auton commanded `SwerveModuleState` setpoints for each module;
     // states are given in a tuple of [top left, top right, bottom left, bottom right].
