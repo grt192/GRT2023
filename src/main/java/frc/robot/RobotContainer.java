@@ -176,7 +176,7 @@ public class RobotContainer {
 
                 if (driveController.getHeadingLock()) {
                     double currentHeading = swerveSubsystem.getRobotPosition().getRotation().getRadians();
-                    double lockHeading = (Math.abs(MathUtil.angleModulus(currentHeading)) > (Math.PI / 2)) ? 0 : Math.PI;
+                    double lockHeading = (Math.abs(MathUtil.angleModulus(currentHeading)) > (Math.PI / 2)) ? Math.PI : 0;
 
                     swerveSubsystem.setDrivePowersWithHeadingLock(xPower, yPower, new Rotation2d(lockHeading), relative);
                 } else {

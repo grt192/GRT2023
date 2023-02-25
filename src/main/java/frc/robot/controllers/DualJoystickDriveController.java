@@ -77,6 +77,11 @@ public class DualJoystickDriveController extends BaseDriveController {
         return leftTopLeftButton;
     }
 
+    @Override
+    public boolean getHeadingLock() {
+        return rightStickCenterButton.getAsBoolean();
+    }
+
     /**
      * Gets the amount to scale translational input by. When the left trigger (full throttle mode) 
      * is not engaged, this is 0.75.
