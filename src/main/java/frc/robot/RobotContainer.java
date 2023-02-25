@@ -41,7 +41,7 @@ import frc.robot.vision.SwitchableCamera;
 import frc.robot.vision.PhotonWrapper;
 import frc.robot.subsystems.drivetrain.TankSubsystem;
 import frc.robot.subsystems.leds.LEDStrip;
-import frc.robot.subsystems.leds.TimeoutLEDSubsystem;
+import frc.robot.subsystems.leds.LEDSubsystem;
 import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
 import frc.robot.subsystems.drivetrain.MissileShellSwerveSubsystem;
 import frc.robot.subsystems.drivetrain.MissileShellSwerveSweeperSubsystem;
@@ -52,8 +52,6 @@ import frc.robot.subsystems.RollerSubsystem;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.TiltedElevatorSubsystem;
 import frc.robot.subsystems.TiltedElevatorSubsystem.ElevatorState;
-
-import static frc.robot.Constants.LEDConstants.*;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -67,7 +65,7 @@ public class RobotContainer {
     public final BaseDrivetrain driveSubsystem;
     private final RollerSubsystem rollerSubsystem;
     private final TiltedElevatorSubsystem tiltedElevatorSubsystem;
-    private final TimeoutLEDSubsystem signalLEDSubsystem;
+    private final LEDSubsystem signalLEDSubsystem;
 
     private final Superstructure superstructure;
     private final PhotonWrapper photonWrapper;
@@ -114,7 +112,7 @@ public class RobotContainer {
         driveSubsystem = new SwerveSubsystem(photonWrapper);
         rollerSubsystem = new RollerSubsystem();
         tiltedElevatorSubsystem = new TiltedElevatorSubsystem();
-        signalLEDSubsystem = new TimeoutLEDSubsystem(SIGNAL_LED_STRIP, 10, Color.kFirstRed); 
+        signalLEDSubsystem = new LEDSubsystem(); 
 
         superstructure = new Superstructure(rollerSubsystem, tiltedElevatorSubsystem, switchableCamera);
         balancerCommand = new DefaultBalancerCommand(driveSubsystem);
@@ -258,9 +256,9 @@ public class RobotContainer {
 
         blSwitch.onTrue(new InstantCommand(() -> {
             System.out.println("yellow");
-            signalLEDSubsystem.setNewColor(new Color(255, 150, 0));
+            signalLEDSubsystem.setColor(new Color(255, 150, 0));
         }, signalLEDSubsystem)).onFalse(new InstantCommand(() -> {
-            signalLEDSubsystem.setNewColor(new Color(192, 8, 254));
+            signalLEDSubsystem.setColor(new Color(192, 8, 254));
         }, signalLEDSubsystem));
     }
 
