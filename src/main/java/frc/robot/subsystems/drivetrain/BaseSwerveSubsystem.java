@@ -56,10 +56,11 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
     private final ShuffleboardTab shuffleboardTab;
     private final GenericEntry xEntry, yEntry, thetaEntry;
     private final GenericEntry swerveRelativeEntry, chargingStationLockedEntry;
+    private final GenericEntry visionEnableEntry;
     private final Field2d fieldWidget = new Field2d();
 
     private static final boolean SHUFFLEBOARD_ENABLE = true;
-    public volatile boolean VISION_ENABLE = true;
+    private volatile boolean VISION_ENABLE = true;
 
     // The driver or auton commanded `SwerveModuleState` setpoints for each module;
     // states are given in a tuple of [top left, top right, bottom left, bottom right].
@@ -128,7 +129,7 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
             .withPosition(4, 5)
             .getEntry();
 
-        GenericEntry visionEnableEntry = Shuffleboard.getTab("PhotonVision").add("Vision enable", VISION_ENABLE)
+        visionEnableEntry = Shuffleboard.getTab("PhotonVision").add("Vision enable", VISION_ENABLE)
             .withPosition(3, 0)
             .withWidget(BuiltInWidgets.kToggleSwitch)
             .getEntry();
@@ -383,5 +384,10 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
         return ahrs.isConnected()
             ? getGyroHeading().minus(angleOffset)
             : getRobotPosition().getRotation();
+    }
+
+    public void setVisionEnabled(boolean visionEnable) {
+        this.VISION_ENABLE = visionEnable;
+        this.visionEnableEntry.setBoolean(this.VISION_ENABLE);
     }
 }

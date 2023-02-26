@@ -49,7 +49,7 @@ public class Robot extends TimedRobot {
     public void autonomousInit() {
         // disable vision
         if (robotContainer.driveSubsystem instanceof BaseSwerveSubsystem) {
-            ((SwerveSubsystem) robotContainer.driveSubsystem).VISION_ENABLE = false;
+            ((BaseSwerveSubsystem) robotContainer.driveSubsystem).setVisionEnabled(false);
         }
 
         // Schedule the autonomous command
@@ -70,7 +70,7 @@ public class Robot extends TimedRobot {
 
         // enable vision
         if (robotContainer.driveSubsystem instanceof BaseSwerveSubsystem) {
-            ((SwerveSubsystem) robotContainer.driveSubsystem).VISION_ENABLE = false;
+            ((BaseSwerveSubsystem) robotContainer.driveSubsystem).setVisionEnabled(false);
         }
     }
 
