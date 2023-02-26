@@ -51,8 +51,8 @@ public class SwitchableCamera {
         server = CameraServer.getServer();
 
         widget = shuffleboardTab.add("Intake Camera", getSource())
-            .withPosition(8, 3)
-            .withSize(4, 2);
+            .withPosition(0, 0)
+            .withSize(10, 5);
     }
 
     /**

@@ -115,8 +115,8 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
 
         shuffleboardTab = Shuffleboard.getTab("Driver");
         shuffleboardTab.add("Field", fieldWidget)
-            .withPosition(0, 0)
-            .withSize(8, 5);
+            .withPosition(5, 5)
+            .withSize(2, 1);
         xEntry = shuffleboardTab.add("x pos (in)", 0).withPosition(0, 5).getEntry();
         yEntry = shuffleboardTab.add("y pos (in)", 0).withPosition(1, 5).getEntry();
         thetaEntry = shuffleboardTab.add("theta pos (deg)", 0).withPosition(2, 5).getEntry();
