@@ -22,6 +22,11 @@ public class MotorTestCommand extends SequentialCommandGroup {
         addRequirements(swerveSubsystem, tiltedElevatorSubsystem, rollerSubsystem);
 
         addCommands(
+            // lock swerve
+            new InstantCommand(() -> {
+                swerveSubsystem.applyLock();
+            }, swerveSubsystem),
+
             // Run tilted elevator to all heights
             // GROUND - CHUTE - SUBSTATION - CUBEMID - CUBEHIGH - CONEMID - CONEHIGH - SUBSTATION
             new TiltedElevatorCommand(tiltedElevatorSubsystem, ElevatorState.GROUND),
@@ -45,19 +50,20 @@ public class MotorTestCommand extends SequentialCommandGroup {
             new TiltedElevatorCommand(tiltedElevatorSubsystem, ElevatorState.CONE_HIGH),
             new WaitCommand(TEST_DELAY_SECS),
 
-            new TiltedElevatorCommand(tiltedElevatorSubsystem, ElevatorState.CONE_MID),
-            new WaitCommand(TEST_DELAY_SECS),
-
-            // Test dropper command from `CONE_MID`
-            DropperChooserCommand.getSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem),
-            new WaitCommand(MECH_DELAY_SECS),
-
             // Sweep rollers from [-1.0, 1.0] over 2 seconds
             new RollerSweepCommand(rollerSubsystem, 2.0),
             new WaitCommand(TEST_DELAY_SECS),
 
             // Open motor
-            new InstantCommand(rollerSubsystem::openMotor),
+            new InstantCommand(rollerSubsystem::openMotor, rollerSubsystem),
+            new WaitCommand(MECH_DELAY_SECS),
+
+            // return to mid before dropping
+            new TiltedElevatorCommand(tiltedElevatorSubsystem, ElevatorState.CONE_MID),
+            new WaitCommand(TEST_DELAY_SECS),
+
+            // Test dropper command from `CONE_MID`
+            DropperChooserCommand.getSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem),
             new WaitCommand(MECH_DELAY_SECS),
 
             // Test swerve with forward, back, left, and right powers, and turning counterclockwise and clockwise
