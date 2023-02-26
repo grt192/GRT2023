@@ -58,6 +58,7 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
     private double offsetDistMeters = 0;
 
     public boolean pieceGrabbed = false;
+    public boolean manualPieceGrabbed = false;
 
     private boolean hallPressed = false;
     private HallEffectMagnet lastHallPos = null;
@@ -90,7 +91,7 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
         CUBE_HIGH(Units.inchesToMeters(Constants.IS_R1 ? 53 : 55)), // absolute height = 31.625 in
         CONE_MID(Units.inchesToMeters(Constants.IS_R1 ? 50 : 48)), // absolute height = 34 in
         CONE_MID_DROP(CONE_MID.getExtension(false) - Units.inchesToMeters(10)),
-        CONE_HIGH(Units.inchesToMeters(Constants.IS_R1 ? 53 : 62)), // absolute height = 46 in
+        CONE_HIGH(Units.inchesToMeters(Constants.IS_R1 ? 53 : 61)), // absolute height = 46 in
         CONE_HIGH_DROP(CONE_HIGH.getExtension(false) - Units.inchesToMeters(0)),
         HYBRID(Units.inchesToMeters(20)),//NEEDS TUNING
         HOME(Units.inchesToMeters(0));
@@ -216,7 +217,7 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
 
         if (state == ElevatorState.HOME) {
             if (zeroLimitSwitch.get()) {
-                extensionMotor.set(-0.2);
+                extensionMotor.set(-0.25);
                 extensionMotor.enableSoftLimit(SoftLimitDirection.kReverse, false);
             } else {
                 extensionMotor.set(0);
@@ -277,15 +278,8 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
      */
     public void setState(ElevatorState state) {
         resetOffset();
+        this.manualPieceGrabbed = false;
         this.state = state;
-    }
-
-    /**
-     * Gets the state of the subsystem.
-     * @return The `ElevatorState` of the subsystem.
-     */
-    public ElevatorState getState() {
-        return state;
     }
 
     /**
@@ -296,10 +290,17 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
      * @param state2 The second state.
      */
     public void toggleState(ElevatorState state1, ElevatorState state2) {
-        resetOffset();
-        state = state == state1
+        setState(state == state1
             ? state2
-            : state1;
+            : state1);
+    }
+
+    /**
+     * Gets the state of the subsystem.
+     * @return The `ElevatorState` of the subsystem.
+     */
+    public ElevatorState getState() {
+        return state;
     }
 
     /**
@@ -338,7 +339,7 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
      * @return The target extension, in meters.
      */
     public double getTargetExtension() {
-        return state.getExtension(pieceGrabbed) + offsetDistMeters;
+        return state.getExtension(pieceGrabbed || manualPieceGrabbed) + offsetDistMeters;
     }
 
     /**

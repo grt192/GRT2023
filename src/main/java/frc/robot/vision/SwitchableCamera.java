@@ -19,8 +19,8 @@ public class SwitchableCamera {
     private int TOP_EXPOSURE = 39;
     private int TOP_BRIGHTNESS = 5;
 
-    private int BOTTOM_EXPOSURE = 40;
-    private int BOTTOM_BRIGHTNESS = 80;
+    private int BOTTOM_EXPOSURE = 39;
+    private int BOTTOM_BRIGHTNESS = 5;
 
     private final VideoSink server;
     private final ComplexWidget widget;
