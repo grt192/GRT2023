@@ -70,7 +70,7 @@ public class Robot extends TimedRobot {
 
         // enable vision
         if (robotContainer.driveSubsystem instanceof BaseSwerveSubsystem) {
-            ((SwerveSubsystem) robotContainer.driveSubsystem).VISION_ENABLE = true;
+            ((SwerveSubsystem) robotContainer.driveSubsystem).VISION_ENABLE = false;
         }
     }
 

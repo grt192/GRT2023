@@ -209,7 +209,7 @@ public class RobotContainer {
 
     private void mechBindings() {
         rollerSubsystem.setDefaultCommand(new RunCommand(() -> {
-            double rollPower = mechController.getRightTriggerAxis() - mechController.getLeftTriggerAxis();
+            double rollPower = (.95 * mechController.getRightTriggerAxis()) - (.65 * mechController.getLeftTriggerAxis());
             rollerSubsystem.setRollPower(rollPower);
         }, rollerSubsystem));
 
@@ -226,6 +226,7 @@ public class RobotContainer {
                 tiltedElevatorSubsystem.setState(ElevatorState.HYBRID);
             } else if (pov == 180){
                 tiltedElevatorSubsystem.setState(ElevatorState.GROUND);
+                tiltedElevatorSubsystem.manualPieceGrabbed = true;
             } else if (pov == 90){
                 tiltedElevatorSubsystem.resetOffset();
             }
