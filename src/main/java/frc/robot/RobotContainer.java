@@ -6,6 +6,8 @@ package frc.robot;
 
 import java.util.Map;
 
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.ComplexWidget;
@@ -59,7 +61,7 @@ import frc.robot.subsystems.TiltedElevatorSubsystem.ElevatorState;
  */
 public class RobotContainer {
     // Subsystems
-    private final BaseDrivetrain driveSubsystem;
+    public final BaseDrivetrain driveSubsystem;
     private final RollerSubsystem rollerSubsystem;
     private final TiltedElevatorSubsystem tiltedElevatorSubsystem;
 
@@ -100,7 +102,7 @@ public class RobotContainer {
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
     public RobotContainer() {
-        driveController = new DualJoystickDriveController();
+        driveController = new XboxDriveController();
 
         photonWrapper = new PhotonWrapper();
         switchableCamera = new SwitchableCamera(shuffleboardTab);
@@ -109,7 +111,7 @@ public class RobotContainer {
         rollerSubsystem = new RollerSubsystem();
         tiltedElevatorSubsystem = new TiltedElevatorSubsystem();
 
-        superstructure = new Superstructure(rollerSubsystem, tiltedElevatorSubsystem);
+        superstructure = new Superstructure(rollerSubsystem, tiltedElevatorSubsystem, switchableCamera);
         balancerCommand = new DefaultBalancerCommand(driveSubsystem);
 
         // Configure the button bindings
@@ -155,6 +157,11 @@ public class RobotContainer {
      * passing it to a {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
      */
     private void configureButtonBindings() {
+        driveBindings();
+        mechBindings();
+    }
+
+    private void driveBindings() {
         driveController.getBalancerButton().whileTrue(balancerCommand);
         driveController.getCameraSwitchButton().onTrue(new InstantCommand(switchableCamera::switchCamera));
 
@@ -166,7 +173,15 @@ public class RobotContainer {
                 double yPower = driveController.getLeftPower();
                 double angularPower = driveController.getRotatePower();
                 boolean relative = driveController.getSwerveRelative();
-                swerveSubsystem.setDrivePowers(xPower, yPower, angularPower, relative);
+
+                if (driveController.getSwerveHeadingLock()) {
+                    double currentHeading = swerveSubsystem.getRobotPosition().getRotation().getRadians();
+                    double lockHeading = (Math.abs(MathUtil.angleModulus(currentHeading)) > (Math.PI / 2)) ? Math.PI : 0;
+
+                    swerveSubsystem.setDrivePowersWithHeadingLock(xPower, yPower, new Rotation2d(lockHeading), relative);
+                } else {
+                    swerveSubsystem.setDrivePowers(xPower, yPower, angularPower, relative);
+                }
             }, swerveSubsystem));
 
             mechAButton.onTrue(new DropperChooserCommand(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem));
@@ -190,9 +205,11 @@ public class RobotContainer {
                 swerveSubsystem.setDrivePowers(xPower, yPower);
             }, swerveSubsystem));
         }
+    }
 
+    private void mechBindings() {
         rollerSubsystem.setDefaultCommand(new RunCommand(() -> {
-            double rollPower = mechController.getRightTriggerAxis() - mechController.getLeftTriggerAxis();
+            double rollPower = (.95 * mechController.getRightTriggerAxis()) - (.65 * mechController.getLeftTriggerAxis());
             rollerSubsystem.setRollPower(rollPower);
         }, rollerSubsystem));
 
@@ -209,6 +226,7 @@ public class RobotContainer {
                 tiltedElevatorSubsystem.setState(ElevatorState.HYBRID);
             } else if (pov == 180){
                 tiltedElevatorSubsystem.setState(ElevatorState.GROUND);
+                tiltedElevatorSubsystem.manualPieceGrabbed = true;
             } else if (pov == 90){
                 tiltedElevatorSubsystem.resetOffset();
             }

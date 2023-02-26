@@ -49,12 +49,17 @@ public class DualJoystickDriveController extends BaseDriveController {
 
     @Override
     public double getRotatePower() {
-        return MathUtil.applyDeadband(-rightJoystick.getX() * 0.75, JOYSTICK_DEADBAND);
+        return MathUtil.applyDeadband(-rightJoystick.getX() * getTurnScaling(), JOYSTICK_DEADBAND);
     }
 
     @Override
     public boolean getSwerveRelative() {
         return rightJoystick.getTrigger();
+    }
+
+    @Override
+    public boolean getSwerveHeadingLock() {
+        return rightStickCenterButton.getAsBoolean();
     }
 
     @Override
@@ -78,13 +83,24 @@ public class DualJoystickDriveController extends BaseDriveController {
     }
 
     /**
-     * Gets the amount to scale translational input by. When the left trigger (full throttle mode) 
-     * is not engaged, this is 0.75.
+     * Gets the amount to scale translational input by. When the left trigger (slow mode) 
+     * is engaged, this is 0.3.
      * 
      * @return The scale to apply to translational input.
      */
     private double getDriveScaling() {
-        boolean isFullThrottle = leftJoystick.getTrigger();
-        return isFullThrottle ? 1.0 : 0.75;
+        boolean isSlowMode = leftJoystick.getTrigger();
+        return isSlowMode ? 0.3 : 1.0;
+    }
+
+    /**
+     * Gets the amount to scale rotational input by.
+     * @return The scale to apply to rotational input.
+     */
+    private double getTurnScaling() {
+        // boolean isSlowMode = leftJoystick.getTrigger();
+        // return isSlowMode ? 0.6 : 0.6;
+
+        return 0.5;
     }
 }

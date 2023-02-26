@@ -1,7 +1,9 @@
 package frc.robot.subsystems.drivetrain;
 
 import edu.wpi.first.math.MatBuilder;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Nat;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -9,6 +11,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.Timer;
@@ -40,6 +43,8 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
     public final double MAX_OMEGA; // Max robot angular velocity, in rads/s
     public final double MAX_ALPHA; // Max robot angular acceleration, in rads/s^2
 
+    private final ProfiledPIDController thetaController;
+
     private final Timer lockTimer;
     private static final double LOCK_TIMEOUT_SECONDS = 1.0; // The elapsed idle time to wait before locking
     private static final boolean LOCKING_ENABLE = true;
@@ -51,6 +56,7 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
     private final ShuffleboardTab shuffleboardTab;
     private final GenericEntry xEntry, yEntry, thetaEntry;
     private final GenericEntry swerveRelativeEntry, chargingStationLockedEntry;
+    private final GenericEntry visionEnableEntry;
     private final Field2d fieldWidget = new Field2d();
 
     private static final boolean SHUFFLEBOARD_ENABLE = true;
@@ -79,6 +85,15 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
         MAX_OMEGA = maxOmega;
         MAX_ALPHA = maxAlpha;
 
+        // Initialize heading-lock PID controller
+        thetaController = new ProfiledPIDController(
+            1.1, 0, 0, // 1.5
+            new TrapezoidProfile.Constraints(
+                MAX_OMEGA * .7,
+                MAX_ALPHA * .7
+            )
+        );
+
         this.topLeftModule = topLeftModule;
         this.topRightModule = topRightModule;
         this.bottomLeftModule = bottomLeftModule;
@@ -101,8 +116,8 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
 
         shuffleboardTab = Shuffleboard.getTab("Driver");
         shuffleboardTab.add("Field", fieldWidget)
-            .withPosition(0, 0)
-            .withSize(8, 5);
+            .withPosition(5, 5)
+            .withSize(2, 1);
         xEntry = shuffleboardTab.add("x pos (in)", 0).withPosition(0, 5).getEntry();
         yEntry = shuffleboardTab.add("y pos (in)", 0).withPosition(1, 5).getEntry();
         thetaEntry = shuffleboardTab.add("theta pos (deg)", 0).withPosition(2, 5).getEntry();
@@ -114,7 +129,7 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
             .withPosition(4, 5)
             .getEntry();
 
-        GenericEntry visionEnableEntry = Shuffleboard.getTab("PhotonVision").add("Vision enable", VISION_ENABLE)
+        visionEnableEntry = Shuffleboard.getTab("PhotonVision").add("Vision enable", VISION_ENABLE)
             .withPosition(3, 0)
             .withWidget(BuiltInWidgets.kToggleSwitch)
             .getEntry();
@@ -236,6 +251,23 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
     }
 
     /**
+     * Sets the swerve module states of this subsystem from provided field-centric
+     * swerve drive powers, locking the swerve to a given heading.
+     * 
+     * @param xPower The power [-1.0, 1.0] in the x (forward) direction.
+     * @param yPower The power [-1.0, 1.0] in the y (left) direction.
+     * @param heading The `Rotation2d` angle to lock the swerve to.
+     * @param relative Whether to use relative powers instead of field-oriented control.
+     */
+    public void setDrivePowersWithHeadingLock(double xPower, double yPower, Rotation2d heading, boolean relative) {
+        Rotation2d currentRotation = getRobotPosition().getRotation();
+        double error = MathUtil.angleModulus(heading.minus(currentRotation).getRadians());
+        double turnSpeed = thetaController.calculate(currentRotation.getRadians(), currentRotation.getRadians() + error);
+
+        setDrivePowers(xPower, yPower, turnSpeed / MAX_VEL, relative);
+    }
+
+    /**
      * Sets the swerve module states of this subsystem. Module states are assumed to
      * be passed in a tuple of [top left, top right, bottom left, bottom right].
      * 
@@ -352,5 +384,10 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
         return ahrs.isConnected()
             ? getGyroHeading().minus(angleOffset)
             : getRobotPosition().getRotation();
+    }
+
+    public void setVisionEnabled(boolean visionEnable) {
+        this.VISION_ENABLE = visionEnable;
+        this.visionEnableEntry.setBoolean(this.VISION_ENABLE);
     }
 }

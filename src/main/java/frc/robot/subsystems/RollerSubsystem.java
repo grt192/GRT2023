@@ -28,10 +28,16 @@ public class RollerSubsystem extends SubsystemBase {
     }
 
     private HeldPiece heldPiece = HeldPiece.EMPTY;
+
     public boolean allowOpen = true;
+    private boolean prevAllowedOpen = true;
 
     private final Timer openTimer = new Timer();
     private final Timer closeTimer = new Timer();
+
+    // ~110. for nothing, 130 for cone, 160 for cube
+    private final int CONE_PROXIMITY_THRESHOLD = 120;
+    private final int CUBE_PROXIMITY_THRESHOLD = 150;
 
     private final int coneRedMax = 80;
     private final int coneRedMin = 65;
@@ -93,14 +99,6 @@ public class RollerSubsystem extends SubsystemBase {
     }
 
     /**
-     * Gets the currently held piece in the subsystem, or `HeldPiece.EMPTY` if there is no piece.
-     * @return The held piece, or `HeldPiece.EMPTY`.
-     */
-    public HeldPiece getPiece() {
-        return heldPiece;
-    }
-
-    /**
      * Set the roller power of this subsystem.
      * @param power The power to set.
      */
@@ -110,8 +108,11 @@ public class RollerSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
+        boolean stopOpening = !allowOpen && prevAllowedOpen; // only heed falling edge of allowed open so we can open from ground position
+        prevAllowedOpen = allowOpen;
+
         boolean opening = openTimer.get() > 0 && !openTimer.hasElapsed(OPEN_TIME_SECONDS);
-        boolean closing = !opening || !allowOpen;
+        boolean closing = !opening || stopOpening;
 
         if (closing) {
             closeTimer.start();
@@ -126,12 +127,6 @@ public class RollerSubsystem extends SubsystemBase {
         } else {
             openMotor.set(0.5);
         }
-
-        // If `OPEN_TIME` hasn't elapsed yet, run the motor.
-        // boolean opening = openTimer.get() > 0 && !openTimer.hasElapsed(OPEN_TIME_SECONDS);
-        // if (opening && allowOpen) {
-        //     openMotor.set(opening && allowOpen ? 0.5 : 0);
-        // }
 
         // If the cooldown has passed, stop and reset the timer.
         if (openTimer.hasElapsed(OPEN_TIME_SECONDS + COOLDOWN_SECONDS)) {
@@ -148,12 +143,48 @@ public class RollerSubsystem extends SubsystemBase {
             leftBeak.set(Math.min(rollPower, 0.0));
         }
 
+        HeldPiece limitPiece = detectElementsLimitSwitch();
+        HeldPiece proximityPiece = detectElementsProximity();
+
+        // if either limit or proxim sensor see a piece, use that
+        if (proximityPiece != HeldPiece.EMPTY) {
+            heldPiece = proximityPiece;
+        } else if (limitPiece != HeldPiece.EMPTY) {
+            heldPiece = limitPiece;
+        } else {
+            heldPiece = HeldPiece.EMPTY;
+        }
+    }
+
+    public HeldPiece detectElementsLimitSwitch() {
+        if (limitSwitch.get()) {
+            return HeldPiece.EMPTY;
+        } else {
+            return HeldPiece.CONE;
+        }
+    }
+
+    public HeldPiece detectElementsProximity() {
+        double dist = crolorSensor.getProximity();
+
+        // System.out.println(dist);
+
+        if (dist >= CUBE_PROXIMITY_THRESHOLD) {
+            return HeldPiece.CUBE;
+        } else if (dist >= CONE_PROXIMITY_THRESHOLD) {
+            return HeldPiece.CONE;
+        } else {
+            return HeldPiece.EMPTY;
+        }
+    }
+
+    public HeldPiece detectElementsColor() {
         Color detectedColor = crolorSensor.getColor();
         double red = detectedColor.red * 255;
         double green = detectedColor.green * 255;
         double blue = detectedColor.blue * 255;
 
-        //for tuning
+        // for tuning
         // entry.setValue(red);
         // gentry.setValue(green);
         // bentry.setValue(blue);
@@ -161,12 +192,23 @@ public class RollerSubsystem extends SubsystemBase {
         // TODO: modify `heldPiece` based on color sensor data
         if (red > cubeRedMin && red < cubeRedMax && blue > cubeBlueMin && blue < cubeBlueMax && green < cubeGreenMax && green > cubeGreenMin){
             // System.out.println("cube");
+            return HeldPiece.CUBE;
         }
         else if (red > coneRedMin && red < coneRedMax && blue > coneBlueMin && blue < coneBlueMax && green < coneGreenMax && green > coneGreenMin){
             // System.out.println("cone");
+            return HeldPiece.CONE;
         }
         else{
             // System.out.println("no object");
+            return HeldPiece.EMPTY;
         }
+    }
+
+    /**
+     * Gets the currently held piece in the subsystem, or `HeldPiece.EMPTY` if there is no piece.
+     * @return The held piece, or `HeldPiece.EMPTY`.
+     */
+    public HeldPiece getPiece() {
+        return heldPiece;
     }
 }

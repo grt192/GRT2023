@@ -8,6 +8,9 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.subsystems.drivetrain.BaseSwerveModule;
+import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
+import frc.robot.subsystems.drivetrain.SwerveSubsystem;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -44,6 +47,11 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousInit() {
+        // disable vision
+        if (robotContainer.driveSubsystem instanceof BaseSwerveSubsystem) {
+            ((BaseSwerveSubsystem) robotContainer.driveSubsystem).setVisionEnabled(false);
+        }
+
         // Schedule the autonomous command
         autonomousCommand = robotContainer.getAutonomousCommand();
         if (autonomousCommand != null) autonomousCommand.schedule();
@@ -59,6 +67,11 @@ public class Robot extends TimedRobot {
         // continue until interrupted by another command, remove
         // this line or comment it out.
         if (autonomousCommand != null) autonomousCommand.cancel();
+
+        // enable vision
+        if (robotContainer.driveSubsystem instanceof BaseSwerveSubsystem) {
+            ((BaseSwerveSubsystem) robotContainer.driveSubsystem).setVisionEnabled(false);
+        }
     }
 
     @Override
