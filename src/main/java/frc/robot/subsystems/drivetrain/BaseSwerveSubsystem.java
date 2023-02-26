@@ -86,7 +86,7 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
 
         // Initialize heading-lock PID controller
         thetaController = new ProfiledPIDController(
-            1.1, 0, 0, 
+            1.1, 0, 0, // 1.5
             new TrapezoidProfile.Constraints(
                 MAX_OMEGA * .7,
                 MAX_ALPHA * .7
@@ -261,7 +261,7 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
     public void setDrivePowersWithHeadingLock(double xPower, double yPower, Rotation2d heading, boolean relative) {
         Rotation2d currentRotation = getRobotPosition().getRotation();
         double error = MathUtil.angleModulus(heading.minus(currentRotation).getRadians());
-        double turnSpeed = thetaController.calculate(error);
+        double turnSpeed = thetaController.calculate(currentRotation.getRadians(), currentRotation.getRadians() + error);
 
         setDrivePowers(xPower, yPower, turnSpeed / MAX_VEL, relative);
     }
