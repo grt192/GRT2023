@@ -46,7 +46,6 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousInit() {
-        // disable vision
         if (robotContainer.driveSubsystem instanceof BaseSwerveSubsystem) {
             ((BaseSwerveSubsystem) robotContainer.driveSubsystem).setVisionEnabled(false);
         }
@@ -62,7 +61,6 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopInit() {
-        // enable vision
         if (robotContainer.driveSubsystem instanceof BaseSwerveSubsystem) {
             ((BaseSwerveSubsystem) robotContainer.driveSubsystem).setVisionEnabled(false);
         }
