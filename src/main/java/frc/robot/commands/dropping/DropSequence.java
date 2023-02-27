@@ -30,7 +30,7 @@ public class DropSequence extends SequentialCommandGroup {
         addRequirements(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem);
 
         addCommands(
-            new TiltedElevatorCommand(tiltedElevatorSubsystem, tiltedElevatorSubsystem.getState(), OffsetState.DROPPING),
+            new TiltedElevatorCommand(tiltedElevatorSubsystem, OffsetState.DROPPING),
             new WaitCommand(waitAfterAtDropHeight),
             new RollerPlaceCommand(rollerSubsystem, -outtakePower, outtakeDuration),
             new WaitCommand(waitAfterPlacing),

@@ -3,36 +3,42 @@ package frc.robot.commands.mover;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.tiltedelevator.ElevatorState;
-import frc.robot.subsystems.tiltedelevator.TiltedElevatorSubsystem;
 import frc.robot.subsystems.tiltedelevator.ElevatorState.OffsetState;
+import frc.robot.subsystems.tiltedelevator.TiltedElevatorSubsystem;
 
 public class TiltedElevatorCommand extends CommandBase {
-    private final ElevatorState targetState;
-    private final OffsetState offsetState;
+    private ElevatorState targetState = null;
+    private OffsetState offsetState = null;
 
     private final TiltedElevatorSubsystem tiltedElevatorSubsystem;
 
     private final Timer timer;
 
-    public TiltedElevatorCommand(TiltedElevatorSubsystem tiltedElevatorSubsystem, ElevatorState targetState, OffsetState offsetState) {
-        this.tiltedElevatorSubsystem = tiltedElevatorSubsystem;
-        this.targetState = targetState;
-        this.offsetState = offsetState;
+    public TiltedElevatorCommand(TiltedElevatorSubsystem tiltedElevatorSubsystem, ElevatorState targetState) {
+        this(tiltedElevatorSubsystem);
 
-        timer = new Timer();
+        this.targetState = targetState;
+    }
+
+    public TiltedElevatorCommand(TiltedElevatorSubsystem tiltedElevatorSubsystem, OffsetState offsetState) {
+        this(tiltedElevatorSubsystem);
+
+        this.offsetState = offsetState;
+    }
+
+    private TiltedElevatorCommand(TiltedElevatorSubsystem tiltedElevatorSubsystem) {
+        this.tiltedElevatorSubsystem = tiltedElevatorSubsystem;
+        
+        this.timer = new Timer();
 
         addRequirements(tiltedElevatorSubsystem);
     }
 
-    public TiltedElevatorCommand(TiltedElevatorSubsystem tiltedElevatorSubsystem, ElevatorState targetState) {
-        this(tiltedElevatorSubsystem, targetState, OffsetState.DEFAULT);
-    }
-
-    public void initialize(){
+    public void initialize() {
         System.out.println("Mover to " + targetState);
 
-        tiltedElevatorSubsystem.setState(targetState);
-        tiltedElevatorSubsystem.offsetState = this.offsetState;
+        if (this.targetState != null) tiltedElevatorSubsystem.setState(targetState);
+        if (this.offsetState != null) tiltedElevatorSubsystem.offsetState = this.offsetState;
 
         timer.start();
     }
