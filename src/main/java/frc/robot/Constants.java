@@ -36,11 +36,21 @@ public final class Constants {
     }
 
     public static final class SwerveConstants {
-        public static final int TL_DRIVE = 2;
-        public static final int TL_STEER = 3;
         public static final double TL_OFFSET_RADS = IS_R1 
             ? -5.704799652099609
-            : -0.3193925619125366;
+            : -0.2999996840953827; // 2.8415929694944104 flipped
+        public static final double TR_OFFSET_RADS = IS_R1 
+            ? -0.842838776116
+            : -0.4716239094773709; // 2.6699687441124222 flipped
+        public static final double BL_OFFSET_RADS = IS_R1
+            ? -0.793255341057
+            : -2.4979224959996085; // 0.6436701575901846 flipped
+        public static final double BR_OFFSET_RADS = IS_R1
+            ? 0.561284053322
+            : 1.8687766234027308; // -1.2728160301870624 flipped
+
+        public static final int TL_DRIVE = 2;
+        public static final int TL_STEER = 3;
         public static final Translation2d TL_POS = IS_R1 ? new Translation2d(
             Units.inchesToMeters(12.0),
             Units.inchesToMeters(8.75)
@@ -51,9 +61,6 @@ public final class Constants {
 
         public static final int TR_DRIVE = 16;
         public static final int TR_STEER = 17;
-        public static final double TR_OFFSET_RADS = IS_R1 
-            ? -0.842838776116
-            : -0.4968042492906033;
         public static final Translation2d TR_POS = IS_R1 ? new Translation2d(
             Units.inchesToMeters(12.0),
             Units.inchesToMeters(-8.75)
@@ -64,9 +71,6 @@ public final class Constants {
 
         public static final int BL_DRIVE = 20;
         public static final int BL_STEER = 1;
-        public static final double BL_OFFSET_RADS = IS_R1
-            ? -0.793255341057
-            : 2.47434924841 + Math.toRadians(120);
         public static final Translation2d BL_POS = IS_R1 ? new Translation2d(
             Units.inchesToMeters(-12.0),
             Units.inchesToMeters(8.75)
@@ -77,9 +81,6 @@ public final class Constants {
 
         public static final int BR_DRIVE = 18;
         public static final int BR_STEER = 19;
-        public static final double BR_OFFSET_RADS = IS_R1
-            ? 0.561284053322
-            : 2.856905806060654;
         public static final Translation2d BR_POS = IS_R1 ? new Translation2d(
             Units.inchesToMeters(-12.0),
             Units.inchesToMeters(-8.75)
