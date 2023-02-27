@@ -254,11 +254,10 @@ public class RobotContainer {
             tiltedElevatorSubsystem.toggleState(ElevatorState.CONE_MID, ElevatorState.CONE_HIGH);
         }, tiltedElevatorSubsystem));
 
-        blSwitch.onTrue(new InstantCommand(() -> {
-            System.out.println("yellow");
-            signalLEDSubsystem.setColor(new Color(255, 150, 0));
-        }, signalLEDSubsystem)).onFalse(new InstantCommand(() -> {
-            signalLEDSubsystem.setColor(new Color(192, 8, 254));
+        signalLEDSubsystem.setDefaultCommand(new RunCommand(() -> {
+            signalLEDSubsystem.setColor(blSwitch.getAsBoolean()
+                ? new Color(255, 100, 0)
+                : new Color(192, 8, 254));
         }, signalLEDSubsystem));
     }
 

@@ -10,16 +10,16 @@ public class LEDSubsystem extends SubsystemBase {
     private final LEDStrip ledStrip;
 
     private final Timer blinkTimer;
-    private static final double BLINK_DURATION_SECONDS = 1.0;
-    private static final Color BLINK_COLOR = new Color(0, 255, 0);
+    private static final double BLINK_DURATION_SECONDS = 0.5;
+    private static final Color BLINK_COLOR = new Color(0, 0, 0);
 
-    private Color color = Color.kFirstRed;
+    private Color color = new Color(192, 8, 254);
     private boolean blinking = false;
 
     public boolean pieceGrabbed = false;
 
     public LEDSubsystem() {
-        ledStrip = SIGNAL_LED_STRIP;
+        ledStrip = new LEDStrip(LED_PWM_PORT, LED_LENGTH);
         blinkTimer = new Timer();
     }
 
@@ -40,6 +40,10 @@ public class LEDSubsystem extends SubsystemBase {
         ledStrip.setSolidColor(blinking ? BLINK_COLOR : color);
     }
 
+    /**
+     * Sets the driver-provided color of the LEDs.
+     * @param color The color to set the LEDs to.
+     */
     public void setColor(Color color) {
         this.color = color;
     }

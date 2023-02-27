@@ -156,7 +156,8 @@ public final class Constants {
     }
 
     public static final class LEDConstants {
-        public static final LEDStrip SIGNAL_LED_STRIP = new LEDStrip(0, 144);
+        public static final int LED_PWM_PORT = 0;
+        public static final int LED_LENGTH = 91;
     }
 
     public static final class GripperConstants {

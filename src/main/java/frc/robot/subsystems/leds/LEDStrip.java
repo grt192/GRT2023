@@ -22,12 +22,7 @@ public class LEDStrip {
      */
     public void setSolidColor(Color color) {
         for (int i = 0; i < ledBuffer.getLength(); i++) {
-            ledBuffer.setRGB(
-                i,
-                (int) Math.floor(color.red * 255),
-                (int) Math.floor(color.green * 255),
-                (int) Math.floor(color.blue * 255)
-            );
+            ledBuffer.setLED(i, color);
         }
         led.setData(ledBuffer);
     }
