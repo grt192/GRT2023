@@ -11,7 +11,6 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.util.Units;
 
 import frc.robot.motorcontrol.HallEffectMagnet;
-import frc.robot.subsystems.leds.LEDStrip;
 
 import org.photonvision.PhotonCamera;
 
