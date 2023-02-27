@@ -154,6 +154,11 @@ public final class Constants {
         );
     }
 
+    public static final class LEDConstants {
+        public static final int LED_PWM_PORT = 0;
+        public static final int LED_LENGTH = 91;
+    }
+
     public static final class GripperConstants {
         public static final int PFFT_FORWARD_IDL = 0;
         public static final int PFFT_REVERSE_IDL = 1;

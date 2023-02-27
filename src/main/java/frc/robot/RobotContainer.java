@@ -4,8 +4,6 @@
 
 package frc.robot;
 
-import java.util.Map;
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -14,6 +12,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ComplexWidget;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -41,6 +40,8 @@ import frc.robot.controllers.XboxDriveController;
 import frc.robot.vision.SwitchableCamera;
 import frc.robot.vision.PhotonWrapper;
 import frc.robot.subsystems.drivetrain.TankSubsystem;
+import frc.robot.subsystems.leds.LEDStrip;
+import frc.robot.subsystems.leds.LEDSubsystem;
 import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
 import frc.robot.subsystems.drivetrain.MissileShellSwerveSubsystem;
 import frc.robot.subsystems.drivetrain.MissileShellSwerveSweeperSubsystem;
@@ -64,6 +65,7 @@ public class RobotContainer {
     public final BaseDrivetrain driveSubsystem;
     private final RollerSubsystem rollerSubsystem;
     private final TiltedElevatorSubsystem tiltedElevatorSubsystem;
+    private final LEDSubsystem signalLEDSubsystem;
 
     private final Superstructure superstructure;
     private final PhotonWrapper photonWrapper;
@@ -110,8 +112,9 @@ public class RobotContainer {
         driveSubsystem = new SwerveSubsystem(photonWrapper);
         rollerSubsystem = new RollerSubsystem();
         tiltedElevatorSubsystem = new TiltedElevatorSubsystem();
+        signalLEDSubsystem = new LEDSubsystem(); 
 
-        superstructure = new Superstructure(rollerSubsystem, tiltedElevatorSubsystem, switchableCamera);
+        superstructure = new Superstructure(rollerSubsystem, tiltedElevatorSubsystem, signalLEDSubsystem, switchableCamera);
         balancerCommand = new DefaultBalancerCommand(driveSubsystem);
 
         // Configure the button bindings
@@ -250,6 +253,12 @@ public class RobotContainer {
         mechLBumper.onTrue(new InstantCommand(() -> {
             tiltedElevatorSubsystem.toggleState(ElevatorState.CONE_MID, ElevatorState.CONE_HIGH);
         }, tiltedElevatorSubsystem));
+
+        signalLEDSubsystem.setDefaultCommand(new RunCommand(() -> {
+            signalLEDSubsystem.setColor(blSwitch.getAsBoolean()
+                ? new Color(255, 100, 0)
+                : new Color(192, 8, 254));
+        }, signalLEDSubsystem));
     }
 
     /**
