@@ -3,8 +3,9 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.subsystems.RollerSubsystem.HeldPiece;
-import frc.robot.subsystems.TiltedElevatorSubsystem.ElevatorState;
 import frc.robot.subsystems.leds.LEDSubsystem;
+import frc.robot.subsystems.tiltedelevator.ElevatorState;
+import frc.robot.subsystems.tiltedelevator.TiltedElevatorSubsystem;
 import frc.robot.vision.SwitchableCamera;
 
 import static frc.robot.Constants.RollerConstants.*;
