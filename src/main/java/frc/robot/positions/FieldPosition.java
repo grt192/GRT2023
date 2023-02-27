@@ -66,6 +66,12 @@ public enum FieldPosition {
         Rotation2d.fromDegrees(180)
     )),
 
+    BOTTOM_1PIECEPOS(new Pose2d(
+        Units.inchesToMeters(238.152),
+        Units.inchesToMeters(29), 
+        Rotation2d.fromDegrees(180)
+    )),
+
     BALANCE_MIDPOS_1(new Pose2d(
         Units.inchesToMeters(215.000),
         Units.inchesToMeters(107.638),
