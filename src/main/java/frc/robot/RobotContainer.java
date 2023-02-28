@@ -231,7 +231,7 @@ public class RobotContainer {
                 tiltedElevatorSubsystem.setState(ElevatorState.HYBRID);
             } else if (pov == 180){
                 tiltedElevatorSubsystem.setState(ElevatorState.GROUND);
-                tiltedElevatorSubsystem.offsetState = OffsetState.ONLY_MANUAL_OFFSET;
+                tiltedElevatorSubsystem.offsetState = OffsetState.OVERRIDE_HAS_PIECE;
             } else if (pov == 90){
                 tiltedElevatorSubsystem.resetOffset();
             }

@@ -47,7 +47,7 @@ public enum ElevatorState {
     public double getExtension(OffsetState offsetState, boolean hasPiece) {
         return switch (offsetState) {
             case ONLY_MANUAL_OFFSET -> this.extendDistanceMeters;
-            case HAS_PIECE -> this.extendDistanceMeters + withPieceOffset;
+            case OVERRIDE_HAS_PIECE -> this.extendDistanceMeters + withPieceOffset;
             case DROPPING -> this.extendDistanceMeters + dropOffset;
             case DEFAULT -> {
                 yield hasPiece ? this.extendDistanceMeters + withPieceOffset
@@ -61,7 +61,7 @@ public enum ElevatorState {
          * Use the current extension state's getWithPieceExtension and apply
          * offsetDistMeters.
          */
-        HAS_PIECE,
+        OVERRIDE_HAS_PIECE,
         /**
          * Use the current extension state's getDropExtension and apply offsetDistMeters.
          */
