@@ -50,7 +50,6 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
     private static final boolean LOCKING_ENABLE = true;
 
     private boolean chargingStationLocked = false;
-    private boolean steerRelativeFeedback = false;
 
     private Rotation2d angleOffset = new Rotation2d(0);
 
@@ -129,7 +128,7 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
         chargingStationLockedEntry = shuffleboardTab.add("Charging station locking", chargingStationLocked)
             .withPosition(4, 5)
             .getEntry();
-        relativeEncoderEntry = shuffleboardTab.add("Relative encoder feedback", steerRelativeFeedback)
+        relativeEncoderEntry = shuffleboardTab.add("Relative encoder feedback", false)
             .withPosition(5, 5)
             .getEntry();
 
@@ -313,18 +312,18 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
     }
 
     /**
-     * Toggles whether the swerve modules should use integrated relative encoders (instead of
+     * Sets whether the swerve modules should use integrated relative encoders (instead of
      * external absolute encoders) to steer.
+     * 
+     * @param useRelative Whether to use relative encoders as steer feedback.
      */
-    public void toggleSteerRelativeEncoderFeedback() {
-        this.steerRelativeFeedback = !steerRelativeFeedback;
+    public void setSteerRelativeEncoderFeedback(boolean useRelative) {
+        topLeftModule.setSteerRelativeFeedback(useRelative);
+        topRightModule.setSteerRelativeFeedback(useRelative);
+        bottomLeftModule.setSteerRelativeFeedback(useRelative);
+        bottomRightModule.setSteerRelativeFeedback(useRelative);
 
-        topLeftModule.setSteerRelativeFeedback(steerRelativeFeedback);
-        topRightModule.setSteerRelativeFeedback(steerRelativeFeedback);
-        bottomLeftModule.setSteerRelativeFeedback(steerRelativeFeedback);
-        bottomRightModule.setSteerRelativeFeedback(steerRelativeFeedback);
-
-        relativeEncoderEntry.setBoolean(steerRelativeFeedback);
+        relativeEncoderEntry.setBoolean(useRelative);
     }
 
     /**

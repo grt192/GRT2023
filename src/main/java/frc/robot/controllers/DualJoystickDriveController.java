@@ -82,11 +82,6 @@ public class DualJoystickDriveController extends BaseDriveController {
         return leftTopLeftButton;
     }
 
-    @Override
-    public JoystickButton getSwerveRelativeFeedbackButton() {
-        return leftMiddleLeftButton;
-    }
-
     /**
      * Gets the amount to scale translational input by. When the left trigger (slow mode) 
      * is engaged, this is 0.3.

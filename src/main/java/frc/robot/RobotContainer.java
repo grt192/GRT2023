@@ -192,10 +192,13 @@ public class RobotContainer {
             mechAButton.onTrue(new DropperChooserCommand(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem));
 
             driveController.getFieldResetButton().onTrue(new InstantCommand(swerveSubsystem::resetFieldAngle, swerveSubsystem));
-            driveController.getChargingStationLockButton()
-                .onTrue(new InstantCommand(swerveSubsystem::toggleChargingStationLocked, swerveSubsystem));
-            driveController.getSwerveRelativeFeedbackButton()
-                .onTrue(new InstantCommand(swerveSubsystem::toggleSteerRelativeEncoderFeedback, swerveSubsystem));
+            driveController.getChargingStationLockButton().onTrue(new InstantCommand(swerveSubsystem::toggleChargingStationLocked, swerveSubsystem));
+
+            brSwitch.onTrue(new InstantCommand(() -> {
+                swerveSubsystem.setSteerRelativeEncoderFeedback(true);
+            }, swerveSubsystem)).onFalse(new InstantCommand(() -> {
+                swerveSubsystem.setSteerRelativeEncoderFeedback(false);
+            }, swerveSubsystem));
         } else if (driveSubsystem instanceof TankSubsystem) {
             final TankSubsystem tankSubsystem = (TankSubsystem) driveSubsystem;
 
