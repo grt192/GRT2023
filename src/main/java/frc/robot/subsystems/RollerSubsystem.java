@@ -144,7 +144,6 @@ public class RollerSubsystem extends SubsystemBase {
         }
 
         HeldPiece limitPiece = detectElementsLimitSwitch();
-        limitPiece = HeldPiece.EMPTY;
         HeldPiece proximityPiece = detectElementsProximity();
 
         // if either limit or proxim sensor see a piece, use that
