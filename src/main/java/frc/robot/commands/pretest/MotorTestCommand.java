@@ -23,10 +23,8 @@ public class MotorTestCommand extends SequentialCommandGroup {
         addRequirements(swerveSubsystem, tiltedElevatorSubsystem, rollerSubsystem);
 
         addCommands(
-            // lock swerve
-            new InstantCommand(() -> {
-                swerveSubsystem.applyLock();
-            }, swerveSubsystem),
+            // Lock swerve
+            new InstantCommand(swerveSubsystem::applyLock, swerveSubsystem),
 
             // Run tilted elevator to all heights
             // GROUND - CHUTE - INTAKE CONE - SUBSTATION - CUBEMID - CUBEHIGH - CONEMID - CONEHIGH - CONEMID 

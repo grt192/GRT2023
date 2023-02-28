@@ -36,12 +36,14 @@ public class SwerveModule implements BaseSwerveModule {
     private SparkMaxPIDController drivePidController;
 
     private final CANSparkMax steerMotor;
+    private RelativeEncoder steerRelativeEncoder;
     private SparkMaxAnalogSensor steerAbsoluteEncoder;
     private SparkMaxPIDController steerPidController;
 
     private final double offsetRads;
 
     private static final double DRIVE_ROTATIONS_TO_METERS = (1.0 / 3.0) * (13.0 / 8.0) * (1.0 / 3.0) * Math.PI * Units.inchesToMeters(4.0) * 9.0 / 9.5; // 3:1, 8:13, 3:1 gear ratios, 4.0" wheel diameter, circumference = pi * d
+    private static final double STEER_ROTATIONS_TO_RADIANS = (1.0 / 52.0) * (34.0 / 63.0) * 2 * Math.PI; // 52:1 gear ratio, 63:34 pulley ratio, 1 rotation = 2pi
     private static final double STEER_VOLTS_TO_RADIANS = 2 * Math.PI / 3.3; // MA3 analog output: 3.3V -> 2pi
 
     private static final double driveP = 0.05;
@@ -104,7 +106,11 @@ public class SwerveModule implements BaseSwerveModule {
 
             steerAbsoluteEncoder = sparkMax.getAnalog(SparkMaxAnalogSensor.Mode.kAbsolute);
             steerAbsoluteEncoder.setPositionConversionFactor(STEER_VOLTS_TO_RADIANS);
-    
+
+            steerRelativeEncoder = sparkMax.getEncoder();
+            steerRelativeEncoder.setPositionConversionFactor(STEER_ROTATIONS_TO_RADIANS);
+            steerRelativeEncoder.setPosition(steerAbsoluteEncoder.getPosition()); // Set initial position to absolute value
+
             steerPidController = MotorUtil.createSparkMaxPIDController(sparkMax, steerAbsoluteEncoder);
             steerPidController.setP(steerP);
             steerPidController.setI(steerI);
@@ -201,8 +207,12 @@ public class SwerveModule implements BaseSwerveModule {
 
         // driveMotor.set(ControlMode.Velocity, optimized.getFirst() / (DRIVE_TICKS_TO_METERS * 10.0));
         drivePidController.setReference(optimized.speedMetersPerSecond, ControlType.kVelocity);
-        // driveMotor.set(optimized.speedMetersPerSecond);
         steerPidController.setReference(targetAngle, ControlType.kPosition);
+    }
+
+    @Override
+    public void setSteerRelativeFeedback(boolean useRelative) {
+        steerPidController.setFeedbackDevice(useRelative ? steerRelativeEncoder : steerAbsoluteEncoder);
     }
 
     /**

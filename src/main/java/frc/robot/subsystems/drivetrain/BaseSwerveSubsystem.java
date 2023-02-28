@@ -50,13 +50,14 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
     private static final boolean LOCKING_ENABLE = true;
 
     private boolean chargingStationLocked = false;
+    private boolean steerRelativeFeedback = false;
 
     private Rotation2d angleOffset = new Rotation2d(0);
 
     private final ShuffleboardTab shuffleboardTab;
     private final GenericEntry xEntry, yEntry, thetaEntry;
-    private final GenericEntry swerveRelativeEntry, chargingStationLockedEntry;
-    private final GenericEntry visionEnableEntry;
+    private final GenericEntry swerveRelativeEntry, chargingStationLockedEntry, relativeEncoderEntry, visionEnableEntry;
+
     private final Field2d fieldWidget = new Field2d();
 
     private static final boolean SHUFFLEBOARD_ENABLE = true;
@@ -127,6 +128,9 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
             .getEntry();
         chargingStationLockedEntry = shuffleboardTab.add("Charging station locking", chargingStationLocked)
             .withPosition(4, 5)
+            .getEntry();
+        relativeEncoderEntry = shuffleboardTab.add("Relative encoder feedback", steerRelativeFeedback)
+            .withPosition(5, 5)
             .getEntry();
 
         visionEnableEntry = Shuffleboard.getTab("PhotonVision").add("Vision enable", VISION_ENABLE)
@@ -306,6 +310,21 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
     public void toggleChargingStationLocked() {
         this.chargingStationLocked = !chargingStationLocked;
         chargingStationLockedEntry.setBoolean(chargingStationLocked);
+    }
+
+    /**
+     * Toggles whether the swerve modules should use integrated relative encoders (instead of
+     * external absolute encoders) to steer.
+     */
+    public void toggleSteerRelativeEncoderFeedback() {
+        this.steerRelativeFeedback = !steerRelativeFeedback;
+
+        topLeftModule.setSteerRelativeFeedback(steerRelativeFeedback);
+        topRightModule.setSteerRelativeFeedback(steerRelativeFeedback);
+        bottomLeftModule.setSteerRelativeFeedback(steerRelativeFeedback);
+        bottomRightModule.setSteerRelativeFeedback(steerRelativeFeedback);
+
+        relativeEncoderEntry.setBoolean(steerRelativeFeedback);
     }
 
     /**
