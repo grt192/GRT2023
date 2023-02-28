@@ -35,23 +35,23 @@ public class RollerSubsystem extends SubsystemBase {
     private final Timer openTimer = new Timer();
     private final Timer closeTimer = new Timer();
 
-    // ~110. for nothing, 130 for cone, 160 for cube
-    private final int CONE_PROXIMITY_THRESHOLD = 115;
-    private final int CUBE_PROXIMITY_THRESHOLD = 145;
+    // ~110 for nothing, 130 for cone, 160 for cube
+    private static final int CONE_PROXIMITY_THRESHOLD = 115;
+    private static final int CUBE_PROXIMITY_THRESHOLD = 145;
 
-    private final int coneRedMax = 80;
-    private final int coneRedMin = 65;
-    private final int coneGreenMax = 140;
-    private final int coneGreenMin = 128;
-    private final int coneBlueMax = 51;
-    private final int coneBlueMin = 45;
+    private static final int coneRedMax = 80;
+    private static final int coneRedMin = 65;
+    private static final int coneGreenMax = 140;
+    private static final int coneGreenMin = 128;
+    private static final int coneBlueMax = 51;
+    private static final int coneBlueMin = 45;
 
-    private final int cubeRedMax = 65;
-    private final int cubeRedMin = 55;
-    private final int cubeGreenMax = 120;
-    private final int cubeGreenMin = 108;
-    private final int cubeBlueMax = 85;
-    private final int cubeBlueMin = 75;
+    private static final int cubeRedMax = 65;
+    private static final int cubeRedMin = 55;
+    private static final int cubeGreenMax = 120;
+    private static final int cubeGreenMin = 108;
+    private static final int cubeBlueMax = 85;
+    private static final int cubeBlueMin = 75;
 
     //for tuning
     // private final ShuffleboardTab tab = Shuffleboard.getTab("Color");
@@ -143,42 +143,44 @@ public class RollerSubsystem extends SubsystemBase {
             leftBeak.set(Math.min(rollPower, 0.0));
         }
 
-        HeldPiece limitPiece = detectElementsLimitSwitch();
-        HeldPiece proximityPiece = detectElementsProximity();
+        HeldPiece limitPiece = getLimitSwitchPiece();
+        HeldPiece proximityPiece = getProximitySensorPiece();
 
-        // if either limit or proxim sensor see a piece, use that
+        // If either the limit switch or the proximity sensor have detected a piece, set
+        // the piece to the detected piece, prioritizing the proximity sensor over the limit
+        // switch.
         if (proximityPiece != HeldPiece.EMPTY) {
             heldPiece = proximityPiece;
-        } else if (limitPiece != HeldPiece.EMPTY) {
+        } else {
             heldPiece = limitPiece;
-        } else {
-            heldPiece = HeldPiece.EMPTY;
         }
     }
 
-    public HeldPiece detectElementsLimitSwitch() {
-        if (limitSwitch.get()) {
-            return HeldPiece.EMPTY;
-        } else {
-            return HeldPiece.CONE;
-        }
+    /**
+     * Gets the piece detected by the limit switch.
+     * @return The piece detected by the limit switch. This is either `EMPTY` if unpressed or `CONE` if pressed.
+     */
+    private HeldPiece getLimitSwitchPiece() {
+        return !limitSwitch.get() ? HeldPiece.CONE : HeldPiece.EMPTY;
     }
 
-    public HeldPiece detectElementsProximity() {
+    /**
+     * Gets the piece detected by the proximity measurement on the color sensor.
+     * @return The piece detected by the proximity sensor.
+     */
+    private HeldPiece getProximitySensorPiece() {
         double dist = crolorSensor.getProximity();
+        if (dist >= CUBE_PROXIMITY_THRESHOLD) return HeldPiece.CUBE;
+        if (dist >= CONE_PROXIMITY_THRESHOLD) return HeldPiece.CONE;
 
-        // System.out.println(dist);
-
-        if (dist >= CUBE_PROXIMITY_THRESHOLD) {
-            return HeldPiece.CUBE;
-        } else if (dist >= CONE_PROXIMITY_THRESHOLD) {
-            return HeldPiece.CONE;
-        } else {
-            return HeldPiece.EMPTY;
-        }
+        return HeldPiece.EMPTY;
     }
 
-    public HeldPiece detectElementsColor() {
+    /**
+     * Gets the piece detected by the color sensor.
+     * @return The piece detected by the color sensor.
+     */
+    private HeldPiece getColorSensorPiece() {
         Color detectedColor = crolorSensor.getColor();
         double red = detectedColor.red * 255;
         double green = detectedColor.green * 255;
