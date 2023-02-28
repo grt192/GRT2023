@@ -64,6 +64,11 @@ public class TwistJoystickDriveController extends BaseDriveController {
     }
 
     @Override
+    public JoystickButton getSwerveRelativeFeedbackButton() {
+        return leftMiddleLeftButton;
+    }
+
+    @Override
     public JoystickButton getChargingStationLockButton() {
         return leftTopLeftButton;
     }

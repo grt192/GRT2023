@@ -58,6 +58,11 @@ public class XboxDriveController extends BaseDriveController {
     }
 
     @Override
+    public JoystickButton getSwerveRelativeFeedbackButton() {
+        return driveXButton;
+    }
+
+    @Override
     public JoystickButton getChargingStationLockButton() {
         return driveBButton;
     }
