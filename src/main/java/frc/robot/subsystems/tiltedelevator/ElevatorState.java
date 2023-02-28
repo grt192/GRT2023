@@ -16,46 +16,50 @@ public enum ElevatorState {
     HOME(Units.inchesToMeters(0));
 
     private final double extendDistanceMeters; // meters, extension distance of winch
-    private final double withPieceOffset;
-    private final double dropOffset;
+    private final double pieceOffsetMeters;
+    private final double dropOffsetMeters;
 
     /**
-     * ElevatorState defined by extension of elevator from zero. All values in
-     * meters and radians.
+     * Creates an `ElevatorState` from the extension of the elevator from zero, the state's offset
+     * when there is a piece in the subsystem, and the state's offset when dropping.
      * 
      * @param extendDistanceMeters The extension of the subsystem.
-     * @param withPieceOffset      The offset to apply to the extension distance
-     *                             when the intake is holding a piece.
-     * @param dropOffset           The offset to apply to the extension distance
-     *                             when lowering the piece before dropping
+     * @param pieceOffsetMeters The offset to apply to the extension distance when the intake is holding a piece.
+     * @param dropOffsetMeters The offset to apply to the extension distance when lowering the piece before dropping.
      */
-    private ElevatorState(double extendDistanceMeters, double withPieceOffset, double dropOffset) {
+    private ElevatorState(double extendDistanceMeters, double pieceOffsetMeters, double dropOffsetMeters) {
         this.extendDistanceMeters = extendDistanceMeters;
-        this.withPieceOffset = withPieceOffset;
-        this.dropOffset = dropOffset;
+        this.pieceOffsetMeters = pieceOffsetMeters;
+        this.dropOffsetMeters = dropOffsetMeters;
     }
 
     /**
-     * ElevatorState defined by extension of elevator from zero. All values in meters and radians.
-     * 
+     * Creates an `ElevatorState` from the extension of the elevator from zero
      * @param extendDistanceMeters The extension of the subsystem.
      */
     private ElevatorState(double extendDistanceMeters) {
         this(extendDistanceMeters, 0, 0);
     }
 
+    /**
+     * Gets the extension commanded by this elevator state, given the `OffsetState` of 
+     * the subsystem and whether there is currently a piece in the rollers.
+     * 
+     * @param offsetState The offset state of the subsystem.
+     * @param hasPiece Whether there is a piece in the subsystem.
+     * @return The extension, in meters, commanded by the state.
+     */
     public double getExtension(OffsetState offsetState, boolean hasPiece) {
         return switch (offsetState) {
             case ONLY_MANUAL_OFFSET -> this.extendDistanceMeters;
-            case OVERRIDE_HAS_PIECE -> this.extendDistanceMeters + withPieceOffset;
-            case DROPPING -> this.extendDistanceMeters + dropOffset;
-            case DEFAULT -> {
-                yield hasPiece ? this.extendDistanceMeters + withPieceOffset
-                    : this.extendDistanceMeters;
-            }
+            case OVERRIDE_HAS_PIECE -> this.extendDistanceMeters + pieceOffsetMeters;
+            case DROPPING -> this.extendDistanceMeters + dropOffsetMeters;
+            case DEFAULT -> hasPiece 
+                ? this.extendDistanceMeters + pieceOffsetMeters
+                : this.extendDistanceMeters;
         };
     }
-    
+
     public enum OffsetState {
         /**
          * Use the current extension state's getWithPieceExtension and apply

@@ -36,10 +36,8 @@ public class RollerPlaceCommand extends CommandBase {
     @Override
     public void initialize() {
         System.out.println("Roller to place");
-
-        rollerSubsystem.openMotor();
-
         runTimer.start();
+        rollerSubsystem.openMotor();
     }
 
     @Override
@@ -50,7 +48,6 @@ public class RollerPlaceCommand extends CommandBase {
     @Override
     public void end(boolean interrupted) {
         System.out.println("Placing done");
-        
         rollerSubsystem.setRollPower(0);
     }
 

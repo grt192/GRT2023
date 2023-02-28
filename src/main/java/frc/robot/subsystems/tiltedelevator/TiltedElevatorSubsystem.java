@@ -1,6 +1,5 @@
 package frc.robot.subsystems.tiltedelevator;
 
-
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
@@ -28,7 +27,7 @@ import frc.robot.motorcontrol.HallEffectMagnet;
 import static frc.robot.Constants.TiltedElevatorConstants.*;
 
 public class TiltedElevatorSubsystem extends SubsystemBase {
-    // config
+    // Config
     private volatile boolean IS_MANUAL = false;
     private static final double OFFSET_FACTOR = 0.01; // The factor to multiply driver input by when changing the offset.
     
@@ -36,19 +35,19 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
     private static final boolean OVERRIDE_SHUFFLEBOARD_ENABLE = false;
     private volatile boolean SHUFFLEBOARD_ENABLE = OVERRIDE_SHUFFLEBOARD_ENABLE || Constants.GLOBAL_SHUFFLEBOARD_ENABLE;
 
-    // states
+    // States
     private ElevatorState state = ElevatorState.GROUND;
     public boolean pieceGrabbed = false;
-    public OffsetState offsetState;
+
+    public OffsetState offsetState = OffsetState.DEFAULT;
     private double offsetDistMeters = 0;
 
     private double manualPower = 0;
 
-    // private states
     private boolean hallPressed = false;
     private HallEffectMagnet lastHallPos = null;
 
-    // motors
+    // Devices
     private final CANSparkMax extensionMotor;
     private RelativeEncoder extensionEncoder;
     private SparkMaxPIDController extensionPidController;
@@ -56,11 +55,10 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
     private final CANSparkMax extensionFollow;
     private final CANSparkMax extensionFollowB;
 
-    // sensors
     private final DigitalInput zeroLimitSwitch;
     private final HallEffectSensor leftHallSensor;
 
-    // constants
+    // Constants
     private static final double EXTENSION_GEAR_RATIO = 14.0 / 64.0;
     private static final double EXTENSION_CIRCUMFERENCE = Units.inchesToMeters(Math.PI * 0.500); // approx circumference of winch
     private static final double EXTENSION_ROTATIONS_TO_METERS = EXTENSION_GEAR_RATIO * EXTENSION_CIRCUMFERENCE * 2.0 * (15.0 / 13.4);
@@ -72,7 +70,7 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
     private static final double extensionRampRate = 0.4;
     private double arbFeedforward = Constants.IS_R1 ? 0.03 : 0;
 
-    // shuffleboard
+    // Shuffleboard
     private final ShuffleboardTab shuffleboardTab;
     private final GenericEntry 
         extensionPEntry, extensionIEntry, extensionDEntry,
@@ -238,14 +236,6 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
     }
 
     /**
-     * Gets the target extension, in meters, of the subsystem.
-     * @return The target extension, in meters.
-     */
-    public double getTargetExtension() {
-        return state.getExtension(offsetState, this.pieceGrabbed) + offsetDistMeters;
-    }
-
-    /**
      * Sets the state of the subsystem.
      * @param state The `ElevatorState` to set the subsystem to.
      */
@@ -305,6 +295,14 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
      */
     public double getExtension() { 
         return extensionEncoder.getPosition();
+    }
+
+    /**
+     * Gets the target extension, in meters, of the subsystem.
+     * @return The target extension, in meters.
+     */
+    public double getTargetExtension() {
+        return state.getExtension(offsetState, this.pieceGrabbed) + offsetDistMeters;
     }
 
     /**
