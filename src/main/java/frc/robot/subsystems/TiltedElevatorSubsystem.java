@@ -203,7 +203,7 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
             // System.out.println(leftHallSensorPos);
             // System.out.println(lastHallPos + " " + leftHallSensorPos);
             if (leftHallSensorPos != null && lastHallPos == null){
-                extensionEncoder.setPosition(Units.inchesToMeters(62.5));//leftHallSensorPos.getExtendDistanceMeters());
+                extensionEncoder.setPosition(Units.inchesToMeters(EXTENSION_LIMIT));//leftHallSensorPos.getExtendDistanceMeters());
             }
             lastHallPos = leftHallSensorPos;
         }

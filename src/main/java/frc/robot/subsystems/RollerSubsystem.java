@@ -36,8 +36,8 @@ public class RollerSubsystem extends SubsystemBase {
     private final Timer closeTimer = new Timer();
 
     // ~110. for nothing, 130 for cone, 160 for cube
-    private final int CONE_PROXIMITY_THRESHOLD = 120;
-    private final int CUBE_PROXIMITY_THRESHOLD = 150;
+    private final int CONE_PROXIMITY_THRESHOLD = 115;
+    private final int CUBE_PROXIMITY_THRESHOLD = 145;
 
     private final int coneRedMax = 80;
     private final int coneRedMin = 65;
@@ -144,6 +144,7 @@ public class RollerSubsystem extends SubsystemBase {
         }
 
         HeldPiece limitPiece = detectElementsLimitSwitch();
+        limitPiece = HeldPiece.EMPTY;
         HeldPiece proximityPiece = detectElementsProximity();
 
         // if either limit or proxim sensor see a piece, use that
