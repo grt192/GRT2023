@@ -325,7 +325,7 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
     }
 
     /**
-     * Reset the robot's position to a given Pose2d.
+     * Reset the robot's position to a given Pose2d. This method does not reset the field heading.
      * @param currentPose The position to reset the pose estimator to.
      */
     public void resetPose(Pose2d currentPose) {
@@ -335,13 +335,11 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
             getModuleStates(),
             currentPose
         );
-
-        angleOffset = gyroAngle.minus(currentPose.getRotation());
     }
 
     /**
-     * Zeros the robot's position.
-     * This method zeros both the robot's translation *and* rotation.
+     * Zeros the robot's position. This method zeros both the robot's translation *and* rotation,
+     * but does not reset the field heading.
      */
     public void resetPose() {
         resetPose(new Pose2d());
@@ -349,18 +347,17 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
 
     /**
      * Zeros *only the angle* of the robot's field-relative control system.
-     * This also resets localization to match the rotated field.
+     * This method has no effect on odometry's origin.
+     * @param currentRotation The rotation to reset the field angle to.
      */
     public void resetFieldAngle(Rotation2d currentRotation) {
-        Pose2d currPos = getRobotPosition();
-
-        // Reset localization angle but keep current (x, y) to preserve the origin.
-        resetPose(new Pose2d(
-            currPos.getTranslation(),
-            currentRotation
-        ));
+        angleOffset = getGyroHeading().minus(currentRotation);
     }
 
+    /**
+     * Zeros *only the angle* of the robot's field-relative control system.
+     * This method has no effect on odometry's origin.
+     */
     public void resetFieldAngle() {
         resetFieldAngle(new Rotation2d());
     }
@@ -381,9 +378,11 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
      */
     private Rotation2d getFieldHeading() {
         // Primarily use AHRS reading, falling back on the pose estimator if the AHRS disconnects.
-        return ahrs.isConnected()
-            ? getGyroHeading().minus(angleOffset)
+        Rotation2d robotHeading = ahrs.isConnected()
+            ? getGyroHeading()
             : getRobotPosition().getRotation();
+
+        return robotHeading.minus(angleOffset);
     }
 
     public void setVisionEnabled(boolean visionEnable) {
