@@ -28,13 +28,13 @@ public class SwitchableCamera {
     private boolean topActive = true;
 
     public SwitchableCamera(ShuffleboardTab shuffleboardTab) {
-        top = CameraServer.startAutomaticCapture(0);
+        top = CameraServer.startAutomaticCapture(1);
         top.setResolution(140, 120);
         top.setExposureManual(TOP_EXPOSURE);
         top.setBrightness(TOP_BRIGHTNESS);
         top.setFPS(30);
 
-        bottom = CameraServer.startAutomaticCapture(1);
+        bottom = CameraServer.startAutomaticCapture(0);
         bottom.setResolution(140, 120);
         bottom.setExposureManual(BOTTOM_EXPOSURE);
         bottom.setBrightness(BOTTOM_BRIGHTNESS);
