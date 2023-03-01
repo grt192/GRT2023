@@ -11,8 +11,8 @@ import frc.robot.positions.FieldPosition;
 import frc.robot.positions.PlacePosition;
 import frc.robot.positions.PlacePosition.PlaceState;
 import frc.robot.subsystems.RollerSubsystem;
-import frc.robot.subsystems.TiltedElevatorSubsystem;
 import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
+import frc.robot.subsystems.tiltedelevator.TiltedElevatorSubsystem;
 
 public class BalanceAutonSequence extends BaseAutonSequence {
     private static final FieldPosition INITIAL_POSE = FieldPosition.B2_INIT;

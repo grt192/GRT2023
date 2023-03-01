@@ -42,6 +42,9 @@ import frc.robot.vision.PhotonWrapper;
 import frc.robot.subsystems.drivetrain.TankSubsystem;
 import frc.robot.subsystems.leds.LEDStrip;
 import frc.robot.subsystems.leds.LEDSubsystem;
+import frc.robot.subsystems.tiltedelevator.ElevatorState;
+import frc.robot.subsystems.tiltedelevator.TiltedElevatorSubsystem;
+import frc.robot.subsystems.tiltedelevator.ElevatorState.OffsetState;
 import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
 import frc.robot.subsystems.drivetrain.MissileShellSwerveSubsystem;
 import frc.robot.subsystems.drivetrain.MissileShellSwerveSweeperSubsystem;
@@ -50,8 +53,6 @@ import frc.robot.subsystems.drivetrain.SwerveSubsystem2020;
 import frc.robot.subsystems.drivetrain.BaseDrivetrain;
 import frc.robot.subsystems.RollerSubsystem;
 import frc.robot.subsystems.Superstructure;
-import frc.robot.subsystems.TiltedElevatorSubsystem;
-import frc.robot.subsystems.TiltedElevatorSubsystem.ElevatorState;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -140,13 +141,13 @@ public class RobotContainer {
             autonChooser.addOption("Blue bottom auton (1-piece)", new BottomOnePieceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, false));
             autonChooser.addOption("Blue bottom auton (2-piece)", new BottomTwoPieceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, false));
 
-            autonChooser.addOption("10\" straight-line path", new TenFeetStraightLinePath(swerveSubsystem));
-            autonChooser.addOption("20\" straight-line path", new TwentyFeetStraightLinePath(swerveSubsystem));
-            autonChooser.addOption("High rotation straight-line path", new HighRotationLinePath(swerveSubsystem));
-            autonChooser.addOption("Rotating S-curve", new RotatingSCurveAutonSequence(swerveSubsystem));
-            autonChooser.addOption("Box auton", new BoxAutonSequence(swerveSubsystem));
-            autonChooser.addOption("No-stopping box auton", new ContinuousBoxAutonSequence(swerveSubsystem));
-            autonChooser.addOption("GRT path", new GRTAutonSequence(swerveSubsystem));
+            // autonChooser.addOption("10\" straight-line path", new TenFeetStraightLinePath(swerveSubsystem));
+            // autonChooser.addOption("20\" straight-line path", new TwentyFeetStraightLinePath(swerveSubsystem));
+            // autonChooser.addOption("High rotation straight-line path", new HighRotationLinePath(swerveSubsystem));
+            // autonChooser.addOption("Rotating S-curve", new RotatingSCurveAutonSequence(swerveSubsystem));
+            // autonChooser.addOption("Box auton", new BoxAutonSequence(swerveSubsystem));
+            // autonChooser.addOption("No-stopping box auton", new ContinuousBoxAutonSequence(swerveSubsystem));
+            // autonChooser.addOption("GRT path", new GRTAutonSequence(swerveSubsystem));
         }
 
         shuffleboardTab.add("Auton", autonChooser)
@@ -230,7 +231,7 @@ public class RobotContainer {
                 tiltedElevatorSubsystem.setState(ElevatorState.HYBRID);
             } else if (pov == 180){
                 tiltedElevatorSubsystem.setState(ElevatorState.GROUND);
-                tiltedElevatorSubsystem.manualPieceGrabbed = true;
+                tiltedElevatorSubsystem.offsetState = OffsetState.OVERRIDE_HAS_PIECE;
             } else if (pov == 90){
                 tiltedElevatorSubsystem.resetOffset();
             }

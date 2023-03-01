@@ -1,7 +1,6 @@
-package frc.robot.subsystems;
+package frc.robot.subsystems.tiltedelevator;
 
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.REVLibError;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMax.SoftLimitDirection;
@@ -13,7 +12,6 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -23,11 +21,33 @@ import frc.robot.Constants;
 import frc.robot.util.MotorUtil;
 import frc.robot.util.ShuffleboardUtil;
 import frc.robot.motorcontrol.HallEffectSensor;
+import frc.robot.subsystems.tiltedelevator.ElevatorState.OffsetState;
 import frc.robot.motorcontrol.HallEffectMagnet;
 
 import static frc.robot.Constants.TiltedElevatorConstants.*;
 
 public class TiltedElevatorSubsystem extends SubsystemBase {
+    // Config
+    private volatile boolean IS_MANUAL = false;
+    private static final double OFFSET_FACTOR = 0.01; // The factor to multiply driver input by when changing the offset.
+    
+    // Whether to read and update shuffleboard values
+    private static final boolean OVERRIDE_SHUFFLEBOARD_ENABLE = false;
+    private volatile boolean SHUFFLEBOARD_ENABLE = OVERRIDE_SHUFFLEBOARD_ENABLE || Constants.GLOBAL_SHUFFLEBOARD_ENABLE;
+
+    // States
+    private ElevatorState state = ElevatorState.GROUND;
+    public boolean pieceGrabbed = false;
+
+    public OffsetState offsetState = OffsetState.DEFAULT;
+    private double offsetDistMeters = 0;
+
+    private double manualPower = 0;
+
+    private boolean hallPressed = false;
+    private HallEffectMagnet lastHallPos = null;
+
+    // Devices
     private final CANSparkMax extensionMotor;
     private RelativeEncoder extensionEncoder;
     private SparkMaxPIDController extensionPidController;
@@ -38,31 +58,19 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
     private final DigitalInput zeroLimitSwitch;
     private final HallEffectSensor leftHallSensor;
 
+    // Constants
     private static final double EXTENSION_GEAR_RATIO = 14.0 / 64.0;
     private static final double EXTENSION_CIRCUMFERENCE = Units.inchesToMeters(Math.PI * 0.500); // approx circumference of winch
     private static final double EXTENSION_ROTATIONS_TO_METERS = EXTENSION_GEAR_RATIO * EXTENSION_CIRCUMFERENCE * 2.0 * (15.0 / 13.4);
 
-    private static final double extensionP = 2.3;
+    private static final double extensionP = 2.4;
     private static final double extensionI = 0;
     private static final double extensionD = 0;
     private static final double extensionTolerance = 0.003;
     private static final double extensionRampRate = 0.4;
     private double arbFeedforward = Constants.IS_R1 ? 0.03 : 0;
 
-    private ElevatorState state = ElevatorState.GROUND;
-
-    private volatile boolean IS_MANUAL = false;
-    private double manualPower = 0;
-
-    private static final double OFFSET_FACTOR = 0.01; // The factor to multiply driver input by when changing the offset.
-    private double offsetDistMeters = 0;
-
-    public boolean pieceGrabbed = false;
-    public boolean manualPieceGrabbed = false;
-
-    private boolean hallPressed = false;
-    private HallEffectMagnet lastHallPos = null;
-
+    // Shuffleboard
     private final ShuffleboardTab shuffleboardTab;
     private final GenericEntry 
         extensionPEntry, extensionIEntry, extensionDEntry,
@@ -70,51 +78,6 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
     private final GenericEntry manualPowerEntry, targetExtensionEntry;
     private final GenericEntry currentExtensionEntry, currentVelEntry, currentStateEntry, offsetDistEntry;
     private final GenericEntry limitSwitchEntry, hallEntry;
-
-    // Whether to read and update shuffleboard values
-    private static final boolean OVERRIDE_SHUFFLEBOARD_ENABLE = false;
-    private volatile boolean SHUFFLEBOARD_ENABLE = OVERRIDE_SHUFFLEBOARD_ENABLE || Constants.GLOBAL_SHUFFLEBOARD_ENABLE;
-
-    public enum ElevatorState {
-        GROUND(0) {
-            @Override
-            public double getExtension(boolean hasPiece) {
-                // If a piece is being held, raise it slightly so that it doesn't drag across the floor.
-                return hasPiece 
-                    ? extendDistanceMeters + Units.inchesToMeters(4)
-                    : extendDistanceMeters;
-            }
-        },
-        CHUTE(Units.inchesToMeters(40)),
-        SUBSTATION(Units.inchesToMeters(45)), // absolute height = 37.375 in
-        CUBE_MID(Units.inchesToMeters(Constants.IS_R1 ? 33 : 40)), // absolute height = 14.25 in
-        CUBE_HIGH(Units.inchesToMeters(Constants.IS_R1 ? 53 : 55)), // absolute height = 31.625 in
-        CONE_MID(Units.inchesToMeters(Constants.IS_R1 ? 50 : 48)), // absolute height = 34 in
-        CONE_MID_DROP(CONE_MID.getExtension(false) - Units.inchesToMeters(10)),
-        CONE_HIGH(Units.inchesToMeters(Constants.IS_R1 ? 53 : 61)), // absolute height = 46 in
-        CONE_HIGH_DROP(CONE_HIGH.getExtension(false) - Units.inchesToMeters(0)),
-        HYBRID(Units.inchesToMeters(20)),//NEEDS TUNING
-        HOME(Units.inchesToMeters(0));
-
-        protected double extendDistanceMeters; // meters, extension distance of winch
-
-        /**
-         * ElevatorState defined by extension of elevator from zero. All values in meters and radians.
-         * @param extendDistanceMeters The extension of the subsystem.
-         */
-        private ElevatorState(double extendDistanceMeters) {
-            this.extendDistanceMeters = extendDistanceMeters;
-        }
-
-        /**
-         * Gets the extension commanded by the elevator state.
-         * @param hasPiece Whether there is a game piece in the subsystem.
-         * @return The distance, in meters, the elevator should extend to.
-         */
-        public double getExtension(boolean hasPiece) {
-            return this.extendDistanceMeters;
-        }
-    }
 
     public TiltedElevatorSubsystem() {
         extensionMotor = MotorUtil.createSparkMax(EXTENSION_ID, (sparkMax) -> {
@@ -278,8 +241,8 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
      */
     public void setState(ElevatorState state) {
         resetOffset();
-        this.manualPieceGrabbed = false;
         this.state = state;
+        this.offsetState = OffsetState.DEFAULT;
     }
 
     /**
@@ -339,7 +302,7 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
      * @return The target extension, in meters.
      */
     public double getTargetExtension() {
-        return state.getExtension(pieceGrabbed || manualPieceGrabbed) + offsetDistMeters;
+        return state.getExtension(offsetState, this.pieceGrabbed) + offsetDistMeters;
     }
 
     /**

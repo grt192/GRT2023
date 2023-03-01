@@ -8,9 +8,9 @@ import frc.robot.commands.dropping.DropperChooserCommand;
 import frc.robot.commands.grabber.RollerIntakeCommand;
 import frc.robot.commands.mover.TiltedElevatorCommand;
 import frc.robot.subsystems.RollerSubsystem;
-import frc.robot.subsystems.TiltedElevatorSubsystem;
-import frc.robot.subsystems.TiltedElevatorSubsystem.ElevatorState;
 import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
+import frc.robot.subsystems.tiltedelevator.ElevatorState;
+import frc.robot.subsystems.tiltedelevator.TiltedElevatorSubsystem;
 
 public class MotorTestCommand extends SequentialCommandGroup {
     private static final double TEST_DELAY_SECS = 1;

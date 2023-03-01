@@ -1,7 +1,7 @@
 package frc.robot.motorcontrol;
 
 import edu.wpi.first.math.util.Units;
-import frc.robot.subsystems.TiltedElevatorSubsystem.ElevatorState;
+import frc.robot.subsystems.tiltedelevator.ElevatorState;
 
 public class HallEffectMagnet {
 
