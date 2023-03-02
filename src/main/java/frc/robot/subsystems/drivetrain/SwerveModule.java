@@ -41,6 +41,7 @@ public class SwerveModule implements BaseSwerveModule {
     private SparkMaxPIDController steerPidController;
 
     private final double offsetRads;
+    private boolean relativeMode = false;
 
     private static final double DRIVE_ROTATIONS_TO_METERS = (1.0 / 3.0) * (13.0 / 8.0) * (1.0 / 3.0) * Math.PI * Units.inchesToMeters(4.0) * 9.0 / 9.5; // 3:1, 8:13, 3:1 gear ratios, 4.0" wheel diameter, circumference = pi * d
     private static final double STEER_ROTATIONS_TO_RADIANS = (1.0 / 52.0) * (34.0 / 63.0) * 2 * Math.PI; // 52:1 gear ratio, 63:34 pulley ratio, 1 rotation = 2pi
@@ -207,12 +208,34 @@ public class SwerveModule implements BaseSwerveModule {
 
         // driveMotor.set(ControlMode.Velocity, optimized.getFirst() / (DRIVE_TICKS_TO_METERS * 10.0));
         drivePidController.setReference(optimized.speedMetersPerSecond, ControlType.kVelocity);
-        steerPidController.setReference(targetAngle, ControlType.kPosition);
+
+        if (relativeMode) {
+            steerPidController.setReference(calculateRelativeTargetPosition(optimized.angle, getRelativeEncoderAngle()), ControlType.kPosition);
+        } else {
+            steerPidController.setReference(targetAngle, ControlType.kPosition);
+        }
+    }
+
+    /**
+     * Calculate the target encoder position for a relative encoder steer given a
+     * target angle.
+     * 
+     * @param targetRads  The target position for the steer.
+     * @param currentRads The current (relative) position for the steer.
+     * @return A target position equivalent to targetRads within currentRads +- PI,
+     *         and within +-PI/2 when the target position is optimized.
+     */
+    private double calculateRelativeTargetPosition(Rotation2d targetRads, Rotation2d currentRads) {
+        double deltaRads = MathUtil.angleModulus(targetRads.getRadians() - currentRads.getRadians());
+        return currentRads.getRadians() + deltaRads;
     }
 
     @Override
     public void setSteerRelativeFeedback(boolean useRelative) {
         steerPidController.setFeedbackDevice(useRelative ? steerRelativeEncoder : steerAbsoluteEncoder);
+        steerPidController.setPositionPIDWrappingEnabled(!useRelative);
+
+        this.relativeMode = useRelative;
     }
 
     /**
@@ -222,15 +245,24 @@ public class SwerveModule implements BaseSwerveModule {
      * @return The current [-pi, pi] angle of the module, as a `Rotation2d`.
      */
     private Rotation2d getAngle() {
-        double wrappedAngleRads = MathUtil.angleModulus(steerAbsoluteEncoder.getPosition() + offsetRads);
-        return new Rotation2d(wrappedAngleRads);
+        double rawAngle = relativeMode ? 
+            steerRelativeEncoder.getPosition()
+            : steerAbsoluteEncoder.getPosition();
+
+        return new Rotation2d(MathUtil.angleModulus(rawAngle + offsetRads));
+    }
+
+    private Rotation2d getRelativeEncoderAngle() {
+        double rawAngle = steerRelativeEncoder.getPosition();
+
+        return new Rotation2d(rawAngle + offsetRads);
     }
 
     /**
      * Returns the raw value, in radians, reported by the steer absolute encoder.
      * @return The current radians reported by the absolute encoder.
      */
-    public double getRawAngleRads() {
+    public double getAbsoluteRawAngleRads() {
         return steerAbsoluteEncoder.getPosition();
     }
 

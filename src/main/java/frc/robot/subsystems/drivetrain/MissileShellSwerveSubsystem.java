@@ -45,7 +45,7 @@ public class MissileShellSwerveSubsystem extends BaseDrivetrain {
         // Print values for encoder tuning. To set a zero, currentAngle + offset = 0 -> offset = -currentAngle.
         // In case the offset is 180 degrees off, also print it plus pi.
         if (OFFSET_TUNING_ENABLE) {
-            double currentAngleRads = module.getRawAngleRads();
+            double currentAngleRads = module.getAbsoluteRawAngleRads();
 
             // The offset of the module assuming that it is aligned with the front of the robot.
             // For the robot offset, subtract the position offset automatically applied by the module subclasses.
