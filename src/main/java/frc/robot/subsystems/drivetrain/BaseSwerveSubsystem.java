@@ -51,6 +51,7 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
 
     private boolean chargingStationLocked = false;
 
+    private Rotation2d targetHeading = new Rotation2d();
     private Rotation2d angleOffset = new Rotation2d(0);
 
     private final ShuffleboardTab shuffleboardTab;
@@ -88,11 +89,9 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
         // Initialize heading-lock PID controller
         thetaController = new ProfiledPIDController(
             1.7, 0, 0, 
-            new TrapezoidProfile.Constraints(
-                MAX_OMEGA,
-                MAX_ALPHA
-            )
+            new TrapezoidProfile.Constraints(MAX_OMEGA, MAX_ALPHA)
         );
+        thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
         this.topLeftModule = topLeftModule;
         this.topRightModule = topRightModule;
@@ -221,13 +220,44 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
      * @param relative Whether to use relative powers instead of field-oriented control.
      */
     public void setDrivePowers(double xPower, double yPower, double angularPower, boolean relative) {
+        // Increment target heading from angular power
+        this.targetHeading = targetHeading.plus(new Rotation2d(MAX_OMEGA * angularPower));
+        setDrivePowers(xPower, yPower, relative);
+    }
+
+    /**
+     * Sets the swerve module states of this subsystem from provided field-centric
+     * swerve drive powers, locking the swerve to a given heading.
+     * 
+     * @param xPower The power [-1.0, 1.0] in the x (forward) direction.
+     * @param yPower The power [-1.0, 1.0] in the y (left) direction.
+     * @param heading The `Rotation2d` angle to lock the swerve to.
+     * @param relative Whether to use relative powers instead of field-oriented control.
+     */
+    public void setDrivePowersWithHeadingLock(double xPower, double yPower, Rotation2d heading, boolean relative) {
+        this.targetHeading = heading;
+        setDrivePowers(xPower, yPower, relative);
+    }
+
+    /**
+     * Sets the swerve module states of this subsystem from provided field-centric
+     * swerve drive powers.
+     * 
+     * @param xPower The power [-1.0, 1.0] in the x (forward) direction.
+     * @param yPower The power [-1.0, 1.0] in the y (left) direction.
+     * @param relative Whether to use relative powers instead of field-oriented control.
+     */
+    public void setDrivePowers(double xPower, double yPower, boolean relative) {
+        Rotation2d currentHeading = getFieldHeading();
+
         // Scale [-1.0, 1.0] powers to desired velocity, turning field-relative powers
-        // into robot relative chassis speeds.
+        // into robot relative chassis speeds. The turn power is calculated using PID to
+        // maintain the target heading.
         ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(
             xPower * MAX_VEL,
             yPower * MAX_VEL,
-            angularPower * MAX_OMEGA,
-            relative ? new Rotation2d() : getFieldHeading()
+            thetaController.calculate(currentHeading.getRadians(), targetHeading.getRadians()),
+            relative ? new Rotation2d() : currentHeading
         );
 
         // Calculate swerve module states from desired chassis speeds, desaturating
@@ -248,23 +278,6 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
     @Override
     public void setDrivePowers(double xPower) {
         setDrivePowers(xPower, 0.0, 0.0, true);
-    }
-
-    /**
-     * Sets the swerve module states of this subsystem from provided field-centric
-     * swerve drive powers, locking the swerve to a given heading.
-     * 
-     * @param xPower The power [-1.0, 1.0] in the x (forward) direction.
-     * @param yPower The power [-1.0, 1.0] in the y (left) direction.
-     * @param heading The `Rotation2d` angle to lock the swerve to.
-     * @param relative Whether to use relative powers instead of field-oriented control.
-     */
-    public void setDrivePowersWithHeadingLock(double xPower, double yPower, Rotation2d heading, boolean relative) {
-        Rotation2d currentRotation = getFieldHeading();
-        double error = MathUtil.angleModulus(heading.minus(currentRotation).getRadians());
-        double turnSpeed = thetaController.calculate(currentRotation.getRadians(), currentRotation.getRadians() + error);
-
-        setDrivePowers(xPower, yPower, turnSpeed / MAX_VEL, relative);
     }
 
     /**
@@ -306,6 +319,14 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
     public void toggleChargingStationLocked() {
         this.chargingStationLocked = !chargingStationLocked;
         chargingStationLockedEntry.setBoolean(chargingStationLocked);
+    }
+
+    /**
+     * Sets the target heading of this subsystem.
+     * @param targetHeading The target heading to set.
+     */
+    public void setTargetHeading(Rotation2d targetHeading) {
+        this.targetHeading = targetHeading;
     }
 
     /**

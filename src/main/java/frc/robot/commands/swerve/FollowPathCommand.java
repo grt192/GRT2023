@@ -57,6 +57,9 @@ public class FollowPathCommand extends SwerveControllerCommand {
             swerveSubsystem::setSwerveModuleStates,
             swerveSubsystem
         );
+
+        // Set swerve subsystem target heading for teleop
+        swerveSubsystem.setTargetHeading(targetAngle);
     }
 
     /**
