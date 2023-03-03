@@ -88,11 +88,9 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
         // Initialize heading-lock PID controller
         thetaController = new ProfiledPIDController(
             1.7, 0, 0, 
-            new TrapezoidProfile.Constraints(
-                MAX_OMEGA,
-                MAX_ALPHA
-            )
+            new TrapezoidProfile.Constraints(MAX_OMEGA, MAX_ALPHA)
         );
+        thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
         this.topLeftModule = topLeftModule;
         this.topRightModule = topRightModule;
@@ -265,13 +263,12 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
      * 
      * @param xPower The power [-1.0, 1.0] in the x (forward) direction.
      * @param yPower The power [-1.0, 1.0] in the y (left) direction.
-     * @param heading The `Rotation2d` angle to lock the swerve to.
+     * @param targetHeading The `Rotation2d` angle to lock the swerve to.
      * @param relative Whether to use relative powers instead of field-oriented control.
      */
-    public void setDrivePowersWithHeadingLock(double xPower, double yPower, Rotation2d heading, boolean relative) {
+    public void setDrivePowersWithHeadingLock(double xPower, double yPower, Rotation2d targetHeading, boolean relative) {
         Rotation2d currentRotation = getFieldHeading();
-        double error = MathUtil.angleModulus(heading.minus(currentRotation).getRadians());
-        double turnSpeed = thetaController.calculate(currentRotation.getRadians(), currentRotation.getRadians() + error);
+        double turnSpeed = thetaController.calculate(currentRotation.getRadians(), targetHeading.getRadians());
 
         // System.out.println("curr: " + currentRotation + " eror: " + Units.radiansToDegrees(error) + " turnsped: " + turnSpeed);
 
@@ -315,8 +312,7 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
      * Toggles whether the swerve should be locked parallel to the charging station.
      */
     public void toggleChargingStationLocked() {
-        this.chargingStationLocked = !chargingStationLocked;
-        chargingStationLockedEntry.setBoolean(chargingStationLocked);
+        setChargingStationLocked(!chargingStationLocked);
     }
 
     /**
@@ -411,8 +407,12 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
         return robotHeading.minus(angleOffset);
     }
 
+    /**
+     * Sets whether vision data is enabled.
+     * @param visionEnable Whether to enable vision data for localization.
+     */
     public void setVisionEnabled(boolean visionEnable) {
         this.VISION_ENABLE = visionEnable;
-        this.visionEnableEntry.setBoolean(this.VISION_ENABLE);
+        visionEnableEntry.setBoolean(VISION_ENABLE);
     }
 }
