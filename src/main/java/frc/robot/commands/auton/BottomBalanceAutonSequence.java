@@ -53,7 +53,7 @@ public class BottomBalanceAutonSequence extends BaseAutonSequence {
                 finalPose
             ),
             // Go onto charging station and balance from the other side
-            new DefaultBalancerCommand(swerveSubsystem, true)
+            new DefaultBalancerCommand(swerveSubsystem)
         );
     }
 }

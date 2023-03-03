@@ -14,8 +14,6 @@ public class DefaultBalancerCommand extends BaseBalancerCommand {
     private double returnDrivePower; // drive power to be returned to DT
     private double returnAngularPower; // angular power to return to DT (for heading correction)
 
-    private final boolean reversed;
-
     private boolean reachedStation;
     private boolean passedCenter;
     private boolean balanced;
@@ -25,10 +23,6 @@ public class DefaultBalancerCommand extends BaseBalancerCommand {
     private double currentPitch;
     private double deltaAngle;
 
-    public DefaultBalancerCommand(BaseDrivetrain driveSubsystem) {
-        this(driveSubsystem, false);
-    }
-
     /**
      * Constructs a default balancer command from a drive subsystem and a boolean indicating
      * whether to balance from the front or back.
@@ -36,14 +30,12 @@ public class DefaultBalancerCommand extends BaseBalancerCommand {
      * @param driveSubsystem The drive subsystem.
      * @param reversed Whether to balance driving forwards or backwards. Defaults to backwards; pass `true` to balance forwards.
      */
-    public DefaultBalancerCommand(BaseDrivetrain driveSubsystem, boolean reversed) {
+    public DefaultBalancerCommand(BaseDrivetrain driveSubsystem) {
         super(driveSubsystem);
 
         drivePID = new PIDController(0.0072, 0.0, 0.0); // no deriv successful
         turnPID = new PIDController(0.1 / 5,0.0, 0.0); // kP = max pwr / max err
         timer = new Timer();
-
-        this.reversed = reversed;
     }
 
     @Override
@@ -79,11 +71,10 @@ public class DefaultBalancerCommand extends BaseBalancerCommand {
         }
 
         // TODO: better name
-        double actualDrivePower = reversed ? -returnDrivePower : returnDrivePower;
         if (driveSubsystem instanceof BaseSwerveSubsystem) {
-            ((BaseSwerveSubsystem) driveSubsystem).setDrivePowers(actualDrivePower, 0.0, 0.0, true);
+            ((BaseSwerveSubsystem) driveSubsystem).setDrivePowers(returnDrivePower, 0.0, 0.0, true);
         } else {
-            driveSubsystem.setDrivePowers(actualDrivePower);
+            driveSubsystem.setDrivePowers(returnDrivePower);
         }
 
         oldPitch = currentPitch; // set the current angle to old angle so it is accessible for next cycle     
