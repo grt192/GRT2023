@@ -16,8 +16,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-
+import frc.robot.commands.auton.BalanceAndTaxiAutonSequence;
 import frc.robot.commands.auton.BalanceAutonSequence;
+import frc.robot.commands.auton.BottomBalanceAutonSequence;
 import frc.robot.commands.auton.BottomOnePieceAutonSequence;
 import frc.robot.commands.auton.BottomTwoPieceAutonSequence;
 import frc.robot.commands.auton.TopOnePieceAutonSequence;
@@ -105,7 +106,7 @@ public class RobotContainer {
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
     public RobotContainer() {
-        driveController = new XboxDriveController();
+        driveController = new DualJoystickDriveController();
 
         photonWrapper = new PhotonWrapper();
         switchableCamera = new SwitchableCamera(shuffleboardTab);
@@ -130,16 +131,20 @@ public class RobotContainer {
             final BaseSwerveSubsystem swerveSubsystem = (BaseSwerveSubsystem) driveSubsystem;
 
             autonChooser.addOption("Red top auton (1-piece)", new TopOnePieceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, true));
-            autonChooser.addOption("Red top auton (2-piece)", new TopTwoPieceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, true));
+            autonChooser.addOption("(untested) Red top auton (2-piece)", new TopTwoPieceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, true));
             autonChooser.addOption("Red balance auton", new BalanceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, true));
+            autonChooser.addOption("(untested) Red balance and taxi auton", new BalanceAndTaxiAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, true));
             autonChooser.addOption("Red bottom auton (1-piece)", new BottomOnePieceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, true));
-            autonChooser.addOption("Red bottom auton (2-piece)", new BottomTwoPieceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, true));
+            autonChooser.addOption("(untested) Red bottom auton (2-piece)", new BottomTwoPieceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, true));
+            autonChooser.addOption("(untested) Red bottom balance auton", new BottomBalanceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, true));
 
             autonChooser.addOption("Blue top auton (1-piece)", new TopOnePieceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, false));
-            autonChooser.addOption("Blue top auton (2-piece)", new TopTwoPieceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, false));
+            autonChooser.addOption("(untested) Blue top auton (2-piece)", new TopTwoPieceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, false));
             autonChooser.addOption("Blue balance auton", new BalanceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, false));
+            autonChooser.addOption("(untested) Blue balance and taxi auton", new BalanceAndTaxiAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, false));
             autonChooser.addOption("Blue bottom auton (1-piece)", new BottomOnePieceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, false));
-            autonChooser.addOption("Blue bottom auton (2-piece)", new BottomTwoPieceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, false));
+            autonChooser.addOption("(untested) Blue bottom auton (2-piece)", new BottomTwoPieceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, false));
+            autonChooser.addOption("(untested) Blue bottom balance auton", new BottomBalanceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, false));
 
             // autonChooser.addOption("10\" straight-line path", new TenFeetStraightLinePath(swerveSubsystem));
             // autonChooser.addOption("20\" straight-line path", new TwentyFeetStraightLinePath(swerveSubsystem));
@@ -180,7 +185,7 @@ public class RobotContainer {
                 boolean relative = driveController.getSwerveRelative();
 
                 if (driveController.getSwerveHeadingLock()) {
-                    double currentHeading = swerveSubsystem.getRobotPosition().getRotation().getRadians();
+                    double currentHeading = swerveSubsystem.getFieldHeading().getRadians();
                     double lockHeading = (Math.abs(MathUtil.angleModulus(currentHeading)) > (Math.PI / 2)) ? Math.PI : 0;
 
                     swerveSubsystem.setDrivePowersWithHeadingLock(xPower, yPower, new Rotation2d(lockHeading), relative);
@@ -194,11 +199,13 @@ public class RobotContainer {
             driveController.getFieldResetButton().onTrue(new InstantCommand(swerveSubsystem::resetFieldAngle, swerveSubsystem));
             driveController.getChargingStationLockButton().onTrue(new InstantCommand(swerveSubsystem::toggleChargingStationLocked, swerveSubsystem));
 
+            /*
             brSwitch.onTrue(new InstantCommand(() -> {
                 swerveSubsystem.setSteerRelativeEncoderFeedback(true);
             }, swerveSubsystem)).onFalse(new InstantCommand(() -> {
                 swerveSubsystem.setSteerRelativeEncoderFeedback(false);
             }, swerveSubsystem));
+            */
         } else if (driveSubsystem instanceof TankSubsystem) {
             final TankSubsystem tankSubsystem = (TankSubsystem) driveSubsystem;
 
@@ -247,7 +254,8 @@ public class RobotContainer {
         }, tiltedElevatorSubsystem));
 
         mechBButton.onTrue(new InstantCommand(() -> {
-            tiltedElevatorSubsystem.toggleState(ElevatorState.GROUND, ElevatorState.CHUTE);
+            // tiltedElevatorSubsystem.toggleState(ElevatorState.GROUND, ElevatorState.CHUTE);
+            tiltedElevatorSubsystem.setState(ElevatorState.GROUND);
         }, tiltedElevatorSubsystem));
 
         mechXButton.onTrue(new InstantCommand(() -> {

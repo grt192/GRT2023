@@ -5,7 +5,7 @@ import edu.wpi.first.math.util.Units;
 import frc.robot.Constants;
 
 public enum ElevatorState {
-    GROUND(0, Units.inchesToMeters(4), 0),
+    GROUND(0, Units.inchesToMeters(5), 0),
     CHUTE(Units.inchesToMeters(40)),
     SUBSTATION(Units.inchesToMeters(45)), // absolute height = 37.375 in
     CUBE_MID(Units.inchesToMeters(Constants.IS_R1 ? 33 : 40)), // absolute height = 14.25 in

@@ -19,7 +19,6 @@ public class DualPIDBalancerCommand extends BaseBalancerCommand {
     private double deltaAngle;
 
     private boolean reachedStation;
-    private boolean passedCenter;
     private boolean balanced;
 
     public DualPIDBalancerCommand(BaseDrivetrain driveSubsystem) {

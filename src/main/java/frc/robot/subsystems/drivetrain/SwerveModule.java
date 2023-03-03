@@ -189,8 +189,10 @@ public class SwerveModule implements BaseSwerveModule {
      * @param state The desired state of the module as a `SwerveModuleState`.
      */
     public void setDesiredState(SwerveModuleState state) {
-        Rotation2d currentAngle = getAngle();
-        SwerveModuleState optimized = SwerveModuleState.optimize(state, currentAngle);
+        Rotation2d currentAngle = relativeMode ? getRelativeEncoderAngle() : getAngle();
+        SwerveModuleState optimized = relativeMode
+            ? optimizeWithWraparound(state, currentAngle)
+            : SwerveModuleState.optimize(state, currentAngle);
 
         double currentVelocity = driveEncoder.getVelocity();
         double targetAngle = optimized.angle.getRadians() - offsetRads;
@@ -208,26 +210,32 @@ public class SwerveModule implements BaseSwerveModule {
 
         // driveMotor.set(ControlMode.Velocity, optimized.getFirst() / (DRIVE_TICKS_TO_METERS * 10.0));
         drivePidController.setReference(optimized.speedMetersPerSecond, ControlType.kVelocity);
-
-        if (relativeMode) {
-            steerPidController.setReference(calculateRelativeTargetPosition(optimized.angle, getRelativeEncoderAngle()), ControlType.kPosition);
-        } else {
-            steerPidController.setReference(targetAngle, ControlType.kPosition);
-        }
+        steerPidController.setReference(targetAngle, ControlType.kPosition);
     }
 
     /**
-     * Calculate the target encoder position for a relative encoder steer given a
-     * target angle.
+     * Optimizes a `SwerveModuleState` by inverting the wheel speeds and rotating the other direction
+     * if the delta angle is greater than 90 degrees. This method also handles angle wraparound.
      * 
-     * @param targetRads  The target position for the steer.
-     * @param currentRads The current (relative) position for the steer.
-     * @return A target position equivalent to targetRads within currentRads +- PI,
-     *         and within +-PI/2 when the target position is optimized.
+     * @param target The target `SwerveModuleState`.
+     * @param currentUnwrappedAngle The current *unwrapped* angle of the module, as a `Rotation2d`.
+     * @return The optimized `SwerveModuleState`.
      */
-    private double calculateRelativeTargetPosition(Rotation2d targetRads, Rotation2d currentRads) {
-        double deltaRads = MathUtil.angleModulus(targetRads.getRadians() - currentRads.getRadians());
-        return currentRads.getRadians() + deltaRads;
+    public static SwerveModuleState optimizeWithWraparound(SwerveModuleState target, Rotation2d currentUnwrappedAngle) {
+        double angleRads = currentUnwrappedAngle.getRadians();
+
+        double targetVel = target.speedMetersPerSecond;
+        double targetWrappedAngleRads = target.angle.getRadians();
+        double deltaRads = MathUtil.angleModulus(targetWrappedAngleRads - angleRads);
+
+        // Optimize the `SwerveModuleState` if delta angle > 90 by flipping wheel speeds
+        // and going the other way.
+        if (Math.abs(deltaRads) > Math.PI / 2.0) {
+            targetVel = -targetVel;
+            deltaRads += deltaRads > Math.PI / 2.0 ? -Math.PI : Math.PI;
+        }
+
+        return new SwerveModuleState(targetVel, new Rotation2d(angleRads + deltaRads));
     }
 
     @Override
@@ -245,17 +253,17 @@ public class SwerveModule implements BaseSwerveModule {
      * @return The current [-pi, pi] angle of the module, as a `Rotation2d`.
      */
     private Rotation2d getAngle() {
-        double rawAngle = relativeMode ? 
-            steerRelativeEncoder.getPosition()
-            : steerAbsoluteEncoder.getPosition();
-
-        return new Rotation2d(MathUtil.angleModulus(rawAngle + offsetRads));
+        double wrappedAngleRads = MathUtil.angleModulus(steerAbsoluteEncoder.getPosition() + offsetRads);
+        return new Rotation2d(wrappedAngleRads);
     }
 
+    /**
+     * Gets the angle of the module reported by the relative encoder. This applies `offsetRads`, but is not wrapped.
+     * @return The angle of the module, reported by the relative encoder.
+     */
     private Rotation2d getRelativeEncoderAngle() {
-        double rawAngle = steerRelativeEncoder.getPosition();
-
-        return new Rotation2d(rawAngle + offsetRads);
+        double angleRads = steerRelativeEncoder.getPosition() + offsetRads;
+        return new Rotation2d(angleRads);
     }
 
     /**

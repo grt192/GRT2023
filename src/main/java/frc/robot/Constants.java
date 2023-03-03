@@ -38,16 +38,16 @@ public final class Constants {
     public static final class SwerveConstants {
         public static final double TL_OFFSET_RADS = IS_R1 
             ? -5.704799652099609
-            : -0.2999996840953827; // 2.8415929694944104 flipped
+            : -0.3458388725942889; // 2.795753780995504 flipped
         public static final double TR_OFFSET_RADS = IS_R1 
             ? -0.842838776116
-            : -0.4716239094773709; // 2.6699687441124222 flipped
+            : -0.44043676455947356; // 2.7011558890303196 flipped
         public static final double BL_OFFSET_RADS = IS_R1
             ? -0.793255341057
-            : -2.4979224959996085; // 0.6436701575901846 flipped
+            : -2.547585173449244; // 0.594007480140549 flipped
         public static final double BR_OFFSET_RADS = IS_R1
             ? 0.561284053322
-            : 1.8687766234027308; // -1.2728160301870624 flipped
+            : 1.8316270430856427; // -1.3099656105041504 flipped
 
         public static final int TL_DRIVE = 2;
         public static final int TL_STEER = 3;
@@ -129,7 +129,7 @@ public final class Constants {
         public static final int EXTENSION_FOLLOW_ID = 8;
         public static final int EXTENSION_FOLLOW_B_ID = 9;
         
-        public static final float EXTENSION_LIMIT = (float) Units.inchesToMeters(63);
+        public static final float EXTENSION_LIMIT = (float) Units.inchesToMeters(62.5);
         public static final double EXTENSION_TOLERANCE = Units.inchesToMeters(1);
 
         public static final int ZERO_LIMIT_ID = 1;

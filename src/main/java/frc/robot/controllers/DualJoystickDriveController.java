@@ -69,12 +69,12 @@ public class DualJoystickDriveController extends BaseDriveController {
 
     @Override
     public JoystickButton getFieldResetButton() {
-        return leftMiddleButton;
+        return leftTopRightButton;
     }
 
     @Override
     public JoystickButton getCameraSwitchButton() {
-        return leftTopRightButton;
+        return rightBaseLeftTopButton;
     }
 
     @Override
@@ -98,9 +98,9 @@ public class DualJoystickDriveController extends BaseDriveController {
      * @return The scale to apply to rotational input.
      */
     private double getTurnScaling() {
-        // boolean isSlowMode = leftJoystick.getTrigger();
+        boolean isSlowMode = leftJoystick.getTrigger();
         // return isSlowMode ? 0.6 : 0.6;
 
-        return 0.5;
+        return isSlowMode ? 0.25 : 0.5;
     }
 }

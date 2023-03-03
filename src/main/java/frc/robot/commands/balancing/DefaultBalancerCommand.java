@@ -14,9 +14,10 @@ public class DefaultBalancerCommand extends BaseBalancerCommand {
     private double returnDrivePower; // drive power to be returned to DT
     private double returnAngularPower; // angular power to return to DT (for heading correction)
 
+    private final boolean reversed;
+
     private boolean reachedStation;
     private boolean passedCenter;
-    private boolean waiting;
     private boolean balanced;
 
     private double initialHeading;
@@ -25,11 +26,24 @@ public class DefaultBalancerCommand extends BaseBalancerCommand {
     private double deltaAngle;
 
     public DefaultBalancerCommand(BaseDrivetrain driveSubsystem) {
+        this(driveSubsystem, false);
+    }
+
+    /**
+     * Constructs a default balancer command from a drive subsystem and a boolean indicating
+     * whether to balance from the front or back.
+     * 
+     * @param driveSubsystem The drive subsystem.
+     * @param reversed Whether to balance driving forwards or backwards. Defaults to backwards; pass `true` to balance forwards.
+     */
+    public DefaultBalancerCommand(BaseDrivetrain driveSubsystem, boolean reversed) {
         super(driveSubsystem);
 
-        drivePID = new PIDController(0.3 / 35, 0.0, 0.0); // no deriv successful
+        drivePID = new PIDController(0.0072, 0.0, 0.0); // no deriv successful
         turnPID = new PIDController(0.1 / 5,0.0, 0.0); // kP = max pwr / max err
         timer = new Timer();
+
+        this.reversed = reversed;
     }
 
     @Override
@@ -39,7 +53,6 @@ public class DefaultBalancerCommand extends BaseBalancerCommand {
         reachedStation = false;
         passedCenter = false;
         balanced = false;
-        waiting = false;
     }
 
     @Override
@@ -50,7 +63,7 @@ public class DefaultBalancerCommand extends BaseBalancerCommand {
             returnDrivePower = -0.80;
             if (ahrs.getPitch() <= -15.0) {
                 reachedStation = true;
-                returnDrivePower = -0.2;
+                returnDrivePower = -0.17;
             } //.15 successful
         } else {
             currentPitch = ahrs.getPitch();
@@ -65,10 +78,12 @@ public class DefaultBalancerCommand extends BaseBalancerCommand {
             }
         }
 
+        // TODO: better name
+        double actualDrivePower = reversed ? -returnDrivePower : returnDrivePower;
         if (driveSubsystem instanceof BaseSwerveSubsystem) {
-            ((BaseSwerveSubsystem) driveSubsystem).setDrivePowers(returnDrivePower, 0.0, 0.0, true);
+            ((BaseSwerveSubsystem) driveSubsystem).setDrivePowers(actualDrivePower, 0.0, 0.0, true);
         } else {
-            driveSubsystem.setDrivePowers(returnDrivePower);
+            driveSubsystem.setDrivePowers(actualDrivePower);
         }
 
         oldPitch = currentPitch; // set the current angle to old angle so it is accessible for next cycle     

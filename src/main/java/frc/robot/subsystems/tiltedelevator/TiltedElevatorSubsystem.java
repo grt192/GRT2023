@@ -166,7 +166,7 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
             // System.out.println(leftHallSensorPos);
             // System.out.println(lastHallPos + " " + leftHallSensorPos);
             if (leftHallSensorPos != null && lastHallPos == null){
-                extensionEncoder.setPosition(Units.inchesToMeters(EXTENSION_LIMIT));//leftHallSensorPos.getExtendDistanceMeters());
+                // extensionEncoder.setPosition(Units.inchesToMeters(EXTENSION_LIMIT));//leftHallSensorPos.getExtendDistanceMeters());
             }
             lastHallPos = leftHallSensorPos;
         }
@@ -218,7 +218,7 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
         // else {
             // Set PID reference
             extensionPidController.setReference(
-                MathUtil.clamp(targetExtension, 0, EXTENSION_LIMIT),
+                MathUtil.clamp(targetExtension, 0, EXTENSION_LIMIT + Units.inchesToMeters(.75)),
                 ControlType.kPosition, 0,
                 arbFeedforward, ArbFFUnits.kPercentOut
             );

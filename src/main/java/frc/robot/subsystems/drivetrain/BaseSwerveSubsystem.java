@@ -138,6 +138,12 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
             .getEntry();
         ShuffleboardUtil.addBooleanListener(visionEnableEntry, (value) -> VISION_ENABLE = value);
 
+        GenericEntry relativeEncoderToggleEntry = shuffleboardTab.add("Relative encoder feedback (set)", false)
+            .withPosition(8, 2)
+            .withWidget(BuiltInWidgets.kToggleSwitch)
+            .getEntry();
+        ShuffleboardUtil.addBooleanListener(relativeEncoderToggleEntry, (value) -> setSteerRelativeEncoderFeedback(value));
+
         lockTimer = new Timer();
     }
 
@@ -267,7 +273,9 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
         double error = MathUtil.angleModulus(heading.minus(currentRotation).getRadians());
         double turnSpeed = thetaController.calculate(currentRotation.getRadians(), currentRotation.getRadians() + error);
 
-        setDrivePowers(xPower, yPower, turnSpeed / MAX_VEL, relative);
+        // System.out.println("curr: " + currentRotation + " eror: " + Units.radiansToDegrees(error) + " turnsped: " + turnSpeed);
+
+        setDrivePowers(xPower, yPower, turnSpeed / MAX_OMEGA, relative);
     }
 
     /**
@@ -394,7 +402,7 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
      * 
      * @return The robot's field-centric heading as a Rotation2d.
      */
-    private Rotation2d getFieldHeading() {
+    public Rotation2d getFieldHeading() {
         // Primarily use AHRS reading, falling back on the pose estimator if the AHRS disconnects.
         Rotation2d robotHeading = ahrs.isConnected()
             ? getGyroHeading()
