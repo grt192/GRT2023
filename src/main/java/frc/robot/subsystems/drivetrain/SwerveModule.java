@@ -41,7 +41,7 @@ public class SwerveModule implements BaseSwerveModule {
     private SparkMaxPIDController steerPidController;
 
     private final double offsetRads;
-    private boolean relativeMode = false;
+    private boolean relativeFeedbackEnabled = false;
 
     private static final double DRIVE_ROTATIONS_TO_METERS = (1.0 / 3.0) * (13.0 / 8.0) * (1.0 / 3.0) * Math.PI * Units.inchesToMeters(4.0) * 9.0 / 9.5; // 3:1, 8:13, 3:1 gear ratios, 4.0" wheel diameter, circumference = pi * d
     private static final double STEER_ROTATIONS_TO_RADIANS = (1.0 / 52.0) * (34.0 / 63.0) * 2 * Math.PI; // 52:1 gear ratio, 63:34 pulley ratio, 1 rotation = 2pi
@@ -180,7 +180,7 @@ public class SwerveModule implements BaseSwerveModule {
         return new SwerveModulePosition(
             // driveMotor.getSelectedSensorPosition() * DRIVE_TICKS_TO_METERS,
             driveEncoder.getPosition(),
-            getAngle()
+            getWrappedAngle()
         );
     }
 
@@ -189,8 +189,10 @@ public class SwerveModule implements BaseSwerveModule {
      * @param state The desired state of the module as a `SwerveModuleState`.
      */
     public void setDesiredState(SwerveModuleState state) {
-        Rotation2d currentAngle = relativeMode ? getRelativeEncoderAngle() : getAngle();
-        SwerveModuleState optimized = relativeMode
+        // If we're using the absolute encoder, keep all angles wrapped and rely on PID wrapping for
+        // the setpoint. Otherwise, use the unwrapped angle and optimize with wraparound.
+        Rotation2d currentAngle = relativeFeedbackEnabled ? getRelativeAngle() : getWrappedAngle();
+        SwerveModuleState optimized = relativeFeedbackEnabled
             ? optimizeWithWraparound(state, currentAngle)
             : SwerveModuleState.optimize(state, currentAngle);
 
@@ -243,7 +245,7 @@ public class SwerveModule implements BaseSwerveModule {
         steerPidController.setFeedbackDevice(useRelative ? steerRelativeEncoder : steerAbsoluteEncoder);
         steerPidController.setPositionPIDWrappingEnabled(!useRelative);
 
-        this.relativeMode = useRelative;
+        this.relativeFeedbackEnabled = useRelative;
     }
 
     /**
@@ -252,16 +254,20 @@ public class SwerveModule implements BaseSwerveModule {
      * 
      * @return The current [-pi, pi] angle of the module, as a `Rotation2d`.
      */
-    private Rotation2d getAngle() {
-        double wrappedAngleRads = MathUtil.angleModulus(steerAbsoluteEncoder.getPosition() + offsetRads);
+    private Rotation2d getWrappedAngle() {
+        double angleRads = relativeFeedbackEnabled
+            ? steerRelativeEncoder.getPosition()
+            : steerAbsoluteEncoder.getPosition();
+        double wrappedAngleRads = MathUtil.angleModulus(angleRads + offsetRads);
+
         return new Rotation2d(wrappedAngleRads);
     }
 
     /**
      * Gets the angle of the module reported by the relative encoder. This applies `offsetRads`, but is not wrapped.
-     * @return The angle of the module, reported by the relative encoder.
+     * @return The current unwrapped angle of the module, as a `Rotation2d`.
      */
-    private Rotation2d getRelativeEncoderAngle() {
+    private Rotation2d getRelativeAngle() {
         double angleRads = steerRelativeEncoder.getPosition() + offsetRads;
         return new Rotation2d(angleRads);
     }
