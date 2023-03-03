@@ -42,7 +42,6 @@ import frc.robot.controllers.XboxDriveController;
 import frc.robot.vision.SwitchableCamera;
 import frc.robot.vision.PhotonWrapper;
 import frc.robot.subsystems.drivetrain.TankSubsystem;
-import frc.robot.subsystems.leds.LEDStrip;
 import frc.robot.subsystems.leds.LEDSubsystem;
 import frc.robot.subsystems.tiltedelevator.ElevatorState;
 import frc.robot.subsystems.tiltedelevator.TiltedElevatorSubsystem;
@@ -121,8 +120,9 @@ public class RobotContainer {
         superstructure = new Superstructure(rollerSubsystem, tiltedElevatorSubsystem, signalLEDSubsystem, switchableCamera);
         balancerCommand = new DefaultBalancerCommand(driveSubsystem);
 
-        // Configure the button bindings
-        configureButtonBindings();
+        // Configure button bindings
+        configureDriveBindings();
+        configureMechBindings();
 
         // Add auton sequences to the chooser and add the chooser to shuffleboard
         autonChooser = new SendableChooser<>();
@@ -162,17 +162,9 @@ public class RobotContainer {
     }
 
     /**
-     * Use this method to define your button->command mappings. Buttons can be
-     * created by instantiating a {@link GenericHID} or one of its subclasses
-     * ({@link edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then
-     * passing it to a {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
+     * Configures button bindings for the drive subsystem and controller.
      */
-    private void configureButtonBindings() {
-        driveBindings();
-        mechBindings();
-    }
-
-    private void driveBindings() {
+    private void configureDriveBindings() {
         driveController.getBalancerButton().whileTrue(balancerCommand);
         driveController.getCameraSwitchButton().onTrue(new InstantCommand(switchableCamera::switchCamera));
 
@@ -186,16 +178,14 @@ public class RobotContainer {
                 boolean relative = driveController.getSwerveRelative();
 
                 if (driveController.getSwerveHeadingLock()) {
-                    double currentHeading = swerveSubsystem.getFieldHeading().getRadians();
-                    double lockHeading = (Math.abs(MathUtil.angleModulus(currentHeading)) > (Math.PI / 2)) ? Math.PI : 0;
+                    double currentHeadingRads = swerveSubsystem.getFieldHeading().getRadians();
+                    double lockHeadingRads = (Math.abs(currentHeadingRads) > Math.PI / 2.0) ? Math.PI : 0;
 
-                    swerveSubsystem.setDrivePowersWithHeadingLock(xPower, yPower, new Rotation2d(lockHeading), relative);
+                    swerveSubsystem.setDrivePowersWithHeadingLock(xPower, yPower, new Rotation2d(lockHeadingRads), relative);
                 } else {
                     swerveSubsystem.setDrivePowers(xPower, yPower, angularPower, relative);
                 }
             }, swerveSubsystem));
-
-            mechAButton.onTrue(new DropperChooserCommand(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem));
 
             driveController.getFieldResetButton().onTrue(new InstantCommand(swerveSubsystem::resetFieldAngle, swerveSubsystem));
             driveController.getChargingStationLockButton().onTrue(new InstantCommand(swerveSubsystem::toggleChargingStationLocked, swerveSubsystem));
@@ -226,31 +216,38 @@ public class RobotContainer {
         }
     }
 
-    private void mechBindings() {
+    /**
+     * Configures button bindings for the roller / elevator mechs and controller.
+     */
+    private void configureMechBindings() {
+        if (driveSubsystem instanceof BaseSwerveSubsystem) {
+            BaseSwerveSubsystem swerveSubsystem = (BaseSwerveSubsystem) driveSubsystem;
+            mechAButton.onTrue(new DropperChooserCommand(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem));
+        }
+
         rollerSubsystem.setDefaultCommand(new RunCommand(() -> {
-            double rollPower = (.95 * mechController.getRightTriggerAxis()) - (.65 * mechController.getLeftTriggerAxis());
-            rollerSubsystem.setRollPower(rollPower);
+            double forwardPower = 0.95 * mechController.getRightTriggerAxis();
+            double reversePower = 0.65 * mechController.getLeftTriggerAxis();
+            rollerSubsystem.setRollPower(forwardPower - reversePower);
         }, rollerSubsystem));
 
-        mechYButton.onTrue(new InstantCommand(() -> {
-            rollerSubsystem.openMotor();;
-        }, rollerSubsystem));
+        mechYButton.onTrue(new InstantCommand(rollerSubsystem::openMotor, rollerSubsystem));
 
         tiltedElevatorSubsystem.setDefaultCommand(new RunCommand(() -> {
             double yPower = -mechController.getLeftY();
-            double pov = mechController.getPOV();
-            if(pov == 0){
-                tiltedElevatorSubsystem.setState(ElevatorState.SUBSTATION);
-            } else if (pov == 270){
-                tiltedElevatorSubsystem.setState(ElevatorState.HYBRID);
-            } else if (pov == 180){
-                tiltedElevatorSubsystem.setState(ElevatorState.GROUND);
-                tiltedElevatorSubsystem.offsetState = OffsetState.OVERRIDE_HAS_PIECE;
-            } else if (pov == 90){
-                tiltedElevatorSubsystem.resetOffset();
-            }
-            tiltedElevatorSubsystem.setManualPower(yPower);
 
+            int pov = mechController.getPOV();
+            switch (pov) {
+                case 0 -> tiltedElevatorSubsystem.setState(ElevatorState.SUBSTATION);
+                case 270 -> tiltedElevatorSubsystem.setState(ElevatorState.HYBRID);
+                case 180 -> {
+                    tiltedElevatorSubsystem.setState(ElevatorState.GROUND);
+                    tiltedElevatorSubsystem.offsetState = OffsetState.OVERRIDE_HAS_PIECE;
+                }
+                case 90 -> tiltedElevatorSubsystem.resetOffset();
+            }
+
+            tiltedElevatorSubsystem.setManualPower(yPower);
             tiltedElevatorSubsystem.changeOffsetDistMeters(yPower);
         }, tiltedElevatorSubsystem));
 
