@@ -22,7 +22,7 @@ public class BottomBalanceAutonSequence extends BaseAutonSequence {
     private static final FieldPosition FINAL_POSE = FieldPosition.SPECIAL_BALANCE_POS;
 
     /**
-     * Non-balancing bottom auton sequence.
+     * Balancing bottom auton sequence.
      * @param swerveSubsystem The swerve subsystem.
      * @param rollerSubsystem The roller subsystem.
      * @param tiltedElevatorSubsystem The tilted elevator subsystem.

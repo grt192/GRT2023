@@ -3,6 +3,7 @@ package frc.robot.subsystems.drivetrain;
 import edu.wpi.first.math.MatBuilder;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Nat;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -11,7 +12,6 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.Timer;
@@ -43,7 +43,8 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
     public final double MAX_OMEGA; // Max robot angular velocity, in rads/s
     public final double MAX_ALPHA; // Max robot angular acceleration, in rads/s^2
 
-    private final ProfiledPIDController thetaController;
+    // private final ProfiledPIDController thetaController;
+    private final PIDController thetaController;
 
     private final Timer lockTimer;
     private static final double LOCK_TIMEOUT_SECONDS = 1.0; // The elapsed idle time to wait before locking
@@ -86,10 +87,13 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
         MAX_ALPHA = maxAlpha;
 
         // Initialize heading-lock PID controller
+        /*
         thetaController = new ProfiledPIDController(
             1.7, 0, 0, 
             new TrapezoidProfile.Constraints(MAX_OMEGA, MAX_ALPHA)
         );
+        */
+        thetaController = new PIDController(3.4, 0, 0);
         thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
         this.topLeftModule = topLeftModule;
@@ -269,10 +273,11 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
     public void setDrivePowersWithHeadingLock(double xPower, double yPower, Rotation2d targetHeading, boolean relative) {
         Rotation2d currentRotation = getFieldHeading();
         double turnSpeed = thetaController.calculate(currentRotation.getRadians(), targetHeading.getRadians());
+        double turnPower = MathUtil.clamp(turnSpeed / MAX_OMEGA, -1.0, 1.0);
 
         // System.out.println("curr: " + currentRotation + " eror: " + Units.radiansToDegrees(error) + " turnsped: " + turnSpeed);
 
-        setDrivePowers(xPower, yPower, turnSpeed / MAX_OMEGA, relative);
+        setDrivePowers(xPower, yPower, turnPower, relative);
     }
 
     /**

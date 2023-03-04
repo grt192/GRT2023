@@ -1,6 +1,7 @@
 package frc.robot.commands.pretest;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 
@@ -23,6 +24,7 @@ public class MotorTestCommand extends SequentialCommandGroup {
         addRequirements(swerveSubsystem, tiltedElevatorSubsystem, rollerSubsystem);
 
         addCommands(
+            new PrintCommand("hello 1"),
             // Lock swerve
             new InstantCommand(swerveSubsystem::applyLock, swerveSubsystem),
 
@@ -33,6 +35,8 @@ public class MotorTestCommand extends SequentialCommandGroup {
 
             new TiltedElevatorCommand(tiltedElevatorSubsystem, ElevatorState.CHUTE),
             new WaitCommand(TEST_DELAY_SECS),
+
+            new PrintCommand("hello 2"),
 
             new RollerIntakeCommand(rollerSubsystem),
             new WaitCommand(4), //to not take any fingers off

@@ -44,10 +44,10 @@ public final class Constants {
             : -0.44043676455947356; // 2.7011558890303196 flipped
         public static final double BL_OFFSET_RADS = IS_R1
             ? -0.793255341057
-            : -2.547585173449244; // 0.594007480140549 flipped
+            : -0.4294843792954861; // 2.712108274294307 flipped
         public static final double BR_OFFSET_RADS = IS_R1
             ? 0.561284053322
-            : 1.8316270430856427; // -1.3099656105041504 flipped
+            : 1.5007363875680646; // -1.6408562660217285 flipped
 
         public static final int TL_DRIVE = 2;
         public static final int TL_STEER = 3;
@@ -157,7 +157,7 @@ public final class Constants {
 
     public static final class LEDConstants {
         public static final int LED_PWM_PORT = 1;
-        public static final int LED_LENGTH = 91;
+        public static final int LED_LENGTH = 144;
     }
 
     public static final class GripperConstants {
