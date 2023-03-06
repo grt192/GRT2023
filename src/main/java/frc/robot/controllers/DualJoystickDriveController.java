@@ -5,8 +5,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 /**
- * A two-joystick drive controller on ports 0 and 1. Swerve relative is bound to the right trigger,
- * balancing is bound to the left trigger, and field reset is bound to the left middle button.
+ * A two-joystick drive controller on ports 0 and 1.
  */
 public class DualJoystickDriveController extends BaseDriveController {
     private final Joystick leftJoystick = new Joystick(0);
@@ -83,9 +82,7 @@ public class DualJoystickDriveController extends BaseDriveController {
     }
 
     /**
-     * Gets the amount to scale translational input by. When the left trigger (slow mode) 
-     * is engaged, this is 0.3.
-     * 
+     * Gets the amount to scale translational input by.
      * @return The scale to apply to translational input.
      */
     private double getDriveScaling() {
@@ -99,8 +96,6 @@ public class DualJoystickDriveController extends BaseDriveController {
      */
     private double getTurnScaling() {
         boolean isSlowMode = leftJoystick.getTrigger();
-        // return isSlowMode ? 0.6 : 0.6;
-
         return isSlowMode ? 0.25 : 0.5;
     }
 }

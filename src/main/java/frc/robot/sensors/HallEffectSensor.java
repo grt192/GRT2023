@@ -1,4 +1,4 @@
-package frc.robot.motorcontrol;
+package frc.robot.sensors;
 
 import java.util.ArrayList;
 
@@ -23,7 +23,7 @@ public class HallEffectSensor {
     public HallEffectSensor(int id, HallEffectMagnet[] magnets, double initialMechPos) {
         this(id, magnets, initialMechPos, -1, 0);
     }
-    
+
     public HallEffectSensor(int id, HallEffectMagnet[] magnets, double initialMechPos, int lowerPos, int upperPos) {
         this.sensor = new DigitalInput(id);
         this.magnets = magnets;
@@ -44,7 +44,10 @@ public class HallEffectSensor {
     public void addToShuffleboard(ShuffleboardTab shuffleboardTab, int columnIndex, int rowIndex) {
         shuffleboardEntries = new ArrayList<GenericEntry>();
         for (HallEffectMagnet magnet : magnets) {
-            GenericEntry entry = shuffleboardTab.add("Magnet " + magnet.getExtendDistanceInches() + "in", false).withPosition(columnIndex++, rowIndex).withWidget(BuiltInWidgets.kBooleanBox).getEntry();
+            GenericEntry entry = shuffleboardTab.add("Magnet " + columnIndex, false)
+                .withPosition(columnIndex++, rowIndex)
+                .withWidget(BuiltInWidgets.kBooleanBox)
+                .getEntry();
             shuffleboardEntries.add(entry);
         }
     }
@@ -80,7 +83,7 @@ public class HallEffectSensor {
 
         //     setShuffleboardValue(lowerPos, true);
         // }
-        
+
         // // If magnet is no longer detected
         // if (!detected && prevDetected == true) {
         //     setShuffleboardValue(lowerPos, false);

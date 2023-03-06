@@ -70,7 +70,6 @@ public class DefaultBalancerCommand extends BaseBalancerCommand {
             }
         }
 
-        // TODO: better name
         if (driveSubsystem instanceof BaseSwerveSubsystem) {
             ((BaseSwerveSubsystem) driveSubsystem).setDrivePowers(returnDrivePower, 0.0, 0.0, true);
         } else {

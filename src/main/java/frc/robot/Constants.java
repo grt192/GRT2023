@@ -9,8 +9,7 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.util.Units;
-
-import frc.robot.motorcontrol.HallEffectMagnet;
+import frc.robot.sensors.HallEffectMagnet;
 
 import org.photonvision.PhotonCamera;
 

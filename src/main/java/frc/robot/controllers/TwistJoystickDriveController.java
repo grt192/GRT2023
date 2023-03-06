@@ -5,9 +5,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 /**
- * A single joystick on port 0, with rotation bound to the Z-rotate axis. Swerve relative is bound
- * to the trigger, balancing is bound to the middle-right button, and field reset is bound to the 
- * middle button.
+ * A single joystick on port 0, with rotation bound to the Z-rotate axis.
  */
 public class TwistJoystickDriveController extends BaseDriveController {
     private final Joystick joystick = new Joystick(0);

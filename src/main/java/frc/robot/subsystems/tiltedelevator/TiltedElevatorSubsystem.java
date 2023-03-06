@@ -18,11 +18,11 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.Constants;
+import frc.robot.sensors.HallEffectMagnet;
+import frc.robot.sensors.HallEffectSensor;
 import frc.robot.util.MotorUtil;
 import frc.robot.util.ShuffleboardUtil;
-import frc.robot.motorcontrol.HallEffectSensor;
 import frc.robot.subsystems.tiltedelevator.ElevatorState.OffsetState;
-import frc.robot.motorcontrol.HallEffectMagnet;
 
 import static frc.robot.Constants.TiltedElevatorConstants.*;
 
@@ -170,7 +170,7 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
             }
             lastHallPos = leftHallSensorPos;
         }
-        
+
         // If we're in manual power mode, use percent out power supplied by driver joystick.
         if (IS_MANUAL) {
             manualPowerEntry.setDouble(manualPower);
