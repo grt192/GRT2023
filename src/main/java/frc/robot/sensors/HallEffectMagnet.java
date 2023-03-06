@@ -1,7 +1,7 @@
 package frc.robot.sensors;
 
 public class HallEffectMagnet {
-    private double extendDistanceMeters;
+    private final double extendDistanceMeters;
 
     public HallEffectMagnet(double extendDistanceMeters) {
         this.extendDistanceMeters = extendDistanceMeters;

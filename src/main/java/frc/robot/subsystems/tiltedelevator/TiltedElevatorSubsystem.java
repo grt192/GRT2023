@@ -90,7 +90,7 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
             extensionEncoder.setVelocityConversionFactor(EXTENSION_ROTATIONS_TO_METERS / 60.0);
             extensionEncoder.setPosition(0);
             
-            sparkMax.setSoftLimit(SoftLimitDirection.kForward, (float) (EXTENSION_LIMIT + Units.inchesToMeters(.5)));
+            sparkMax.setSoftLimit(SoftLimitDirection.kForward, (float) (EXTENSION_LIMIT_METERS + Units.inchesToMeters(.5)));
             sparkMax.enableSoftLimit(SoftLimitDirection.kForward, true);
             sparkMax.setSoftLimit(SoftLimitDirection.kReverse, (float) Units.inchesToMeters(-2));
             sparkMax.enableSoftLimit(SoftLimitDirection.kReverse, true);
@@ -207,18 +207,17 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
 
         // If we're trying to get to 0, set the motor to 0 power so the carriage drops with gravity
         // and hits the hard stop / limit switch.
-        double targetExtension = getTargetExtension();
+        double targetExtension = getTargetExtensionMeters();
         if (targetExtension == 0 && currentPos < Units.inchesToMeters(1) && zeroLimitSwitch.get()) {
             extensionMotor.set(-0.075);
         }
-        // If we're trying to get max extension and we're currently within 1'' of our goal, move elevator up so it hits the magnet
+        // If we're trying to get max extension and we're currently within 1" of our goal, move elevator up so it hits the magnet
         // else if (targetExtension >= EXTENSION_LIMIT && (EXTENSION_LIMIT - currentPos < Units.inchesToMeters(1))) {
         //     extensionMotor.set(0.075);
-        // } 
-        // else {
+        // } else {
             // Set PID reference
             extensionPidController.setReference(
-                MathUtil.clamp(targetExtension, 0, EXTENSION_LIMIT + Units.inchesToMeters(.75)),
+                MathUtil.clamp(targetExtension, 0, EXTENSION_LIMIT_METERS + Units.inchesToMeters(.75)),
                 ControlType.kPosition, 0,
                 arbFeedforward, ArbFFUnits.kPercentOut
             );
@@ -293,7 +292,7 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
      * Gets the current extension, in meters, of the subsystem.
      * @return The current extension, in meters.
      */
-    public double getExtension() { 
+    public double getExtensionMeters() { 
         return extensionEncoder.getPosition();
     }
 
@@ -301,7 +300,7 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
      * Gets the target extension, in meters, of the subsystem.
      * @return The target extension, in meters.
      */
-    public double getTargetExtension() {
+    public double getTargetExtensionMeters() {
         return state.getExtension(offsetState, this.pieceGrabbed) + offsetDistMeters;
     }
 
@@ -310,6 +309,6 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
      * @return Whether the elevator has reached its target extension.
      */
     public boolean atTarget() {
-        return Math.abs(getExtension() - getTargetExtension()) <= EXTENSION_TOLERANCE;
+        return Math.abs(getExtensionMeters() - getTargetExtensionMeters()) <= EXTENSION_TOLERANCE_METERS;
     }
 }

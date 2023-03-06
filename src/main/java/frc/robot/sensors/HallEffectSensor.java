@@ -8,8 +8,8 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 
 public class HallEffectSensor {
-    private DigitalInput sensor;
-    private HallEffectMagnet[] magnets; // array of magnet locations from smallest extension to largest extension
+    private final DigitalInput sensor;
+    private final HallEffectMagnet[] magnets; // array of magnet locations from smallest extension to largest extension
     private ArrayList<GenericEntry> shuffleboardEntries = null;
 
     // State vars tracking current sensor location using index of magnet position[]
