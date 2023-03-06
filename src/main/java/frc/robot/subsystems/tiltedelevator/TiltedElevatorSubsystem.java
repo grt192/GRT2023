@@ -89,11 +89,11 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
             extensionEncoder.setPositionConversionFactor(EXTENSION_ROTATIONS_TO_METERS);
             extensionEncoder.setVelocityConversionFactor(EXTENSION_ROTATIONS_TO_METERS / 60.0);
             extensionEncoder.setPosition(0);
-
-            sparkMax.enableSoftLimit(SoftLimitDirection.kForward, true);
+            
             sparkMax.setSoftLimit(SoftLimitDirection.kForward, (float) (EXTENSION_LIMIT + Units.inchesToMeters(.5)));
-            sparkMax.enableSoftLimit(SoftLimitDirection.kReverse, true);
+            sparkMax.enableSoftLimit(SoftLimitDirection.kForward, true);
             sparkMax.setSoftLimit(SoftLimitDirection.kReverse, (float) Units.inchesToMeters(-2));
+            sparkMax.enableSoftLimit(SoftLimitDirection.kReverse, true);
 
             extensionPidController = MotorUtil.createSparkMaxPIDController(sparkMax, extensionEncoder);
             extensionPidController.setP(extensionP);
