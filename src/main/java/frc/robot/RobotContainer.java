@@ -17,9 +17,12 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
+import frc.robot.commands.auton.BalanceAndTaxiAutonSequence;
 import frc.robot.commands.auton.BalanceAutonSequence;
+import frc.robot.commands.auton.BottomBalanceAutonSequence;
 import frc.robot.commands.auton.BottomOnePieceAutonSequence;
 import frc.robot.commands.auton.BottomTwoPieceAutonSequence;
+import frc.robot.commands.auton.PreloadedOnlyAutonSequence;
 import frc.robot.commands.auton.TopOnePieceAutonSequence;
 import frc.robot.commands.auton.TopTwoPieceAutonSequence;
 import frc.robot.commands.auton.test.BoxAutonSequence;
@@ -40,7 +43,6 @@ import frc.robot.controllers.XboxDriveController;
 import frc.robot.vision.SwitchableCamera;
 import frc.robot.vision.PhotonWrapper;
 import frc.robot.subsystems.drivetrain.TankSubsystem;
-import frc.robot.subsystems.leds.LEDStrip;
 import frc.robot.subsystems.leds.LEDSubsystem;
 import frc.robot.subsystems.tiltedelevator.ElevatorState;
 import frc.robot.subsystems.tiltedelevator.TiltedElevatorSubsystem;
@@ -100,12 +102,13 @@ public class RobotContainer {
     private final ShuffleboardTab shuffleboardTab = Shuffleboard.getTab("Driver");
     private final SendableChooser<Command> autonChooser;
     private final BaseBalancerCommand balancerCommand;
+    private final MotorTestCommand testCommand;
 
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
     public RobotContainer() {
-        driveController = new XboxDriveController();
+        driveController = new DualJoystickDriveController();
 
         photonWrapper = new PhotonWrapper();
         switchableCamera = new SwitchableCamera(shuffleboardTab);
@@ -117,37 +120,49 @@ public class RobotContainer {
         signalLEDSubsystem = new LEDSubsystem(); 
 
         superstructure = new Superstructure(rollerSubsystem, tiltedElevatorSubsystem, signalLEDSubsystem, switchableCamera);
+
         balancerCommand = new DefaultBalancerCommand(driveSubsystem);
 
-        // Configure the button bindings
-        configureButtonBindings();
+        // Configure button bindings
+        configureDriveBindings();
+        configureMechBindings();
 
-        // Add auton sequences to the chooser and add the chooser to shuffleboard
+        // Initialize auton and test commands
         autonChooser = new SendableChooser<>();
         autonChooser.setDefaultOption("Skip auton", new InstantCommand());
 
         if (driveSubsystem instanceof BaseSwerveSubsystem) {
             final BaseSwerveSubsystem swerveSubsystem = (BaseSwerveSubsystem) driveSubsystem;
 
+            testCommand = new MotorTestCommand(swerveSubsystem, tiltedElevatorSubsystem, rollerSubsystem);
+
+            autonChooser.addOption("Red preloaded only", new PreloadedOnlyAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, true));
             autonChooser.addOption("Red top auton (1-piece)", new TopOnePieceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, true));
-            autonChooser.addOption("Red top auton (2-piece)", new TopTwoPieceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, true));
+            // autonChooser.addOption("Red top auton (2-piece)", new TopTwoPieceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, true));
             autonChooser.addOption("Red balance auton", new BalanceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, true));
+            // autonChooser.addOption("Red balance and taxi auton", new BalanceAndTaxiAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, true));
             autonChooser.addOption("Red bottom auton (1-piece)", new BottomOnePieceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, true));
-            autonChooser.addOption("Red bottom auton (2-piece)", new BottomTwoPieceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, true));
+            // autonChooser.addOption("Red bottom auton (2-piece)", new BottomTwoPieceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, true));
+            // autonChooser.addOption("Red bottom balance auton", new BottomBalanceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, true));
 
+            autonChooser.addOption("Blue preloaded only", new PreloadedOnlyAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, false));
             autonChooser.addOption("Blue top auton (1-piece)", new TopOnePieceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, false));
-            autonChooser.addOption("Blue top auton (2-piece)", new TopTwoPieceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, false));
+            // autonChooser.addOption("Blue top auton (2-piece)", new TopTwoPieceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, false));
             autonChooser.addOption("Blue balance auton", new BalanceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, false));
+            // autonChooser.addOption("Blue balance and taxi auton", new BalanceAndTaxiAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, false));
             autonChooser.addOption("Blue bottom auton (1-piece)", new BottomOnePieceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, false));
-            autonChooser.addOption("Blue bottom auton (2-piece)", new BottomTwoPieceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, false));
+            // autonChooser.addOption("Blue bottom auton (2-piece)", new BottomTwoPieceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, false));
+            // autonChooser.addOption("Blue bottom balance auton", new BottomBalanceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, false));
 
-            // autonChooser.addOption("10\" straight-line path", new TenFeetStraightLinePath(swerveSubsystem));
-            // autonChooser.addOption("20\" straight-line path", new TwentyFeetStraightLinePath(swerveSubsystem));
+            // autonChooser.addOption("10' straight-line path", new TenFeetStraightLinePath(swerveSubsystem));
+            // autonChooser.addOption("20' straight-line path", new TwentyFeetStraightLinePath(swerveSubsystem));
             // autonChooser.addOption("High rotation straight-line path", new HighRotationLinePath(swerveSubsystem));
             // autonChooser.addOption("Rotating S-curve", new RotatingSCurveAutonSequence(swerveSubsystem));
             // autonChooser.addOption("Box auton", new BoxAutonSequence(swerveSubsystem));
             // autonChooser.addOption("No-stopping box auton", new ContinuousBoxAutonSequence(swerveSubsystem));
             // autonChooser.addOption("GRT path", new GRTAutonSequence(swerveSubsystem));
+        } else {
+            testCommand = null;
         }
 
         shuffleboardTab.add("Auton", autonChooser)
@@ -156,17 +171,9 @@ public class RobotContainer {
     }
 
     /**
-     * Use this method to define your button->command mappings. Buttons can be
-     * created by instantiating a {@link GenericHID} or one of its subclasses
-     * ({@link edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then
-     * passing it to a {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
+     * Configures button bindings for the drive subsystem and controller.
      */
-    private void configureButtonBindings() {
-        driveBindings();
-        mechBindings();
-    }
-
-    private void driveBindings() {
+    private void configureDriveBindings() {
         driveController.getBalancerButton().whileTrue(balancerCommand);
         driveController.getCameraSwitchButton().onTrue(new InstantCommand(switchableCamera::switchCamera));
 
@@ -180,19 +187,25 @@ public class RobotContainer {
                 boolean relative = driveController.getSwerveRelative();
 
                 if (driveController.getSwerveHeadingLock()) {
-                    double currentHeading = swerveSubsystem.getRobotPosition().getRotation().getRadians();
-                    double lockHeading = (Math.abs(MathUtil.angleModulus(currentHeading)) > (Math.PI / 2)) ? Math.PI : 0;
+                    double currentHeadingRads = swerveSubsystem.getFieldHeading().getRadians();
+                    double lockHeadingRads = (Math.abs(currentHeadingRads) > Math.PI / 2.0) ? Math.PI : 0;
 
-                    swerveSubsystem.setDrivePowersWithHeadingLock(xPower, yPower, new Rotation2d(lockHeading), relative);
+                    swerveSubsystem.setDrivePowersWithHeadingLock(xPower, yPower, new Rotation2d(lockHeadingRads), relative);
                 } else {
                     swerveSubsystem.setDrivePowers(xPower, yPower, angularPower, relative);
                 }
             }, swerveSubsystem));
 
-            mechAButton.onTrue(new DropperChooserCommand(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem));
-
             driveController.getFieldResetButton().onTrue(new InstantCommand(swerveSubsystem::resetFieldAngle, swerveSubsystem));
             driveController.getChargingStationLockButton().onTrue(new InstantCommand(swerveSubsystem::toggleChargingStationLocked, swerveSubsystem));
+
+            /*
+            brSwitch.onTrue(new InstantCommand(() -> {
+                swerveSubsystem.setSteerRelativeEncoderFeedback(true);
+            }, swerveSubsystem)).onFalse(new InstantCommand(() -> {
+                swerveSubsystem.setSteerRelativeEncoderFeedback(false);
+            }, swerveSubsystem));
+            */
         } else if (driveSubsystem instanceof TankSubsystem) {
             final TankSubsystem tankSubsystem = (TankSubsystem) driveSubsystem;
 
@@ -212,36 +225,41 @@ public class RobotContainer {
         }
     }
 
-    private void mechBindings() {
+    /**
+     * Configures button bindings for the roller / elevator mechs and controller.
+     */
+    private void configureMechBindings() {
+        mechAButton.onTrue(new DropperChooserCommand(driveSubsystem, rollerSubsystem, tiltedElevatorSubsystem));
+
         rollerSubsystem.setDefaultCommand(new RunCommand(() -> {
-            double rollPower = (.95 * mechController.getRightTriggerAxis()) - (.65 * mechController.getLeftTriggerAxis());
-            rollerSubsystem.setRollPower(rollPower);
+            double forwardPower = 0.95 * mechController.getRightTriggerAxis();
+            double reversePower = 0.65 * mechController.getLeftTriggerAxis();
+            rollerSubsystem.setRollPower(forwardPower - reversePower);
         }, rollerSubsystem));
 
-        mechYButton.onTrue(new InstantCommand(() -> {
-            rollerSubsystem.openMotor();;
-        }, rollerSubsystem));
+        mechYButton.onTrue(new InstantCommand(rollerSubsystem::openMotor, rollerSubsystem));
 
         tiltedElevatorSubsystem.setDefaultCommand(new RunCommand(() -> {
             double yPower = -mechController.getLeftY();
-            double pov = mechController.getPOV();
-            if(pov == 0){
-                tiltedElevatorSubsystem.setState(ElevatorState.SUBSTATION);
-            } else if (pov == 270){
-                tiltedElevatorSubsystem.setState(ElevatorState.HYBRID);
-            } else if (pov == 180){
-                tiltedElevatorSubsystem.setState(ElevatorState.GROUND);
-                tiltedElevatorSubsystem.offsetState = OffsetState.OVERRIDE_HAS_PIECE;
-            } else if (pov == 90){
-                tiltedElevatorSubsystem.resetOffset();
-            }
-            tiltedElevatorSubsystem.setManualPower(yPower);
 
+            int pov = mechController.getPOV();
+            switch (pov) {
+                case 0 -> tiltedElevatorSubsystem.setState(ElevatorState.SUBSTATION);
+                case 270 -> tiltedElevatorSubsystem.setState(ElevatorState.HYBRID);
+                case 180 -> {
+                    tiltedElevatorSubsystem.setState(ElevatorState.GROUND);
+                    tiltedElevatorSubsystem.offsetState = OffsetState.OVERRIDE_HAS_PIECE;
+                }
+                case 90 -> tiltedElevatorSubsystem.resetOffset();
+            }
+
+            tiltedElevatorSubsystem.setManualPower(yPower);
             tiltedElevatorSubsystem.changeOffsetDistMeters(yPower);
         }, tiltedElevatorSubsystem));
 
         mechBButton.onTrue(new InstantCommand(() -> {
-            tiltedElevatorSubsystem.toggleState(ElevatorState.GROUND, ElevatorState.CHUTE);
+            // tiltedElevatorSubsystem.toggleState(ElevatorState.GROUND, ElevatorState.CHUTE);
+            tiltedElevatorSubsystem.setState(ElevatorState.GROUND);
         }, tiltedElevatorSubsystem));
 
         mechXButton.onTrue(new InstantCommand(() -> {
@@ -257,9 +275,11 @@ public class RobotContainer {
         }, tiltedElevatorSubsystem));
 
         signalLEDSubsystem.setDefaultCommand(new RunCommand(() -> {
-            signalLEDSubsystem.setColor(blSwitch.getAsBoolean()
-                ? new Color(255, 100, 0)
-                : new Color(192, 8, 254));
+            if (blSwitch.getAsBoolean()) {
+                signalLEDSubsystem.setColor(255, 100, 0);
+            } else {
+                signalLEDSubsystem.setColor(192, 8, 254);
+            }
         }, signalLEDSubsystem));
     }
 
@@ -270,17 +290,12 @@ public class RobotContainer {
     public Command getAutonomousCommand() {
         return autonChooser.getSelected();
     }
-    
+
     /**
      * Use this to pass the test command to the main {@link Robot} class.
      * @return the command to run in test
      */
     public Command getTestCommand() {
-        if (!(driveSubsystem instanceof BaseSwerveSubsystem)) return null;
-        return new MotorTestCommand(
-            (BaseSwerveSubsystem) driveSubsystem,
-            tiltedElevatorSubsystem,
-            rollerSubsystem
-        );
+        return testCommand;
     }
 }

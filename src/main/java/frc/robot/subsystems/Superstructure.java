@@ -48,6 +48,6 @@ public class Superstructure extends SubsystemBase {
         }
         lastElevatorState = currentState;
 
-        rollerSubsystem.allowOpen = tiltedElevatorSubsystem.getExtension() >= ALLOW_OPEN_HEIGHT;
+        rollerSubsystem.allowOpen = tiltedElevatorSubsystem.getExtensionMeters() >= ALLOW_OPEN_EXTENSION_METERS;
     }
 }

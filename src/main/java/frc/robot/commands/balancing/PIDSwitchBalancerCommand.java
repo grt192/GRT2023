@@ -21,9 +21,6 @@ public class PIDSwitchBalancerCommand extends BaseBalancerCommand {
     private double deltaAngle;
 
     private boolean reachedStation;
-    private boolean passedCenter;
-    private boolean waiting;
-
     private boolean fine; 
     private boolean balanced;
 
@@ -42,9 +39,7 @@ public class PIDSwitchBalancerCommand extends BaseBalancerCommand {
         System.out.println("------------------- Balancer initialized -------------------");
         initialHeading = ahrs.getCompassHeading();
         reachedStation = false;
-        passedCenter = false;
         balanced = false;
-        waiting = false;
     }
 
     @Override

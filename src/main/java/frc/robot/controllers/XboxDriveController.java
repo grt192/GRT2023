@@ -4,8 +4,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 /**
- * A single XboxController on port 0. Swerve relative is bound to the right trigger, balancing is bound to the
- * right bumper, and field reset is bound to the A button.
+ * A single Xbox controller on port 0.
  */
 public class XboxDriveController extends BaseDriveController {
     private final XboxController driveController = new XboxController(0);

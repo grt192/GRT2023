@@ -109,6 +109,12 @@ public enum FieldPosition {
         Rotation2d.fromDegrees(-90)
     )),
 
+    SPECIAL_BALANCE_POS(new Pose2d(
+        Units.inchesToMeters(233.092),
+        Units.inchesToMeters(105.965),
+        Rotation2d.fromDegrees(180)
+    )),
+
     PIECE1(new Pose2d(
         Units.inchesToMeters(278.264),
         Units.inchesToMeters(179.893),

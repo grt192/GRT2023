@@ -3,6 +3,7 @@ package frc.robot.subsystems.drivetrain;
 import edu.wpi.first.math.MatBuilder;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Nat;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -11,7 +12,6 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.Timer;
@@ -43,20 +43,20 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
     public final double MAX_OMEGA; // Max robot angular velocity, in rads/s
     public final double MAX_ALPHA; // Max robot angular acceleration, in rads/s^2
 
-    private final ProfiledPIDController thetaController;
+    // private final ProfiledPIDController thetaController;
+    private final PIDController thetaController;
 
     private final Timer lockTimer;
     private static final double LOCK_TIMEOUT_SECONDS = 1.0; // The elapsed idle time to wait before locking
     private static final boolean LOCKING_ENABLE = true;
-
     private boolean chargingStationLocked = false;
 
     private Rotation2d angleOffset = new Rotation2d(0);
 
     private final ShuffleboardTab shuffleboardTab;
     private final GenericEntry xEntry, yEntry, thetaEntry;
-    private final GenericEntry swerveRelativeEntry, chargingStationLockedEntry;
-    private final GenericEntry visionEnableEntry;
+    private final GenericEntry swerveRelativeEntry, chargingStationLockedEntry, relativeEncoderEntry, visionEnableEntry;
+
     private final Field2d fieldWidget = new Field2d();
 
     private static final boolean SHUFFLEBOARD_ENABLE = true;
@@ -86,13 +86,14 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
         MAX_ALPHA = maxAlpha;
 
         // Initialize heading-lock PID controller
+        /*
         thetaController = new ProfiledPIDController(
             1.7, 0, 0, 
-            new TrapezoidProfile.Constraints(
-                MAX_OMEGA,
-                MAX_ALPHA
-            )
+            new TrapezoidProfile.Constraints(MAX_OMEGA, MAX_ALPHA)
         );
+        */
+        thetaController = new PIDController(3.4, 0, 0);
+        thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
         this.topLeftModule = topLeftModule;
         this.topRightModule = topRightModule;
@@ -128,12 +129,21 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
         chargingStationLockedEntry = shuffleboardTab.add("Charging station locking", chargingStationLocked)
             .withPosition(4, 5)
             .getEntry();
+        relativeEncoderEntry = shuffleboardTab.add("Relative encoder feedback", false)
+            .withPosition(5, 5)
+            .getEntry();
 
         visionEnableEntry = Shuffleboard.getTab("PhotonVision").add("Vision enable", VISION_ENABLE)
             .withPosition(3, 0)
             .withWidget(BuiltInWidgets.kToggleSwitch)
             .getEntry();
         ShuffleboardUtil.addBooleanListener(visionEnableEntry, (value) -> VISION_ENABLE = value);
+
+        GenericEntry relativeEncoderToggleEntry = shuffleboardTab.add("Relative encoder feedback (set)", false)
+            .withPosition(8, 2)
+            .withWidget(BuiltInWidgets.kToggleSwitch)
+            .getEntry();
+        ShuffleboardUtil.addBooleanListener(relativeEncoderToggleEntry, (value) -> setSteerRelativeEncoderFeedback(value));
 
         lockTimer = new Timer();
     }
@@ -256,15 +266,17 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
      * 
      * @param xPower The power [-1.0, 1.0] in the x (forward) direction.
      * @param yPower The power [-1.0, 1.0] in the y (left) direction.
-     * @param heading The `Rotation2d` angle to lock the swerve to.
+     * @param targetHeading The `Rotation2d` angle to lock the swerve to.
      * @param relative Whether to use relative powers instead of field-oriented control.
      */
-    public void setDrivePowersWithHeadingLock(double xPower, double yPower, Rotation2d heading, boolean relative) {
+    public void setDrivePowersWithHeadingLock(double xPower, double yPower, Rotation2d targetHeading, boolean relative) {
         Rotation2d currentRotation = getFieldHeading();
-        double error = MathUtil.angleModulus(heading.minus(currentRotation).getRadians());
-        double turnSpeed = thetaController.calculate(currentRotation.getRadians(), currentRotation.getRadians() + error);
+        double turnSpeed = thetaController.calculate(currentRotation.getRadians(), targetHeading.getRadians());
+        double turnPower = MathUtil.clamp(turnSpeed / MAX_OMEGA, -1.0, 1.0);
 
-        setDrivePowers(xPower, yPower, turnSpeed / MAX_VEL, relative);
+        // System.out.println("curr: " + currentRotation + " eror: " + Units.radiansToDegrees(error) + " turnsped: " + turnSpeed);
+
+        setDrivePowers(xPower, yPower, turnPower, relative);
     }
 
     /**
@@ -304,8 +316,22 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
      * Toggles whether the swerve should be locked parallel to the charging station.
      */
     public void toggleChargingStationLocked() {
-        this.chargingStationLocked = !chargingStationLocked;
-        chargingStationLockedEntry.setBoolean(chargingStationLocked);
+        setChargingStationLocked(!chargingStationLocked);
+    }
+
+    /**
+     * Sets whether the swerve modules should use integrated relative encoders (instead of
+     * external absolute encoders) to steer.
+     * 
+     * @param useRelative Whether to use relative encoders as steer feedback.
+     */
+    public void setSteerRelativeEncoderFeedback(boolean useRelative) {
+        topLeftModule.setSteerRelativeFeedback(useRelative);
+        topRightModule.setSteerRelativeFeedback(useRelative);
+        bottomLeftModule.setSteerRelativeFeedback(useRelative);
+        bottomRightModule.setSteerRelativeFeedback(useRelative);
+
+        relativeEncoderEntry.setBoolean(useRelative);
     }
 
     /**
@@ -376,7 +402,7 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
      * 
      * @return The robot's field-centric heading as a Rotation2d.
      */
-    private Rotation2d getFieldHeading() {
+    public Rotation2d getFieldHeading() {
         // Primarily use AHRS reading, falling back on the pose estimator if the AHRS disconnects.
         Rotation2d robotHeading = ahrs.isConnected()
             ? getGyroHeading()
@@ -385,8 +411,12 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
         return robotHeading.minus(angleOffset);
     }
 
+    /**
+     * Sets whether vision data is enabled.
+     * @param visionEnable Whether to enable vision data for localization.
+     */
     public void setVisionEnabled(boolean visionEnable) {
         this.VISION_ENABLE = visionEnable;
-        this.visionEnableEntry.setBoolean(this.VISION_ENABLE);
+        visionEnableEntry.setBoolean(VISION_ENABLE);
     }
 }

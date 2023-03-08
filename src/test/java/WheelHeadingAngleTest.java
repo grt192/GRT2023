@@ -1,17 +1,9 @@
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.math.trajectory.TrajectoryConfig;
-import edu.wpi.first.math.trajectory.constraint.SwerveDriveKinematicsConstraint;
 
-import frc.robot.Constants.SwerveConstants;
 import frc.robot.commands.swerve.FollowPathCommand;
-import frc.robot.subsystems.drivetrain.SwerveSubsystem;
 
 public class WheelHeadingAngleTest {
     private static final double ACCEPTABLE_ANGLE_DELTA = 1e-15;

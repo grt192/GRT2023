@@ -12,10 +12,11 @@ public class LEDSubsystem extends SubsystemBase {
     private final Timer blinkTimer;
     private static final double BLINK_DURATION_SECONDS = 0.5;
     private static final Color BLINK_COLOR = new Color(0, 0, 0);
-
-    private Color color = new Color(192, 8, 254);
     private boolean blinking = false;
 
+    private static final double BRIGHTNESS_SCALE_FACTOR = 0.25;
+
+    private Color color = new Color(192, 8, 254);
     public boolean pieceGrabbed = false;
 
     public LEDSubsystem() {
@@ -42,9 +43,15 @@ public class LEDSubsystem extends SubsystemBase {
 
     /**
      * Sets the driver-provided color of the LEDs.
-     * @param color The color to set the LEDs to.
+     * @param red The red component of the color.
+     * @param green The green component of the color.
+     * @param blue The blue component of the color.
      */
-    public void setColor(Color color) {
-        this.color = color;
+    public void setColor(double red, double green, double blue) {
+        this.color = new Color(
+            (int) (red * BRIGHTNESS_SCALE_FACTOR),
+            (int) (green * BRIGHTNESS_SCALE_FACTOR),
+            (int) (blue * BRIGHTNESS_SCALE_FACTOR)
+        );
     }
 }

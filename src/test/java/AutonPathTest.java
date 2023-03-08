@@ -1,8 +1,11 @@
 import org.junit.jupiter.api.Test;
 
+import frc.robot.commands.auton.BalanceAndTaxiAutonSequence;
 import frc.robot.commands.auton.BalanceAutonSequence;
+import frc.robot.commands.auton.BottomBalanceAutonSequence;
 import frc.robot.commands.auton.BottomOnePieceAutonSequence;
 import frc.robot.commands.auton.BottomTwoPieceAutonSequence;
+import frc.robot.commands.auton.PreloadedOnlyAutonSequence;
 import frc.robot.commands.auton.TopOnePieceAutonSequence;
 import frc.robot.commands.auton.TopTwoPieceAutonSequence;
 import frc.robot.commands.auton.test.BoxAutonSequence;
@@ -40,11 +43,14 @@ public class AutonPathTest {
      */
     @Test
     public void compileRedPaths() {
+        new PreloadedOnlyAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, true);
         new TopOnePieceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, true);
         new TopTwoPieceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, true);
         new BalanceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, true);
+        new BalanceAndTaxiAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, true);
         new BottomOnePieceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, true);
         new BottomTwoPieceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, true);
+        new BottomBalanceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, true);
     }
 
     /**
@@ -52,10 +58,13 @@ public class AutonPathTest {
      */
     @Test
     public void compileBluePaths() {
+        new PreloadedOnlyAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, false);
         new TopOnePieceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, false);
         new TopTwoPieceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, false);
         new BalanceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, false);
+        new BalanceAndTaxiAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, false);
         new BottomOnePieceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, false);
         new BottomTwoPieceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, false);
+        new BottomBalanceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, false);
     }
 }

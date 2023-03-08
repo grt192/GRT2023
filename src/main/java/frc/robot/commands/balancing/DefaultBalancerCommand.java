@@ -16,7 +16,6 @@ public class DefaultBalancerCommand extends BaseBalancerCommand {
 
     private boolean reachedStation;
     private boolean passedCenter;
-    private boolean waiting;
     private boolean balanced;
 
     private double initialHeading;
@@ -24,10 +23,17 @@ public class DefaultBalancerCommand extends BaseBalancerCommand {
     private double currentPitch;
     private double deltaAngle;
 
+    /**
+     * Constructs a default balancer command from a drive subsystem and a boolean indicating
+     * whether to balance from the front or back.
+     * 
+     * @param driveSubsystem The drive subsystem.
+     * @param reversed Whether to balance driving forwards or backwards. Defaults to backwards; pass `true` to balance forwards.
+     */
     public DefaultBalancerCommand(BaseDrivetrain driveSubsystem) {
         super(driveSubsystem);
 
-        drivePID = new PIDController(0.3 / 35, 0.0, 0.0); // no deriv successful
+        drivePID = new PIDController(0.0072, 0.0, 0.0); // no deriv successful
         turnPID = new PIDController(0.1 / 5,0.0, 0.0); // kP = max pwr / max err
         timer = new Timer();
     }
@@ -39,7 +45,6 @@ public class DefaultBalancerCommand extends BaseBalancerCommand {
         reachedStation = false;
         passedCenter = false;
         balanced = false;
-        waiting = false;
     }
 
     @Override
@@ -50,7 +55,7 @@ public class DefaultBalancerCommand extends BaseBalancerCommand {
             returnDrivePower = -0.80;
             if (ahrs.getPitch() <= -15.0) {
                 reachedStation = true;
-                returnDrivePower = -0.2;
+                returnDrivePower = -0.17;
             } //.15 successful
         } else {
             currentPitch = ahrs.getPitch();

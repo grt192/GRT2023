@@ -16,7 +16,7 @@ public class MissileShellSwerveSubsystem extends BaseDrivetrain {
     private final SwerveModule module;
     private final SwerveDriveKinematics kinematics;
 
-    public static final double MAX_VEL = SwerveSubsystem.MAX_VEL; // Max robot tangential velocity, in m/s
+    private static final double MAX_VEL = SwerveSubsystem.MAX_VEL; // Max robot tangential velocity, in m/s
     private static final boolean OFFSET_TUNING_ENABLE = true; // Whether to use this subsystem for swerve module offset tuning.
 
     private SwerveModuleState[] states = {
@@ -29,6 +29,8 @@ public class MissileShellSwerveSubsystem extends BaseDrivetrain {
             SwerveConstants.BR_STEER,
             SwerveConstants.BR_OFFSET_RADS
         );
+
+        // module.setSteerRelativeFeedback(true);
 
         // One module at the center of the robot
         kinematics = new SwerveDriveKinematics(
@@ -45,7 +47,7 @@ public class MissileShellSwerveSubsystem extends BaseDrivetrain {
         // Print values for encoder tuning. To set a zero, currentAngle + offset = 0 -> offset = -currentAngle.
         // In case the offset is 180 degrees off, also print it plus pi.
         if (OFFSET_TUNING_ENABLE) {
-            double currentAngleRads = module.getRawAngleRads();
+            double currentAngleRads = module.getAbsoluteRawAngleRads();
 
             // The offset of the module assuming that it is aligned with the front of the robot.
             // For the robot offset, subtract the position offset automatically applied by the module subclasses.

@@ -36,12 +36,15 @@ public class SwerveModule implements BaseSwerveModule {
     private SparkMaxPIDController drivePidController;
 
     private final CANSparkMax steerMotor;
+    private RelativeEncoder steerRelativeEncoder;
     private SparkMaxAnalogSensor steerAbsoluteEncoder;
     private SparkMaxPIDController steerPidController;
 
     private final double offsetRads;
+    private boolean relativeFeedbackEnabled = false;
 
     private static final double DRIVE_ROTATIONS_TO_METERS = (1.0 / 3.0) * (13.0 / 8.0) * (1.0 / 3.0) * Math.PI * Units.inchesToMeters(4.0) * 9.0 / 9.5; // 3:1, 8:13, 3:1 gear ratios, 4.0" wheel diameter, circumference = pi * d
+    private static final double STEER_ROTATIONS_TO_RADIANS = (1.0 / 52.0) * (34.0 / 63.0) * 2 * Math.PI; // 52:1 gear ratio, 63:34 pulley ratio, 1 rotation = 2pi
     private static final double STEER_VOLTS_TO_RADIANS = 2 * Math.PI / 3.3; // MA3 analog output: 3.3V -> 2pi
 
     private static final double driveP = 0.05;
@@ -104,7 +107,11 @@ public class SwerveModule implements BaseSwerveModule {
 
             steerAbsoluteEncoder = sparkMax.getAnalog(SparkMaxAnalogSensor.Mode.kAbsolute);
             steerAbsoluteEncoder.setPositionConversionFactor(STEER_VOLTS_TO_RADIANS);
-    
+
+            steerRelativeEncoder = sparkMax.getEncoder();
+            steerRelativeEncoder.setPositionConversionFactor(STEER_ROTATIONS_TO_RADIANS);
+            steerRelativeEncoder.setPosition(steerAbsoluteEncoder.getPosition()); // Set initial position to absolute value
+
             steerPidController = MotorUtil.createSparkMaxPIDController(sparkMax, steerAbsoluteEncoder);
             steerPidController.setP(steerP);
             steerPidController.setI(steerI);
@@ -173,7 +180,7 @@ public class SwerveModule implements BaseSwerveModule {
         return new SwerveModulePosition(
             // driveMotor.getSelectedSensorPosition() * DRIVE_TICKS_TO_METERS,
             driveEncoder.getPosition(),
-            getAngle()
+            getWrappedAngle()
         );
     }
 
@@ -182,8 +189,12 @@ public class SwerveModule implements BaseSwerveModule {
      * @param state The desired state of the module as a `SwerveModuleState`.
      */
     public void setDesiredState(SwerveModuleState state) {
-        Rotation2d currentAngle = getAngle();
-        SwerveModuleState optimized = SwerveModuleState.optimize(state, currentAngle);
+        // If we're using the absolute encoder, keep all angles wrapped and rely on PID wrapping for
+        // the setpoint. Otherwise, use the unwrapped angle and optimize with wraparound.
+        Rotation2d currentAngle = relativeFeedbackEnabled ? getRelativeAngle() : getWrappedAngle();
+        SwerveModuleState optimized = relativeFeedbackEnabled
+            ? optimizeWithWraparound(state, currentAngle)
+            : SwerveModuleState.optimize(state, currentAngle);
 
         double currentVelocity = driveEncoder.getVelocity();
         double targetAngle = optimized.angle.getRadians() - offsetRads;
@@ -201,8 +212,40 @@ public class SwerveModule implements BaseSwerveModule {
 
         // driveMotor.set(ControlMode.Velocity, optimized.getFirst() / (DRIVE_TICKS_TO_METERS * 10.0));
         drivePidController.setReference(optimized.speedMetersPerSecond, ControlType.kVelocity);
-        // driveMotor.set(optimized.speedMetersPerSecond);
         steerPidController.setReference(targetAngle, ControlType.kPosition);
+    }
+
+    /**
+     * Optimizes a `SwerveModuleState` by inverting the wheel speeds and rotating the other direction
+     * if the delta angle is greater than 90 degrees. This method also handles angle wraparound.
+     * 
+     * @param target The target `SwerveModuleState`.
+     * @param currentUnwrappedAngle The current *unwrapped* angle of the module, as a `Rotation2d`.
+     * @return The optimized `SwerveModuleState`.
+     */
+    public static SwerveModuleState optimizeWithWraparound(SwerveModuleState target, Rotation2d currentUnwrappedAngle) {
+        double angleRads = currentUnwrappedAngle.getRadians();
+
+        double targetVel = target.speedMetersPerSecond;
+        double targetWrappedAngleRads = target.angle.getRadians();
+        double deltaRads = MathUtil.angleModulus(targetWrappedAngleRads - angleRads);
+
+        // Optimize the `SwerveModuleState` if delta angle > 90 by flipping wheel speeds
+        // and going the other way.
+        if (Math.abs(deltaRads) > Math.PI / 2.0) {
+            targetVel = -targetVel;
+            deltaRads += deltaRads > Math.PI / 2.0 ? -Math.PI : Math.PI;
+        }
+
+        return new SwerveModuleState(targetVel, new Rotation2d(angleRads + deltaRads));
+    }
+
+    @Override
+    public void setSteerRelativeFeedback(boolean useRelative) {
+        steerPidController.setFeedbackDevice(useRelative ? steerRelativeEncoder : steerAbsoluteEncoder);
+        steerPidController.setPositionPIDWrappingEnabled(!useRelative);
+
+        this.relativeFeedbackEnabled = useRelative;
     }
 
     /**
@@ -211,16 +254,29 @@ public class SwerveModule implements BaseSwerveModule {
      * 
      * @return The current [-pi, pi] angle of the module, as a `Rotation2d`.
      */
-    private Rotation2d getAngle() {
-        double wrappedAngleRads = MathUtil.angleModulus(steerAbsoluteEncoder.getPosition() + offsetRads);
+    private Rotation2d getWrappedAngle() {
+        double angleRads = relativeFeedbackEnabled
+            ? steerRelativeEncoder.getPosition()
+            : steerAbsoluteEncoder.getPosition();
+        double wrappedAngleRads = MathUtil.angleModulus(angleRads + offsetRads);
+
         return new Rotation2d(wrappedAngleRads);
+    }
+
+    /**
+     * Gets the angle of the module reported by the relative encoder. This applies `offsetRads`, but is not wrapped.
+     * @return The current unwrapped angle of the module, as a `Rotation2d`.
+     */
+    private Rotation2d getRelativeAngle() {
+        double angleRads = steerRelativeEncoder.getPosition() + offsetRads;
+        return new Rotation2d(angleRads);
     }
 
     /**
      * Returns the raw value, in radians, reported by the steer absolute encoder.
      * @return The current radians reported by the absolute encoder.
      */
-    public double getRawAngleRads() {
+    public double getAbsoluteRawAngleRads() {
         return steerAbsoluteEncoder.getPosition();
     }
 

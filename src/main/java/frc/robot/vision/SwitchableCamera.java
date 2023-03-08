@@ -16,11 +16,11 @@ public class SwitchableCamera {
     private final UsbCamera top;
     private final UsbCamera bottom;
 
-    private int TOP_EXPOSURE = 39;
-    private int TOP_BRIGHTNESS = 5;
+    private static final int TOP_EXPOSURE = 39;
+    private static final int TOP_BRIGHTNESS = 5;
 
-    private int BOTTOM_EXPOSURE = 39;
-    private int BOTTOM_BRIGHTNESS = 5;
+    private static final int BOTTOM_EXPOSURE = 39;
+    private static final int BOTTOM_BRIGHTNESS = 5;
 
     private final VideoSink server;
     private final ComplexWidget widget;

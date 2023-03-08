@@ -18,11 +18,10 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.Constants;
+import frc.robot.sensors.HallEffectSensor;
 import frc.robot.util.MotorUtil;
 import frc.robot.util.ShuffleboardUtil;
-import frc.robot.motorcontrol.HallEffectSensor;
 import frc.robot.subsystems.tiltedelevator.ElevatorState.OffsetState;
-import frc.robot.motorcontrol.HallEffectMagnet;
 
 import static frc.robot.Constants.TiltedElevatorConstants.*;
 
@@ -45,7 +44,7 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
     private double manualPower = 0;
 
     private boolean hallPressed = false;
-    private HallEffectMagnet lastHallPos = null;
+    private HallEffectSensor.Magnet lastHallPos = null;
 
     // Devices
     private final CANSparkMax extensionMotor;
@@ -89,11 +88,11 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
             extensionEncoder.setPositionConversionFactor(EXTENSION_ROTATIONS_TO_METERS);
             extensionEncoder.setVelocityConversionFactor(EXTENSION_ROTATIONS_TO_METERS / 60.0);
             extensionEncoder.setPosition(0);
-
+            
+            sparkMax.setSoftLimit(SoftLimitDirection.kForward, (float) (EXTENSION_LIMIT_METERS + Units.inchesToMeters(.5)));
             sparkMax.enableSoftLimit(SoftLimitDirection.kForward, true);
-            sparkMax.setSoftLimit(SoftLimitDirection.kForward, (float) (EXTENSION_LIMIT + Units.inchesToMeters(.5)));
-            sparkMax.enableSoftLimit(SoftLimitDirection.kReverse, true);
             sparkMax.setSoftLimit(SoftLimitDirection.kReverse, (float) Units.inchesToMeters(-2));
+            sparkMax.enableSoftLimit(SoftLimitDirection.kReverse, true);
 
             extensionPidController = MotorUtil.createSparkMaxPIDController(sparkMax, extensionEncoder);
             extensionPidController.setP(extensionP);
@@ -162,15 +161,15 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
 
         // When magnet is detected, reset encoder
         if (leftHallSensor != null) {
-            HallEffectMagnet leftHallSensorPos = leftHallSensor.getHallEffectState(extensionEncoder.getPosition());
+            HallEffectSensor.Magnet leftHallSensorPos = leftHallSensor.getHallEffectState(extensionEncoder.getPosition());
             // System.out.println(leftHallSensorPos);
             // System.out.println(lastHallPos + " " + leftHallSensorPos);
             if (leftHallSensorPos != null && lastHallPos == null){
-                extensionEncoder.setPosition(Units.inchesToMeters(EXTENSION_LIMIT));//leftHallSensorPos.getExtendDistanceMeters());
+                // extensionEncoder.setPosition(Units.inchesToMeters(EXTENSION_LIMIT));//leftHallSensorPos.getExtendDistanceMeters());
             }
             lastHallPos = leftHallSensorPos;
         }
-        
+
         // If we're in manual power mode, use percent out power supplied by driver joystick.
         if (IS_MANUAL) {
             manualPowerEntry.setDouble(manualPower);
@@ -207,18 +206,17 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
 
         // If we're trying to get to 0, set the motor to 0 power so the carriage drops with gravity
         // and hits the hard stop / limit switch.
-        double targetExtension = getTargetExtension();
+        double targetExtension = getTargetExtensionMeters();
         if (targetExtension == 0 && currentPos < Units.inchesToMeters(1) && zeroLimitSwitch.get()) {
             extensionMotor.set(-0.075);
         }
-        // If we're trying to get max extension and we're currently within 1'' of our goal, move elevator up so it hits the magnet
+        // If we're trying to get max extension and we're currently within 1" of our goal, move elevator up so it hits the magnet
         // else if (targetExtension >= EXTENSION_LIMIT && (EXTENSION_LIMIT - currentPos < Units.inchesToMeters(1))) {
         //     extensionMotor.set(0.075);
-        // } 
-        // else {
+        // } else {
             // Set PID reference
             extensionPidController.setReference(
-                MathUtil.clamp(targetExtension, 0, EXTENSION_LIMIT),
+                MathUtil.clamp(targetExtension, 0, EXTENSION_LIMIT_METERS + Units.inchesToMeters(.75)),
                 ControlType.kPosition, 0,
                 arbFeedforward, ArbFFUnits.kPercentOut
             );
@@ -293,7 +291,7 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
      * Gets the current extension, in meters, of the subsystem.
      * @return The current extension, in meters.
      */
-    public double getExtension() { 
+    public double getExtensionMeters() { 
         return extensionEncoder.getPosition();
     }
 
@@ -301,7 +299,7 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
      * Gets the target extension, in meters, of the subsystem.
      * @return The target extension, in meters.
      */
-    public double getTargetExtension() {
+    public double getTargetExtensionMeters() {
         return state.getExtension(offsetState, this.pieceGrabbed) + offsetDistMeters;
     }
 
@@ -310,6 +308,6 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
      * @return Whether the elevator has reached its target extension.
      */
     public boolean atTarget() {
-        return Math.abs(getExtension() - getTargetExtension()) <= EXTENSION_TOLERANCE;
+        return Math.abs(getExtensionMeters() - getTargetExtensionMeters()) <= EXTENSION_TOLERANCE_METERS;
     }
 }
