@@ -8,20 +8,14 @@ import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
 
 public class DefaultBalancerCommand extends BaseBalancerCommand {
     private final PIDController drivePID;
-    private final PIDController turnPID;
     private final Timer timer;
 
     private double returnDrivePower; // drive power to be returned to DT
-    private double returnAngularPower; // angular power to return to DT (for heading correction)
+    private double prevPitchDegs;
 
     private boolean reachedStation;
     private boolean passedCenter;
     private boolean balanced;
-
-    private double initialHeading;
-    private double oldPitch;
-    private double currentPitch;
-    private double deltaAngle;
 
     /**
      * Constructs a default balancer command from a drive subsystem and a boolean indicating
@@ -33,15 +27,13 @@ public class DefaultBalancerCommand extends BaseBalancerCommand {
     public DefaultBalancerCommand(BaseDrivetrain driveSubsystem) {
         super(driveSubsystem);
 
-        drivePID = new PIDController(0.0072, 0.0, 0.0); // no deriv successful
-        turnPID = new PIDController(0.1 / 5,0.0, 0.0); // kP = max pwr / max err
+        drivePID = new PIDController(0.0072, 0.0, 0.0);
         timer = new Timer();
     }
 
     @Override
     public void initialize() {
         System.out.println("------------------- Balancer initialized -------------------");
-        initialHeading = ahrs.getCompassHeading();
         reachedStation = false;
         passedCenter = false;
         balanced = false;
@@ -49,34 +41,33 @@ public class DefaultBalancerCommand extends BaseBalancerCommand {
 
     @Override
     public void execute() {
-        returnAngularPower = turnPID.calculate(ahrs.getCompassHeading(), initialHeading); // correct angle of approach
+        double currentPitchDegs = ahrs.getPitch();
 
         if (!reachedStation) {
             returnDrivePower = -0.80;
-            if (ahrs.getPitch() <= -15.0) {
+            if (currentPitchDegs <= -15.0) {
                 reachedStation = true;
                 returnDrivePower = -0.17;
-            } //.15 successful
+            }
         } else {
-            currentPitch = ahrs.getPitch();
-            deltaAngle = Math.abs(currentPitch - oldPitch); // calc magnitude of angular acceleration based on delta angle over time
+            double deltaPitchDegs = Math.abs(currentPitchDegs - prevPitchDegs); // calc magnitude of angular acceleration based on delta angle over time
 
             if (!passedCenter) {
-                passedCenter = ahrs.getPitch() >= -5.0; // <= 1.0 worked 
+                passedCenter = currentPitchDegs >= -5.0;
             } else {
-                returnDrivePower = -1 * drivePID.calculate(ahrs.getPitch(), 0);
-                System.out.println(returnDrivePower);
-                if (Math.abs(ahrs.getPitch()) <= 1.0 && deltaAngle <= 0.1) balanced = true;
+                returnDrivePower = -1 * drivePID.calculate(currentPitchDegs, 0);
+                // System.out.println(returnDrivePower);
+                if (Math.abs(currentPitchDegs) <= 1.0 && deltaPitchDegs <= 0.1) balanced = true;
             }
         }
 
-        if (driveSubsystem instanceof BaseSwerveSubsystem) {
-            ((BaseSwerveSubsystem) driveSubsystem).setDrivePowers(returnDrivePower, 0.0, 0.0, true);
-        } else {
-            driveSubsystem.setDrivePowers(returnDrivePower);
-        }
+        // if (driveSubsystem instanceof BaseSwerveSubsystem) {
+        //     ((BaseSwerveSubsystem) driveSubsystem).setDrivePowers(returnDrivePower, 0.0, 0.0, true);
+        // } else {
+             driveSubsystem.setDrivePowers(returnDrivePower);
+        // }
 
-        oldPitch = currentPitch; // set the current angle to old angle so it is accessible for next cycle     
+        prevPitchDegs = currentPitchDegs;
     }
 
     @Override
