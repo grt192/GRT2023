@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.grabber.RollerPlaceCommand;
 import frc.robot.commands.mover.TiltedElevatorCommand;
 import frc.robot.subsystems.RollerSubsystem;
-import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
+import frc.robot.subsystems.drivetrain.BaseDrivetrain;
 import frc.robot.subsystems.tiltedelevator.ElevatorState;
 import frc.robot.subsystems.tiltedelevator.TiltedElevatorSubsystem;
 import frc.robot.subsystems.tiltedelevator.ElevatorState.OffsetState;
@@ -24,19 +24,19 @@ public class DropSequence extends SequentialCommandGroup {
      * 7. Moves to GROUND
      */
     public DropSequence(
-        BaseSwerveSubsystem swerveSubsystem, RollerSubsystem rollerSubsystem, TiltedElevatorSubsystem tiltedElevatorSubsystem,
+        BaseDrivetrain driveSubsystem, RollerSubsystem rollerSubsystem, TiltedElevatorSubsystem tiltedElevatorSubsystem,
         double waitAfterAtDropHeight, double outtakePower, double outtakeDuration, double waitAfterPlacing, double backTime
     ) {
-        addRequirements(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem);
+        addRequirements(driveSubsystem, rollerSubsystem, tiltedElevatorSubsystem);
 
         addCommands(
             new TiltedElevatorCommand(tiltedElevatorSubsystem, OffsetState.DROPPING),
             new WaitCommand(waitAfterAtDropHeight),
             new RollerPlaceCommand(rollerSubsystem, -outtakePower, outtakeDuration),
             new WaitCommand(waitAfterPlacing),
-            new InstantCommand(() -> swerveSubsystem.setDrivePowers(-0.2, 0, 0, true)),
+            new InstantCommand(() -> driveSubsystem.setDrivePowers(-0.2)),
             new WaitCommand(backTime),
-            new InstantCommand(() -> swerveSubsystem.setDrivePowers(0, 0, 0, true)),
+            new InstantCommand(() -> driveSubsystem.setDrivePowers(0)),
             new InstantCommand(() -> tiltedElevatorSubsystem.setState(ElevatorState.GROUND))
         );
     }

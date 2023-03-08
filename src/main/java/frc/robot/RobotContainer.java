@@ -122,15 +122,7 @@ public class RobotContainer {
         superstructure = new Superstructure(rollerSubsystem, tiltedElevatorSubsystem, signalLEDSubsystem, switchableCamera);
 
         balancerCommand = new DefaultBalancerCommand(driveSubsystem);
-        if (driveSubsystem instanceof BaseSwerveSubsystem) {
-            testCommand = new MotorTestCommand(
-                (BaseSwerveSubsystem) driveSubsystem,
-                tiltedElevatorSubsystem,
-                rollerSubsystem
-            );
-        } else {
-            testCommand = null;
-        }
+        testCommand = new MotorTestCommand(driveSubsystem, tiltedElevatorSubsystem, rollerSubsystem);
 
         // Configure button bindings
         configureDriveBindings();
@@ -161,8 +153,8 @@ public class RobotContainer {
             // autonChooser.addOption("Blue bottom auton (2-piece)", new BottomTwoPieceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, false));
             // autonChooser.addOption("Blue bottom balance auton", new BottomBalanceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, false));
 
-            // autonChooser.addOption("10\" straight-line path", new TenFeetStraightLinePath(swerveSubsystem));
-            // autonChooser.addOption("20\" straight-line path", new TwentyFeetStraightLinePath(swerveSubsystem));
+            // autonChooser.addOption("10' straight-line path", new TenFeetStraightLinePath(swerveSubsystem));
+            // autonChooser.addOption("20' straight-line path", new TwentyFeetStraightLinePath(swerveSubsystem));
             // autonChooser.addOption("High rotation straight-line path", new HighRotationLinePath(swerveSubsystem));
             // autonChooser.addOption("Rotating S-curve", new RotatingSCurveAutonSequence(swerveSubsystem));
             // autonChooser.addOption("Box auton", new BoxAutonSequence(swerveSubsystem));
@@ -234,10 +226,7 @@ public class RobotContainer {
      * Configures button bindings for the roller / elevator mechs and controller.
      */
     private void configureMechBindings() {
-        if (driveSubsystem instanceof BaseSwerveSubsystem) {
-            BaseSwerveSubsystem swerveSubsystem = (BaseSwerveSubsystem) driveSubsystem;
-            mechAButton.onTrue(new DropperChooserCommand(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem));
-        }
+        mechAButton.onTrue(new DropperChooserCommand(driveSubsystem, rollerSubsystem, tiltedElevatorSubsystem));
 
         rollerSubsystem.setDefaultCommand(new RunCommand(() -> {
             double forwardPower = 0.95 * mechController.getRightTriggerAxis();

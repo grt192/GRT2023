@@ -8,6 +8,7 @@ import frc.robot.commands.dropping.DropperChooserCommand;
 import frc.robot.commands.grabber.RollerIntakeCommand;
 import frc.robot.commands.mover.TiltedElevatorCommand;
 import frc.robot.subsystems.RollerSubsystem;
+import frc.robot.subsystems.drivetrain.BaseDrivetrain;
 import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
 import frc.robot.subsystems.tiltedelevator.ElevatorState;
 import frc.robot.subsystems.tiltedelevator.TiltedElevatorSubsystem;
@@ -19,12 +20,12 @@ public class MotorTestCommand extends SequentialCommandGroup {
     private static final double SWERVE_DRIVE_POWER = 0.5;
     private static final double SWERVE_DRIVE_TIME_SECS = 3;
 
-    public MotorTestCommand(BaseSwerveSubsystem swerveSubsystem, TiltedElevatorSubsystem tiltedElevatorSubsystem, RollerSubsystem rollerSubsystem) {
-        addRequirements(swerveSubsystem, tiltedElevatorSubsystem, rollerSubsystem);
+    public MotorTestCommand(BaseDrivetrain driveSubsystem, TiltedElevatorSubsystem tiltedElevatorSubsystem, RollerSubsystem rollerSubsystem) {
+        addRequirements(driveSubsystem, tiltedElevatorSubsystem, rollerSubsystem);
 
         addCommands(
             // Lock swerve
-            new InstantCommand(swerveSubsystem::applyLock, swerveSubsystem),
+            // new InstantCommand(swerveSubsystem::applyLock, swerveSubsystem),
 
             // Run tilted elevator to all heights
             // GROUND - CHUTE - INTAKE CONE - SUBSTATION - CUBEMID - CUBEHIGH - CONEMID - CONEHIGH - CONEMID 
@@ -57,7 +58,7 @@ public class MotorTestCommand extends SequentialCommandGroup {
             new WaitCommand(TEST_DELAY_SECS),
 
             // Test dropper command from `CONE_MID`
-            DropperChooserCommand.getSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem),
+            DropperChooserCommand.getSequence(driveSubsystem, rollerSubsystem, tiltedElevatorSubsystem),
             new WaitCommand(MECH_DELAY_SECS)
 
             // // Sweep rollers from [-1.0, 1.0] over 2 seconds
