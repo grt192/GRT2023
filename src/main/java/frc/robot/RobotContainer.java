@@ -122,18 +122,19 @@ public class RobotContainer {
         superstructure = new Superstructure(rollerSubsystem, tiltedElevatorSubsystem, signalLEDSubsystem, switchableCamera);
 
         balancerCommand = new DefaultBalancerCommand(driveSubsystem);
-        testCommand = new MotorTestCommand(driveSubsystem, tiltedElevatorSubsystem, rollerSubsystem);
 
         // Configure button bindings
         configureDriveBindings();
         configureMechBindings();
 
-        // Add auton sequences to the chooser and add the chooser to shuffleboard
+        // Initialize auton and test commands
         autonChooser = new SendableChooser<>();
         autonChooser.setDefaultOption("Skip auton", new InstantCommand());
 
         if (driveSubsystem instanceof BaseSwerveSubsystem) {
             final BaseSwerveSubsystem swerveSubsystem = (BaseSwerveSubsystem) driveSubsystem;
+
+            testCommand = new MotorTestCommand(swerveSubsystem, tiltedElevatorSubsystem, rollerSubsystem);
 
             autonChooser.addOption("Red preloaded only", new PreloadedOnlyAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, true));
             autonChooser.addOption("Red top auton (1-piece)", new TopOnePieceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, true));
@@ -160,6 +161,8 @@ public class RobotContainer {
             // autonChooser.addOption("Box auton", new BoxAutonSequence(swerveSubsystem));
             // autonChooser.addOption("No-stopping box auton", new ContinuousBoxAutonSequence(swerveSubsystem));
             // autonChooser.addOption("GRT path", new GRTAutonSequence(swerveSubsystem));
+        } else {
+            testCommand = null;
         }
 
         shuffleboardTab.add("Auton", autonChooser)
