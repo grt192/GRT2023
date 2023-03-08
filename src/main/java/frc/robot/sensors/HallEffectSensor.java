@@ -9,7 +9,8 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 
 public class HallEffectSensor {
     private final DigitalInput sensor;
-    private final HallEffectMagnet[] magnets; // array of magnet locations from smallest extension to largest extension
+    private final Magnet[] magnets; // array of magnet locations from smallest extension to largest extension
+
     private ArrayList<GenericEntry> shuffleboardEntries = null;
 
     // State vars tracking current sensor location using index of magnet position[]
@@ -20,11 +21,11 @@ public class HallEffectSensor {
     private boolean prevDetected;
     private double prevMechPos;
 
-    public HallEffectSensor(int id, HallEffectMagnet[] magnets, double initialMechPos) {
+    public HallEffectSensor(int id, Magnet[] magnets, double initialMechPos) {
         this(id, magnets, initialMechPos, -1, 0);
     }
 
-    public HallEffectSensor(int id, HallEffectMagnet[] magnets, double initialMechPos, int lowerPos, int upperPos) {
+    public HallEffectSensor(int id, Magnet[] magnets, double initialMechPos, int lowerPos, int upperPos) {
         this.sensor = new DigitalInput(id);
         this.magnets = magnets;
 
@@ -43,7 +44,7 @@ public class HallEffectSensor {
      */
     public void addToShuffleboard(ShuffleboardTab shuffleboardTab, int columnIndex, int rowIndex) {
         shuffleboardEntries = new ArrayList<GenericEntry>();
-        for (HallEffectMagnet magnet : magnets) {
+        for (Magnet magnet : magnets) {
             GenericEntry entry = shuffleboardTab.add("Magnet " + columnIndex, false)
                 .withPosition(columnIndex++, rowIndex)
                 .withWidget(BuiltInWidgets.kBooleanBox)
@@ -68,7 +69,7 @@ public class HallEffectSensor {
      * @param mechPos Mechanism position, double
      * @return A HallEffectMagnet object or null if sensor is between magnets.
      */
-    public HallEffectMagnet getHallEffectState(double mechPos) {
+    public Magnet getHallEffectState(double mechPos) {
         boolean detected = !sensor.get();
         return((detected) ? magnets[0] : null);
         // boolean movingUp = (mechPos - prevMechPos) > 0;
@@ -100,5 +101,17 @@ public class HallEffectSensor {
         // prevMechPos = mechPos;
 
         // return (lowerPos == upperPos) ? magnets[lowerPos] : null;
+    }
+
+    public static class Magnet {
+        private final double extendDistanceMeters;
+    
+        public Magnet(double extendDistanceMeters) {
+            this.extendDistanceMeters = extendDistanceMeters;
+        }
+        
+        public double getExtendDistanceMeters() {
+            return extendDistanceMeters;
+        }
     }
 }

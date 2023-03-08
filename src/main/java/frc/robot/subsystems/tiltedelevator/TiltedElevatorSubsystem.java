@@ -18,7 +18,6 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.Constants;
-import frc.robot.sensors.HallEffectMagnet;
 import frc.robot.sensors.HallEffectSensor;
 import frc.robot.util.MotorUtil;
 import frc.robot.util.ShuffleboardUtil;
@@ -45,7 +44,7 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
     private double manualPower = 0;
 
     private boolean hallPressed = false;
-    private HallEffectMagnet lastHallPos = null;
+    private HallEffectSensor.Magnet lastHallPos = null;
 
     // Devices
     private final CANSparkMax extensionMotor;
@@ -162,7 +161,7 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
 
         // When magnet is detected, reset encoder
         if (leftHallSensor != null) {
-            HallEffectMagnet leftHallSensorPos = leftHallSensor.getHallEffectState(extensionEncoder.getPosition());
+            HallEffectSensor.Magnet leftHallSensorPos = leftHallSensor.getHallEffectState(extensionEncoder.getPosition());
             // System.out.println(leftHallSensorPos);
             // System.out.println(lastHallPos + " " + leftHallSensorPos);
             if (leftHallSensorPos != null && lastHallPos == null){
