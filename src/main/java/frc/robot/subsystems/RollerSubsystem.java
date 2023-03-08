@@ -43,12 +43,12 @@ public class RollerSubsystem extends SubsystemBase {
     private static final int CONE_PROXIMITY_THRESHOLD = 115;
     private static final int CUBE_PROXIMITY_THRESHOLD = 145;
 
-    private static final int coneRedMax = 80;
-    private static final int coneRedMin = 65;
-    private static final int coneGreenMax = 140;
-    private static final int coneGreenMin = 128;
-    private static final int coneBlueMax = 51;
-    private static final int coneBlueMin = 45;
+    // private static final int coneRedMax = 80;
+    // private static final int coneRedMin = 65;
+    // private static final int coneGreenMax = 140;
+    // private static final int coneGreenMin = 128;
+    // private static final int coneBlueMax = 51;
+    // private static final int coneBlueMin = 45;
 
     private int coneRed = 79;
     private int coneGreen = 129;
@@ -62,12 +62,12 @@ public class RollerSubsystem extends SubsystemBase {
     private int emptyGreen = 125;
     private int emptyBlue = 62;
 
-    private static final int cubeRedMax = 65;
-    private static final int cubeRedMin = 55;
-    private static final int cubeGreenMax = 120;
-    private static final int cubeGreenMin = 108;
-    private static final int cubeBlueMax = 85;
-    private static final int cubeBlueMin = 75;
+    // private static final int cubeRedMax = 65;
+    // private static final int cubeRedMin = 55;
+    // private static final int cubeGreenMax = 120;
+    // private static final int cubeGreenMin = 108;
+    // private static final int cubeBlueMax = 85;
+    // private static final int cubeBlueMin = 75;
 
     //for tuning
     private final ShuffleboardTab tab = Shuffleboard.getTab("Color");
