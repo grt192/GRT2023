@@ -139,20 +139,20 @@ public class RobotContainer {
             autonChooser.addOption("Red preloaded only", new PreloadedOnlyAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, true));
             autonChooser.addOption("Red top auton (1-piece)", new TopOnePieceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, true));
             // autonChooser.addOption("Red top auton (2-piece)", new TopTwoPieceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, true));
-            autonChooser.addOption("Red balance auton", new BalanceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, true));
-            // autonChooser.addOption("Red balance and taxi auton", new BalanceAndTaxiAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, true));
+            autonChooser.addOption("Red balance auton", BalanceAutonSequence.withDeadline(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, true));
+            // autonChooser.addOption("Red balance and taxi auton", BalanceAndTaxiAutonSequence.withDeadline(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, true));
             autonChooser.addOption("Red bottom auton (1-piece)", new BottomOnePieceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, true));
             // autonChooser.addOption("Red bottom auton (2-piece)", new BottomTwoPieceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, true));
-            // autonChooser.addOption("Red bottom balance auton", new BottomBalanceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, true));
+            // autonChooser.addOption("Red bottom balance auton", BottomBalanceAutonSequence.withDeadline(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, true));
 
             autonChooser.addOption("Blue preloaded only", new PreloadedOnlyAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, false));
             autonChooser.addOption("Blue top auton (1-piece)", new TopOnePieceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, false));
             // autonChooser.addOption("Blue top auton (2-piece)", new TopTwoPieceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, false));
-            autonChooser.addOption("Blue balance auton", new BalanceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, false));
-            // autonChooser.addOption("Blue balance and taxi auton", new BalanceAndTaxiAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, false));
+            autonChooser.addOption("Blue balance auton", BalanceAutonSequence.withDeadline(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, false));
+            // autonChooser.addOption("Blue balance and taxi auton", BalanceAndTaxiAutonSequence.withDeadline(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, false));
             autonChooser.addOption("Blue bottom auton (1-piece)", new BottomOnePieceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, false));
             // autonChooser.addOption("Blue bottom auton (2-piece)", new BottomTwoPieceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, false));
-            // autonChooser.addOption("Blue bottom balance auton", new BottomBalanceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, false));
+            // autonChooser.addOption("Blue bottom balance auton", BottomBalanceAutonSequence.withDeadline(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, false));
 
             // autonChooser.addOption("10' straight-line path", new TenFeetStraightLinePath(swerveSubsystem));
             // autonChooser.addOption("20' straight-line path", new TwentyFeetStraightLinePath(swerveSubsystem));
