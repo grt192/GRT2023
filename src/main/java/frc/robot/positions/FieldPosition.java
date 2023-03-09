@@ -134,6 +134,99 @@ public enum FieldPosition {
         Units.inchesToMeters(278.264),
         Units.inchesToMeters(35.719),
         Rotation2d.fromDegrees(0)
+    )),
+
+    C3MID(new Pose2d(
+        Units.inchesToMeters(74),
+        Units.inchesToMeters(195.55),
+        Rotation2d.fromDegrees(180)
+    )),
+    C3HIGH(new Pose2d(
+        Units.inchesToMeters(74),
+        Units.inchesToMeters(195.55),
+        Rotation2d.fromDegrees(180)
+    )),
+    C2MID(new Pose2d(
+        Units.inchesToMeters(74),
+        Units.inchesToMeters(174.123),
+        Rotation2d.fromDegrees(180)
+    )),
+    C2HIGH(new Pose2d(
+        Units.inchesToMeters(74),
+        Units.inchesToMeters(174.123),
+        Rotation2d.fromDegrees(180)
+    )),
+    C1MID(new Pose2d(
+        Units.inchesToMeters(74),
+        Units.inchesToMeters(152.123),
+        Rotation2d.fromDegrees(180)
+    )),
+    C1HIGH(new Pose2d(
+        Units.inchesToMeters(74),
+        Units.inchesToMeters(152.123),
+        Rotation2d.fromDegrees(180)
+    )),
+
+    B3MID(new Pose2d(
+        Units.inchesToMeters(74),
+        Units.inchesToMeters(129.75),
+        Rotation2d.fromDegrees(180)
+    )),
+    B3HIGH(new Pose2d(
+        Units.inchesToMeters(74),
+        Units.inchesToMeters(129.75),
+        Rotation2d.fromDegrees(180)
+    )),
+    B2MID(new Pose2d(
+        Units.inchesToMeters(74),
+        Units.inchesToMeters(107.801),
+        Rotation2d.fromDegrees(180)
+    )),
+    B2HIGH(new Pose2d(
+        Units.inchesToMeters(74),
+        Units.inchesToMeters(107.801),
+        Rotation2d.fromDegrees(180)
+    )),
+    B1MID(new Pose2d(
+        Units.inchesToMeters(74),
+        Units.inchesToMeters(86.149),
+        Rotation2d.fromDegrees(180)
+    )),
+    B1HIGH(new Pose2d(
+        Units.inchesToMeters(74),
+        Units.inchesToMeters(86.149),
+        Rotation2d.fromDegrees(180)
+    )),
+
+    A3MID(new Pose2d(
+        Units.inchesToMeters(74),
+        Units.inchesToMeters(64.818),
+        Rotation2d.fromDegrees(180)
+    )),
+    A3HIGH(new Pose2d(
+        Units.inchesToMeters(74),
+        Units.inchesToMeters(64.818),
+        Rotation2d.fromDegrees(180)
+    )),
+    A2MID(new Pose2d(
+        Units.inchesToMeters(74),
+        Units.inchesToMeters(41.761),
+        Rotation2d.fromDegrees(180)
+    )),
+    A2HIGH(new Pose2d(
+        Units.inchesToMeters(74),
+        Units.inchesToMeters(41.761),
+        Rotation2d.fromDegrees(180)
+    )),
+    A1MID(new Pose2d(
+        Units.inchesToMeters(74),
+        Units.inchesToMeters(20.016),
+        Rotation2d.fromDegrees(180)
+    )), 
+    A1HIGH(new Pose2d(
+        Units.inchesToMeters(74),
+        Units.inchesToMeters(20.016),
+        Rotation2d.fromDegrees(180)
     ));
 
     public final Pose2d BLUE;

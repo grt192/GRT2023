@@ -1,148 +1,115 @@
 package frc.robot.positions;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.util.Units;
-
 import frc.robot.subsystems.tiltedelevator.ElevatorState;
-import frc.robot.util.FieldUtil;
 
 public enum PlacePosition {
-    C3MID(new Pose2d(
-        Units.inchesToMeters(74),
-        Units.inchesToMeters(195.55),
-        Rotation2d.fromDegrees(180)
-    ), ElevatorState.CONE_MID),
-    C3HIGH(new Pose2d(
-        Units.inchesToMeters(74),
-        Units.inchesToMeters(195.55),
-        Rotation2d.fromDegrees(180)
-    ), ElevatorState.CONE_HIGH),
-    C2MID(new Pose2d(
-        Units.inchesToMeters(74),
-        Units.inchesToMeters(174.123),
-        Rotation2d.fromDegrees(180)
-    ), ElevatorState.CUBE_MID),
-    C2HIGH(new Pose2d(
-        Units.inchesToMeters(74),
-        Units.inchesToMeters(174.123),
-        Rotation2d.fromDegrees(180)
-    ), ElevatorState.CUBE_HIGH),
-    C1MID(new Pose2d(
-        Units.inchesToMeters(74),
-        Units.inchesToMeters(152.123),
-        Rotation2d.fromDegrees(180)
-    ), ElevatorState.CONE_MID),
-    C1HIGH(new Pose2d(
-        Units.inchesToMeters(74),
-        Units.inchesToMeters(152.123),
-        Rotation2d.fromDegrees(180)
-    ), ElevatorState.CONE_HIGH),
+    C3MID(
+        FieldPosition.C3MID,
+        FieldPosition.C3_INIT,
+        ElevatorState.CONE_MID
+    ),
+    C3HIGH(
+        FieldPosition.C3HIGH,
+        FieldPosition.C3_INIT,
+        ElevatorState.CONE_HIGH
+    ),
+    C2MID(
+        FieldPosition.C2MID,
+        FieldPosition.C2_INIT,
+        ElevatorState.CUBE_MID
+    ),
+    C2HIGH(
+        FieldPosition.C2HIGH,
+        FieldPosition.C2_INIT,
+        ElevatorState.CUBE_HIGH
+    ),
+    C1MID(
+        FieldPosition.C1MID,
+        FieldPosition.C1_INIT,
+        ElevatorState.CONE_MID
+    ),
+    C1HIGH(
+        FieldPosition.C1HIGH,
+        FieldPosition.C1_INIT,
+        ElevatorState.CONE_HIGH
+    ),
 
-    B3MID(new Pose2d(
-        Units.inchesToMeters(74),
-        Units.inchesToMeters(129.75),
-        Rotation2d.fromDegrees(180)
-    ), ElevatorState.CONE_MID),
-    B3HIGH(new Pose2d(
-        Units.inchesToMeters(74),
-        Units.inchesToMeters(129.75),
-        Rotation2d.fromDegrees(180)
-    ), ElevatorState.CONE_HIGH),
-    B2MID(new Pose2d(
-        Units.inchesToMeters(74),
-        Units.inchesToMeters(107.801),
-        Rotation2d.fromDegrees(180)
-    ), ElevatorState.CUBE_MID),
-    B2HIGH(new Pose2d(
-        Units.inchesToMeters(74),
-        Units.inchesToMeters(107.801),
-        Rotation2d.fromDegrees(180)
-    ), ElevatorState.CUBE_HIGH),
-    B1MID(new Pose2d(
-        Units.inchesToMeters(74),
-        Units.inchesToMeters(86.149),
-        Rotation2d.fromDegrees(180)
-    ), ElevatorState.CUBE_MID),
-    B1HIGH(new Pose2d(
-        Units.inchesToMeters(74),
-        Units.inchesToMeters(86.149),
-        Rotation2d.fromDegrees(180)
-    ), ElevatorState.CUBE_HIGH),
+    B3MID(
+        FieldPosition.B3MID,
+        FieldPosition.B3_INIT,
+        ElevatorState.CONE_MID
+    ),
+    B3HIGH(
+        FieldPosition.B3HIGH,
+        FieldPosition.B3_INIT,
+        ElevatorState.CONE_HIGH
+    ),
+    B2MID(
+        FieldPosition.B2MID,
+        FieldPosition.B2_INIT,
+        ElevatorState.CUBE_MID
+    ),
+    B2HIGH(
+        FieldPosition.B2HIGH,
+        FieldPosition.B2_INIT,
+        ElevatorState.CUBE_HIGH
+    ),
+    B1MID(
+        FieldPosition.B1MID,
+        FieldPosition.B1_INIT,
+        ElevatorState.CONE_MID
+    ),
+    B1HIGH(
+        FieldPosition.B1HIGH,
+        FieldPosition.B1_INIT,
+        ElevatorState.CONE_HIGH
+    ),
 
-    A3MID(new Pose2d(
-        Units.inchesToMeters(74),
-        Units.inchesToMeters(64.818),
-        Rotation2d.fromDegrees(180)
-    ), ElevatorState.CONE_MID),
-    A3HIGH(new Pose2d(
-        Units.inchesToMeters(74),
-        Units.inchesToMeters(64.818),
-        Rotation2d.fromDegrees(180)
-    ), ElevatorState.CONE_HIGH),
-    A2MID(new Pose2d(
-        Units.inchesToMeters(74),
-        Units.inchesToMeters(41.761),
-        Rotation2d.fromDegrees(180)
-    ),  ElevatorState.CUBE_MID),
-    A2HIGH(new Pose2d(
-        Units.inchesToMeters(74),
-        Units.inchesToMeters(41.761),
-        Rotation2d.fromDegrees(180)
-    ),  ElevatorState.CUBE_HIGH),
-    A1MID(new Pose2d(
-        Units.inchesToMeters(74),
-        Units.inchesToMeters(20.016),
-        Rotation2d.fromDegrees(180)
-    ), ElevatorState.CONE_MID), 
-    A1HIGH(new Pose2d(
-        Units.inchesToMeters(74),
-        Units.inchesToMeters(20.016),
-        Rotation2d.fromDegrees(180)
-    ), ElevatorState.CONE_HIGH);
+    A3MID(
+        FieldPosition.A3MID,
+        FieldPosition.A3_INIT,
+        ElevatorState.CONE_MID
+    ),
+    A3HIGH(
+        FieldPosition.A3HIGH,
+        FieldPosition.A3_INIT,
+        ElevatorState.CONE_HIGH
+    ),
+    A2MID(
+        FieldPosition.A2MID,
+        FieldPosition.A2_INIT,
+        ElevatorState.CUBE_MID
+    ),
+    A2HIGH(
+        FieldPosition.A2HIGH,
+        FieldPosition.A2_INIT,
+        ElevatorState.CUBE_HIGH
+    ),
+    A1MID(
+        FieldPosition.A1MID,
+        FieldPosition.A1_INIT,
+        ElevatorState.CONE_MID
+    ),
+    A1HIGH(
+        FieldPosition.A1HIGH,
+        FieldPosition.A1_INIT,
+        ElevatorState.CONE_HIGH
+    );
 
-    public final PlaceState BLUE;
-    public final PlaceState RED;
+    public final FieldPosition placePosition;
+    public final FieldPosition alignPosition;
+    public final ElevatorState elevatorState;
 
     /**
-     * Constructs a `PlacePosition` from a blue-team pose and elevator state. The red-team pose is automatically
-     * generated by mirroring the blue.
+     * Constructs a `PlacePosition` from provided placing and aligning field positions and a provided elevator state.
      * 
-     * @param pose The blue-team pose.
+     * @param placePosition The position of the robot when placing the piece.
+     * @param alignPosition The position of the robot when aligning to the node.
      * @param elevatorState The elevator state.
      */
-    private PlacePosition(Pose2d pose, ElevatorState elevatorState) {
-        this.BLUE = new PlaceState(pose, elevatorState);
-        this.RED = new PlaceState(
-            FieldUtil.mirrorPoseAcrossField(pose),
-            elevatorState
-        );
-    }
-
-    /**
-     * Gets the team-specific `PlaceState` represented by this place position.
-     * @param isRed Whether to return the RED state. If false, returns BLUE.
-     * @return The team-specific state.
-     */
-    public PlaceState getPlaceState(boolean isRed) {
-        return isRed ? RED : BLUE;
-    }
-
-    public class PlaceState {
-        private Pose2d pose;
-        private ElevatorState elevatorState;
-
-        public PlaceState(Pose2d pose, ElevatorState elevatorState) {
-            this.pose = pose;
-            this.elevatorState = elevatorState;
-        }
-    
-        public Pose2d getPose() {
-            return pose;
-        }
-    
-        public ElevatorState getElevatorState() {
-            return elevatorState;
-        }
+    private PlacePosition(FieldPosition placePosition, FieldPosition alignPosition, ElevatorState elevatorState) {
+        this.placePosition = placePosition;
+        this.alignPosition = alignPosition;
+        this.elevatorState = elevatorState;
     }
 }

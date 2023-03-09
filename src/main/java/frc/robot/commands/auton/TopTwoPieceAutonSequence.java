@@ -6,14 +6,13 @@ import edu.wpi.first.math.geometry.Pose2d;
 
 import frc.robot.positions.FieldPosition;
 import frc.robot.positions.PlacePosition;
-import frc.robot.positions.PlacePosition.PlaceState;
 import frc.robot.subsystems.RollerSubsystem;
 import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
+import frc.robot.subsystems.tiltedelevator.ElevatorState;
 import frc.robot.subsystems.tiltedelevator.TiltedElevatorSubsystem;
 
 public class TopTwoPieceAutonSequence extends BaseAutonSequence {
-    private static final FieldPosition INITIAL_POSE = FieldPosition.C2_INIT;
-    private static final PlacePosition PLACE_POSE1 = PlacePosition.C2HIGH;
+    private static final PlacePosition INITIAL_POSE = PlacePosition.C2HIGH;
 
     private static final FieldPosition MID_POSE_1 = FieldPosition.TOP_MIDPOS_1;
     private static final FieldPosition MID_POSE_2 = FieldPosition.TOP_MIDPOS_2;
@@ -33,26 +32,24 @@ public class TopTwoPieceAutonSequence extends BaseAutonSequence {
         BaseSwerveSubsystem swerveSubsystem, RollerSubsystem rollerSubsystem, TiltedElevatorSubsystem tiltedElevatorSubsystem,
         boolean isRed // TODO: better way of passing this
     ) {
-        super(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, INITIAL_POSE.getPose(isRed)); // TODO: better
+        super(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, INITIAL_POSE, isRed);
 
-        Pose2d initialPose = INITIAL_POSE.getPose(isRed);
+        Pose2d initialPose = INITIAL_POSE.alignPosition.getPose(isRed);
         Pose2d midPose1 = MID_POSE_1.getPose(isRed);
         Pose2d midPose2 = MID_POSE_2.getPose(isRed);
         Pose2d midPose3 = MID_POSE_3.getPose(isRed);
         Pose2d midPose4 = MID_POSE_4.getPose(isRed);
 
-        PlaceState placeState1 = PLACE_POSE1.getPlaceState(isRed);
-        PlaceState placeState2 = PLACE_POSE2.getPlaceState(isRed);
-
         Pose2d grabPose = GRAB_POSE.getPose(isRed);
 
+        Pose2d placePose2 = PLACE_POSE2.placePosition.getPose(isRed);
+        ElevatorState elevatorState2 = PLACE_POSE2.elevatorState;
+
         addCommands(
-            // Place preloaded game piece
-            goAndPlace(initialPose, placeState1),
             // Go and grab 2nd piece
             goAndGrab(initialPose, List.of(midPose1, midPose2, midPose3, midPose4), grabPose), 
             // Go and place grabbed piece
-            goAndPlace(grabPose, List.of(midPose4, midPose3, midPose2), midPose1, placeState2)
+            goAndPlace(grabPose, List.of(midPose4, midPose3, midPose2), midPose1, placePose2, elevatorState2)
         );
     }
 }

@@ -3,18 +3,19 @@ package frc.robot.commands.auton;
 import java.util.List;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+
 import frc.robot.commands.balancing.DefaultBalancerCommand;
 import frc.robot.commands.swerve.FollowPathCommand;
 import frc.robot.positions.FieldPosition;
 import frc.robot.positions.PlacePosition;
-import frc.robot.positions.PlacePosition.PlaceState;
 import frc.robot.subsystems.RollerSubsystem;
 import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
 import frc.robot.subsystems.tiltedelevator.TiltedElevatorSubsystem;
 
 public class BottomBalanceAutonSequence extends BaseAutonSequence {
-    private static final FieldPosition INITIAL_POSE = FieldPosition.A2_INIT;
-    private static final PlacePosition PLACE_POSE1 = PlacePosition.A2HIGH;
+    private static final PlacePosition INITIAL_POSE = PlacePosition.A2HIGH;
 
     private static final FieldPosition MID_POSE_1 = FieldPosition.BOTTOM_MIDPOS_1;
     private static final FieldPosition MID_POSE_2 = FieldPosition.BOTTOM_MIDPOS_2;
@@ -32,19 +33,15 @@ public class BottomBalanceAutonSequence extends BaseAutonSequence {
         BaseSwerveSubsystem swerveSubsystem, RollerSubsystem rollerSubsystem, TiltedElevatorSubsystem tiltedElevatorSubsystem,
         boolean isRed // TODO: better way of passing this
     ) {
-        super(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, INITIAL_POSE.getPose(isRed)); // TODO: better
+        super(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, INITIAL_POSE, isRed);
 
-        Pose2d initialPose = INITIAL_POSE.getPose(isRed);
-        PlaceState placeState1 = PLACE_POSE1.getPlaceState(isRed);
-
+        Pose2d initialPose = INITIAL_POSE.alignPosition.getPose(isRed);
         Pose2d midPose1 = MID_POSE_1.getPose(isRed);
         Pose2d midPose2 = MID_POSE_2.getPose(isRed);
         Pose2d midPose3 = MID_POSE_3.getPose(isRed);
         Pose2d finalPose = FINAL_POSE.getPose(isRed);
 
         addCommands(
-            // Place preloaded game piece
-            goAndPlace(initialPose, placeState1),
             // Pathfollow outside community (to final pose) but don't turn
             FollowPathCommand.from(
                 swerveSubsystem,
@@ -54,6 +51,23 @@ public class BottomBalanceAutonSequence extends BaseAutonSequence {
             ),
             // Go onto charging station and balance from the other side
             new DefaultBalancerCommand(swerveSubsystem)
+        );
+    }
+
+    /**
+     * Creates a balancing bottom auton sequence that terminates after 14.5 seconds.
+     * @param swerveSubsystem The swerve subsystem.
+     * @param rollerSubsystem The roller subsystem.
+     * @param tiltedElevatorSubsystem The tilted elevator subsystem.
+     * @param isRed Whether this is a red auton path.
+     * @return The created auton path.
+     */
+    public static ParallelDeadlineGroup withDeadline(
+        BaseSwerveSubsystem swerveSubsystem, RollerSubsystem rollerSubsystem, TiltedElevatorSubsystem tiltedElevatorSubsystem,
+        boolean isRed // TODO: better way of passing this
+    ) {
+        return new WaitCommand(14.5).deadlineWith(
+            new BottomBalanceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, isRed)
         );
     }
 }

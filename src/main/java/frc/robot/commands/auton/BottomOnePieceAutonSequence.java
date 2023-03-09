@@ -7,14 +7,12 @@ import edu.wpi.first.math.geometry.Pose2d;
 import frc.robot.commands.swerve.FollowPathCommand;
 import frc.robot.positions.FieldPosition;
 import frc.robot.positions.PlacePosition;
-import frc.robot.positions.PlacePosition.PlaceState;
 import frc.robot.subsystems.RollerSubsystem;
 import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
 import frc.robot.subsystems.tiltedelevator.TiltedElevatorSubsystem;
 
 public class BottomOnePieceAutonSequence extends BaseAutonSequence {
-    private static final FieldPosition INITIAL_POSE = FieldPosition.A2_INIT;
-    private static final PlacePosition PLACE_POSE1 = PlacePosition.A2HIGH;
+    private static final PlacePosition INITIAL_POSE = PlacePosition.A2HIGH;
 
     private static final FieldPosition MID_POSE_1 = FieldPosition.BOTTOM_MIDPOS_1;
     private static final FieldPosition MID_POSE_2 = FieldPosition.BOTTOM_MIDPOS_2;
@@ -31,18 +29,14 @@ public class BottomOnePieceAutonSequence extends BaseAutonSequence {
         BaseSwerveSubsystem swerveSubsystem, RollerSubsystem rollerSubsystem, TiltedElevatorSubsystem tiltedElevatorSubsystem,
         boolean isRed // TODO: better way of passing this
     ) {
-        super(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, INITIAL_POSE.getPose(isRed)); // TODO: better
+        super(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, INITIAL_POSE, isRed);
 
-        Pose2d initialPose = INITIAL_POSE.getPose(isRed);
-        PlaceState placeState1 = PLACE_POSE1.getPlaceState(isRed);
-
+        Pose2d initialPose = INITIAL_POSE.alignPosition.getPose(isRed);
         Pose2d midPose1 = MID_POSE_1.getPose(isRed);
         Pose2d midPose2 = MID_POSE_2.getPose(isRed);
         Pose2d finalPose = FINAL_POSE.getPose(isRed);
 
         addCommands(
-            // Place preloaded game piece
-            goAndPlace(initialPose, placeState1),
             // Pathfollow outside community (to grab pose) but don't turn
             FollowPathCommand.from(
                 swerveSubsystem,
