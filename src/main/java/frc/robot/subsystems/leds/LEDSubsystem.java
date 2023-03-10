@@ -69,4 +69,13 @@ public class LEDSubsystem extends SubsystemBase {
             (int) (v * BRIGHTNESS_SCALE_FACTOR)
         );
     }
+
+    public static double getJoystickAngleAsPercent(double x, double y){
+        double angle = Math.atan(y/x);
+        if(x < 0){
+            angle += Math.PI;
+        }
+        return angle / (2 * Math.PI);
+    }
+    
 }
