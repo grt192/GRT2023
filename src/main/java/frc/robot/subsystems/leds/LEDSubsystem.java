@@ -53,5 +53,10 @@ public class LEDSubsystem extends SubsystemBase {
             (int) (green * BRIGHTNESS_SCALE_FACTOR),
             (int) (blue * BRIGHTNESS_SCALE_FACTOR)
         );
+        
+    }
+
+    public void setColorHSV(double h, double s, double v){
+        this.color = Color.fromHSV((int)h, (int)s, (int)v);
     }
 }
