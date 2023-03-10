@@ -272,6 +272,9 @@ public class RobotContainer {
         }, tiltedElevatorSubsystem));
 
         signalLEDSubsystem.setDefaultCommand(new RunCommand(() -> {
+            if(mechController.getRightY() != 0 || mechController.getRightX() != 0){
+                signalLEDSubsystem.setColorHSV(Math.floor(getJoystickAngleAsPercent(mechController.getRightX(), mechController.getRightY()) * 256), 255, 255);
+            }
             if (blSwitch.getAsBoolean()) {
                 signalLEDSubsystem.setColor(255, 100, 0);
             } else {
@@ -294,5 +297,13 @@ public class RobotContainer {
      */
     public Command getTestCommand() {
         return testCommand;
+    }
+
+    public double getJoystickAngleAsPercent(double x, double y){
+        double angle = Math.atan(y/x);
+        if(x < 0){
+            angle += Math.PI;
+        }
+        return angle / (2 * Math.PI);
     }
 }
