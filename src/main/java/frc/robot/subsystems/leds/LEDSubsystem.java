@@ -42,21 +42,31 @@ public class LEDSubsystem extends SubsystemBase {
     }
 
     /**
-     * Sets the driver-provided color of the LEDs.
-     * @param red The red component of the color.
-     * @param green The green component of the color.
-     * @param blue The blue component of the color.
+     * Sets the driver-provided color of the LEDs from provided RGB values.
+     * @param r The red component of the color, from [0, 255].
+     * @param g The green component of the color, from [0, 255].
+     * @param b The blue component of the color, from [0, 255].
      */
-    public void setColor(double red, double green, double blue) {
+    public void setRGB(double r, double g, double b) {
         this.color = new Color(
-            (int) (red * BRIGHTNESS_SCALE_FACTOR),
-            (int) (green * BRIGHTNESS_SCALE_FACTOR),
-            (int) (blue * BRIGHTNESS_SCALE_FACTOR)
+            (int) (r * BRIGHTNESS_SCALE_FACTOR),
+            (int) (g * BRIGHTNESS_SCALE_FACTOR),
+            (int) (b * BRIGHTNESS_SCALE_FACTOR)
         );
         
     }
 
-    public void setColorHSV(double h, double s, double v){
-        this.color = Color.fromHSV((int)h, (int)s, (int)v);
+    /**
+     * Sets the driver-provided color of the LEDs from provided HSV values.
+     * @param h The hue component of the color, from [0, 180).
+     * @param s The saturation component of the color, from [0, 255].
+     * @param v The value component of the color, from [0, 255].
+     */
+    public void setHSV(double h, double s, double v) {
+        this.color = Color.fromHSV(
+            (int) h,
+            (int) s,
+            (int) (v * BRIGHTNESS_SCALE_FACTOR)
+        );
     }
 }
