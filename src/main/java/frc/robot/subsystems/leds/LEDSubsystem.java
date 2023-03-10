@@ -59,4 +59,13 @@ public class LEDSubsystem extends SubsystemBase {
     public void setColorHSV(double h, double s, double v){
         this.color = Color.fromHSV((int)h, (int)s, (int)v);
     }
+
+    public static double getJoystickAngleAsPercent(double x, double y){
+        double angle = Math.atan(y/x);
+        if(x < 0){
+            angle += Math.PI;
+        }
+        return angle / (2 * Math.PI);
+    }
+    
 }

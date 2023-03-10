@@ -273,9 +273,9 @@ public class RobotContainer {
 
         signalLEDSubsystem.setDefaultCommand(new RunCommand(() -> {
             if(mechController.getRightY() != 0 || mechController.getRightX() != 0){
-                signalLEDSubsystem.setColorHSV(Math.floor(getJoystickAngleAsPercent(mechController.getRightX(), mechController.getRightY()) * 256), 255, 255);
+                signalLEDSubsystem.setColorHSV(Math.floor(LEDSubsystem.getJoystickAngleAsPercent(mechController.getRightX(), mechController.getRightY()) * 256), 255, 255);
             }
-            if (blSwitch.getAsBoolean()) {
+            else if (blSwitch.getAsBoolean()) {
                 signalLEDSubsystem.setColor(255, 100, 0);
             } else {
                 signalLEDSubsystem.setColor(192, 8, 254);
@@ -299,11 +299,5 @@ public class RobotContainer {
         return testCommand;
     }
 
-    public double getJoystickAngleAsPercent(double x, double y){
-        double angle = Math.atan(y/x);
-        if(x < 0){
-            angle += Math.PI;
-        }
-        return angle / (2 * Math.PI);
-    }
+    
 }
