@@ -53,16 +53,21 @@ public class TwistJoystickDriveController extends BaseDriveController {
 
     @Override
     public JoystickButton getFieldResetButton() {
-        return leftMiddleButton;
+        return leftTopRightButton;
     }
 
     @Override
     public JoystickButton getCameraSwitchButton() {
-        return leftTopRightButton;
+        return leftMiddleLeftButton;
     }
 
     @Override
     public JoystickButton getChargingStationLockButton() {
         return leftTopLeftButton;
+    }
+
+    @Override
+    public JoystickButton getCancelAutoAlignButton() {
+        return leftMiddleButton;
     }
 }

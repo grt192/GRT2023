@@ -60,4 +60,9 @@ public class XboxDriveController extends BaseDriveController {
     public JoystickButton getChargingStationLockButton() {
         return driveBButton;
     }
+
+    @Override
+    public JoystickButton getCancelAutoAlignButton() {
+        return driveXButton;
+    }
 }

@@ -81,6 +81,11 @@ public class DualJoystickDriveController extends BaseDriveController {
         return leftTopLeftButton;
     }
 
+    @Override
+    public JoystickButton getCancelAutoAlignButton() {
+        return leftMiddleButton;
+    }
+
     /**
      * Gets the amount to scale translational input by.
      * @return The scale to apply to translational input.

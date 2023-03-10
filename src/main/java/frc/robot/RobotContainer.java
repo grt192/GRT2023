@@ -34,6 +34,7 @@ import frc.robot.commands.auton.test.TenFeetStraightLinePath;
 import frc.robot.commands.auton.test.TwentyFeetStraightLinePath;
 import frc.robot.commands.balancing.BaseBalancerCommand;
 import frc.robot.commands.balancing.DefaultBalancerCommand;
+import frc.robot.commands.dropping.AutoAlignGrid;
 import frc.robot.commands.dropping.DropperChooserCommand;
 import frc.robot.commands.pretest.MotorTestCommand;
 import frc.robot.controllers.BaseDriveController;
@@ -101,8 +102,10 @@ public class RobotContainer {
     // Commands
     private final ShuffleboardTab shuffleboardTab = Shuffleboard.getTab("Driver");
     private final SendableChooser<Command> autonChooser;
-    private final BaseBalancerCommand balancerCommand;
     private final MotorTestCommand testCommand;
+
+    private final BaseBalancerCommand balancerCommand;
+    private final AutoAlignGrid autoAlignCommands;
 
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -135,6 +138,7 @@ public class RobotContainer {
             final BaseSwerveSubsystem swerveSubsystem = (BaseSwerveSubsystem) driveSubsystem;
 
             testCommand = new MotorTestCommand(swerveSubsystem, tiltedElevatorSubsystem, rollerSubsystem);
+            autoAlignCommands = new AutoAlignGrid(swerveSubsystem, tiltedElevatorSubsystem, false);
 
             autonChooser.addOption("Red preloaded only", new PreloadedOnlyAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, true));
             autonChooser.addOption("Red top auton (1-piece)", new TopOnePieceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, true));
@@ -163,6 +167,7 @@ public class RobotContainer {
             // autonChooser.addOption("GRT path", new GRTAutonSequence(swerveSubsystem));
         } else {
             testCommand = null;
+            autoAlignCommands = null;
         }
 
         shuffleboardTab.add("Auton", autonChooser)
@@ -198,6 +203,7 @@ public class RobotContainer {
 
             driveController.getFieldResetButton().onTrue(new InstantCommand(swerveSubsystem::resetFieldAngle, swerveSubsystem));
             driveController.getChargingStationLockButton().onTrue(new InstantCommand(swerveSubsystem::toggleChargingStationLocked, swerveSubsystem));
+            driveController.getCancelAutoAlignButton().onTrue(new InstantCommand(autoAlignCommands::cancelAll));
 
             /*
             brSwitch.onTrue(new InstantCommand(() -> {
