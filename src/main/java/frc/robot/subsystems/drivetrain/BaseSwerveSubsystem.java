@@ -117,8 +117,8 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
 
         shuffleboardTab = Shuffleboard.getTab("Driver");
         shuffleboardTab.add("Field", fieldWidget)
-            .withPosition(5, 5)
-            .withSize(2, 1);
+            .withPosition(8, 1)
+            .withSize(3, 2);
         xEntry = shuffleboardTab.add("x pos (in)", 0).withPosition(0, 5).getEntry();
         yEntry = shuffleboardTab.add("y pos (in)", 0).withPosition(1, 5).getEntry();
         thetaEntry = shuffleboardTab.add("theta pos (deg)", 0).withPosition(2, 5).getEntry();
@@ -140,7 +140,7 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
         ShuffleboardUtil.addBooleanListener(visionEnableEntry, (value) -> VISION_ENABLE = value);
 
         GenericEntry relativeEncoderToggleEntry = shuffleboardTab.add("Relative encoder feedback (set)", false)
-            .withPosition(8, 2)
+            .withPosition(6, 5)
             .withWidget(BuiltInWidgets.kToggleSwitch)
             .getEntry();
         ShuffleboardUtil.addBooleanListener(relativeEncoderToggleEntry, (value) -> setSteerRelativeEncoderFeedback(value));
