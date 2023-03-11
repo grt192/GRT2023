@@ -62,6 +62,12 @@ public class DropperChooserCommand extends InstantCommand {
                 0, 0.2, 0.5, 0.2, 0.5
             );
 
+            // TODO: tune
+            case GROUND -> new DropSequence(
+                driveSubsystem, rollerSubsystem, tiltedElevatorSubsystem,
+                0, 0.2, 0.5, 0.2, 0.5
+            );
+
             default -> new DropSequence(
                 driveSubsystem, rollerSubsystem, tiltedElevatorSubsystem,
                 0, 0, 0, 0, 0.5

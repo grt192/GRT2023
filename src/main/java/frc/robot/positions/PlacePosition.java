@@ -3,94 +3,139 @@ package frc.robot.positions;
 import frc.robot.subsystems.tiltedelevator.ElevatorState;
 
 public enum PlacePosition {
-    C3MID(
+    C3_HYBRID(
+        FieldPosition.C3,
+        FieldPosition.C3_INIT,
+        ElevatorState.GROUND
+    ),
+    C3_MID(
         FieldPosition.C3,
         FieldPosition.C3_INIT,
         ElevatorState.CONE_MID
     ),
-    C3HIGH(
+    C3_HIGH(
         FieldPosition.C3,
         FieldPosition.C3_INIT,
         ElevatorState.CONE_HIGH
     ),
-    C2MID(
+    C2_HYBRID(
+        FieldPosition.C2,
+        FieldPosition.C2_INIT,
+        ElevatorState.GROUND
+    ),
+    C2_MID(
         FieldPosition.C2,
         FieldPosition.C2_INIT,
         ElevatorState.CUBE_MID
     ),
-    C2HIGH(
+    C2_HIGH(
         FieldPosition.C2,
         FieldPosition.C2_INIT,
         ElevatorState.CUBE_HIGH
     ),
-    C1MID(
+    C1_HYBRID(
+        FieldPosition.C1,
+        FieldPosition.C1_INIT,
+        ElevatorState.GROUND
+    ),
+    C1_MID(
         FieldPosition.C1,
         FieldPosition.C1_INIT,
         ElevatorState.CONE_MID
     ),
-    C1HIGH(
+    C1_HIGH(
         FieldPosition.C1,
         FieldPosition.C1_INIT,
         ElevatorState.CONE_HIGH
     ),
 
-    B3MID(
+    B3_HYBRID(
+        FieldPosition.B3,
+        FieldPosition.B3_INIT,
+        ElevatorState.GROUND
+    ),
+    B3_MID(
         FieldPosition.B3,
         FieldPosition.B3_INIT,
         ElevatorState.CONE_MID
     ),
-    B3HIGH(
+    B3_HIGH(
         FieldPosition.B3,
         FieldPosition.B3_INIT,
         ElevatorState.CONE_HIGH
     ),
-    B2MID(
+    B2_HYBRID(
+        FieldPosition.B2,
+        FieldPosition.B2_INIT,
+        ElevatorState.GROUND
+    ),
+    B2_MID(
         FieldPosition.B2,
         FieldPosition.B2_INIT,
         ElevatorState.CUBE_MID
     ),
-    B2HIGH(
+    B2_HIGH(
         FieldPosition.B2,
         FieldPosition.B2_INIT,
         ElevatorState.CUBE_HIGH
     ),
-    B1MID(
+    B1_HYBRID(
+        FieldPosition.B1,
+        FieldPosition.B1_INIT,
+        ElevatorState.GROUND
+    ),
+    B1_MID(
         FieldPosition.B1,
         FieldPosition.B1_INIT,
         ElevatorState.CONE_MID
     ),
-    B1HIGH(
+    B1_HIGH(
         FieldPosition.B1,
         FieldPosition.B1_INIT,
         ElevatorState.CONE_HIGH
     ),
 
-    A3MID(
+    A3_HYBRID(
+        FieldPosition.A3,
+        FieldPosition.A3_INIT,
+        ElevatorState.GROUND
+    ),
+    A3_MID(
         FieldPosition.A3,
         FieldPosition.A3_INIT,
         ElevatorState.CONE_MID
     ),
-    A3HIGH(
+    A3_HIGH(
         FieldPosition.A3,
         FieldPosition.A3_INIT,
         ElevatorState.CONE_HIGH
     ),
-    A2MID(
+    A2_HYBRID(
+        FieldPosition.A2,
+        FieldPosition.A2_INIT,
+        ElevatorState.GROUND
+    ),
+    A2_MID(
         FieldPosition.A2,
         FieldPosition.A2_INIT,
         ElevatorState.CUBE_MID
     ),
-    A2HIGH(
+    A2_HIGH(
         FieldPosition.A2,
         FieldPosition.A2_INIT,
         ElevatorState.CUBE_HIGH
     ),
-    A1MID(
+    A1_HYBRID(
+        FieldPosition.A1,
+        FieldPosition.A1_INIT,
+        ElevatorState.GROUND
+    ),
+    A1_MID(
         FieldPosition.A1,
         FieldPosition.A1_INIT,
         ElevatorState.CONE_MID
     ),
-    A1HIGH(
+    A1_HIGH(
         FieldPosition.A1,
         FieldPosition.A1_INIT,
         ElevatorState.CONE_HIGH

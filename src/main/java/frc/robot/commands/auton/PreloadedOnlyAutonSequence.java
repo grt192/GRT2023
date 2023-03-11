@@ -6,7 +6,7 @@ import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
 import frc.robot.subsystems.tiltedelevator.TiltedElevatorSubsystem;
 
 public class PreloadedOnlyAutonSequence extends BaseAutonSequence {
-    private static final PlacePosition INITIAL_POSE = PlacePosition.A2HIGH;
+    private static final PlacePosition INITIAL_POSE = PlacePosition.A2_HIGH;
 
     /**
      * Preloaded-only auton sequence. This only places the preloaded game piece and

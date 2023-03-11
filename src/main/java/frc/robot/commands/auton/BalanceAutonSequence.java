@@ -10,7 +10,7 @@ import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
 import frc.robot.subsystems.tiltedelevator.TiltedElevatorSubsystem;
 
 public class BalanceAutonSequence extends BaseAutonSequence {
-    private static final PlacePosition INITIAL_POSE = PlacePosition.B2HIGH;
+    private static final PlacePosition INITIAL_POSE = PlacePosition.B2_HIGH;
 
     /**
      * Balancing auton sequence.

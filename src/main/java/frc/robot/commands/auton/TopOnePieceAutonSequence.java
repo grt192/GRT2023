@@ -12,7 +12,7 @@ import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
 import frc.robot.subsystems.tiltedelevator.TiltedElevatorSubsystem;
 
 public class TopOnePieceAutonSequence extends BaseAutonSequence {
-    private static final PlacePosition INITIAL_POSE = PlacePosition.C2HIGH;
+    private static final PlacePosition INITIAL_POSE = PlacePosition.C2_HIGH;
 
     private static final FieldPosition MID_POSE_1 = FieldPosition.TOP_MIDPOS_1;
     private static final FieldPosition MID_POSE_2 = FieldPosition.TOP_MIDPOS_2;

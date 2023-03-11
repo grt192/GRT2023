@@ -12,7 +12,7 @@ import frc.robot.subsystems.tiltedelevator.ElevatorState;
 import frc.robot.subsystems.tiltedelevator.TiltedElevatorSubsystem;
 
 public class TopTwoPieceAutonSequence extends BaseAutonSequence {
-    private static final PlacePosition INITIAL_POSE = PlacePosition.C2HIGH;
+    private static final PlacePosition INITIAL_POSE = PlacePosition.C2_HIGH;
 
     private static final FieldPosition MID_POSE_1 = FieldPosition.TOP_MIDPOS_1;
     private static final FieldPosition MID_POSE_2 = FieldPosition.TOP_MIDPOS_2;
@@ -20,7 +20,7 @@ public class TopTwoPieceAutonSequence extends BaseAutonSequence {
     private static final FieldPosition MID_POSE_4 = FieldPosition.TOP_MIDPOS_4;
 
     private static final FieldPosition GRAB_POSE = FieldPosition.PIECE1;
-    private static final PlacePosition PLACE_POSE2 = PlacePosition.C2MID;
+    private static final PlacePosition PLACE_POSE2 = PlacePosition.C2_MID;
 
     /**
      * Non-balancing top auton sequence.
