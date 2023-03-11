@@ -28,6 +28,7 @@ import frc.robot.commands.auton.TopTwoPieceAutonSequence;
 import frc.robot.commands.auton.test.BoxAutonSequence;
 import frc.robot.commands.auton.test.ContinuousBoxAutonSequence;
 import frc.robot.commands.auton.test.GRTAutonSequence;
+import frc.robot.commands.auton.test.GoToOriginSequence;
 import frc.robot.commands.auton.test.HighRotationLinePath;
 import frc.robot.commands.auton.test.RotatingSCurveAutonSequence;
 import frc.robot.commands.auton.test.TenFeetStraightLinePath;
@@ -161,6 +162,7 @@ public class RobotContainer {
             // autonChooser.addOption("Box auton", new BoxAutonSequence(swerveSubsystem));
             // autonChooser.addOption("No-stopping box auton", new ContinuousBoxAutonSequence(swerveSubsystem));
             // autonChooser.addOption("GRT path", new GRTAutonSequence(swerveSubsystem));
+            autonChooser.addOption("Go to origin", new GoToOriginSequence(swerveSubsystem));
         } else {
             testCommand = null;
             autoAlignCommands = null;

@@ -15,6 +15,7 @@ public class ContinuousBoxAutonSequence extends SequentialCommandGroup {
         addRequirements(swerveSubsystem);
         addCommands(
             new InstantCommand(swerveSubsystem::resetPose),
+            new InstantCommand(() -> swerveSubsystem.setVisionEnabled(false)),
             FollowPathCommand.composedFrom(
                 swerveSubsystem, 
                 new Pose2d(),
