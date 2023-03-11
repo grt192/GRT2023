@@ -111,7 +111,7 @@ public class RobotContainer {
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
     public RobotContainer() {
-        driveController = new DualJoystickDriveController();
+        driveController = new XboxDriveController();
 
         photonWrapper = new PhotonWrapper();
         switchableCamera = new SwitchableCamera(shuffleboardTab);
@@ -125,10 +125,6 @@ public class RobotContainer {
         superstructure = new Superstructure(rollerSubsystem, tiltedElevatorSubsystem, signalLEDSubsystem, switchableCamera);
 
         balancerCommand = new DefaultBalancerCommand(driveSubsystem);
-
-        // Configure button bindings
-        configureDriveBindings();
-        configureMechBindings();
 
         // Initialize auton and test commands
         autonChooser = new SendableChooser<>();
@@ -172,7 +168,11 @@ public class RobotContainer {
 
         shuffleboardTab.add("Auton", autonChooser)
             .withPosition(8, 0)
-            .withSize(4, 2);
+            .withSize(3, 1);
+
+        // Configure button bindings
+        configureDriveBindings();
+        configureMechBindings();
     }
 
     /**

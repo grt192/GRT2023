@@ -84,7 +84,7 @@ public class AutoAlignCommand extends InstantCommand {
 
     @Override
     public void cancel() {
-        wrappedDriveCommand.cancel();
+        if (wrappedDriveCommand != null) wrappedDriveCommand.cancel();
         super.cancel();
     }
 }
