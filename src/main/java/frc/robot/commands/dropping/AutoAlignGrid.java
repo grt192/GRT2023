@@ -8,7 +8,8 @@ import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
 import frc.robot.subsystems.tiltedelevator.TiltedElevatorSubsystem;
 
 public class AutoAlignGrid {
-    private final AutoAlignCommand[] commands;
+    private final AutoAlignCommand alignToClosestCommand;
+    private final AutoAlignCommand[] setTargetCommands;
 
     private final ShuffleboardTab shuffleboardTab = Shuffleboard.getTab("Grid");
 
@@ -24,14 +25,16 @@ public class AutoAlignGrid {
         BaseSwerveSubsystem swerveSubsystem, TiltedElevatorSubsystem tiltedElevatorSubsystem,
         boolean isRed // TODO: better way of passing this
     ) {
+        alignToClosestCommand = new AutoAlignCommand(swerveSubsystem, tiltedElevatorSubsystem, isRed);
+
         PlacePosition[] positions = PlacePosition.values();
-        commands = new AutoAlignCommand[positions.length];
+        setTargetCommands = new AutoAlignCommand[positions.length];
 
         for (int i = 0; i < positions.length; i++) {
             PlacePosition position = positions[i];
 
             AutoAlignCommand command = new AutoAlignCommand(swerveSubsystem, tiltedElevatorSubsystem, position, isRed);
-            commands[i] = command;
+            setTargetCommands[i] = command;
 
             // Add command to grid
             shuffleboardTab.add(position.name(), command).withPosition(
@@ -42,10 +45,19 @@ public class AutoAlignGrid {
     }
 
     /**
+     * Gets the command to align to the closest node.
+     * @return The command to align to the closest node.
+     */
+    public AutoAlignCommand getAlignToClosestCommand() {
+        return alignToClosestCommand;
+    }
+
+    /**
      * Cancels all currently scheduled auto-align commands.
      */
     public void cancelAll() {
-        for (AutoAlignCommand command : commands) {
+        alignToClosestCommand.cancel();
+        for (AutoAlignCommand command : setTargetCommands) {
             command.cancel();
         }
     }

@@ -203,6 +203,8 @@ public class RobotContainer {
 
             driveController.getFieldResetButton().onTrue(new InstantCommand(swerveSubsystem::resetFieldAngle, swerveSubsystem));
             driveController.getChargingStationLockButton().onTrue(new InstantCommand(swerveSubsystem::toggleChargingStationLocked, swerveSubsystem));
+
+            driveController.getAlignToClosestButton().onTrue(autoAlignCommands.getAlignToClosestCommand());
             driveController.getCancelAutoAlignButton().onTrue(new InstantCommand(autoAlignCommands::cancelAll));
 
             /*
