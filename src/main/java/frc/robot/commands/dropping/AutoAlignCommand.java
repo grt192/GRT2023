@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.positions.PlacePosition;
 import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
 import frc.robot.subsystems.tiltedelevator.TiltedElevatorSubsystem;
+import frc.robot.subsystems.tiltedelevator.ElevatorState.OffsetState;
 
 public class AutoAlignCommand extends InstantCommand {
     private final BaseSwerveSubsystem swerveSubsystem;
@@ -45,11 +46,20 @@ public class AutoAlignCommand extends InstantCommand {
     public void initialize() {
         Pose2d initialPose = swerveSubsystem.getRobotPosition();
 
-        // Target the closest place position.
+        // Target the closest place position. If two place positions are equally close (eg. HIGH and MID), align with
+        // the one that requires less elevator movement.
         PlacePosition targetPlacePosition = Collections.min(
             Arrays.asList(PlacePosition.values()),
-            Comparator.comparing((pos) -> initialPose.getTranslation().getDistance(pos.alignPosition.getPose(isRed).getTranslation()))
+            Comparator.comparing((PlacePosition pos) -> {
+                return initialPose.getTranslation().getDistance(pos.alignPosition.getPose(isRed).getTranslation());
+            }).thenComparing((PlacePosition pos) -> {
+                double currentExtensionMeters = tiltedElevatorSubsystem.getExtensionMeters();
+                double targetExtensionMeters =  pos.elevatorState.getExtension(OffsetState.DROPPING, true);
+                return Math.abs(targetExtensionMeters - currentExtensionMeters);
+            })
         );
+
+        System.out.println("Aligning with " + targetPlacePosition.name());
 
         // Schedule command to align with targeted node.
         wrappedCommand = new AlignToNodeCommand(swerveSubsystem, tiltedElevatorSubsystem, targetPlacePosition, isRed);
