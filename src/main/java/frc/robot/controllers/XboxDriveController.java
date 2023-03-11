@@ -14,7 +14,9 @@ public class XboxDriveController extends BaseDriveController {
         driveXButton = new JoystickButton(driveController, XboxController.Button.kX.value),
         driveYButton = new JoystickButton(driveController, XboxController.Button.kY.value),
         driveLBumper = new JoystickButton(driveController, XboxController.Button.kLeftBumper.value),
-        driveRBumper = new JoystickButton(driveController, XboxController.Button.kRightBumper.value);
+        driveRBumper = new JoystickButton(driveController, XboxController.Button.kRightBumper.value),
+        driveLStickButton = new JoystickButton(driveController, XboxController.Button.kLeftStick.value),
+        driveRStickButton = new JoystickButton(driveController, XboxController.Button.kRightStick.value);
 
     @Override
     public double getForwardPower() {
@@ -59,6 +61,11 @@ public class XboxDriveController extends BaseDriveController {
     @Override
     public JoystickButton getChargingStationLockButton() {
         return driveBButton;
+    }
+
+    @Override
+    public JoystickButton getAlignToClosestButton() {
+        return driveRStickButton;
     }
 
     @Override

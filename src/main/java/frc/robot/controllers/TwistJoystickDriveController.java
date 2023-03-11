@@ -67,6 +67,11 @@ public class TwistJoystickDriveController extends BaseDriveController {
     }
 
     @Override
+    public JoystickButton getAlignToClosestButton() {
+        return leftBackButton;
+    }
+
+    @Override
     public JoystickButton getCancelAutoAlignButton() {
         return leftMiddleButton;
     }
