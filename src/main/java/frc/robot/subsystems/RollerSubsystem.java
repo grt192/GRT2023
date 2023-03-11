@@ -206,23 +206,24 @@ public class RollerSubsystem extends SubsystemBase {
         gentry.setValue(green);
         bentry.setValue(blue);
 
+        //calculate 3d distance between measured point and each set points
         double emptyDist = Math.pow(emptyRed - red, 2) + Math.pow(emptyGreen - green, 2) + Math.pow(emptyBlue - blue, 2);
         double coneDist = Math.pow(coneRed - red, 2) + Math.pow(coneGreen - green, 2) + Math.pow(coneBlue - blue, 2);
         double cubeDist = Math.pow(cubeRed - red, 2) + Math.pow(cubeGreen - green, 2) + Math.pow(cubeBlue - blue, 2);
-        double minDist = Math.min(emptyDist, Math.min(coneDist, cubeDist));
 
-        System.out.println("empty -  " + emptyDist + " cone - " + coneDist + " cube - " + cubeDist);
-        // TODO: modify `heldPiece` based on color sensor data
-        if (minDist == cubeDist){
-            System.out.print("CUBE ");
+        // System.out.println("empty -  " + emptyDist + " cone - " + coneDist + " cube - " + cubeDist);
+
+        //determine that the piece is the one with the least 3d distance
+        if (cubeDist < coneDist && cubeDist < emptyDist){
+            // System.out.print("CUBE ");
             return HeldPiece.CUBE;
         }
-        else if (minDist == coneDist){
-            System.out.print("CONE ");
+        else if (coneDist < emptyDist){
+            // System.out.print("CONE ");
             return HeldPiece.CONE;
         }
         else{
-            System.out.print("NONE ");
+            // System.out.print("NONE ");
             return HeldPiece.EMPTY;
         }
 
