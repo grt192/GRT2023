@@ -1,31 +1,64 @@
 package frc.robot.commands.dropping;
 
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 
-import frc.robot.commands.swerve.GoToPointCommand;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+
 import frc.robot.positions.PlacePosition;
 import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
 import frc.robot.subsystems.tiltedelevator.TiltedElevatorSubsystem;
 
-public class AutoAlignCommand extends ParallelCommandGroup {
+public class AutoAlignCommand extends InstantCommand {
+    private final BaseSwerveSubsystem swerveSubsystem;
+    private final TiltedElevatorSubsystem tiltedElevatorSubsystem;
+
+    private final boolean isRed;
+
+    private AlignToNodeCommand wrappedCommand;
+
     /**
-     * Creates an auto-align command from a given swerve subsystem, elevator subsystem, target place position, and
-     * whether the robot is currently on the red team.
+     * Creates an auto-align command from a given swerve subsystem, elevator subsystem, and
+     * whether the robot is currently on the red team. This command is an `InstantCommand` that
+     * schedules an `AlignToNodeCommand` corresponding to the closest node to the current robot
+     * position.
      * 
      * @param swerveSubsystem The swerve subsystem.
      * @param tiltedElevatorSubsystem The tilted elevator subsystem.
-     * @param placePosition The target place position to align with.
      * @param isRed Whether the robot is on the red team.
      */
     public AutoAlignCommand(
         BaseSwerveSubsystem swerveSubsystem, TiltedElevatorSubsystem tiltedElevatorSubsystem,
-        PlacePosition targetPlacePosition, boolean isRed
+        boolean isRed
     ) {
+        this.swerveSubsystem = swerveSubsystem;
+        this.tiltedElevatorSubsystem = tiltedElevatorSubsystem;
+
+        this.isRed = isRed;
+
         addRequirements(swerveSubsystem, tiltedElevatorSubsystem);
-        addCommands(
-            new InstantCommand(() -> tiltedElevatorSubsystem.setState(targetPlacePosition.elevatorState)),
-            new GoToPointCommand(swerveSubsystem, targetPlacePosition.alignPosition.getPose(isRed))
+    }
+
+    @Override
+    public void initialize() {
+        Pose2d initialPose = swerveSubsystem.getRobotPosition();
+
+        // Target the closest place position.
+        PlacePosition targetPlacePosition = Collections.min(
+            Arrays.asList(PlacePosition.values()),
+            Comparator.comparing((pos) -> initialPose.getTranslation().getDistance(pos.alignPosition.getPose(isRed).getTranslation()))
         );
+
+        // Schedule command to align with targeted node.
+        wrappedCommand = new AlignToNodeCommand(swerveSubsystem, tiltedElevatorSubsystem, targetPlacePosition, isRed);
+        wrappedCommand.schedule();
+    }
+
+    @Override
+    public void cancel() {
+        if (wrappedCommand != null) wrappedCommand.cancel();
+        super.cancel();
     }
 }

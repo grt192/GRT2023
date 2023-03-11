@@ -8,8 +8,8 @@ import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
 import frc.robot.subsystems.tiltedelevator.TiltedElevatorSubsystem;
 
 public class AutoAlignGrid {
-    private final AutoAlignToClosestCommand alignToClosestCommand;
-    private final AutoAlignCommand[] setTargetCommands;
+    private final AutoAlignCommand alignToClosestCommand;
+    private final AlignToNodeCommand[] setTargetCommands;
 
     private final ShuffleboardTab shuffleboardTab = Shuffleboard.getTab("Grid");
 
@@ -25,15 +25,15 @@ public class AutoAlignGrid {
         BaseSwerveSubsystem swerveSubsystem, TiltedElevatorSubsystem tiltedElevatorSubsystem,
         boolean isRed // TODO: better way of passing this
     ) {
-        alignToClosestCommand = new AutoAlignToClosestCommand(swerveSubsystem, tiltedElevatorSubsystem, isRed);
+        alignToClosestCommand = new AutoAlignCommand(swerveSubsystem, tiltedElevatorSubsystem, isRed);
 
         PlacePosition[] positions = PlacePosition.values();
-        setTargetCommands = new AutoAlignCommand[positions.length];
+        setTargetCommands = new AlignToNodeCommand[positions.length];
 
         for (int i = 0; i < positions.length; i++) {
             PlacePosition position = positions[i];
 
-            AutoAlignCommand command = new AutoAlignCommand(swerveSubsystem, tiltedElevatorSubsystem, position, isRed);
+            AlignToNodeCommand command = new AlignToNodeCommand(swerveSubsystem, tiltedElevatorSubsystem, position, isRed);
             setTargetCommands[i] = command;
 
             // Add command to grid
@@ -48,7 +48,7 @@ public class AutoAlignGrid {
      * Gets the command to align to the closest node.
      * @return The command to align to the closest node.
      */
-    public AutoAlignToClosestCommand getAlignToClosestCommand() {
+    public AutoAlignCommand getAlignToClosestCommand() {
         return alignToClosestCommand;
     }
 
@@ -57,7 +57,7 @@ public class AutoAlignGrid {
      */
     public void cancelAll() {
         alignToClosestCommand.cancel();
-        for (AutoAlignCommand command : setTargetCommands) {
+        for (AlignToNodeCommand command : setTargetCommands) {
             command.cancel();
         }
     }
