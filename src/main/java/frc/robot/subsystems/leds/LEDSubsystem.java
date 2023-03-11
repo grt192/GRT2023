@@ -13,6 +13,8 @@ public class LEDSubsystem extends SubsystemBase {
     private static final double BLINK_DURATION_SECONDS = 0.5;
     private static final Color BLINK_COLOR = new Color(0, 0, 0);
     private boolean blinking = false;
+    private boolean continuous = false;
+    public boolean manual = false;
 
     private static final double BRIGHTNESS_SCALE_FACTOR = 0.25;
 
@@ -38,7 +40,11 @@ public class LEDSubsystem extends SubsystemBase {
         // Toggle the blink boolean every duration to swap the LEDs between the driver piece color
         // and the blink color.
         if (blinkTimer.advanceIfElapsed(BLINK_DURATION_SECONDS)) blinking = !blinking;
-        ledStrip.setSolidColor(blinking ? BLINK_COLOR : color);
+        if(manual && continuous){
+            ledStrip.setContinuousColor(blinking ? BLINK_COLOR : color);
+        } else {
+            ledStrip.setSolidColor(blinking ? BLINK_COLOR : color);
+        }
     }
 
     /**
@@ -68,5 +74,13 @@ public class LEDSubsystem extends SubsystemBase {
             (int) s,
             (int) (v * BRIGHTNESS_SCALE_FACTOR)
         );
+    }
+
+    public void toggleLEDControlMode(){
+        continuous = !continuous;
+    }
+
+    public void setManual(boolean manual){
+        this.manual = manual;
     }
 }
