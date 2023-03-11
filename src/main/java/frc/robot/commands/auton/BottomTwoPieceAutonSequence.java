@@ -44,7 +44,8 @@ public class BottomTwoPieceAutonSequence extends BaseAutonSequence {
 
         addCommands(
             // Spline through midpose 1 to avoid overshoot
-            FollowPathCommand.from(swerveSubsystem, initialPose, List.of(midPose1.getTranslation()), midPose2, false, true),
+            FollowPathCommand.from(swerveSubsystem, initialPose, List.of(), midPose1, false, true),
+            FollowPathCommand.from(swerveSubsystem, midPose1, List.of(), midPose2, true, true),
             // Go and grab 2nd piece
             goAndGrab(midPose2, List.of(), grabPose, true, false),
             // Go and place grabbed piece

@@ -112,7 +112,7 @@ public enum FieldPosition {
     BOTTOM_MIDPOS_2(new Pose2d(
         Units.inchesToMeters(170),
         Units.inchesToMeters(29), 
-        Rotation2d.fromDegrees(180)
+        Rotation2d.fromDegrees(0) // orginally 180 deg
     )),
 
     BOTTOM_1PIECEPOS(new Pose2d(
