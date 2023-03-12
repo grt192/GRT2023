@@ -6,7 +6,7 @@ public enum PlacePosition {
     C3_HYBRID(
         FieldPosition.C3,
         FieldPosition.C3_INIT,
-        ElevatorState.GROUND
+        ElevatorState.HYBRID
     ),
     C3_MID(
         FieldPosition.C3,
@@ -21,7 +21,7 @@ public enum PlacePosition {
     C2_HYBRID(
         FieldPosition.C2,
         FieldPosition.C2_INIT,
-        ElevatorState.GROUND
+        ElevatorState.HYBRID
     ),
     C2_MID(
         FieldPosition.C2,
@@ -36,7 +36,7 @@ public enum PlacePosition {
     C1_HYBRID(
         FieldPosition.C1,
         FieldPosition.C1_INIT,
-        ElevatorState.GROUND
+        ElevatorState.HYBRID
     ),
     C1_MID(
         FieldPosition.C1,
@@ -52,7 +52,7 @@ public enum PlacePosition {
     B3_HYBRID(
         FieldPosition.B3,
         FieldPosition.B3_INIT,
-        ElevatorState.GROUND
+        ElevatorState.HYBRID
     ),
     B3_MID(
         FieldPosition.B3,
@@ -67,7 +67,7 @@ public enum PlacePosition {
     B2_HYBRID(
         FieldPosition.B2,
         FieldPosition.B2_INIT,
-        ElevatorState.GROUND
+        ElevatorState.HYBRID
     ),
     B2_MID(
         FieldPosition.B2,
@@ -82,7 +82,7 @@ public enum PlacePosition {
     B1_HYBRID(
         FieldPosition.B1,
         FieldPosition.B1_INIT,
-        ElevatorState.GROUND
+        ElevatorState.HYBRID
     ),
     B1_MID(
         FieldPosition.B1,
@@ -98,7 +98,7 @@ public enum PlacePosition {
     A3_HYBRID(
         FieldPosition.A3,
         FieldPosition.A3_INIT,
-        ElevatorState.GROUND
+        ElevatorState.HYBRID
     ),
     A3_MID(
         FieldPosition.A3,
@@ -113,7 +113,7 @@ public enum PlacePosition {
     A2_HYBRID(
         FieldPosition.A2,
         FieldPosition.A2_INIT,
-        ElevatorState.GROUND
+        ElevatorState.HYBRID
     ),
     A2_MID(
         FieldPosition.A2,
@@ -128,7 +128,7 @@ public enum PlacePosition {
     A1_HYBRID(
         FieldPosition.A1,
         FieldPosition.A1_INIT,
-        ElevatorState.GROUND
+        ElevatorState.HYBRID
     ),
     A1_MID(
         FieldPosition.A1,
