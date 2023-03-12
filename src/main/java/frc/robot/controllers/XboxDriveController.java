@@ -45,7 +45,7 @@ public class XboxDriveController extends BaseDriveController {
 
     @Override
     public JoystickButton getBalancerButton() {
-        return driveRBumper;
+        return driveLStickButton;
     }
 
     @Override
@@ -66,6 +66,16 @@ public class XboxDriveController extends BaseDriveController {
     @Override
     public JoystickButton getAlignToClosestButton() {
         return driveRStickButton;
+    }
+
+    @Override
+    public JoystickButton getAlignLeftButton() {
+        return driveLBumper;
+    }
+
+    @Override
+    public JoystickButton getAlignRightButton() {
+        return driveRBumper;
     }
 
     @Override

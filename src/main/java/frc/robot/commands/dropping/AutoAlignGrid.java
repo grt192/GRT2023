@@ -8,7 +8,6 @@ import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
 import frc.robot.subsystems.tiltedelevator.TiltedElevatorSubsystem;
 
 public class AutoAlignGrid {
-    private final AutoAlignCommand alignToClosestCommand;
     private final AlignToNodeCommand[] setTargetCommands;
 
     private final ShuffleboardTab shuffleboardTab = Shuffleboard.getTab("Grid");
@@ -25,8 +24,6 @@ public class AutoAlignGrid {
         BaseSwerveSubsystem swerveSubsystem, TiltedElevatorSubsystem tiltedElevatorSubsystem,
         boolean isRed // TODO: better way of passing this
     ) {
-        alignToClosestCommand = new AutoAlignCommand(swerveSubsystem, tiltedElevatorSubsystem, isRed);
-
         PlacePosition[] positions = PlacePosition.values();
         setTargetCommands = new AlignToNodeCommand[positions.length];
 
@@ -45,18 +42,9 @@ public class AutoAlignGrid {
     }
 
     /**
-     * Gets the command to align to the closest node.
-     * @return The command to align to the closest node.
-     */
-    public AutoAlignCommand getAlignToClosestCommand() {
-        return alignToClosestCommand;
-    }
-
-    /**
      * Cancels all currently scheduled auto-align commands.
      */
     public void cancelAll() {
-        alignToClosestCommand.cancel();
         for (AlignToNodeCommand command : setTargetCommands) {
             command.cancel();
         }

@@ -8,8 +8,10 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 
+import frc.robot.positions.FieldPosition;
 import frc.robot.positions.PlacePosition;
 import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
+import frc.robot.subsystems.tiltedelevator.ElevatorState;
 import frc.robot.subsystems.tiltedelevator.TiltedElevatorSubsystem;
 import frc.robot.subsystems.tiltedelevator.ElevatorState.OffsetState;
 
@@ -19,6 +21,7 @@ public class AutoAlignCommand extends InstantCommand {
 
     private final boolean isRed;
 
+    private PlacePosition targetPlacePosition;
     private AlignToNodeCommand wrappedCommand;
 
     /**
@@ -48,13 +51,79 @@ public class AutoAlignCommand extends InstantCommand {
         Pose2d initialPose = swerveSubsystem.getRobotPosition();
         double currentExtensionMeters = tiltedElevatorSubsystem.getExtensionMeters();
 
-        // Get closest place pose to align with
-        PlacePosition targetPlacePosition = getClosestPlacePosition(initialPose, currentExtensionMeters, isRed);
+        // Initialize `targetPlacePosition` to closest place pose
+        targetPlacePosition = getClosestPlacePosition(initialPose, currentExtensionMeters, isRed);
         System.out.println("Aligning with " + targetPlacePosition.name());
 
-        // Schedule command to align with targeted node
-        wrappedCommand = new AlignToNodeCommand(swerveSubsystem, tiltedElevatorSubsystem, targetPlacePosition, isRed);
-        wrappedCommand.schedule();
+        scheduleAlignCommand();
+    }
+
+    /**
+     * Aligns to the node immediately left of the currently selected node.
+     * This is a no-op if there isn't yet a node selected, or if the selected node is the left-most node already (A1).
+     */
+    public void alignLeft() {
+        if (targetPlacePosition == null) return;
+        if (targetPlacePosition.placePosition == FieldPosition.A1) return;
+
+        // TODO: better way of doing this?
+        ElevatorState currentElevatorState = tiltedElevatorSubsystem.getState();
+        targetPlacePosition = switch (targetPlacePosition.placePosition) {
+            case A2 -> elevatorStateToPlacePosition(currentElevatorState, PlacePosition.A1_HYBRID, PlacePosition.A1_MID, PlacePosition.A1_HIGH);
+            case A3 -> elevatorStateToPlacePosition(currentElevatorState, PlacePosition.A2_HYBRID, PlacePosition.A2_MID, PlacePosition.A2_HIGH);
+            case B1 -> elevatorStateToPlacePosition(currentElevatorState, PlacePosition.A3_HYBRID, PlacePosition.A3_MID, PlacePosition.A3_HIGH);
+            case B2 -> elevatorStateToPlacePosition(currentElevatorState, PlacePosition.B1_HYBRID, PlacePosition.B1_MID, PlacePosition.B1_HIGH);
+            case B3 -> elevatorStateToPlacePosition(currentElevatorState, PlacePosition.B2_HYBRID, PlacePosition.B2_MID, PlacePosition.B2_HIGH);
+            case C1 -> elevatorStateToPlacePosition(currentElevatorState, PlacePosition.B3_HYBRID, PlacePosition.B3_MID, PlacePosition.B3_HIGH);
+            case C2 -> elevatorStateToPlacePosition(currentElevatorState, PlacePosition.C1_HYBRID, PlacePosition.C1_MID, PlacePosition.C1_HIGH);
+            case C3 -> elevatorStateToPlacePosition(currentElevatorState, PlacePosition.C2_HYBRID, PlacePosition.C2_MID, PlacePosition.C2_HIGH);
+            default -> throw new RuntimeException("Position not found!");
+        };
+
+        scheduleAlignCommand();
+    }
+
+    /**
+     * Aligns to the node immediately right of the currently selected node.
+     * This is a no-op if there isn't yet a node selected, or if the selected node is the right-most node already (C3).
+     */
+    public void alignRight() {
+        if (targetPlacePosition == null) return;
+        if (targetPlacePosition.placePosition == FieldPosition.C3) return;
+
+        // TODO: better way of doing this?
+        ElevatorState currentElevatorState = tiltedElevatorSubsystem.getState();
+        targetPlacePosition = switch (targetPlacePosition.placePosition) {
+            case A1 -> elevatorStateToPlacePosition(currentElevatorState, PlacePosition.A2_HYBRID, PlacePosition.A2_MID, PlacePosition.A2_HIGH);
+            case A2 -> elevatorStateToPlacePosition(currentElevatorState, PlacePosition.A3_HYBRID, PlacePosition.A3_MID, PlacePosition.A3_HIGH);
+            case A3 -> elevatorStateToPlacePosition(currentElevatorState, PlacePosition.B1_HYBRID, PlacePosition.B1_MID, PlacePosition.B1_HIGH);
+            case B1 -> elevatorStateToPlacePosition(currentElevatorState, PlacePosition.B2_HYBRID, PlacePosition.B2_MID, PlacePosition.B2_HIGH);
+            case B2 -> elevatorStateToPlacePosition(currentElevatorState, PlacePosition.B3_HYBRID, PlacePosition.B3_MID, PlacePosition.B3_HIGH);
+            case B3 -> elevatorStateToPlacePosition(currentElevatorState, PlacePosition.C1_HYBRID, PlacePosition.C1_MID, PlacePosition.C1_HIGH);
+            case C1 -> elevatorStateToPlacePosition(currentElevatorState, PlacePosition.C2_HYBRID, PlacePosition.C2_MID, PlacePosition.C2_HIGH);
+            case C2 -> elevatorStateToPlacePosition(currentElevatorState, PlacePosition.C3_HYBRID, PlacePosition.C3_MID, PlacePosition.C3_HIGH);
+            default -> throw new RuntimeException("Position not found!");
+        };
+
+        scheduleAlignCommand();
+    }
+
+    /**
+     * Returns a provided HYBRID, MID, or HIGH place position, depending on the given elevator state.
+     * @param elevatorState The current elevator state of the robot.
+     * @param hybridPosition The HYBRID position to return.
+     * @param midPosition The MID position to return.
+     * @param highPosition The HIGH position to return.
+     * @return The provided HYBRID, MID, or HIGH place position, depending on the given elevator state.
+     */
+    private static PlacePosition elevatorStateToPlacePosition(
+        ElevatorState elevatorState, PlacePosition hybridPosition, PlacePosition midPosition, PlacePosition highPosition
+    ) {
+        return switch (elevatorState) {
+            case CONE_MID, CUBE_MID -> midPosition;
+            case CONE_HIGH, CUBE_HIGH -> highPosition;
+            default -> hybridPosition;
+        };
     }
 
     /**
@@ -84,5 +153,15 @@ public class AutoAlignCommand extends InstantCommand {
     public void cancel() {
         if (wrappedCommand != null) wrappedCommand.cancel();
         super.cancel();
+    }
+
+    /**
+     * Schedules a wrapped `AlignToNodeCommand` to align the robot with the selected node.
+     * If an align command was previously scheduled, cancel it before scheduling another.
+     */
+    private void scheduleAlignCommand() {
+        if (wrappedCommand != null) wrappedCommand.cancel();
+        wrappedCommand = new AlignToNodeCommand(swerveSubsystem, tiltedElevatorSubsystem, targetPlacePosition, isRed);
+        wrappedCommand.schedule();
     }
 }

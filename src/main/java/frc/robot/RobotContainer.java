@@ -35,6 +35,7 @@ import frc.robot.commands.auton.test.TenFeetStraightLinePath;
 import frc.robot.commands.auton.test.TwentyFeetStraightLinePath;
 import frc.robot.commands.balancing.BaseBalancerCommand;
 import frc.robot.commands.balancing.DefaultBalancerCommand;
+import frc.robot.commands.dropping.AutoAlignCommand;
 import frc.robot.commands.dropping.AutoAlignGrid;
 import frc.robot.commands.dropping.DropperChooserCommand;
 import frc.robot.commands.pretest.MotorTestCommand;
@@ -106,7 +107,8 @@ public class RobotContainer {
     private final MotorTestCommand testCommand;
 
     private final BaseBalancerCommand balancerCommand;
-    private final AutoAlignGrid autoAlignCommands;
+    private final AutoAlignCommand autoAlignCommand;
+    private final AutoAlignGrid autoAlignGrid;
 
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -135,7 +137,9 @@ public class RobotContainer {
             final BaseSwerveSubsystem swerveSubsystem = (BaseSwerveSubsystem) driveSubsystem;
 
             testCommand = new MotorTestCommand(swerveSubsystem, tiltedElevatorSubsystem, rollerSubsystem);
-            autoAlignCommands = new AutoAlignGrid(swerveSubsystem, tiltedElevatorSubsystem, false);
+
+            autoAlignCommand = new AutoAlignCommand(swerveSubsystem, tiltedElevatorSubsystem, false);
+            autoAlignGrid = new AutoAlignGrid(swerveSubsystem, tiltedElevatorSubsystem, false);
 
             autonChooser.addOption("Red preloaded only", new PreloadedOnlyAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, true));
             autonChooser.addOption("Red top auton (1-piece)", new TopOnePieceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, true));
@@ -165,7 +169,8 @@ public class RobotContainer {
             autonChooser.addOption("Go to origin", new GoToOriginSequence(swerveSubsystem));
         } else {
             testCommand = null;
-            autoAlignCommands = null;
+            autoAlignCommand = null;
+            autoAlignGrid = null;
         }
 
         shuffleboardTab.add("Auton", autonChooser)
@@ -206,8 +211,12 @@ public class RobotContainer {
             driveController.getFieldResetButton().onTrue(new InstantCommand(swerveSubsystem::resetFieldAngle, swerveSubsystem));
             driveController.getChargingStationLockButton().onTrue(new InstantCommand(swerveSubsystem::toggleChargingStationLocked, swerveSubsystem));
 
-            driveController.getAlignToClosestButton().onTrue(autoAlignCommands.getAlignToClosestCommand());
-            driveController.getCancelAutoAlignButton().onTrue(new InstantCommand(autoAlignCommands::cancelAll));
+            driveController.getAlignToClosestButton().onTrue(autoAlignCommand);
+            driveController.getAlignLeftButton().onTrue(new InstantCommand(autoAlignCommand::alignLeft));
+            driveController.getAlignRightButton().onTrue(new InstantCommand(autoAlignCommand::alignRight));
+            driveController.getCancelAutoAlignButton()
+                .onTrue(new InstantCommand(autoAlignCommand::cancel))
+                .onTrue(new InstantCommand(autoAlignGrid::cancelAll));
 
             /*
             brSwitch.onTrue(new InstantCommand(() -> {
