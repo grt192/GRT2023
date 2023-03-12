@@ -63,7 +63,7 @@ public class DropperChooserCommand extends InstantCommand {
             );
 
             // TODO: tune
-            case HYBRID -> new DropSequence(
+            case GROUND -> new DropSequence(
                 driveSubsystem, rollerSubsystem, tiltedElevatorSubsystem,
                 0, 0.2, 0.5, 0.2, 0.5
             );

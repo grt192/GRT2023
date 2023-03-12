@@ -255,7 +255,7 @@ public class RobotContainer {
             int pov = mechController.getPOV();
             switch (pov) {
                 case 0 -> tiltedElevatorSubsystem.setState(ElevatorState.SUBSTATION);
-                case 270 -> tiltedElevatorSubsystem.setState(ElevatorState.HYBRID);
+                case 270 -> {}
                 case 180 -> {
                     tiltedElevatorSubsystem.setState(ElevatorState.GROUND);
                     tiltedElevatorSubsystem.offsetState = OffsetState.OVERRIDE_HAS_PIECE;

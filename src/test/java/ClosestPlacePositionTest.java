@@ -18,7 +18,7 @@ public class ClosestPlacePositionTest {
      * position when the robot is at a given place position.
      * 
      * Current position: A1_INIT
-     * Current elevator state: ElevatorState.HYBRID
+     * Current elevator state: ElevatorState.GROUND
      * Expected position: A1_HYBRID
      */
     @Test
@@ -103,7 +103,7 @@ public class ClosestPlacePositionTest {
      * position when the robot is near (10" from) a given place position.
      * 
      * Current position: A1_INIT + 10"
-     * Current elevator state: ElevatorState.HYBRID
+     * Current elevator state: ElevatorState.GROUND
      * Expected position: A1_HYBRID
      */
     @Test
