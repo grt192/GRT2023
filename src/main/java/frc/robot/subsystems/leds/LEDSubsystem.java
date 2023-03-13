@@ -22,6 +22,7 @@ public class LEDSubsystem extends SubsystemBase {
     private Color color = new Color(192, 8, 254);
     private final Color aprilColor = new Color(255, 0, 0);
     private final Timer aprilTimer = new Timer();
+    private final Timer aprilTimer2 = new Timer();
     public boolean pieceGrabbed = false;
 
     public LEDSubsystem() {
@@ -52,21 +53,8 @@ public class LEDSubsystem extends SubsystemBase {
             ledStrip.fillContinuousColor(color);
             ledStrip.setContinuousColor();
         } else {
-            Color currentColor;
-            //current color is the color that will be added at the bottom of the strip buffer
-            if(!aprilTimer.hasElapsed(APRIL_BLINK_DURATION)){
-                currentColor = aprilColor;
-            } else {
-                currentColor = color;
-            }
-            if(blinking){
-                ledStrip.setSolidColor(BLINK_COLOR);
-                //we update the continuous color so that the pulses continue even when the leds are off
-                ledStrip.updateContinuousColor(currentColor);
-            }
-            //if the leds are on update the continuous color and then set the leds to that continuous buffer
-            ledStrip.updateContinuousColor(currentColor);
-            ledStrip.setContinuousColor();
+            setColorPulse();
+            //setTwoColor()
         }
     }
 
@@ -119,5 +107,34 @@ public class LEDSubsystem extends SubsystemBase {
             aprilTimer.reset();
             aprilTimer.start();
         }
+        aprilTimer2.reset();
+        aprilTimer2.start();
+    }
+
+    public void setColorPulse(){Color currentColor;
+        //current color is the color that will be added at the bottom of the strip buffer
+        if(!aprilTimer.hasElapsed(APRIL_BLINK_DURATION)){
+            currentColor = aprilColor;
+        } else {
+            currentColor = color;
+        }
+        if(blinking){
+            ledStrip.setSolidColor(BLINK_COLOR);
+            //we update the continuous color so that the pulses continue even when the leds are off
+            ledStrip.updateContinuousColor(currentColor);
+        }
+        //if the leds are on update the continuous color and then set the leds to that continuous buffer
+        ledStrip.updateContinuousColor(currentColor);
+        ledStrip.setContinuousColor();
+    }
+
+    public void setTwoColor(){
+        Color color2;
+        if(!aprilTimer2.hasElapsed(.05)){
+            color2 = aprilColor;
+        } else {
+            color2 =  color;
+        }
+        ledStrip.setTwoColors(color, color2);
     }
 }
