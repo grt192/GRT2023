@@ -44,10 +44,16 @@ public class LEDSubsystem extends SubsystemBase {
         // and the blink color.
         if (blinkTimer.advanceIfElapsed(BLINK_DURATION_SECONDS)) blinking = !blinking;
         if(manual && continuous){
-            ledStrip.updateContinuousColor(blinking ? BLINK_COLOR : color);
+            //if manual and continuous set the bottom to color
+            ledStrip.updateContinuousColor(color);
+            ledStrip.setContinuousColor();
+        } else if(manual){
+            //if manual and not continuous fill entire strip with color
+            ledStrip.fillContinuousColor(color);
             ledStrip.setContinuousColor();
         } else {
             Color currentColor;
+            //current color is the color that will be added at the bottom of the strip buffer
             if(!aprilTimer.hasElapsed(APRIL_BLINK_DURATION)){
                 currentColor = aprilColor;
             } else {
@@ -55,8 +61,10 @@ public class LEDSubsystem extends SubsystemBase {
             }
             if(blinking){
                 ledStrip.setSolidColor(BLINK_COLOR);
+                //we update the continuous color so that the pulses continue even when the leds are off
                 ledStrip.updateContinuousColor(currentColor);
             }
+            //if the leds are on update the continuous color and then set the leds to that continuous buffer
             ledStrip.updateContinuousColor(currentColor);
             ledStrip.setContinuousColor();
         }
@@ -69,7 +77,8 @@ public class LEDSubsystem extends SubsystemBase {
      * @param b The blue component of the color, from [0, 255].
      */
     public void setRGB(double r, double g, double b) {
-        if(this.color.red == r && this.color.green == g && this.color.blue == b){
+        //if the color doesnt change, dont do anything
+        if(this.color.red == r && this.color.green == g && this.color.blue == b){ 
             return;
         }
         this.color = new Color(
@@ -77,8 +86,9 @@ public class LEDSubsystem extends SubsystemBase {
             (int) (g * BRIGHTNESS_SCALE_FACTOR),
             (int) (b * BRIGHTNESS_SCALE_FACTOR)
         );
+        //sets the whole strip to the color
         ledStrip.fillContinuousColor(this.color);
-        
+        ledStrip.setContinuousColor();
     }
 
     /**
@@ -87,6 +97,7 @@ public class LEDSubsystem extends SubsystemBase {
      * @param s The saturation component of the color, from [0, 255].
      * @param v The value component of the color, from [0, 255].
      */
+    //sets the color to the 
     public void setHSV(double h, double s, double v) {
         this.color = Color.fromHSV(
             (int) h,

@@ -33,6 +33,7 @@ public class LEDStrip {
         led.setData(ledBuffer);
     }
 
+    //increment the colors in the cont buffer, does not set the leds
     public void updateContinuousColor(Color color){
         if(ledTimer.hasElapsed(0.05)){
             for (int i = contLedBuffer.getLength() - 1; i > 0; i--){
@@ -44,10 +45,13 @@ public class LEDStrip {
         }
     }
 
+    //set cont buffer on to the leds
     public void setContinuousColor(){
         led.setData(contLedBuffer);
     }
 
+    //set entire cont buffer to a single color
+    //does the same thing as set solid color except the continuous buffer is reset
     public void fillContinuousColor(Color color){
         for(int i = 0; i < contLedBuffer.getLength(); i++){
             contLedBuffer.setLED(i, color);
