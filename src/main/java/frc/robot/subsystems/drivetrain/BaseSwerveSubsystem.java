@@ -19,7 +19,7 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
-
+import frc.robot.subsystems.leds.LEDSubsystem;
 import frc.robot.util.ShuffleboardUtil;
 import frc.robot.vision.PhotonWrapper;
 
@@ -37,6 +37,7 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
     private final SwerveDriveKinematics kinematics;
 
     private final PhotonWrapper photonWrapper;
+    private final LEDSubsystem ledSubsystem;
 
     public final double MAX_VEL; // Max robot tangential velocity, in m/s
     public final double MAX_ACCEL; // Max robot tangential acceleration, in m/s^2
@@ -78,7 +79,8 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
         BaseSwerveModule bottomRightModule,
         double maxVel, double maxAccel, double maxOmega, double maxAlpha,
         SwerveDriveKinematics kinematics,
-        PhotonWrapper photonWrapper
+        PhotonWrapper photonWrapper,
+        LEDSubsystem ledSubsystem
     ) {
         MAX_VEL = maxVel;
         MAX_ACCEL = maxAccel;
@@ -102,6 +104,7 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
 
         this.kinematics = kinematics;
         this.photonWrapper = photonWrapper;
+        this.ledSubsystem = ledSubsystem;
 
         // Initialize pose estimator
         poseEstimator = new SwerveDrivePoseEstimator(
@@ -167,6 +170,7 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
 
         // Add vision pose estimate to pose estimator
         if (VISION_ENABLE) photonWrapper.getRobotPoses(estimate).forEach((visionPose) -> {
+            ledSubsystem.tagDetected();
             poseEstimator.addVisionMeasurement(
                 visionPose.estimatedPose.toPose2d(),
                 visionPose.timestampSeconds
