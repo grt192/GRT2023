@@ -11,6 +11,7 @@ public class LEDStrip {
     private final AddressableLEDBuffer contLedBuffer;
     private final Timer ledTimer;
     private final int LEDS_PER_SEC = 60;
+    private final int LED_GROUP_LENGTH = 5;
 
     public LEDStrip(int ledPort, int ledLength) {
         led = new AddressableLED(ledPort);
@@ -52,6 +53,17 @@ public class LEDStrip {
     //set cont buffer on to the leds
     public void setContinuousColor(){
         led.setData(contLedBuffer);
+    }
+
+    public void setTwoColors(Color color1, Color color2){
+        for(int i = 0; i < ledBuffer.getLength(); i++){
+            if(i % (LED_GROUP_LENGTH * 2) < LED_GROUP_LENGTH){
+                ledBuffer.setLED(i, color1);
+            } else {
+                ledBuffer.setLED(i, color2);
+            }
+        }
+        led.setData(ledBuffer);
     }
 
     //set entire cont buffer to a single color
