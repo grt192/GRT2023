@@ -2,6 +2,7 @@ package frc.robot.subsystems.drivetrain;
 
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.util.Units;
+import frc.robot.subsystems.leds.LEDSubsystem;
 import frc.robot.vision.PhotonWrapper;
 
 import static frc.robot.Constants.SwerveConstants.*;
@@ -12,7 +13,7 @@ public class SwerveSubsystem extends BaseSwerveSubsystem {
     public static final double MAX_OMEGA = MAX_VEL / TL_POS.getNorm(); // Max robot angular velocity, in rads/s (omega = v / r)
     public static final double MAX_ALPHA = 7.97564656352; // Max robot angular acceleration, in rads/s^2
 
-    public SwerveSubsystem(PhotonWrapper photonWrapper) {
+    public SwerveSubsystem(PhotonWrapper photonWrapper, LEDSubsystem ledSubsystem) {
         super(
             new SwerveModule.TopLeft(TL_DRIVE, TL_STEER, TL_OFFSET_RADS),
             new SwerveModule.TopRight(TR_DRIVE, TR_STEER, TR_OFFSET_RADS),
@@ -20,7 +21,8 @@ public class SwerveSubsystem extends BaseSwerveSubsystem {
             new SwerveModule.BottomRight(BR_DRIVE, BR_STEER, BR_OFFSET_RADS),
             MAX_VEL, MAX_ACCEL, MAX_OMEGA, MAX_ALPHA,
             new SwerveDriveKinematics(TL_POS, TR_POS, BL_POS, BR_POS),
-            photonWrapper
+            photonWrapper,
+            ledSubsystem
         );
     }
 }

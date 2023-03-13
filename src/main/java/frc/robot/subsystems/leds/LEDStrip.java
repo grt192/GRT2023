@@ -8,11 +8,13 @@ import edu.wpi.first.wpilibj.util.Color;
 public class LEDStrip {
     private final AddressableLED led;
     private final AddressableLEDBuffer ledBuffer;
+    private final AddressableLEDBuffer contLedBuffer;
     private final Timer ledTimer;
 
     public LEDStrip(int ledPort, int ledLength) {
         led = new AddressableLED(ledPort);
         ledBuffer = new AddressableLEDBuffer(ledLength);
+        contLedBuffer = new AddressableLEDBuffer(ledLength);
 
         led.setLength(ledBuffer.getLength());
         led.start();
@@ -31,15 +33,24 @@ public class LEDStrip {
         led.setData(ledBuffer);
     }
 
-    public void setContinuousColor(Color color){
-        if(ledTimer.hasElapsed(0.1)){
-            for (int i = ledBuffer.getLength() - 1; i > 0; i--){
-                ledBuffer.setLED(i, ledBuffer.getLED(i - 1));
+    public void updateContinuousColor(Color color){
+        if(ledTimer.hasElapsed(0.05)){
+            for (int i = contLedBuffer.getLength() - 1; i > 0; i--){
+                contLedBuffer.setLED(i, contLedBuffer.getLED(i - 1));
             }
-            ledBuffer.setLED(0, color);
-            led.setData(ledBuffer);
+            contLedBuffer.setLED(0, color);
             ledTimer.reset();
             ledTimer.start();
+        }
+    }
+
+    public void setContinuousColor(){
+        led.setData(contLedBuffer);
+    }
+
+    public void fillContinuousColor(Color color){
+        for(int i = 0; i < contLedBuffer.getLength(); i++){
+            contLedBuffer.setLED(i, color);
         }
     }
 }
