@@ -7,7 +7,6 @@ import com.revrobotics.ColorSensorV3;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.I2C;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -92,11 +91,9 @@ public class RollerSubsystem extends SubsystemBase {
     }
 
     /**
-     * Opens the roller by starting the open timer. Does nothing if we're not allowed
-     * to open, or if opening is still on cooldown.
+     * Opens the roller by starting the open timer. Does nothing if opening is still on cooldown.
      */
     public void openMotor() {
-        if (!allowOpen) return;
         if (cooldownTimer.hasStarted() && !cooldownTimer.hasElapsed(COOLDOWN_SECONDS)) return;
 
         openTimer.start();
@@ -141,9 +138,7 @@ public class RollerSubsystem extends SubsystemBase {
         // if wheels must intake, and the limit switch is not pressed, turn on motors
         if (limitSwitch.get()) {
             leftBeak.set(rollPower);
-            heldPiece = HeldPiece.EMPTY;
         } else {
-            heldPiece = HeldPiece.CONE;
             leftBeak.set(Math.min(rollPower, 0.0));
         }
 
