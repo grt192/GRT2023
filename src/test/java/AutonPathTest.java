@@ -4,7 +4,8 @@ import frc.robot.commands.auton.BalanceAndTaxiAutonSequence;
 import frc.robot.commands.auton.BalanceAutonSequence;
 import frc.robot.commands.auton.BottomBalanceAutonSequence;
 import frc.robot.commands.auton.BottomOnePieceAutonSequence;
-import frc.robot.commands.auton.BottomTwoPieceAutonSequence;
+import frc.robot.commands.auton.EarlyTurnBottomTwoPieceAutonSequence;
+import frc.robot.commands.auton.OgBottomTwoPieceAutonSequence;
 import frc.robot.commands.auton.PreloadedOnlyAutonSequence;
 import frc.robot.commands.auton.TopOnePieceAutonSequence;
 import frc.robot.commands.auton.TopTwoPieceAutonSequence;
@@ -50,7 +51,6 @@ public class AutonPathTest {
         BalanceAutonSequence.withDeadline(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, PlacePosition.B2_HIGH, true);
         BalanceAndTaxiAutonSequence.withDeadline(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, PlacePosition.B2_HIGH, true);
         new BottomOnePieceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, PlacePosition.A2_HIGH, true);
-        new BottomTwoPieceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, PlacePosition.A2_HIGH, true);
         BottomBalanceAutonSequence.withDeadline(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, PlacePosition.A2_HIGH, true);
     }
 
@@ -65,7 +65,6 @@ public class AutonPathTest {
         BalanceAutonSequence.withDeadline(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, PlacePosition.B2_HIGH, false);
         BalanceAndTaxiAutonSequence.withDeadline(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, PlacePosition.B2_HIGH, false);
         new BottomOnePieceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, PlacePosition.A2_HIGH, false);
-        new BottomTwoPieceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, PlacePosition.A2_HIGH, false);
         BottomBalanceAutonSequence.withDeadline(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, PlacePosition.A2_HIGH, false);
     }
 }
