@@ -1,5 +1,7 @@
 package frc.robot.subsystems.drivetrain;
 
+import java.util.ArrayList;
+
 import edu.wpi.first.math.MatBuilder;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Nat;
@@ -8,6 +10,7 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -62,6 +65,9 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
 
     private static final boolean SHUFFLEBOARD_ENABLE = true;
     private volatile boolean VISION_ENABLE = true;
+
+    private static final double APRIL_TAG_MAX_DIST_TO_ODOMETRY = 1.0; //meters 
+    private static final double APRIL_TAG_CUTOFF_DIST = 6.0; //meters
 
     // The driver or auton commanded `SwerveModuleState` setpoints for each module;
     // states are given in a tuple of [top left, top right, bottom left, bottom right].
