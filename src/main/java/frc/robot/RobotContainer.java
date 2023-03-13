@@ -116,9 +116,10 @@ public class RobotContainer {
 
         photonWrapper = new PhotonWrapper();
         switchableCamera = new SwitchableCamera(shuffleboardTab);
+        
+        signalLEDSubsystem = new LEDSubsystem(); 
 
         // driveSubsystem = new MissileShellSwerveSubsystem();
-        signalLEDSubsystem = new LEDSubsystem(); 
         driveSubsystem = new SwerveSubsystem(photonWrapper, signalLEDSubsystem);
         rollerSubsystem = new RollerSubsystem();
         tiltedElevatorSubsystem = new TiltedElevatorSubsystem();
