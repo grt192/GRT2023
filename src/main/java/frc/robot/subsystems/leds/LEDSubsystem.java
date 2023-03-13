@@ -14,8 +14,8 @@ public class LEDSubsystem extends SubsystemBase {
     private final double APRIL_BLINK_DURATION = .2;
     private static final Color BLINK_COLOR = new Color(0, 0, 0);
     private boolean blinking = false;
-    private boolean continuous = false;
-    public boolean manual = false;
+    private boolean continuous = false; //toggle in manual mode
+    public boolean manual = false; //when driver is directly controlling leds
 
     private static final double BRIGHTNESS_SCALE_FACTOR = 0.25;
 
