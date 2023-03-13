@@ -170,7 +170,9 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
 
         // Add vision pose estimate to pose estimator
         if (VISION_ENABLE) photonWrapper.getRobotPoses(estimate).forEach((visionPose) -> {
-            ledSubsystem.tagDetected();
+            if(ledSubsystem != null){
+                ledSubsystem.tagDetected();
+            }
             poseEstimator.addVisionMeasurement(
                 visionPose.estimatedPose.toPose2d(),
                 visionPose.timestampSeconds

@@ -10,6 +10,7 @@ public class LEDStrip {
     private final AddressableLEDBuffer ledBuffer;
     private final AddressableLEDBuffer contLedBuffer;
     private final Timer ledTimer;
+    private final int LEDS_PER_SEC = 60;
 
     public LEDStrip(int ledPort, int ledLength) {
         led = new AddressableLED(ledPort);
@@ -35,14 +36,17 @@ public class LEDStrip {
 
     //increment the colors in the cont buffer, does not set the leds
     public void updateContinuousColor(Color color){
-        if(ledTimer.hasElapsed(0.05)){
-            for (int i = contLedBuffer.getLength() - 1; i > 0; i--){
-                contLedBuffer.setLED(i, contLedBuffer.getLED(i - 1));
-            }
-            contLedBuffer.setLED(0, color);
-            ledTimer.reset();
-            ledTimer.start();
+        int inc = (int) Math.ceil(ledTimer.get() * LEDS_PER_SEC);
+        inc = Math.max(1, inc);
+        for (int i = contLedBuffer.getLength() - inc; i > 0; i--){
+            contLedBuffer.setLED(i, contLedBuffer.getLED(i - inc));
         }
+        for(int i = 0; i < inc; i++){
+            contLedBuffer.setLED(i, color);
+        }
+        ledTimer.reset();
+        ledTimer.start();
+        
     }
 
     //set cont buffer on to the leds
