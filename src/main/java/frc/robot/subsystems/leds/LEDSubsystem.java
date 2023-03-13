@@ -11,6 +11,7 @@ public class LEDSubsystem extends SubsystemBase {
 
     private final Timer blinkTimer;
     private static final double BLINK_DURATION_SECONDS = 0.5;
+    private final double APRIL_BLINK_DURATION = .2;
     private static final Color BLINK_COLOR = new Color(0, 0, 0);
     private boolean blinking = false;
     private boolean continuous = false;
@@ -19,6 +20,8 @@ public class LEDSubsystem extends SubsystemBase {
     private static final double BRIGHTNESS_SCALE_FACTOR = 0.25;
 
     private Color color = new Color(192, 8, 254);
+    private final Color aprilColor = new Color(255, 0, 0);
+    private final Timer aprilTimer = new Timer();
     public boolean pieceGrabbed = false;
 
     public LEDSubsystem() {
@@ -41,9 +44,21 @@ public class LEDSubsystem extends SubsystemBase {
         // and the blink color.
         if (blinkTimer.advanceIfElapsed(BLINK_DURATION_SECONDS)) blinking = !blinking;
         if(manual && continuous){
-            ledStrip.setContinuousColor(blinking ? BLINK_COLOR : color);
+            ledStrip.updateContinuousColor(blinking ? BLINK_COLOR : color);
+            ledStrip.setContinuousColor();
         } else {
-            ledStrip.setSolidColor(blinking ? BLINK_COLOR : color);
+            Color currentColor;
+            if(!aprilTimer.hasElapsed(APRIL_BLINK_DURATION)){
+                currentColor = aprilColor;
+            } else {
+                currentColor = color;
+            }
+            if(blinking){
+                ledStrip.setSolidColor(BLINK_COLOR);
+                ledStrip.updateContinuousColor(currentColor);
+            }
+            ledStrip.updateContinuousColor(currentColor);
+            ledStrip.setContinuousColor();
         }
     }
 
@@ -54,11 +69,15 @@ public class LEDSubsystem extends SubsystemBase {
      * @param b The blue component of the color, from [0, 255].
      */
     public void setRGB(double r, double g, double b) {
+        if(this.color.red == r && this.color.green == g && this.color.blue == b){
+            return;
+        }
         this.color = new Color(
             (int) (r * BRIGHTNESS_SCALE_FACTOR),
             (int) (g * BRIGHTNESS_SCALE_FACTOR),
             (int) (b * BRIGHTNESS_SCALE_FACTOR)
         );
+        ledStrip.fillContinuousColor(this.color);
         
     }
 
@@ -82,5 +101,12 @@ public class LEDSubsystem extends SubsystemBase {
 
     public void setManual(boolean manual){
         this.manual = manual;
+    }
+
+    public void tagDetected(){
+        if(aprilTimer.hasElapsed(APRIL_BLINK_DURATION * 2)){
+            aprilTimer.reset();
+            aprilTimer.start();
+        }
     }
 }
