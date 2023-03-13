@@ -6,6 +6,8 @@ import java.util.Comparator;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 
 import frc.robot.positions.FieldPosition;
@@ -15,14 +17,23 @@ import frc.robot.subsystems.tiltedelevator.ElevatorState;
 import frc.robot.subsystems.tiltedelevator.TiltedElevatorSubsystem;
 import frc.robot.subsystems.tiltedelevator.ElevatorState.OffsetState;
 
+/**
+ * An auto-align command that maintains a target `PlacePosition`. When scheduled, this command sets the target
+ * to the closest `PlacePosition` and aligns with it. This command also creates a grid of buttons on Shuffleboard
+ * to set the target to any given node. `alignLeft()` and `alignRight()` can be used to shift the target left or
+ * right.
+ */
 public class AutoAlignCommand extends InstantCommand {
     private final BaseSwerveSubsystem swerveSubsystem;
     private final TiltedElevatorSubsystem tiltedElevatorSubsystem;
-
     private final boolean isRed;
 
-    private PlacePosition targetPlacePosition;
-    private AlignToNodeCommand wrappedCommand;
+    private final InstantCommand[] setTargetCommands;
+
+    private volatile PlacePosition targetPlacePosition;
+    private volatile AlignToNodeCommand wrappedCommand;
+
+    private final ShuffleboardTab shuffleboardTab;
 
     /**
      * Creates an auto-align command from a given swerve subsystem, elevator subsystem, and
@@ -40,10 +51,33 @@ public class AutoAlignCommand extends InstantCommand {
     ) {
         this.swerveSubsystem = swerveSubsystem;
         this.tiltedElevatorSubsystem = tiltedElevatorSubsystem;
-
         this.isRed = isRed;
 
         addRequirements(swerveSubsystem, tiltedElevatorSubsystem);
+
+        // Initialize shuffleboard alignment buttons
+        shuffleboardTab = Shuffleboard.getTab("Grid");
+
+        PlacePosition[] positions = PlacePosition.values();
+        setTargetCommands = new InstantCommand[positions.length];
+
+        for (int i = 0; i < positions.length; i++) {
+            PlacePosition position = positions[i];
+
+            // When pressed, set the target place position to the given value and align to the node.
+            InstantCommand command = new InstantCommand(() -> {
+                targetPlacePosition = position;
+                scheduleAlignCommand();
+            }, swerveSubsystem, tiltedElevatorSubsystem);
+
+            setTargetCommands[i] = command;
+
+            // Add command to grid
+            shuffleboardTab.add(position.name(), command).withPosition(
+                getShuffleboardColumn(position),
+                getShuffleboardRow(position)
+            );
+        }
     }
 
     @Override
@@ -149,12 +183,6 @@ public class AutoAlignCommand extends InstantCommand {
         );
     }
 
-    @Override
-    public void cancel() {
-        if (wrappedCommand != null) wrappedCommand.cancel();
-        super.cancel();
-    }
-
     /**
      * Schedules a wrapped `AlignToNodeCommand` to align the robot with the selected node.
      * If an align command was previously scheduled, cancel it before scheduling another.
@@ -163,5 +191,42 @@ public class AutoAlignCommand extends InstantCommand {
         if (wrappedCommand != null) wrappedCommand.cancel();
         wrappedCommand = new AlignToNodeCommand(swerveSubsystem, tiltedElevatorSubsystem, targetPlacePosition, isRed);
         wrappedCommand.schedule();
+    }
+
+    /**
+     * Cancels this command, the wrapped align command if it is scheduled, and
+     * any scheduled Shuffleboard button command.
+     */
+    @Override
+    public void cancel() {
+        if (wrappedCommand != null) wrappedCommand.cancel();
+        for (InstantCommand command : setTargetCommands) {
+            command.cancel();
+        }
+        super.cancel();
+    }
+
+    private static int getShuffleboardRow(PlacePosition position) {
+        return switch (position) {
+            case A1_HIGH, A2_HIGH, A3_HIGH, B1_HIGH, B2_HIGH, B3_HIGH, C1_HIGH, C2_HIGH, C3_HIGH -> 0;
+            case A1_MID, A2_MID, A3_MID, B1_MID, B2_MID, B3_MID, C1_MID, C2_MID, C3_MID -> 1;
+            case A1_HYBRID, A2_HYBRID, A3_HYBRID, B1_HYBRID, B2_HYBRID, B3_HYBRID, C1_HYBRID, C2_HYBRID, C3_HYBRID -> 2;
+            default -> throw new RuntimeException("Position not found!");
+        };
+    }
+
+    private static int getShuffleboardColumn(PlacePosition position) {
+        return switch (position) {
+            case A1_HIGH, A1_MID, A1_HYBRID -> 0;
+            case A2_HIGH, A2_MID, A2_HYBRID -> 1;
+            case A3_HIGH, A3_MID, A3_HYBRID -> 2;
+            case B1_HIGH, B1_MID, B1_HYBRID -> 3;
+            case B2_HIGH, B2_MID, B2_HYBRID -> 4;
+            case B3_HIGH, B3_MID, B3_HYBRID -> 5;
+            case C1_HIGH, C1_MID, C1_HYBRID -> 6;
+            case C2_HIGH, C2_MID, C2_HYBRID -> 7;
+            case C3_HIGH, C3_MID, C3_HYBRID -> 8;
+            default -> throw new RuntimeException("Position not found!");
+        };
     }
 }

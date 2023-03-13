@@ -36,7 +36,6 @@ import frc.robot.commands.auton.test.TwentyFeetStraightLinePath;
 import frc.robot.commands.balancing.BaseBalancerCommand;
 import frc.robot.commands.balancing.DefaultBalancerCommand;
 import frc.robot.commands.dropping.AutoAlignCommand;
-import frc.robot.commands.dropping.AutoAlignGrid;
 import frc.robot.commands.dropping.DropperChooserCommand;
 import frc.robot.commands.pretest.MotorTestCommand;
 import frc.robot.controllers.BaseDriveController;
@@ -108,7 +107,6 @@ public class RobotContainer {
 
     private final BaseBalancerCommand balancerCommand;
     private final AutoAlignCommand autoAlignCommand;
-    private final AutoAlignGrid autoAlignGrid;
 
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -137,9 +135,7 @@ public class RobotContainer {
             final BaseSwerveSubsystem swerveSubsystem = (BaseSwerveSubsystem) driveSubsystem;
 
             testCommand = new MotorTestCommand(swerveSubsystem, tiltedElevatorSubsystem, rollerSubsystem);
-
             autoAlignCommand = new AutoAlignCommand(swerveSubsystem, tiltedElevatorSubsystem, false);
-            autoAlignGrid = new AutoAlignGrid(swerveSubsystem, tiltedElevatorSubsystem, false);
 
             autonChooser.addOption("Red preloaded only", new PreloadedOnlyAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, true));
             autonChooser.addOption("Red top auton (1-piece)", new TopOnePieceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, true));
@@ -170,7 +166,6 @@ public class RobotContainer {
         } else {
             testCommand = null;
             autoAlignCommand = null;
-            autoAlignGrid = null;
         }
 
         shuffleboardTab.add("Auton", autonChooser)
@@ -214,9 +209,7 @@ public class RobotContainer {
             driveController.getAlignToClosestButton().onTrue(autoAlignCommand);
             driveController.getAlignLeftButton().onTrue(new InstantCommand(autoAlignCommand::alignLeft));
             driveController.getAlignRightButton().onTrue(new InstantCommand(autoAlignCommand::alignRight));
-            driveController.getCancelAutoAlignButton()
-                .onTrue(new InstantCommand(autoAlignCommand::cancel))
-                .onTrue(new InstantCommand(autoAlignGrid::cancelAll));
+            driveController.getCancelAutoAlignButton().onTrue(new InstantCommand(autoAlignCommand::cancel));
 
             /*
             brSwitch.onTrue(new InstantCommand(() -> {
