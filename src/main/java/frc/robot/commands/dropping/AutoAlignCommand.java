@@ -3,9 +3,11 @@ package frc.robot.commands.dropping;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -29,6 +31,7 @@ public class AutoAlignCommand extends InstantCommand {
     private final boolean isRed;
 
     private final InstantCommand[] setTargetCommands;
+    private final HashMap<PlacePosition, GenericEntry> booleanEntries;
 
     private volatile PlacePosition targetPlacePosition;
     private volatile AlignToNodeCommand wrappedCommand;
@@ -57,6 +60,7 @@ public class AutoAlignCommand extends InstantCommand {
 
         // Initialize shuffleboard alignment buttons
         shuffleboardTab = Shuffleboard.getTab("Grid");
+        booleanEntries = new HashMap<>();
 
         PlacePosition[] positions = PlacePosition.values();
         setTargetCommands = new InstantCommand[positions.length];
@@ -65,17 +69,17 @@ public class AutoAlignCommand extends InstantCommand {
             PlacePosition position = positions[i];
 
             // When pressed, set the target place position to the given value and align to the node.
-            InstantCommand command = new InstantCommand(() -> {
-                targetPlacePosition = position;
-                scheduleAlignCommand();
-            }, swerveSubsystem, tiltedElevatorSubsystem);
-
+            InstantCommand command = new InstantCommand(() -> scheduleAlignCommandWith(position), swerveSubsystem, tiltedElevatorSubsystem);
             setTargetCommands[i] = command;
 
-            // Add command to grid
-            shuffleboardTab.add(position.name(), command).withPosition(
-                getShuffleboardColumn(position),
-                getShuffleboardRow(position)
+            // Add command and boolean indicator to grid
+            int column = getShuffleboardColumn(position);
+            int row = getShuffleboardRow(position);
+
+            shuffleboardTab.add(position.name(), command).withPosition(column, row + 1);
+            booleanEntries.put(
+                position,
+                shuffleboardTab.add("T: " + position.name(), false).withPosition(column, row).getEntry()
             );
         }
     }
@@ -85,11 +89,8 @@ public class AutoAlignCommand extends InstantCommand {
         Pose2d initialPose = swerveSubsystem.getRobotPosition();
         double currentExtensionMeters = tiltedElevatorSubsystem.getExtensionMeters();
 
-        // Initialize `targetPlacePosition` to closest place pose
-        targetPlacePosition = getClosestPlacePosition(initialPose, currentExtensionMeters, isRed);
-        System.out.println("Aligning with " + targetPlacePosition.name());
-
-        scheduleAlignCommand();
+        // Align with closest place position
+        scheduleAlignCommandWith(getClosestPlacePosition(initialPose, currentExtensionMeters, isRed));
     }
 
     /**
@@ -102,7 +103,7 @@ public class AutoAlignCommand extends InstantCommand {
 
         // TODO: better way of doing this?
         ElevatorState currentElevatorState = tiltedElevatorSubsystem.getState();
-        targetPlacePosition = switch (targetPlacePosition.placePosition) {
+        scheduleAlignCommandWith(switch (targetPlacePosition.placePosition) {
             case A2 -> elevatorStateToPlacePosition(currentElevatorState, PlacePosition.A1_HYBRID, PlacePosition.A1_MID, PlacePosition.A1_HIGH);
             case A3 -> elevatorStateToPlacePosition(currentElevatorState, PlacePosition.A2_HYBRID, PlacePosition.A2_MID, PlacePosition.A2_HIGH);
             case B1 -> elevatorStateToPlacePosition(currentElevatorState, PlacePosition.A3_HYBRID, PlacePosition.A3_MID, PlacePosition.A3_HIGH);
@@ -112,9 +113,7 @@ public class AutoAlignCommand extends InstantCommand {
             case C2 -> elevatorStateToPlacePosition(currentElevatorState, PlacePosition.C1_HYBRID, PlacePosition.C1_MID, PlacePosition.C1_HIGH);
             case C3 -> elevatorStateToPlacePosition(currentElevatorState, PlacePosition.C2_HYBRID, PlacePosition.C2_MID, PlacePosition.C2_HIGH);
             default -> throw new RuntimeException("Position not found!");
-        };
-
-        scheduleAlignCommand();
+        });
     }
 
     /**
@@ -127,7 +126,7 @@ public class AutoAlignCommand extends InstantCommand {
 
         // TODO: better way of doing this?
         ElevatorState currentElevatorState = tiltedElevatorSubsystem.getState();
-        targetPlacePosition = switch (targetPlacePosition.placePosition) {
+        scheduleAlignCommandWith(switch (targetPlacePosition.placePosition) {
             case A1 -> elevatorStateToPlacePosition(currentElevatorState, PlacePosition.A2_HYBRID, PlacePosition.A2_MID, PlacePosition.A2_HIGH);
             case A2 -> elevatorStateToPlacePosition(currentElevatorState, PlacePosition.A3_HYBRID, PlacePosition.A3_MID, PlacePosition.A3_HIGH);
             case A3 -> elevatorStateToPlacePosition(currentElevatorState, PlacePosition.B1_HYBRID, PlacePosition.B1_MID, PlacePosition.B1_HIGH);
@@ -137,9 +136,7 @@ public class AutoAlignCommand extends InstantCommand {
             case C1 -> elevatorStateToPlacePosition(currentElevatorState, PlacePosition.C2_HYBRID, PlacePosition.C2_MID, PlacePosition.C2_HIGH);
             case C2 -> elevatorStateToPlacePosition(currentElevatorState, PlacePosition.C3_HYBRID, PlacePosition.C3_MID, PlacePosition.C3_HIGH);
             default -> throw new RuntimeException("Position not found!");
-        };
-
-        scheduleAlignCommand();
+        });
     }
 
     /**
@@ -186,8 +183,16 @@ public class AutoAlignCommand extends InstantCommand {
     /**
      * Schedules a wrapped `AlignToNodeCommand` to align the robot with the selected node.
      * If an align command was previously scheduled, cancel it before scheduling another.
+     * This method also toggles the given boolean entries on shuffleboard to display which
+     * node it is aligning with.
+     * 
+     * @param newPosition The new `PlacePosition` to align with.
      */
-    private void scheduleAlignCommand() {
+    private void scheduleAlignCommandWith(PlacePosition newPosition) {
+        booleanEntries.get(targetPlacePosition).setBoolean(false);
+        booleanEntries.get(newPosition).setBoolean(true);
+        targetPlacePosition = newPosition;
+
         if (wrappedCommand != null) wrappedCommand.cancel();
         wrappedCommand = new AlignToNodeCommand(swerveSubsystem, tiltedElevatorSubsystem, targetPlacePosition, isRed);
         wrappedCommand.schedule();
@@ -209,8 +214,8 @@ public class AutoAlignCommand extends InstantCommand {
     private static int getShuffleboardRow(PlacePosition position) {
         return switch (position) {
             case A1_HIGH, A2_HIGH, A3_HIGH, B1_HIGH, B2_HIGH, B3_HIGH, C1_HIGH, C2_HIGH, C3_HIGH -> 0;
-            case A1_MID, A2_MID, A3_MID, B1_MID, B2_MID, B3_MID, C1_MID, C2_MID, C3_MID -> 1;
-            case A1_HYBRID, A2_HYBRID, A3_HYBRID, B1_HYBRID, B2_HYBRID, B3_HYBRID, C1_HYBRID, C2_HYBRID, C3_HYBRID -> 2;
+            case A1_MID, A2_MID, A3_MID, B1_MID, B2_MID, B3_MID, C1_MID, C2_MID, C3_MID -> 2;
+            case A1_HYBRID, A2_HYBRID, A3_HYBRID, B1_HYBRID, B2_HYBRID, B3_HYBRID, C1_HYBRID, C2_HYBRID, C3_HYBRID -> 4;
             default -> throw new RuntimeException("Position not found!");
         };
     }
