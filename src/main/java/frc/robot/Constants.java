@@ -25,7 +25,7 @@ import org.photonvision.PhotonCamera;
  * wherever the constants are needed, to reduce verbosity.
  */
 public final class Constants {
-    public static final boolean IS_R1 = false;
+    public static final boolean IS_R1 = true;
     public static final boolean GLOBAL_SHUFFLEBOARD_ENABLE = false;
 
     public static final class TankConstants{
@@ -37,16 +37,16 @@ public final class Constants {
 
     public static final class SwerveConstants {
         public static final double TL_OFFSET_RADS = IS_R1 
-            ? -2.947861520451955 //0.19373113313783819
+            ? -2.9255307594961444 //0.21606189409364873 
             : -0.3458388725942889; // 2.795753780995504 flipped
         public static final double TR_OFFSET_RADS = IS_R1 
-            ? 2.780232312279292 //-0.3613603413105011
+            ? -0.16252283652755217 // 2.979069817062241
             : -0.44043676455947356; // 2.7011558890303196 flipped
         public static final double BL_OFFSET_RADS = IS_R1
-            ? -3.1313341538137713 //0.010258499776021779
+            ? -0.28875590563215603 // 2.852836747957637
             : -0.4294843792954861; // 2.712108274294307 flipped
         public static final double BR_OFFSET_RADS = IS_R1
-            ? 0.561284053322 //-2.824524402618408
+            ? -2.798290729522705 // 0.34330192406708804 
             : 1.5007363875680646; // -1.6408562660217285 flipped
 
         public static final int TL_DRIVE = 2;
