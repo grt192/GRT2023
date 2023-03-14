@@ -51,7 +51,7 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
     private static final boolean LOCKING_ENABLE = true;
     private boolean chargingStationLocked = false;
 
-    private Rotation2d angleOffset = new Rotation2d(0);
+    private Rotation2d driverHeadingOffset = new Rotation2d(0);
 
     private final ShuffleboardTab shuffleboardTab;
     private final GenericEntry xEntry, yEntry, thetaEntry;
@@ -207,7 +207,7 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
     public void applyLock() {
         if (chargingStationLocked) {
             // Lock modules parallel to the charging station, accounting for the orientation of the robot.
-            Rotation2d lockAngle = Rotation2d.fromDegrees(90).minus(getFieldHeading());
+            Rotation2d lockAngle = Rotation2d.fromDegrees(90).minus(getDriverHeading());
 
             topLeftModule.setDesiredState(new SwerveModuleState(0.0, lockAngle));
             topRightModule.setDesiredState(new SwerveModuleState(0.0, lockAngle));
@@ -237,7 +237,7 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
             xPower * MAX_VEL,
             yPower * MAX_VEL,
             angularPower * MAX_OMEGA,
-            relative ? new Rotation2d() : getFieldHeading()
+            relative ? new Rotation2d() : getDriverHeading()
         );
 
         // Calculate swerve module states from desired chassis speeds, desaturating
@@ -270,7 +270,7 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
      * @param relative Whether to use relative powers instead of field-oriented control.
      */
     public void setDrivePowersWithHeadingLock(double xPower, double yPower, Rotation2d targetHeading, boolean relative) {
-        Rotation2d currentRotation = getFieldHeading();
+        Rotation2d currentRotation = getDriverHeading();
         double turnSpeed = thetaController.calculate(currentRotation.getRadians(), targetHeading.getRadians());
         double turnPower = MathUtil.clamp(turnSpeed / MAX_OMEGA, -1.0, 1.0);
 
@@ -384,16 +384,16 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
      * This method has no effect on odometry's origin.
      * @param currentRotation The rotation to reset the field angle to.
      */
-    public void resetFieldAngle(Rotation2d currentRotation) {
-        angleOffset = getGyroHeading().minus(currentRotation);
+    public void resetDriverAngle(Rotation2d currentRotation) {
+        driverHeadingOffset = getGyroHeading().minus(currentRotation);
     }
 
     /**
      * Zeros *only the angle* of the robot's field-relative control system.
      * This method has no effect on odometry's origin.
      */
-    public void resetFieldAngle() {
-        resetFieldAngle(new Rotation2d());
+    public void resetDriverAngle() {
+        resetDriverAngle(new Rotation2d());
     }
 
     /**
@@ -410,13 +410,13 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
      * 
      * @return The robot's field-centric heading as a Rotation2d.
      */
-    public Rotation2d getFieldHeading() {
+    public Rotation2d getDriverHeading() {
         // Primarily use AHRS reading, falling back on the pose estimator if the AHRS disconnects.
         Rotation2d robotHeading = ahrs.isConnected()
             ? getGyroHeading()
             : getRobotPosition().getRotation();
 
-        return robotHeading.minus(angleOffset);
+        return robotHeading.minus(driverHeadingOffset);
     }
 
     /**

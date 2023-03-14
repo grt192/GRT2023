@@ -194,7 +194,7 @@ public class RobotContainer {
                 boolean relative = driveController.getSwerveRelative();
 
                 if (driveController.getSwerveHeadingLock()) {
-                    double currentHeadingRads = swerveSubsystem.getFieldHeading().getRadians();
+                    double currentHeadingRads = swerveSubsystem.getDriverHeading().getRadians();
                     double lockHeadingRads = (Math.abs(currentHeadingRads) > Math.PI / 2.0) ? Math.PI : 0;
 
                     swerveSubsystem.setDrivePowersWithHeadingLock(xPower, yPower, new Rotation2d(lockHeadingRads), relative);
@@ -207,7 +207,7 @@ public class RobotContainer {
                 if (inputMagnitude > 0.3) autoAlignCommand.cancel();
             }, swerveSubsystem));
 
-            driveController.getFieldResetButton().onTrue(new InstantCommand(swerveSubsystem::resetFieldAngle, swerveSubsystem));
+            driveController.getFieldResetButton().onTrue(new InstantCommand(swerveSubsystem::resetDriverAngle, swerveSubsystem));
             driveController.getChargingStationLockButton().onTrue(new InstantCommand(swerveSubsystem::toggleChargingStationLocked, swerveSubsystem));
 
             driveController.getAlignToClosestButton().onTrue(autoAlignCommand);
