@@ -143,14 +143,14 @@ public final class Constants {
         public static final PhotonCamera FRONT_CAMERA = new PhotonCamera("Arducam_OV9281_USB_Camera");
         public static final Transform3d FRONT_CAMERA_POSE = new Transform3d(
             // new Translation3d(Units.inchesToMeters(10.375), Units.inchesToMeters(10.597), Units.inchesToMeters(22.638875)),
-            new Translation3d(Units.inchesToMeters(10.125), Units.inchesToMeters(7.767605), Units.inchesToMeters(22.638875)),
+            new Translation3d(Units.inchesToMeters(10.125), Units.inchesToMeters(7.767605), Units.inchesToMeters(22.25)),
             new Rotation3d(Math.PI, 0, 0)
         );
 
         public static final PhotonCamera BACK_CAMERA = new PhotonCamera("HD_USB_Camera");
         public static final Transform3d BACK_CAMERA_POSE = new Transform3d(
             // new Translation3d(Units.inchesToMeters(7.375), Units.inchesToMeters(10.597), Units.inchesToMeters(22.638875)),
-            new Translation3d(Units.inchesToMeters(7.625), Units.inchesToMeters(7.767605), Units.inchesToMeters(22.638875)),
+            new Translation3d(Units.inchesToMeters(7.625), Units.inchesToMeters(7.767605), Units.inchesToMeters(22.25)),
             new Rotation3d(Math.PI, 0, Math.PI)
         );
     }

@@ -24,6 +24,8 @@ public class GoToPointCommand extends CommandBase {
     public GoToPointCommand(BaseSwerveSubsystem swerveSubsystem, Pose2d targetPose) {
         this.swerveSubsystem = swerveSubsystem;
         this.targetPose = targetPose;
+
+        addRequirements(swerveSubsystem);
     }
 
     @Override

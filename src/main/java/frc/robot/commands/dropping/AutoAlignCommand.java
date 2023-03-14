@@ -189,7 +189,7 @@ public class AutoAlignCommand extends InstantCommand {
      * @param newPosition The new `PlacePosition` to align with.
      */
     private void scheduleAlignCommandWith(PlacePosition newPosition) {
-        booleanEntries.get(targetPlacePosition).setBoolean(false);
+        if (targetPlacePosition != null) booleanEntries.get(targetPlacePosition).setBoolean(false);
         booleanEntries.get(newPosition).setBoolean(true);
         targetPlacePosition = newPosition;
 
