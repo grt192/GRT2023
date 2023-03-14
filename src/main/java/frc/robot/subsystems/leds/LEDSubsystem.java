@@ -1,10 +1,13 @@
 package frc.robot.subsystems.leds;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import static frc.robot.Constants.LEDConstants.*;
+
+import java.util.List;
 
 public class LEDSubsystem extends SubsystemBase {
     private final LEDStrip ledStrip;
@@ -18,9 +21,12 @@ public class LEDSubsystem extends SubsystemBase {
     public boolean manual = false; //when driver is directly controlling leds
 
     private static final double BRIGHTNESS_SCALE_FACTOR = 0.25;
+    private static final double INPUT_DEADZONE = .1;
 
     private Color color = new Color(192, 8, 254);
-    private final Color aprilColor = new Color(255, 0, 0);
+    private final Color APRIL_COLOR = new Color(255, 0, 0);
+    private final Color CUBE_COLOR = new Color(192, 8, 254);
+    private final Color CONE_COLOR = new Color(255, 100, 0);
     private final Timer aprilTimer = new Timer();
     private final Timer aprilTimer2 = new Timer();
     public boolean pieceGrabbed = false;
@@ -44,14 +50,14 @@ public class LEDSubsystem extends SubsystemBase {
         // Toggle the blink boolean every duration to swap the LEDs between the driver piece color
         // and the blink color.
         if (blinkTimer.advanceIfElapsed(BLINK_DURATION_SECONDS)) blinking = !blinking;
-        if(manual && continuous){
+        if(manual){
             //if manual and continuous set the bottom to color
             ledStrip.updateContinuousColor(color);
             ledStrip.setContinuousColor();
-        } else if(manual){
+        //} else if(manual){
             //if manual and not continuous fill entire strip with color
-            ledStrip.fillContinuousColor(color);
-            ledStrip.setContinuousColor();
+            // ledStrip.fillContinuousColor(color);
+            // ledStrip.setContinuousColor();
         } else {
             setColorPulse();
             //setTwoColor()
@@ -111,16 +117,17 @@ public class LEDSubsystem extends SubsystemBase {
         aprilTimer2.start();
     }
 
-    public void setColorPulse(){Color currentColor;
+    public void setColorPulse(){
+        Color currentColor;
         //current color is the color that will be added at the bottom of the strip buffer
         if(!aprilTimer.hasElapsed(APRIL_BLINK_DURATION)){
-            currentColor = aprilColor;
+            currentColor = APRIL_COLOR;
         } else {
             currentColor = color;
         }
         if(blinking){
-            ledStrip.setSolidColor(BLINK_COLOR);
-            //we update the continuous color so that the pulses continue even when the leds are off
+            ledStrip.fillContinuousColorIgnoringOneColor(BLINK_COLOR, APRIL_COLOR);
+            ledStrip.setContinuousColor();
             ledStrip.updateContinuousColor(currentColor);
         }
         //if the leds are on update the continuous color and then set the leds to that continuous buffer
@@ -131,10 +138,27 @@ public class LEDSubsystem extends SubsystemBase {
     public void setTwoColor(){
         Color color2;
         if(!aprilTimer2.hasElapsed(.05)){
-            color2 = aprilColor;
+            color2 = APRIL_COLOR;
         } else {
             color2 =  color;
         }
         ledStrip.setTwoColors(color, color2);
+    }
+
+    public void setColorFromXandY(double x, double y){
+        if(manual){
+            double angleRads = MathUtil.inputModulus(Math.atan2(y, x), 0, 2 * Math.PI);
+            this.color = Color.fromHSV(
+            (int) (angleRads / (2 * Math.PI) * 180),
+            (int) 255,
+            (int) (255 * BRIGHTNESS_SCALE_FACTOR)
+        );
+        } else {
+            if(x > INPUT_DEADZONE){
+                color = CUBE_COLOR;
+            } else if(x < -INPUT_DEADZONE){
+                color = CONE_COLOR;
+            }
+        }
     }
 }
