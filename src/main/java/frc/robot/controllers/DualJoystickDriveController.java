@@ -19,7 +19,15 @@ public class DualJoystickDriveController extends BaseDriveController {
         leftBackButton = new JoystickButton(leftJoystick, 7);
 
     private final Joystick rightJoystick = new Joystick(1);
-    private final JoystickButton
+    private final JoystickButton    
+        rightTrigger = new JoystickButton(rightJoystick, 1),
+        rightMiddleButton = new JoystickButton(rightJoystick, 2),
+        rightTopLeftButton = new JoystickButton(rightJoystick, 3),
+        rightTopRightButton = new JoystickButton(rightJoystick, 4),
+        rightMiddleLeftButton = new JoystickButton(rightJoystick, 5),
+        rightMiddleRightButton = new JoystickButton(rightJoystick, 6),
+        rightBackButton = new JoystickButton(rightJoystick, 7);
+    /*
         rightTrigger = new JoystickButton(rightJoystick, 1),
         rightStickBackButton = new JoystickButton(rightJoystick, 2),
         rightStickCenterButton = new JoystickButton(rightJoystick, 3),
@@ -31,6 +39,7 @@ public class DualJoystickDriveController extends BaseDriveController {
         rightBaseBackRightButton = new JoystickButton(rightJoystick, 9),
         rightBaseRightBottomButton = new JoystickButton(rightJoystick, 10),
         rightBaseRightTopButton = new JoystickButton(rightJoystick, 11);
+        */
 
     private static final double JOYSTICK_DEADBAND = 0.08;
 
@@ -58,12 +67,12 @@ public class DualJoystickDriveController extends BaseDriveController {
 
     @Override
     public boolean getSwerveHeadingLock() {
-        return rightStickCenterButton.getAsBoolean();
+        return rightMiddleButton.getAsBoolean();
     }
 
     @Override
     public JoystickButton getBalancerButton() {
-        return rightStickBackButton;
+        return rightTopRightButton;
     }
 
     @Override
@@ -73,7 +82,7 @@ public class DualJoystickDriveController extends BaseDriveController {
 
     @Override
     public JoystickButton getCameraSwitchButton() {
-        return rightBaseLeftTopButton;
+        return leftTopRightButton;
     }
 
     @Override
@@ -98,7 +107,7 @@ public class DualJoystickDriveController extends BaseDriveController {
 
     @Override
     public JoystickButton getCancelAutoAlignButton() {
-        return rightStickLeftButton;
+        return rightBackButton;
     }
 
     /**
