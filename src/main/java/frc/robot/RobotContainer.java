@@ -277,7 +277,7 @@ public class RobotContainer {
             double y = mechController.getRightY();
 
             if(mechController.getRightStickButtonPressed()){
-
+                signalLEDSubsystem.toggleLEDControlMode();
             }
 
             if (y != 0 || x != 0) {
