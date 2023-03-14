@@ -127,8 +127,6 @@ public class LEDSubsystem extends SubsystemBase {
         }
         if(blinking){
             ledStrip.fillContinuousColorIgnoringOneColor(BLINK_COLOR, APRIL_COLOR);
-            ledStrip.setContinuousColor();
-            ledStrip.updateContinuousColor(currentColor);
         }
         //if the leds are on update the continuous color and then set the leds to that continuous buffer
         ledStrip.updateContinuousColor(currentColor);
@@ -137,6 +135,9 @@ public class LEDSubsystem extends SubsystemBase {
 
     public void setTwoColor(){
         Color color2;
+        if(blinking){
+            color = BLINK_COLOR;
+        }
         if(!aprilTimer2.hasElapsed(.05)){
             color2 = APRIL_COLOR;
         } else {
