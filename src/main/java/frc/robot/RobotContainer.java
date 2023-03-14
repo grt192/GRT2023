@@ -276,21 +276,9 @@ public class RobotContainer {
             double x = mechController.getRightX();
             double y = mechController.getRightY();
 
-            if(mechController.getRightStickButtonPressed()){
-                signalLEDSubsystem.toggleLEDControlMode();
-            }
+            signalLEDSubsystem.setManual(mechController.getRightStickButton());
 
-            if (y != 0 || x != 0) {
-                double angleRads = MathUtil.inputModulus(Math.atan2(y, x), 0, 2 * Math.PI);
-                signalLEDSubsystem.setHSV(angleRads / (2 * Math.PI) * 180, 255, 255);
-                signalLEDSubsystem.setManual(true);
-            } else if (blSwitch.getAsBoolean()) {
-                signalLEDSubsystem.setRGB(255, 100, 0);
-                signalLEDSubsystem.setManual(false);
-            } else {
-                signalLEDSubsystem.setRGB(192, 8, 254);
-                signalLEDSubsystem.setManual(false);
-            }
+            signalLEDSubsystem.setColorFromXandY(x, y);
         }, signalLEDSubsystem));
     }
 

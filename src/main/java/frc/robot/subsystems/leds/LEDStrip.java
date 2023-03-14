@@ -1,5 +1,7 @@
 package frc.robot.subsystems.leds;
 
+import java.util.List;
+
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.Timer;
@@ -71,6 +73,14 @@ public class LEDStrip {
     public void fillContinuousColor(Color color){
         for(int i = 0; i < contLedBuffer.getLength(); i++){
             contLedBuffer.setLED(i, color);
+        }
+    }
+
+    public void fillContinuousColorIgnoringOneColor(Color color, Color ignoreColor){
+        for(int i = 0; i < contLedBuffer.getLength(); i++){
+            if(ignoreColor != contLedBuffer.getLED(i)){
+                contLedBuffer.setLED(i, color);
+            }
         }
     }
 }
