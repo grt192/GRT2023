@@ -343,6 +343,14 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
     }
 
     /**
+     * Gets the subsystems heading-correction `PIDController` instance.
+     * @return The PIDController for correcting robot heading.
+     */
+    public PIDController getThetaController() {
+        return thetaController;
+    }
+
+    /**
      * Gets the estimated current position of the robot.
      * @return The estimated position of the robot as a Pose2d.
      */

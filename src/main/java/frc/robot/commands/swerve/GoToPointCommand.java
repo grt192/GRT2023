@@ -3,6 +3,9 @@ package frc.robot.commands.swerve;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
@@ -10,12 +13,14 @@ import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
 
 public class GoToPointCommand extends CommandBase {
     private final BaseSwerveSubsystem swerveSubsystem;
+    private final SwerveDriveKinematics kinematics;
+
+    private final PIDController xController = new PIDController(1.5, 0, 0);
+    private final PIDController yController = new PIDController(1.5, 0, 0);
+    private final PIDController thetaController;
 
     private final Pose2d targetPose;
     private Pose2d currentPose;
-
-    private static final PIDController xController = new PIDController(1.5, 0, 0);
-    private static final PIDController yController = new PIDController(1.5, 0, 0);
 
     private static final double X_TOLERANCE_METERS = Units.inchesToMeters(1.0);
     private static final double Y_TOLERANCE_METERS = Units.inchesToMeters(1.0);
@@ -23,6 +28,9 @@ public class GoToPointCommand extends CommandBase {
 
     public GoToPointCommand(BaseSwerveSubsystem swerveSubsystem, Pose2d targetPose) {
         this.swerveSubsystem = swerveSubsystem;
+        this.kinematics = swerveSubsystem.getKinematics();
+        this.thetaController = swerveSubsystem.getThetaController();
+
         this.targetPose = targetPose;
 
         addRequirements(swerveSubsystem);
@@ -32,20 +40,36 @@ public class GoToPointCommand extends CommandBase {
     public void execute() {
         currentPose = swerveSubsystem.getRobotPosition();
 
-        // Calculate powers from PID, clamping them to within [-1.0, 1.0].
-        double xPower = MathUtil.clamp(
+        // Calculate velocities from PID, clamping them to within [-MAX_VEL, MAX_VEL].
+        double vx = MathUtil.clamp(
             xController.calculate(currentPose.getX(), targetPose.getX()),
-            -1.0, 1.0
+            -swerveSubsystem.MAX_VEL, swerveSubsystem.MAX_VEL
         );
-        double yPower = MathUtil.clamp(
+        double vy = MathUtil.clamp(
             yController.calculate(currentPose.getY(), targetPose.getY()),
-            -1.0, 1.0
+            -swerveSubsystem.MAX_VEL, swerveSubsystem.MAX_VEL
+        );
+        double omega = MathUtil.clamp(
+            thetaController.calculate(currentPose.getRotation().getRadians(), targetPose.getRotation().getRadians()),
+            -swerveSubsystem.MAX_OMEGA, swerveSubsystem.MAX_OMEGA
         );
 
-        // Pass powers and target heading to swerve subsystem
-        swerveSubsystem.setDrivePowersWithHeadingLock(
-            xPower, yPower, targetPose.getRotation(), false
+        // Convert field-relative velocities into robot-relative chassis speeds.
+        ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(
+            vx, vy, omega,
+            currentPose.getRotation()
         );
+
+        // Calculate swerve module states from desired chassis speeds, desaturating
+        // them to ensure all velocities are under MAX_VEL after kinematics.
+        SwerveModuleState[] states = kinematics.toSwerveModuleStates(speeds);
+        SwerveDriveKinematics.desaturateWheelSpeeds(
+            states, speeds, 
+            swerveSubsystem.MAX_VEL, swerveSubsystem.MAX_VEL, swerveSubsystem.MAX_OMEGA
+        );
+
+        // Pass states to swerve subsystem
+        swerveSubsystem.setSwerveModuleStates(states);
     }
 
     @Override
