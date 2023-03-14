@@ -1,6 +1,9 @@
 package frc.robot.subsystems.drivetrain;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import org.photonvision.targeting.PhotonTrackedTarget;
 
 import edu.wpi.first.math.MatBuilder;
 import edu.wpi.first.math.MathUtil;
@@ -437,5 +440,25 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
     public void setVisionEnabled(boolean visionEnable) {
         this.VISION_ENABLE = visionEnable;
         visionEnableEntry.setBoolean(VISION_ENABLE);
+    }
+
+    public double minTargetDistance(List<PhotonTrackedTarget> trackedTargets){
+        Transform3d targetTransform = trackedTargets.get(0).getAlternateCameraToTarget();
+        double distance = Math.sqrt(Math.pow(targetTransform.getX(), 2) + Math.pow(targetTransform.getY(), 2));
+        double minAprilTagDist = distance;
+        
+        for(int i = 1; i < trackedTargets.size(); i++){
+            targetTransform = trackedTargets.get(i).getAlternateCameraToTarget();
+            distance = Math.sqrt(Math.pow(targetTransform.getX(), 2) + Math.pow(targetTransform.getY(), 2));
+            if(minAprilTagDist < distance){
+                minAprilTagDist = distance;
+            }
+        }
+
+        return minAprilTagDist;
+    }
+
+    public double poseDist(Pose2d pose1, Pose2d pose2){
+        return (Math.sqrt(Math.pow(pose1.getX() - pose2.getX(), 2) + Math.pow(pose1.getY() - pose2.getY(), 2)));
     }
 }
