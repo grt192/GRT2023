@@ -94,10 +94,10 @@ public class AutoAlignCommand extends InstantCommand {
     }
 
     /**
-     * Aligns to the node immediately left of the currently selected node (from the perspective of the drivers).
-     * This is a no-op if there isn't yet a node selected, or if the selected node is the left-most node already (C3).
+     * Aligns to the node adjacent to the current target in the direction of C3.
+     * This is a no-op if there isn't yet a node selected, or if the selected node is already C3.
      */
-    public void alignLeft() {
+    public void alignTowardsC3() {
         if (targetPlacePosition == null) return;
         if (targetPlacePosition.placePosition == FieldPosition.C3) return;
 
@@ -117,10 +117,10 @@ public class AutoAlignCommand extends InstantCommand {
     }
 
     /**
-     * Aligns to the node immediately right of the currently selected node (from the perspective of the drivers).
-     * This is a no-op if there isn't yet a node selected, or if the selected node is the right-most node already (A1).
+     * Aligns to the node adjacent to the current target in the direction of A1.
+     * This is a no-op if there isn't yet a node selected, or if the selected node is already A1.
      */
-    public void alignRight() {
+    public void alignTowardsA1() {
         if (targetPlacePosition == null) return;
         if (targetPlacePosition.placePosition == FieldPosition.A1) return;
 
@@ -137,6 +137,22 @@ public class AutoAlignCommand extends InstantCommand {
             case C3 -> elevatorStateToPlacePosition(currentElevatorState, PlacePosition.C2_HYBRID, PlacePosition.C2_MID, PlacePosition.C2_HIGH);
             default -> throw new RuntimeException("Position not found!");
         });
+    }
+
+    /**
+     * Aligns to the node to the left of the current target, from the perspective of the drivers.
+     */
+    public void alignLeft() {
+        if (isRed) alignTowardsA1();
+        else alignTowardsC3();
+    }
+
+    /**
+     * Aligns to the node to the right of the current target, from the perspective of the drivers.
+     */
+    public void alignRight() {
+        if (isRed) alignTowardsC3();
+        else alignTowardsA1();
     }
 
     /**
