@@ -15,8 +15,8 @@ public class GoToPointCommand extends CommandBase {
     private final BaseSwerveSubsystem swerveSubsystem;
     private final SwerveDriveKinematics kinematics;
 
-    private final PIDController xController = new PIDController(1.5, 0, 0);
-    private final PIDController yController = new PIDController(1.5, 0, 0);
+    private final PIDController xController = new PIDController(3.5, 0, 0);
+    private final PIDController yController = new PIDController(3.5, 0, 0);
     private final PIDController thetaController;
 
     private final Pose2d targetPose;

@@ -22,9 +22,8 @@ public class AlignToNodeCommand extends ParallelCommandGroup {
         BaseSwerveSubsystem swerveSubsystem, TiltedElevatorSubsystem tiltedElevatorSubsystem,
         PlacePosition targetPlacePosition, boolean isRed
     ) {
-        addRequirements(swerveSubsystem, tiltedElevatorSubsystem);
         addCommands(
-            new InstantCommand(() -> tiltedElevatorSubsystem.setState(targetPlacePosition.elevatorState)),
+            new InstantCommand(() -> tiltedElevatorSubsystem.setState(targetPlacePosition.elevatorState), tiltedElevatorSubsystem),
             new GoToPointCommand(swerveSubsystem, targetPlacePosition.alignPosition.getPose(isRed))
         );
     }

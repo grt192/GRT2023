@@ -54,7 +54,7 @@ public class PhotonWrapper {
                 FRONT_CAMERA,
                 FRONT_CAMERA_POSE
             );
-            frontPoseEstimator.setMultiTagFallbackStrategy(PoseStrategy.AVERAGE_BEST_TARGETS);
+            frontPoseEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
 
             backPoseEstimator = new PhotonPoseEstimator(
                 fieldLayout,
@@ -62,7 +62,7 @@ public class PhotonWrapper {
                 BACK_CAMERA,
                 BACK_CAMERA_POSE
             );
-            backPoseEstimator.setMultiTagFallbackStrategy(PoseStrategy.AVERAGE_BEST_TARGETS);
+            backPoseEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

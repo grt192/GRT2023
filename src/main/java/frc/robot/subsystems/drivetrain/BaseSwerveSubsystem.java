@@ -92,7 +92,7 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
             new TrapezoidProfile.Constraints(MAX_OMEGA, MAX_ALPHA)
         );
         */
-        thetaController = new PIDController(3.4, 0, 0);
+        thetaController = new PIDController(4.6, 0, 0);
         thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
         this.topLeftModule = topLeftModule;

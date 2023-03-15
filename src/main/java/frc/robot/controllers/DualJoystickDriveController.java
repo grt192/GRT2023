@@ -27,19 +27,6 @@ public class DualJoystickDriveController extends BaseDriveController {
         rightMiddleLeftButton = new JoystickButton(rightJoystick, 5),
         rightMiddleRightButton = new JoystickButton(rightJoystick, 6),
         rightBackButton = new JoystickButton(rightJoystick, 7);
-    /*
-        rightTrigger = new JoystickButton(rightJoystick, 1),
-        rightStickBackButton = new JoystickButton(rightJoystick, 2),
-        rightStickCenterButton = new JoystickButton(rightJoystick, 3),
-        rightStickLeftButton = new JoystickButton(rightJoystick, 4),
-        rightStickRightButton = new JoystickButton(rightJoystick, 5),
-        rightBaseLeftTopButton = new JoystickButton(rightJoystick, 6),
-        rightBaseLeftBottomButton = new JoystickButton(rightJoystick, 7),
-        rightBaseBackLeftButton = new JoystickButton(rightJoystick, 8),
-        rightBaseBackRightButton = new JoystickButton(rightJoystick, 9),
-        rightBaseRightBottomButton = new JoystickButton(rightJoystick, 10),
-        rightBaseRightTopButton = new JoystickButton(rightJoystick, 11);
-        */
 
     private static final double JOYSTICK_DEADBAND = 0.08;
 
@@ -67,7 +54,7 @@ public class DualJoystickDriveController extends BaseDriveController {
 
     @Override
     public boolean getSwerveHeadingLock() {
-        return rightMiddleButton.getAsBoolean();
+        return leftMiddleButton.getAsBoolean();
     }
 
     @Override
@@ -92,17 +79,17 @@ public class DualJoystickDriveController extends BaseDriveController {
 
     @Override
     public JoystickButton getAlignToClosestButton() {
-        return leftMiddleButton;
+        return rightMiddleButton;
     }
 
     @Override
     public JoystickButton getAlignLeftButton() {
-        return leftMiddleLeftButton;
+        return rightMiddleLeftButton;
     }
 
     @Override
     public JoystickButton getAlignRightButton() {
-        return leftMiddleRightButton;
+        return rightMiddleRightButton;
     }
 
     @Override
