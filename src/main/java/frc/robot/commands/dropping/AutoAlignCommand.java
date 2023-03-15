@@ -87,10 +87,10 @@ public class AutoAlignCommand extends InstantCommand {
     @Override
     public void initialize() {
         Pose2d initialPose = swerveSubsystem.getRobotPosition();
-        double currentExtensionMeters = tiltedElevatorSubsystem.getExtensionMeters();
+        ElevatorState currentElevatorState = tiltedElevatorSubsystem.getState();
 
         // Align with closest place position
-        scheduleAlignCommandWith(getClosestPlacePosition(initialPose, currentExtensionMeters, isRed));
+        scheduleAlignCommandWith(getClosestPlacePosition(initialPose, currentElevatorState, isRed));
     }
 
     /**
@@ -163,18 +163,20 @@ public class AutoAlignCommand extends InstantCommand {
      * using elevator extension.
      * 
      * @param robotPose The current pose of the robot.
-     * @param elevatorExtensionMeters The current extension, in meters, of the elevator.
+     * @param elevatorState The current state of the elevator.
      * @param isRed Whether the robot is on the red team.
      * @return The closest `PlacePosition`.
      */
-    public static PlacePosition getClosestPlacePosition(Pose2d robotPose, double elevatorExtensionMeters, boolean isRed) {
+    public static PlacePosition getClosestPlacePosition(Pose2d robotPose, ElevatorState elevatorState, boolean isRed) {
+        double elevatorExtensionMeters = elevatorState.getExtension(OffsetState.DEFAULT, true);
+
         return Collections.min(
             Arrays.asList(PlacePosition.values()),
             Comparator.comparing((PlacePosition pos) -> {
                 Translation2d targetTranslation = pos.alignPosition.getPose(isRed).getTranslation();
                 return robotPose.getTranslation().getDistance(targetTranslation);
             }).thenComparing((PlacePosition pos) -> {
-                double targetExtensionMeters =  pos.elevatorState.getExtension(OffsetState.DROPPING, true);
+                double targetExtensionMeters =  pos.elevatorState.getExtension(OffsetState.DEFAULT, true);
                 return Math.abs(targetExtensionMeters - elevatorExtensionMeters);
             })
         );

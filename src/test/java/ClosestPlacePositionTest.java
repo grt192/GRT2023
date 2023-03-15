@@ -222,9 +222,7 @@ public class ClosestPlacePositionTest {
      * @param expectedPlacePosition The expected closest (blue) place position.
      */
     private void runTest(Pose2d robotPose, ElevatorState elevatorState, PlacePosition expectedPlacePosition) {
-        double elevatorExtensionMeters = elevatorState.getExtension(OffsetState.DEFAULT, true);
-        PlacePosition target = AutoAlignCommand.getClosestPlacePosition(robotPose, elevatorExtensionMeters, false);
-
+        PlacePosition target = AutoAlignCommand.getClosestPlacePosition(robotPose, elevatorState, false);
         assertEquals(expectedPlacePosition, target);
     }
 }
