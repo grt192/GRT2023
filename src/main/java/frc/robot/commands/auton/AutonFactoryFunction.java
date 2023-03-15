@@ -9,7 +9,7 @@ import frc.robot.subsystems.tiltedelevator.TiltedElevatorSubsystem;
 
 @FunctionalInterface
 public interface AutonFactoryFunction {
-    Command apply(
+    Command create(
         BaseSwerveSubsystem swerveSubsystem, RollerSubsystem rollerSubsystem, TiltedElevatorSubsystem tiltedElevatorSubsystem,
         PlacePosition initialPosition, boolean isRed
     );

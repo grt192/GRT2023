@@ -116,7 +116,7 @@ public class RobotContainer {
     private final MotorTestCommand testCommand;
 
     private final BaseBalancerCommand balancerCommand;
-    private AutoAlignCommand autoAlignCommand;
+    private volatile AutoAlignCommand autoAlignCommand;
 
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -324,7 +324,7 @@ public class RobotContainer {
     public Command getAutonomousCommand() {
         // TODO: find some way to set up listeners such that we can preconstruct this before auton starts
         if (!(driveSubsystem instanceof BaseSwerveSubsystem)) return null;
-        return autonPathChooser.getSelected().apply(
+        return autonPathChooser.getSelected().create(
             (BaseSwerveSubsystem) driveSubsystem, rollerSubsystem, tiltedElevatorSubsystem,
             autonInitialPoseChooser.getSelected(), isRedEntry.getBoolean(false)
         );
