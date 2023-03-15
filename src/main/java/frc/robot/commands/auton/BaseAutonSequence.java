@@ -41,7 +41,7 @@ public abstract class BaseAutonSequence extends SequentialCommandGroup {
 
         addCommands(
             // Reset field position and angle; the robot always faces towards the driver station at 180 degrees.
-            new InstantCommand(() -> swerveSubsystem.resetDriverAngle(Rotation2d.fromDegrees(180)), swerveSubsystem),
+            new InstantCommand(() -> swerveSubsystem.resetDriverHeading(Rotation2d.fromDegrees(180)), swerveSubsystem),
             new InstantCommand(() -> swerveSubsystem.resetPose(initialPose), swerveSubsystem),
 
             // Place preloaded game piece

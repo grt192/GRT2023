@@ -382,9 +382,9 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
     /**
      * Zeros *only the angle* of the robot's field-relative control system.
      * This method has no effect on odometry's origin.
-     * @param currentRotation The rotation to reset the field angle to.
+     * @param currentRotation The rotation to reset the driver angle to.
      */
-    public void resetDriverAngle(Rotation2d currentRotation) {
+    public void resetDriverHeading(Rotation2d currentRotation) {
         driverHeadingOffset = getGyroHeading().minus(currentRotation);
     }
 
@@ -392,8 +392,8 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
      * Zeros *only the angle* of the robot's field-relative control system.
      * This method has no effect on odometry's origin.
      */
-    public void resetDriverAngle() {
-        resetDriverAngle(new Rotation2d());
+    public void resetDriverHeading() {
+        resetDriverHeading(new Rotation2d());
     }
 
     /**
