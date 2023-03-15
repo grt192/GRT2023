@@ -53,6 +53,7 @@ import frc.robot.subsystems.leds.LEDSubsystem;
 import frc.robot.subsystems.tiltedelevator.ElevatorState;
 import frc.robot.subsystems.tiltedelevator.TiltedElevatorSubsystem;
 import frc.robot.subsystems.tiltedelevator.ElevatorState.OffsetState;
+import frc.robot.util.ShuffleboardUtil;
 import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
 import frc.robot.subsystems.drivetrain.MissileShellSwerveSubsystem;
 import frc.robot.subsystems.drivetrain.MissileShellSwerveSweeperSubsystem;
@@ -157,7 +158,6 @@ public class RobotContainer {
             autoAlignCommand = new AutoAlignCommand(swerveSubsystem, tiltedElevatorSubsystem, false);
         } else {
             testCommand = null;
-            autoAlignCommand = null;
         }
 
         superstructure = new Superstructure(
@@ -177,6 +177,14 @@ public class RobotContainer {
             .withPosition(8, 1)
             .withWidget(BuiltInWidgets.kToggleSwitch)
             .getEntry();
+
+        ShuffleboardUtil.addBooleanListener(isRedEntry, (isRed) -> {
+            if (!(driveSubsystem instanceof BaseSwerveSubsystem)) return;
+            autoAlignCommand = new AutoAlignCommand((BaseSwerveSubsystem) driveSubsystem, tiltedElevatorSubsystem, isRed);
+            configureAutoAlignBindings();
+
+            // TODO: preconstruct auton
+        });
 
         // Configure button bindings
         configureDriveBindings();
@@ -300,6 +308,13 @@ public class RobotContainer {
         }, signalLEDSubsystem));
 
         mechRStick.onTrue(new InstantCommand(signalLEDSubsystem::toggleManual));
+    }
+
+    private void configureAutoAlignBindings() {
+        driveController.getAlignToClosestButton().onTrue(autoAlignCommand);
+        driveController.getAlignLeftButton().onTrue(new InstantCommand(autoAlignCommand::alignLeft));
+        driveController.getAlignRightButton().onTrue(new InstantCommand(autoAlignCommand::alignRight));
+        driveController.getCancelAutoAlignButton().onTrue(new InstantCommand(autoAlignCommand::cancel));
     }
 
     /**
