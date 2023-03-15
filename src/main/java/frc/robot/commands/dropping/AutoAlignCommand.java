@@ -94,33 +94,10 @@ public class AutoAlignCommand extends InstantCommand {
     }
 
     /**
-     * Aligns to the node immediately left of the currently selected node.
-     * This is a no-op if there isn't yet a node selected, or if the selected node is the left-most node already (A1).
+     * Aligns to the node immediately left of the currently selected node (from the perspective of the drivers).
+     * This is a no-op if there isn't yet a node selected, or if the selected node is the left-most node already (C3).
      */
     public void alignLeft() {
-        if (targetPlacePosition == null) return;
-        if (targetPlacePosition.placePosition == FieldPosition.A1) return;
-
-        // TODO: better way of doing this?
-        ElevatorState currentElevatorState = tiltedElevatorSubsystem.getState();
-        scheduleAlignCommandWith(switch (targetPlacePosition.placePosition) {
-            case A2 -> elevatorStateToPlacePosition(currentElevatorState, PlacePosition.A1_HYBRID, PlacePosition.A1_MID, PlacePosition.A1_HIGH);
-            case A3 -> elevatorStateToPlacePosition(currentElevatorState, PlacePosition.A2_HYBRID, PlacePosition.A2_MID, PlacePosition.A2_HIGH);
-            case B1 -> elevatorStateToPlacePosition(currentElevatorState, PlacePosition.A3_HYBRID, PlacePosition.A3_MID, PlacePosition.A3_HIGH);
-            case B2 -> elevatorStateToPlacePosition(currentElevatorState, PlacePosition.B1_HYBRID, PlacePosition.B1_MID, PlacePosition.B1_HIGH);
-            case B3 -> elevatorStateToPlacePosition(currentElevatorState, PlacePosition.B2_HYBRID, PlacePosition.B2_MID, PlacePosition.B2_HIGH);
-            case C1 -> elevatorStateToPlacePosition(currentElevatorState, PlacePosition.B3_HYBRID, PlacePosition.B3_MID, PlacePosition.B3_HIGH);
-            case C2 -> elevatorStateToPlacePosition(currentElevatorState, PlacePosition.C1_HYBRID, PlacePosition.C1_MID, PlacePosition.C1_HIGH);
-            case C3 -> elevatorStateToPlacePosition(currentElevatorState, PlacePosition.C2_HYBRID, PlacePosition.C2_MID, PlacePosition.C2_HIGH);
-            default -> throw new RuntimeException("Position not found!");
-        });
-    }
-
-    /**
-     * Aligns to the node immediately right of the currently selected node.
-     * This is a no-op if there isn't yet a node selected, or if the selected node is the right-most node already (C3).
-     */
-    public void alignRight() {
         if (targetPlacePosition == null) return;
         if (targetPlacePosition.placePosition == FieldPosition.C3) return;
 
@@ -135,6 +112,29 @@ public class AutoAlignCommand extends InstantCommand {
             case B3 -> elevatorStateToPlacePosition(currentElevatorState, PlacePosition.C1_HYBRID, PlacePosition.C1_MID, PlacePosition.C1_HIGH);
             case C1 -> elevatorStateToPlacePosition(currentElevatorState, PlacePosition.C2_HYBRID, PlacePosition.C2_MID, PlacePosition.C2_HIGH);
             case C2 -> elevatorStateToPlacePosition(currentElevatorState, PlacePosition.C3_HYBRID, PlacePosition.C3_MID, PlacePosition.C3_HIGH);
+            default -> throw new RuntimeException("Position not found!");
+        });
+    }
+
+    /**
+     * Aligns to the node immediately right of the currently selected node (from the perspective of the drivers).
+     * This is a no-op if there isn't yet a node selected, or if the selected node is the right-most node already (A1).
+     */
+    public void alignRight() {
+        if (targetPlacePosition == null) return;
+        if (targetPlacePosition.placePosition == FieldPosition.A1) return;
+
+        // TODO: better way of doing this?
+        ElevatorState currentElevatorState = tiltedElevatorSubsystem.getState();
+        scheduleAlignCommandWith(switch (targetPlacePosition.placePosition) {
+            case A2 -> elevatorStateToPlacePosition(currentElevatorState, PlacePosition.A1_HYBRID, PlacePosition.A1_MID, PlacePosition.A1_HIGH);
+            case A3 -> elevatorStateToPlacePosition(currentElevatorState, PlacePosition.A2_HYBRID, PlacePosition.A2_MID, PlacePosition.A2_HIGH);
+            case B1 -> elevatorStateToPlacePosition(currentElevatorState, PlacePosition.A3_HYBRID, PlacePosition.A3_MID, PlacePosition.A3_HIGH);
+            case B2 -> elevatorStateToPlacePosition(currentElevatorState, PlacePosition.B1_HYBRID, PlacePosition.B1_MID, PlacePosition.B1_HIGH);
+            case B3 -> elevatorStateToPlacePosition(currentElevatorState, PlacePosition.B2_HYBRID, PlacePosition.B2_MID, PlacePosition.B2_HIGH);
+            case C1 -> elevatorStateToPlacePosition(currentElevatorState, PlacePosition.B3_HYBRID, PlacePosition.B3_MID, PlacePosition.B3_HIGH);
+            case C2 -> elevatorStateToPlacePosition(currentElevatorState, PlacePosition.C1_HYBRID, PlacePosition.C1_MID, PlacePosition.C1_HIGH);
+            case C3 -> elevatorStateToPlacePosition(currentElevatorState, PlacePosition.C2_HYBRID, PlacePosition.C2_MID, PlacePosition.C2_HIGH);
             default -> throw new RuntimeException("Position not found!");
         });
     }
