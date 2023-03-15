@@ -35,18 +35,18 @@ public final class Constants {
         public static final int RIGHT_FOLLOW = 1;
     }
 
-    public static final class SwerveConstants {
+    public static final class SwerveConstants { //may be flipped rn
         public static final double TL_OFFSET_RADS = IS_R1 
-            ? -5.704799652099609
+            ? -2.9255307594961444 //0.21606189409364873 
             : -0.3458388725942889; // 2.795753780995504 flipped
         public static final double TR_OFFSET_RADS = IS_R1 
-            ? -0.842838776116
+            ? -0.9027260979029794 // 2.2388665556868137
             : -0.44043676455947356; // 2.7011558890303196 flipped
         public static final double BL_OFFSET_RADS = IS_R1
-            ? -0.793255341057
+            ? -0.3165152510020395 // 2.8250774025877536
             : -0.4294843792954861; // 2.712108274294307 flipped
         public static final double BR_OFFSET_RADS = IS_R1
-            ? 0.561284053322
+            ? -2.8609512726492206 // 0.28064138094057256
             : 1.5007363875680646; // -1.6408562660217285 flipped
 
         public static final int TL_DRIVE = 2;
@@ -143,15 +143,15 @@ public final class Constants {
         public static final PhotonCamera FRONT_CAMERA = new PhotonCamera("Arducam_OV9281_USB_Camera");
         public static final Transform3d FRONT_CAMERA_POSE = new Transform3d(
             // new Translation3d(Units.inchesToMeters(10.375), Units.inchesToMeters(10.597), Units.inchesToMeters(22.638875)),
-            new Translation3d(Units.inchesToMeters(10.125), Units.inchesToMeters(10.597), Units.inchesToMeters(22.638875)),
-            new Rotation3d(0, 0, 0)
+            new Translation3d(Units.inchesToMeters(10.125), Units.inchesToMeters(7.767605), Units.inchesToMeters(22.25)),
+            new Rotation3d(Math.PI, 0, 0)
         );
 
         public static final PhotonCamera BACK_CAMERA = new PhotonCamera("HD_USB_Camera");
         public static final Transform3d BACK_CAMERA_POSE = new Transform3d(
             // new Translation3d(Units.inchesToMeters(7.375), Units.inchesToMeters(10.597), Units.inchesToMeters(22.638875)),
-            new Translation3d(Units.inchesToMeters(7.625), Units.inchesToMeters(10.597), Units.inchesToMeters(22.638875)),
-            new Rotation3d(0, 0, Math.PI)
+            new Translation3d(Units.inchesToMeters(7.625), Units.inchesToMeters(7.767605), Units.inchesToMeters(22.25)),
+            new Rotation3d(Math.PI, 0, Math.PI)
         );
     }
 

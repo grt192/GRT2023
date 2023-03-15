@@ -8,7 +8,6 @@ import frc.robot.commands.dropping.DropperChooserCommand;
 import frc.robot.commands.grabber.RollerIntakeCommand;
 import frc.robot.commands.mover.TiltedElevatorCommand;
 import frc.robot.subsystems.RollerSubsystem;
-import frc.robot.subsystems.drivetrain.BaseDrivetrain;
 import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
 import frc.robot.subsystems.tiltedelevator.ElevatorState;
 import frc.robot.subsystems.tiltedelevator.TiltedElevatorSubsystem;
@@ -20,12 +19,12 @@ public class MotorTestCommand extends SequentialCommandGroup {
     private static final double SWERVE_DRIVE_POWER = 0.5;
     private static final double SWERVE_DRIVE_TIME_SECS = 3;
 
-    public MotorTestCommand(BaseDrivetrain driveSubsystem, TiltedElevatorSubsystem tiltedElevatorSubsystem, RollerSubsystem rollerSubsystem) {
-        addRequirements(driveSubsystem, tiltedElevatorSubsystem, rollerSubsystem);
+    public MotorTestCommand(BaseSwerveSubsystem swerveSubsystem, TiltedElevatorSubsystem tiltedElevatorSubsystem, RollerSubsystem rollerSubsystem) {
+        addRequirements(swerveSubsystem, tiltedElevatorSubsystem, rollerSubsystem);
 
         addCommands(
             // Lock swerve
-            // new InstantCommand(swerveSubsystem::applyLock, swerveSubsystem),
+            new InstantCommand(swerveSubsystem::applyLock, swerveSubsystem),
 
             // Run tilted elevator to all heights
             // GROUND - CHUTE - INTAKE CONE - SUBSTATION - CUBEMID - CUBEHIGH - CONEMID - CONEHIGH - CONEMID 
@@ -58,8 +57,8 @@ public class MotorTestCommand extends SequentialCommandGroup {
             new WaitCommand(TEST_DELAY_SECS),
 
             // Test dropper command from `CONE_MID`
-            DropperChooserCommand.getSequence(driveSubsystem, rollerSubsystem, tiltedElevatorSubsystem),
-            new WaitCommand(MECH_DELAY_SECS)
+            DropperChooserCommand.getSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem),
+            new WaitCommand(MECH_DELAY_SECS),
 
             // // Sweep rollers from [-1.0, 1.0] over 2 seconds
             // new RollerSweepCommand(rollerSubsystem, 2.0),
@@ -68,6 +67,27 @@ public class MotorTestCommand extends SequentialCommandGroup {
             // // Open motor
             // new InstantCommand(rollerSubsystem::openMotor, rollerSubsystem),
             // new WaitCommand(MECH_DELAY_SECS),
+
+            // Test swerve with forward, back, left, and right powers, and turning counterclockwise and clockwise
+            new InstantCommand(() -> swerveSubsystem.setDrivePowers(SWERVE_DRIVE_POWER, 0, 0, true)),
+            new WaitCommand(SWERVE_DRIVE_TIME_SECS),
+
+            new InstantCommand(() -> swerveSubsystem.setDrivePowers(-SWERVE_DRIVE_POWER, 0, 0, true)),
+            new WaitCommand(SWERVE_DRIVE_TIME_SECS),
+
+            new InstantCommand(() -> swerveSubsystem.setDrivePowers(0, SWERVE_DRIVE_POWER, 0, true)),
+            new WaitCommand(SWERVE_DRIVE_TIME_SECS),
+
+            new InstantCommand(() -> swerveSubsystem.setDrivePowers(0, -SWERVE_DRIVE_POWER, 0, true)),
+            new WaitCommand(SWERVE_DRIVE_TIME_SECS),
+
+            new InstantCommand(() -> swerveSubsystem.setDrivePowers(0, 0, SWERVE_DRIVE_POWER, true)),
+            new WaitCommand(SWERVE_DRIVE_TIME_SECS),
+
+            new InstantCommand(() -> swerveSubsystem.setDrivePowers(0, 0, -SWERVE_DRIVE_POWER, true)),
+            new WaitCommand(SWERVE_DRIVE_TIME_SECS),
+
+            new InstantCommand(() -> swerveSubsystem.setDrivePowers(0, 0, 0, true))
         );
     }
 }

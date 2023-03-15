@@ -47,10 +47,6 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousInit() {
-        if (robotContainer.driveSubsystem instanceof BaseSwerveSubsystem) {
-            ((BaseSwerveSubsystem) robotContainer.driveSubsystem).setVisionEnabled(false);
-        }
-
         // Schedule the autonomous command and cancel testing
         autonomousCommand = robotContainer.getAutonomousCommand();
         if (testCommand != null) testCommand.cancel();
@@ -64,7 +60,6 @@ public class Robot extends TimedRobot {
     public void teleopInit() {
         if (robotContainer.driveSubsystem instanceof BaseSwerveSubsystem) {
             BaseSwerveSubsystem swerveSubsystem = (BaseSwerveSubsystem) robotContainer.driveSubsystem;
-            swerveSubsystem.setVisionEnabled(false);
             swerveSubsystem.setChargingStationLocked(false);
         }
 

@@ -50,17 +50,19 @@ public class PhotonWrapper {
                 // new AprilTagFieldLayout(AprilTagFields.k2023ChargedUp.m_resourceFile),
                 // new AprilTagFieldLayout(Filesystem.getDeployDirectory() + "/2023-chargedup.json"),
                 fieldLayout,
-                PoseStrategy.CLOSEST_TO_REFERENCE_POSE,
+                PoseStrategy.MULTI_TAG_PNP,
                 FRONT_CAMERA,
                 FRONT_CAMERA_POSE
             );
+            frontPoseEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
 
             backPoseEstimator = new PhotonPoseEstimator(
                 fieldLayout,
-                PoseStrategy.CLOSEST_TO_REFERENCE_POSE,
+                PoseStrategy.MULTI_TAG_PNP,
                 BACK_CAMERA,
                 BACK_CAMERA_POSE
             );
+            backPoseEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

@@ -28,12 +28,14 @@ import frc.robot.commands.auton.TopTwoPieceAutonSequence;
 import frc.robot.commands.auton.test.BoxAutonSequence;
 import frc.robot.commands.auton.test.ContinuousBoxAutonSequence;
 import frc.robot.commands.auton.test.GRTAutonSequence;
+import frc.robot.commands.auton.test.GoToOriginSequence;
 import frc.robot.commands.auton.test.HighRotationLinePath;
 import frc.robot.commands.auton.test.RotatingSCurveAutonSequence;
 import frc.robot.commands.auton.test.TenFeetStraightLinePath;
 import frc.robot.commands.auton.test.TwentyFeetStraightLinePath;
 import frc.robot.commands.balancing.BaseBalancerCommand;
 import frc.robot.commands.balancing.DefaultBalancerCommand;
+import frc.robot.commands.dropping.AutoAlignCommand;
 import frc.robot.commands.dropping.DropperChooserCommand;
 import frc.robot.commands.pretest.MotorTestCommand;
 import frc.robot.controllers.BaseDriveController;
@@ -101,8 +103,10 @@ public class RobotContainer {
     // Commands
     private final ShuffleboardTab shuffleboardTab = Shuffleboard.getTab("Driver");
     private final SendableChooser<Command> autonChooser;
-    private final BaseBalancerCommand balancerCommand;
     private final MotorTestCommand testCommand;
+
+    private final BaseBalancerCommand balancerCommand;
+    private final AutoAlignCommand autoAlignCommand;
 
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -123,36 +127,34 @@ public class RobotContainer {
         superstructure = new Superstructure(rollerSubsystem, tiltedElevatorSubsystem, signalLEDSubsystem, switchableCamera);
 
         balancerCommand = new DefaultBalancerCommand(driveSubsystem);
-        testCommand = new MotorTestCommand(driveSubsystem, tiltedElevatorSubsystem, rollerSubsystem);
 
-        // Configure button bindings
-        configureDriveBindings();
-        configureMechBindings();
-
-        // Add auton sequences to the chooser and add the chooser to shuffleboard
+        // Initialize auton and test commands
         autonChooser = new SendableChooser<>();
         autonChooser.setDefaultOption("Skip auton", new InstantCommand());
 
         if (driveSubsystem instanceof BaseSwerveSubsystem) {
             final BaseSwerveSubsystem swerveSubsystem = (BaseSwerveSubsystem) driveSubsystem;
 
+            testCommand = new MotorTestCommand(swerveSubsystem, tiltedElevatorSubsystem, rollerSubsystem);
+            autoAlignCommand = new AutoAlignCommand(swerveSubsystem, tiltedElevatorSubsystem, false);
+
             autonChooser.addOption("Red preloaded only", new PreloadedOnlyAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, true));
             autonChooser.addOption("Red top auton (1-piece)", new TopOnePieceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, true));
             // autonChooser.addOption("Red top auton (2-piece)", new TopTwoPieceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, true));
-            autonChooser.addOption("Red balance auton", new BalanceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, true));
-            // autonChooser.addOption("Red balance and taxi auton", new BalanceAndTaxiAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, true));
+            autonChooser.addOption("Red balance auton", BalanceAutonSequence.withDeadline(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, true));
+            // autonChooser.addOption("Red balance and taxi auton", BalanceAndTaxiAutonSequence.withDeadline(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, true));
             autonChooser.addOption("Red bottom auton (1-piece)", new BottomOnePieceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, true));
             // autonChooser.addOption("Red bottom auton (2-piece)", new BottomTwoPieceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, true));
-            // autonChooser.addOption("Red bottom balance auton", new BottomBalanceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, true));
+            // autonChooser.addOption("Red bottom balance auton", BottomBalanceAutonSequence.withDeadline(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, true));
 
             autonChooser.addOption("Blue preloaded only", new PreloadedOnlyAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, false));
             autonChooser.addOption("Blue top auton (1-piece)", new TopOnePieceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, false));
             // autonChooser.addOption("Blue top auton (2-piece)", new TopTwoPieceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, false));
-            autonChooser.addOption("Blue balance auton", new BalanceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, false));
-            // autonChooser.addOption("Blue balance and taxi auton", new BalanceAndTaxiAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, false));
+            autonChooser.addOption("Blue balance auton", BalanceAutonSequence.withDeadline(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, false));
+            // autonChooser.addOption("Blue balance and taxi auton", BalanceAndTaxiAutonSequence.withDeadline(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, false));
             autonChooser.addOption("Blue bottom auton (1-piece)", new BottomOnePieceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, false));
             // autonChooser.addOption("Blue bottom auton (2-piece)", new BottomTwoPieceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, false));
-            // autonChooser.addOption("Blue bottom balance auton", new BottomBalanceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, false));
+            // autonChooser.addOption("Blue bottom balance auton", BottomBalanceAutonSequence.withDeadline(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, false));
 
             // autonChooser.addOption("10' straight-line path", new TenFeetStraightLinePath(swerveSubsystem));
             // autonChooser.addOption("20' straight-line path", new TwentyFeetStraightLinePath(swerveSubsystem));
@@ -161,11 +163,19 @@ public class RobotContainer {
             // autonChooser.addOption("Box auton", new BoxAutonSequence(swerveSubsystem));
             // autonChooser.addOption("No-stopping box auton", new ContinuousBoxAutonSequence(swerveSubsystem));
             // autonChooser.addOption("GRT path", new GRTAutonSequence(swerveSubsystem));
+            autonChooser.addOption("Go to origin", new GoToOriginSequence(swerveSubsystem));
+        } else {
+            testCommand = null;
+            autoAlignCommand = null;
         }
 
         shuffleboardTab.add("Auton", autonChooser)
             .withPosition(8, 0)
-            .withSize(4, 2);
+            .withSize(3, 1);
+
+        // Configure button bindings
+        configureDriveBindings();
+        configureMechBindings();
     }
 
     /**
@@ -185,17 +195,26 @@ public class RobotContainer {
                 boolean relative = driveController.getSwerveRelative();
 
                 if (driveController.getSwerveHeadingLock()) {
-                    double currentHeadingRads = swerveSubsystem.getFieldHeading().getRadians();
+                    double currentHeadingRads = swerveSubsystem.getDriverHeading().getRadians();
                     double lockHeadingRads = (Math.abs(currentHeadingRads) > Math.PI / 2.0) ? Math.PI : 0;
 
                     swerveSubsystem.setDrivePowersWithHeadingLock(xPower, yPower, new Rotation2d(lockHeadingRads), relative);
                 } else {
                     swerveSubsystem.setDrivePowers(xPower, yPower, angularPower, relative);
                 }
+
+                // Cancel auto-align command if magnitude of drive inputs is greater than 0.3.
+                double inputMagnitude = Math.sqrt(xPower * xPower + yPower * yPower);
+                if (inputMagnitude > 0.3) autoAlignCommand.cancel();
             }, swerveSubsystem));
 
-            driveController.getFieldResetButton().onTrue(new InstantCommand(swerveSubsystem::resetFieldAngle, swerveSubsystem));
+            driveController.getFieldResetButton().onTrue(new InstantCommand(swerveSubsystem::resetDriverHeading, swerveSubsystem));
             driveController.getChargingStationLockButton().onTrue(new InstantCommand(swerveSubsystem::toggleChargingStationLocked, swerveSubsystem));
+
+            driveController.getAlignToClosestButton().onTrue(autoAlignCommand);
+            driveController.getAlignLeftButton().onTrue(new InstantCommand(autoAlignCommand::alignLeft));
+            driveController.getAlignRightButton().onTrue(new InstantCommand(autoAlignCommand::alignRight));
+            driveController.getCancelAutoAlignButton().onTrue(new InstantCommand(autoAlignCommand::cancel));
 
             /*
             brSwitch.onTrue(new InstantCommand(() -> {
@@ -243,7 +262,7 @@ public class RobotContainer {
             int pov = mechController.getPOV();
             switch (pov) {
                 case 0 -> tiltedElevatorSubsystem.setState(ElevatorState.SUBSTATION);
-                case 270 -> tiltedElevatorSubsystem.setState(ElevatorState.HYBRID);
+                case 270 -> {}
                 case 180 -> {
                     tiltedElevatorSubsystem.setState(ElevatorState.GROUND);
                     tiltedElevatorSubsystem.offsetState = OffsetState.OVERRIDE_HAS_PIECE;
@@ -297,4 +316,5 @@ public class RobotContainer {
     public Command getTestCommand() {
         return testCommand;
     }
+    
 }

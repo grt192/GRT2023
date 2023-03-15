@@ -41,10 +41,18 @@ public class LEDStrip {
     public void updateContinuousColor(Color color){
         int inc = (int) Math.ceil(ledTimer.get() * LEDS_PER_SEC);
         inc = Math.max(1, inc);
+<<<<<<< HEAD
         for (int i = contLedBuffer.getLength() - inc; i > 0; i--){
             contLedBuffer.setLED(i, contLedBuffer.getLED(i - inc));
         }
         for(int i = 0; i < inc; i++){
+=======
+        inc = 2;
+        for (int i = Math.max(contLedBuffer.getLength() - inc, 0); i > inc; i--){
+            contLedBuffer.setLED(i, contLedBuffer.getLED(i - inc));
+        }
+        for(int i = 0; i < Math.min(inc, LED_GROUP_LENGTH); i++){
+>>>>>>> f495019bd2e1ffa0ca1c07511ded8e2aa1d0efbf
             contLedBuffer.setLED(i, color);
         }
         ledTimer.reset();

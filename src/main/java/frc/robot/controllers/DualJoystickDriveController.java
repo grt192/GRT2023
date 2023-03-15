@@ -21,16 +21,12 @@ public class DualJoystickDriveController extends BaseDriveController {
     private final Joystick rightJoystick = new Joystick(1);
     private final JoystickButton
         rightTrigger = new JoystickButton(rightJoystick, 1),
-        rightStickBackButton = new JoystickButton(rightJoystick, 2),
-        rightStickCenterButton = new JoystickButton(rightJoystick, 3),
-        rightStickLeftButton = new JoystickButton(rightJoystick, 4),
-        rightStickRightButton = new JoystickButton(rightJoystick, 5),
-        rightBaseLeftTopButton = new JoystickButton(rightJoystick, 6),
-        rightBaseLeftBottomButton = new JoystickButton(rightJoystick, 7),
-        rightBaseBackLeftButton = new JoystickButton(rightJoystick, 8),
-        rightBaseBackRightButton = new JoystickButton(rightJoystick, 9),
-        rightBaseRightBottomButton = new JoystickButton(rightJoystick, 10),
-        rightBaseRightTopButton = new JoystickButton(rightJoystick, 11);
+        rightMiddleButton = new JoystickButton(rightJoystick, 2),
+        rightTopLeftButton = new JoystickButton(rightJoystick, 3),
+        rightTopRightButton = new JoystickButton(rightJoystick, 4),
+        rightMiddleLeftButton = new JoystickButton(rightJoystick, 5),
+        rightMiddleRightButton = new JoystickButton(rightJoystick, 6),
+        rightBackButton = new JoystickButton(rightJoystick, 7);
 
     private static final double JOYSTICK_DEADBAND = 0.08;
 
@@ -58,12 +54,12 @@ public class DualJoystickDriveController extends BaseDriveController {
 
     @Override
     public boolean getSwerveHeadingLock() {
-        return rightStickCenterButton.getAsBoolean();
+        return leftMiddleButton.getAsBoolean();
     }
 
     @Override
     public JoystickButton getBalancerButton() {
-        return rightStickBackButton;
+        return rightTopRightButton;
     }
 
     @Override
@@ -73,12 +69,32 @@ public class DualJoystickDriveController extends BaseDriveController {
 
     @Override
     public JoystickButton getCameraSwitchButton() {
-        return rightBaseLeftTopButton;
+        return leftTopRightButton;
     }
 
     @Override
     public JoystickButton getChargingStationLockButton() {
         return leftTopLeftButton;
+    }
+
+    @Override
+    public JoystickButton getAlignToClosestButton() {
+        return rightMiddleButton;
+    }
+
+    @Override
+    public JoystickButton getAlignLeftButton() {
+        return rightMiddleLeftButton;
+    }
+
+    @Override
+    public JoystickButton getAlignRightButton() {
+        return rightMiddleRightButton;
+    }
+
+    @Override
+    public JoystickButton getCancelAutoAlignButton() {
+        return rightBackButton;
     }
 
     /**
