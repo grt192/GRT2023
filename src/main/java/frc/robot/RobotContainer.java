@@ -6,8 +6,10 @@ package frc.robot;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -17,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
+import frc.robot.commands.auton.AutonFactoryFunction;
 import frc.robot.commands.auton.BalanceAndTaxiAutonSequence;
 import frc.robot.commands.auton.BalanceAutonSequence;
 import frc.robot.commands.auton.BottomBalanceAutonSequence;
@@ -42,6 +45,7 @@ import frc.robot.controllers.BaseDriveController;
 import frc.robot.controllers.DualJoystickDriveController;
 import frc.robot.controllers.TwistJoystickDriveController;
 import frc.robot.controllers.XboxDriveController;
+import frc.robot.positions.PlacePosition;
 import frc.robot.vision.SwitchableCamera;
 import frc.robot.vision.PhotonWrapper;
 import frc.robot.subsystems.drivetrain.TankSubsystem;
@@ -104,11 +108,14 @@ public class RobotContainer {
 
     // Commands
     private final ShuffleboardTab shuffleboardTab = Shuffleboard.getTab("Driver");
-    private final SendableChooser<Command> autonChooser;
+    private final SendableChooser<AutonFactoryFunction> autonPathChooser;
+    private final SendableChooser<PlacePosition> autonInitialPoseChooser;
+    private final GenericEntry isRedEntry;
+
     private final MotorTestCommand testCommand;
 
     private final BaseBalancerCommand balancerCommand;
-    private final AutoAlignCommand autoAlignCommand;
+    private AutoAlignCommand autoAlignCommand;
 
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -128,42 +135,26 @@ public class RobotContainer {
 
         balancerCommand = new DefaultBalancerCommand(driveSubsystem);
 
-        // Initialize auton and test commands
-        autonChooser = new SendableChooser<>();
-        autonChooser.setDefaultOption("Skip auton", new InstantCommand());
+        // Initialize auton choosers
+        autonPathChooser = new SendableChooser<>();
+        autonPathChooser.setDefaultOption("Preloaded only", PreloadedOnlyAutonSequence::new);
+        autonPathChooser.addOption("Top auton (1-piece)", TopOnePieceAutonSequence::new);
+        // autonPathChooser.addOption("Top auton (2-piece)", TopTwoPieceAutonSequence::new);
+        autonPathChooser.addOption("Balance auton", BalanceAutonSequence::withDeadline);
+        // autonPathChooser.addOption("Balance and taxi auton", BalanceAndTaxiAutonSequence::withDeadline);
+        autonPathChooser.addOption("Bottom auton (1-piece)", BottomOnePieceAutonSequence::new);
+        // autonPathChooser.addOption("Bottom auton (2-piece)", BottomTwoPieceAutonSequence::new);
+        // autonPathChooser.addOption("Bottom balance auton", BottomBalanceAutonSequence::withDeadline);
+
+        autonInitialPoseChooser = new SendableChooser<>();
+        for (PlacePosition position : PlacePosition.values()) {
+            autonInitialPoseChooser.addOption(position.name(), position);
+        }
 
         if (driveSubsystem instanceof BaseSwerveSubsystem) {
             final BaseSwerveSubsystem swerveSubsystem = (BaseSwerveSubsystem) driveSubsystem;
-
             testCommand = new MotorTestCommand(swerveSubsystem, tiltedElevatorSubsystem, rollerSubsystem);
             autoAlignCommand = new AutoAlignCommand(swerveSubsystem, tiltedElevatorSubsystem, false);
-
-            autonChooser.addOption("Red preloaded only", new PreloadedOnlyAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, true));
-            autonChooser.addOption("Red top auton (1-piece)", new TopOnePieceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, true));
-            // autonChooser.addOption("Red top auton (2-piece)", new TopTwoPieceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, true));
-            autonChooser.addOption("Red balance auton", BalanceAutonSequence.withDeadline(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, true));
-            // autonChooser.addOption("Red balance and taxi auton", BalanceAndTaxiAutonSequence.withDeadline(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, true));
-            autonChooser.addOption("Red bottom auton (1-piece)", new BottomOnePieceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, true));
-            // autonChooser.addOption("Red bottom auton (2-piece)", new BottomTwoPieceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, true));
-            // autonChooser.addOption("Red bottom balance auton", BottomBalanceAutonSequence.withDeadline(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, true));
-
-            autonChooser.addOption("Blue preloaded only", new PreloadedOnlyAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, false));
-            autonChooser.addOption("Blue top auton (1-piece)", new TopOnePieceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, false));
-            // autonChooser.addOption("Blue top auton (2-piece)", new TopTwoPieceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, false));
-            autonChooser.addOption("Blue balance auton", BalanceAutonSequence.withDeadline(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, false));
-            // autonChooser.addOption("Blue balance and taxi auton", BalanceAndTaxiAutonSequence.withDeadline(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, false));
-            autonChooser.addOption("Blue bottom auton (1-piece)", new BottomOnePieceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, false));
-            // autonChooser.addOption("Blue bottom auton (2-piece)", new BottomTwoPieceAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, false));
-            // autonChooser.addOption("Blue bottom balance auton", BottomBalanceAutonSequence.withDeadline(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, false));
-
-            // autonChooser.addOption("10' straight-line path", new TenFeetStraightLinePath(swerveSubsystem));
-            // autonChooser.addOption("20' straight-line path", new TwentyFeetStraightLinePath(swerveSubsystem));
-            // autonChooser.addOption("High rotation straight-line path", new HighRotationLinePath(swerveSubsystem));
-            // autonChooser.addOption("Rotating S-curve", new RotatingSCurveAutonSequence(swerveSubsystem));
-            // autonChooser.addOption("Box auton", new BoxAutonSequence(swerveSubsystem));
-            // autonChooser.addOption("No-stopping box auton", new ContinuousBoxAutonSequence(swerveSubsystem));
-            // autonChooser.addOption("GRT path", new GRTAutonSequence(swerveSubsystem));
-            autonChooser.addOption("Go to origin", new GoToOriginSequence(swerveSubsystem));
         } else {
             testCommand = null;
             autoAlignCommand = null;
@@ -174,9 +165,18 @@ public class RobotContainer {
             autoAlignCommand, switchableCamera, driveController
         );
 
-        shuffleboardTab.add("Auton", autonChooser)
+        shuffleboardTab.add("Auton path", autonPathChooser)
             .withPosition(0, 4)
-            .withSize(3, 2);
+            .withSize(3, 1);
+
+        shuffleboardTab.add("Start position", autonInitialPoseChooser)
+            .withPosition(9, 1)
+            .withSize(2, 1);
+
+        isRedEntry = shuffleboardTab.add("Is RED", false)
+            .withPosition(8, 1)
+            .withWidget(BuiltInWidgets.kToggleSwitch)
+            .getEntry();
 
         // Configure button bindings
         configureDriveBindings();
@@ -307,7 +307,12 @@ public class RobotContainer {
      * @return the command to run in autonomous
      */
     public Command getAutonomousCommand() {
-        return autonChooser.getSelected();
+        // TODO: find some way to set up listeners such that we can preconstruct this before auton starts
+        if (!(driveSubsystem instanceof BaseSwerveSubsystem)) return null;
+        return autonPathChooser.getSelected().apply(
+            (BaseSwerveSubsystem) driveSubsystem, rollerSubsystem, tiltedElevatorSubsystem,
+            isRedEntry.getBoolean(false)
+        );
     }
 
     /**
