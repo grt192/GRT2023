@@ -7,6 +7,7 @@ package frc.robot;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -47,6 +48,8 @@ import frc.robot.vision.PhotonWrapper;
 import frc.robot.subsystems.drivetrain.TankSubsystem;
 import frc.robot.subsystems.leds.LEDSubsystem;
 import frc.robot.subsystems.tiltedelevator.ElevatorState;
+import frc.robot.subsystems.tiltedelevator.TiltedElevatorIO;
+import frc.robot.subsystems.tiltedelevator.TiltedElevatorIOReal;
 import frc.robot.subsystems.tiltedelevator.TiltedElevatorSubsystem;
 import frc.robot.subsystems.tiltedelevator.ElevatorState.OffsetState;
 import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
@@ -119,10 +122,15 @@ public class RobotContainer {
         
         signalLEDSubsystem = new LEDSubsystem(); 
 
+        if (RobotBase.isReal()) {
+            tiltedElevatorSubsystem = new TiltedElevatorSubsystem(new TiltedElevatorIOReal());
+        } else {
+            tiltedElevatorSubsystem = new TiltedElevatorSubsystem(new TiltedElevatorIO() {});
+        }
+
         // driveSubsystem = new MissileShellSwerveSubsystem();
         driveSubsystem = new SwerveSubsystem(photonWrapper, signalLEDSubsystem);
         rollerSubsystem = new RollerSubsystem();
-        tiltedElevatorSubsystem = new TiltedElevatorSubsystem();
 
         superstructure = new Superstructure(rollerSubsystem, tiltedElevatorSubsystem, signalLEDSubsystem, switchableCamera);
 

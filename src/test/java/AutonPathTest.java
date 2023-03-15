@@ -17,12 +17,13 @@ import frc.robot.commands.auton.test.TenFeetStraightLinePath;
 import frc.robot.commands.auton.test.TwentyFeetStraightLinePath;
 import frc.robot.subsystems.RollerSubsystem;
 import frc.robot.subsystems.drivetrain.SwerveSubsystem;
+import frc.robot.subsystems.tiltedelevator.TiltedElevatorIO;
 import frc.robot.subsystems.tiltedelevator.TiltedElevatorSubsystem;
 
 public class AutonPathTest {
     private static final SwerveSubsystem swerveSubsystem = new SwerveSubsystem(null, null);
     private static final RollerSubsystem rollerSubsystem = new RollerSubsystem();
-    private static final TiltedElevatorSubsystem tiltedElevatorSubsystem = new TiltedElevatorSubsystem();
+    private static final TiltedElevatorSubsystem tiltedElevatorSubsystem = new TiltedElevatorSubsystem(new TiltedElevatorIO() {});
 
     /**
      * Ensures that all test auton paths compile.
