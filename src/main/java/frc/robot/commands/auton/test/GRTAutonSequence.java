@@ -16,6 +16,7 @@ public class GRTAutonSequence extends SequentialCommandGroup {
         addRequirements(swerveSubsystem);
         addCommands(
             new InstantCommand(swerveSubsystem::resetPose),
+            new InstantCommand(() -> swerveSubsystem.setVisionEnabled(false)),
             FollowPathCommand.from(
                 swerveSubsystem, 
                 new Pose2d(),
