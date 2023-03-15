@@ -311,7 +311,7 @@ public class RobotContainer {
         if (!(driveSubsystem instanceof BaseSwerveSubsystem)) return null;
         return autonPathChooser.getSelected().apply(
             (BaseSwerveSubsystem) driveSubsystem, rollerSubsystem, tiltedElevatorSubsystem,
-            isRedEntry.getBoolean(false)
+            autonInitialPoseChooser.getSelected(), isRedEntry.getBoolean(false)
         );
     }
 

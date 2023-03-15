@@ -11,20 +11,19 @@ import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
 import frc.robot.subsystems.tiltedelevator.TiltedElevatorSubsystem;
 
 public class BalanceAndTaxiAutonSequence extends BaseAutonSequence {
-    private static final PlacePosition INITIAL_POSE = PlacePosition.B2_HIGH;
-
     /**
      * Balancing auton sequence with mobility bonus.
      * @param swerveSubsystem The swerve subsystem.
      * @param rollerSubsystem The roller subsystem.
      * @param tiltedElevatorSubsystem The tilted elevator subsystem.
+     * @param initialPosition The initial place position of the sequence.
      * @param isRed Whether this is a red auton path.
      */
     public BalanceAndTaxiAutonSequence(
         BaseSwerveSubsystem swerveSubsystem, RollerSubsystem rollerSubsystem, TiltedElevatorSubsystem tiltedElevatorSubsystem,
-        boolean isRed // TODO: better way of passing this
+        PlacePosition initialPosition, boolean isRed // TODO: better way of passing this
     ) {
-        super(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, INITIAL_POSE, isRed);
+        super(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, initialPosition, isRed);
 
         addCommands(
             // Go over the charging station to taxi
@@ -39,15 +38,16 @@ public class BalanceAndTaxiAutonSequence extends BaseAutonSequence {
      * @param swerveSubsystem The swerve subsystem.
      * @param rollerSubsystem The roller subsystem.
      * @param tiltedElevatorSubsystem The tilted elevator subsystem.
+     * @param initialPosition The initial place position of the sequence.
      * @param isRed Whether this is a red auton path.
      * @return The created auton path.
      */
     public static ParallelDeadlineGroup withDeadline(
         BaseSwerveSubsystem swerveSubsystem, RollerSubsystem rollerSubsystem, TiltedElevatorSubsystem tiltedElevatorSubsystem,
-        boolean isRed // TODO: better way of passing this
+        PlacePosition initialPosition, boolean isRed // TODO: better way of passing this
     ) {
         return new WaitCommand(14.5).deadlineWith(
-            new BalanceAndTaxiAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, isRed)
+            new BalanceAndTaxiAutonSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, initialPosition, isRed)
         );
     }
 }

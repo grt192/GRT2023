@@ -13,8 +13,6 @@ import frc.robot.subsystems.tiltedelevator.ElevatorState;
 import frc.robot.subsystems.tiltedelevator.TiltedElevatorSubsystem;
 
 public class BottomTwoPieceAutonSequence extends BaseAutonSequence {
-    private static final PlacePosition INITIAL_POSE = PlacePosition.A2_HIGH;
-
     private static final FieldPosition MID_POSE_1 = FieldPosition.BOTTOM_MIDPOS_1;
     private static final FieldPosition MID_POSE_2 = FieldPosition.BOTTOM_MIDPOS_2;
 
@@ -26,15 +24,16 @@ public class BottomTwoPieceAutonSequence extends BaseAutonSequence {
      * @param swerveSubsystem The swerve subsystem.
      * @param rollerSubsystem The roller subsystem.
      * @param tiltedElevatorSubsystem The tilted elevator subsystem.
+     * @param initialPosition The initial place position of the sequence.
      * @param isRed Whether this is a red auton path.
      */
     public BottomTwoPieceAutonSequence(
         BaseSwerveSubsystem swerveSubsystem, RollerSubsystem rollerSubsystem, TiltedElevatorSubsystem tiltedElevatorSubsystem,
-        boolean isRed // TODO: better way of passing this
+        PlacePosition initialPosition, boolean isRed // TODO: better way of passing this
     ) {
-        super(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, INITIAL_POSE, isRed);
+        super(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, initialPosition, isRed);
 
-        Pose2d initialPose = INITIAL_POSE.alignPosition.getPose(isRed);
+        Pose2d initialPose = initialPosition.alignPosition.getPose(isRed);
         Pose2d midPose1 = MID_POSE_1.getPose(isRed);
         Pose2d midPose2 = MID_POSE_2.getPose(isRed);
 
