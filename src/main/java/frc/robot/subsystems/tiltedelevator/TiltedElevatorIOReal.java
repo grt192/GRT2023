@@ -94,14 +94,14 @@ public class TiltedElevatorIOReal implements TiltedElevatorIO {
     }
 
     @Override
-    public void setExtensionPower(double power) {
+    public void setPower(double power) {
         extensionMotor.set(power);
     }
 
     @Override
-    public void setExtensionPosition(double targetExtensionMeters) {
+    public void setPosition(double targetExtensionMeters) {
         extensionPidController.setReference(
-            MathUtil.clamp(targetExtensionMeters, 0, EXTENSION_LIMIT_METERS + Units.inchesToMeters(.75)),
+            MathUtil.clamp(targetExtensionMeters, 0, EXTENSION_LIMIT_METERS + Units.inchesToMeters(0.75)),
             ControlType.kPosition, 0,
             arbFeedforward, ArbFFUnits.kPercentOut
         );
