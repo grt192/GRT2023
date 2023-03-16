@@ -47,13 +47,14 @@ public class OgBottomTwoPieceAutonSequence extends BaseAutonSequence {
         ElevatorState elevatorState2 = PLACE_POSE2.elevatorState;
 
         addCommands(
-            // Spline through midPose 1 to avoid overhsoot
+            // Spline through midPose 1 to avoid overshoot
             FollowPathCommand.from(swerveSubsystem, initialPose, List.of(midPose1.getTranslation()), midPose2, false, true),
             FollowPathCommand.from(swerveSubsystem, midPose2, List.of(), midPose3, true, true),
             // Go and grab 2nd piece
             goAndGrab(midPose3, List.of(), grabPose, true, false),
             // Go and place grabbed piece
-            goAndPlace(grabPose, List.of(midPose2), midPose1, placePose2, elevatorState2)
+            FollowPathCommand.from(swerveSubsystem, grabPose, List.of(), midPose2,  false, true),
+            goAndPlace(midPose2, List.of(midPose1), initialPose, placePose2, elevatorState2)
         );
     }
 }
