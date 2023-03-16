@@ -45,7 +45,7 @@ public class GoOverCommand extends CommandBase {
         }
 
         if (reachedStation && !passedCenter) {
-            returnDrivePower = 0.5;
+            returnDrivePower = 0.4;
             if (ahrs.getPitch() >= -0.0){
                 returnDrivePower = 0.4;
                 passedCenter = true;
@@ -68,8 +68,13 @@ public class GoOverCommand extends CommandBase {
         driveSubsystem.setDrivePowers(returnDrivePower);
     }
 
+    @Override 
+    public void end(boolean interrupted){
+        driveSubsystem.setDrivePowers(0.0);
+    }
+
     @Override
     public boolean isFinished() {
-        return overStation && timer.hasElapsed(0.5);
+        return overStation && timer.hasElapsed(0.25);
     }
 }

@@ -39,7 +39,7 @@ public class PIDSwitchBalancerCommand extends BaseBalancerCommand {
 
         if (!reachedStation) {
             returnDrivePower = -0.80;
-            reachedStation = currentPitchDegs <= -15.0;
+            reachedStation = currentPitchDegs <= - 7.0;
         } else {
             double deltaPitchDegs = Math.abs(currentPitchDegs - prevPitchDegs);
             boolean fine = currentPitchDegs >= -11.0 && deltaPitchDegs <= 0.25;

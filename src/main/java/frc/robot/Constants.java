@@ -187,4 +187,9 @@ public final class Constants {
         public static final double ANGLE_OFFSET_SPEED = 0.001;
         public static final double EXTENSION_OFFSET_SPEED = 0.001;
     }
+
+    public static final class BalancerConstants{
+        public static final double GRT_CHARGING_STATION_KP = 0.3/35;
+        public static final double COMP_CHARGING_STATION_KP = 0.0072;
+    }
 }

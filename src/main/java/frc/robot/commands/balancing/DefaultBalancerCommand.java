@@ -6,9 +6,12 @@ import edu.wpi.first.math.controller.PIDController;
 import frc.robot.subsystems.drivetrain.BaseDrivetrain;
 import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
 
+import frc.robot.Constants.BalancerConstants;
+
 public class DefaultBalancerCommand extends BaseBalancerCommand {
     private final PIDController drivePID;
-    private final Timer timer;
+
+    private final Timer runawayTimer;
 
     private double returnDrivePower; // drive power to be returned to DT
     private double prevPitchDegs;
@@ -22,13 +25,12 @@ public class DefaultBalancerCommand extends BaseBalancerCommand {
      * whether to balance from the front or back.
      * 
      * @param driveSubsystem The drive subsystem.
-     * @param reversed Whether to balance driving forwards or backwards. Defaults to backwards; pass `true` to balance forwards.
      */
     public DefaultBalancerCommand(BaseDrivetrain driveSubsystem) {
         super(driveSubsystem);
 
-        drivePID = new PIDController(0.0072, 0.0, 0.0);
-        timer = new Timer();
+        drivePID = new PIDController(BalancerConstants.GRT_CHARGING_STATION_KP, 0.0, 0.0);
+        runawayTimer = new Timer();
     }
 
     @Override
@@ -37,6 +39,8 @@ public class DefaultBalancerCommand extends BaseBalancerCommand {
         reachedStation = false;
         passedCenter = false;
         balanced = false;
+        runawayTimer.reset();
+        runawayTimer.start();
     }
 
     @Override
@@ -48,6 +52,12 @@ public class DefaultBalancerCommand extends BaseBalancerCommand {
             if (currentPitchDegs <= -15.0) {
                 reachedStation = true;
                 returnDrivePower = -0.17;
+            }
+            else if(runawayTimer.hasElapsed(2)){
+                returnDrivePower = 0.0;
+                System.out.println("BALANCER RUNAWAY DETECTED");
+                end(false);
+
             }
         } else {
             double deltaPitchDegs = Math.abs(currentPitchDegs - prevPitchDegs); // calc magnitude of angular acceleration based on delta angle over time
