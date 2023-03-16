@@ -112,16 +112,17 @@ public class RobotContainer {
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
     public RobotContainer() {
-        driveController = new XboxDriveController();
+        driveController = new DualJoystickDriveController();
 
         photonWrapper = new PhotonWrapper();
         switchableCamera = new SwitchableCamera(shuffleboardTab);
+        
+        signalLEDSubsystem = new LEDSubsystem(); 
 
-        //driveSubsystem = new MissileShellSwerveSubsystem();
-        driveSubsystem = new SwerveSubsystem(photonWrapper);
+        // driveSubsystem = new MissileShellSwerveSubsystem();
+        driveSubsystem = new SwerveSubsystem(photonWrapper, signalLEDSubsystem);
         rollerSubsystem = new RollerSubsystem();
         tiltedElevatorSubsystem = new TiltedElevatorSubsystem();
-        signalLEDSubsystem = new LEDSubsystem(); 
 
         superstructure = new Superstructure(rollerSubsystem, tiltedElevatorSubsystem, signalLEDSubsystem, switchableCamera);
 
@@ -291,11 +292,12 @@ public class RobotContainer {
         }, tiltedElevatorSubsystem));
 
         signalLEDSubsystem.setDefaultCommand(new RunCommand(() -> {
-            if (blSwitch.getAsBoolean()) {
-                signalLEDSubsystem.setColor(255, 100, 0);
-            } else {
-                signalLEDSubsystem.setColor(192, 8, 254);
-            }
+            double x = mechController.getRightX();
+            double y = mechController.getRightY();
+
+            signalLEDSubsystem.setManual(mechController.getRightStickButton());
+
+            signalLEDSubsystem.setColorFromInput(x, y);
         }, signalLEDSubsystem));
     }
 
@@ -314,4 +316,5 @@ public class RobotContainer {
     public Command getTestCommand() {
         return testCommand;
     }
+    
 }

@@ -19,7 +19,8 @@ public class SwerveSubsystem2020 extends BaseSwerveSubsystem {
             new SwerveModule2020(BR_DRIVE, BR_STEER, BR_OFFSET_RADS),
             MAX_VEL, MAX_ACCEL, MAX_OMEGA, MAX_ALPHA,
             new SwerveDriveKinematics(TL_POS, TR_POS, BL_POS, BR_POS),
-            photonWrapper
+            photonWrapper,
+            null
         );
     }
 }
