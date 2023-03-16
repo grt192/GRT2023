@@ -12,6 +12,7 @@ public class LEDSubsystem extends SubsystemBase {
 
     private final Timer blinkTimer;
     private static final double BLINK_DURATION_SECONDS = 0.5;
+    private static final double BLINK_OFF_TO_ON_RATIO = 4;
     private static final Color BLINK_COLOR = new Color(0, 0, 0);
     private boolean blinking = false;
 
@@ -29,7 +30,7 @@ public class LEDSubsystem extends SubsystemBase {
     private static final double APRIL_BLINK_DURATION_SECONDS = 0.05;
     private boolean aprilStarted = false;
 
-    private static final Color APRIL_COLOR = new Color(255, 255, 255);
+    private static final Color APRIL_COLOR = new Color(252, 255, 236);
     private static final Color CUBE_COLOR = new Color(192, 8, 254);
     private static final Color CONE_COLOR = new Color(255, 100, 0);
 
@@ -77,7 +78,7 @@ public class LEDSubsystem extends SubsystemBase {
             aprilStarted = true;
             aprilBlinkTimer.start();
         }
-        if (aprilBlinkTimer.hasElapsed(APRIL_BLINK_DURATION_SECONDS * 5)) {
+        if (aprilBlinkTimer.hasElapsed(APRIL_BLINK_DURATION_SECONDS * BLINK_OFF_TO_ON_RATIO)) {
             aprilBlinkTimer.reset();
             aprilBlinkTimer.start();
         }
