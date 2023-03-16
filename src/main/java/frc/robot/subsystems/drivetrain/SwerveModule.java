@@ -146,7 +146,7 @@ public class SwerveModule implements BaseSwerveModule {
             .withPosition(8, 0)
             .withSize(2, 1)
             .getEntry();
-        angleErrorEntry = shuffleboardTab.add("Angle error (rads)", 0.0)
+        angleErrorEntry = shuffleboardTab.add("Angle error (degs)", 0.0)
             .withPosition(6, 1)
             .withSize(5, 3)
             // .withWidget(BuiltInWidgets.kGraph)
@@ -196,23 +196,26 @@ public class SwerveModule implements BaseSwerveModule {
             ? optimizeWithWraparound(state, currentAngle)
             : SwerveModuleState.optimize(state, currentAngle);
 
+        double targetAngleRads = optimized.angle.getRadians() - offsetRads;
+        double angleErrorRads = optimized.angle.minus(currentAngle).getRadians();
+
         double currentVelocity = driveEncoder.getVelocity();
-        double targetAngle = optimized.angle.getRadians() - offsetRads;
+        double targetVelocity = optimized.speedMetersPerSecond * Math.abs(Math.cos(angleErrorRads));
 
         // Set shuffleboard debug info
         if (SHUFFLEBOARD_ENABLE) {
-            targetVelEntry.setDouble(optimized.speedMetersPerSecond);
+            targetVelEntry.setDouble(targetVelocity);
             currentVelEntry.setDouble(currentVelocity);
-            velErrorEntry.setDouble(optimized.speedMetersPerSecond - currentVelocity);
+            velErrorEntry.setDouble(targetVelocity - currentVelocity);
 
-            targetAngleEntry.setDouble(Math.toDegrees(MathUtil.angleModulus(targetAngle)));
-            currentAngleEntry.setDouble(currentAngle.minus(new Rotation2d(offsetRads)).getDegrees());
-            angleErrorEntry.setDouble(MathUtil.angleModulus(targetAngle - currentAngle.getRadians() + offsetRads));
+            targetAngleEntry.setDouble(Math.toDegrees(MathUtil.angleModulus(targetAngleRads + offsetRads)));
+            currentAngleEntry.setDouble(currentAngle.getDegrees());
+            angleErrorEntry.setDouble(Math.toDegrees(angleErrorRads));
         }
 
         // driveMotor.set(ControlMode.Velocity, optimized.getFirst() / (DRIVE_TICKS_TO_METERS * 10.0));
-        drivePidController.setReference(optimized.speedMetersPerSecond, ControlType.kVelocity);
-        steerPidController.setReference(targetAngle, ControlType.kPosition);
+        drivePidController.setReference(targetVelocity, ControlType.kVelocity);
+        steerPidController.setReference(targetAngleRads, ControlType.kPosition);
     }
 
     /**
