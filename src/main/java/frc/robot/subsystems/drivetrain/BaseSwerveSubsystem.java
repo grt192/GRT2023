@@ -181,10 +181,11 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
         if (VISION_ENABLE) photonWrapper.getRobotPoses(estimate).forEach((visionPose) -> {
             if (ledSubsystem != null) ledSubsystem.displayTagDetected();
 
-            poseEstimator.addVisionMeasurement(
+            if(poseInField(visionPose.estimatedPose.toPose2d())){
+                poseEstimator.addVisionMeasurement(
                 visionPose.estimatedPose.toPose2d(),
-                visionPose.timestampSeconds
-            );
+                visionPose.timestampSeconds);
+            }
         });
 
         // If all commanded velocities are 0, the system is idle (drivers / commands are
@@ -442,23 +443,9 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
         visionEnableEntry.setBoolean(VISION_ENABLE);
     }
 
-    public double minTargetDistance(List<PhotonTrackedTarget> trackedTargets){
-        Transform3d targetTransform = trackedTargets.get(0).getAlternateCameraToTarget();
-        double distance = Math.sqrt(Math.pow(targetTransform.getX(), 2) + Math.pow(targetTransform.getY(), 2));
-        double minAprilTagDist = distance;
-        
-        for(int i = 1; i < trackedTargets.size(); i++){
-            targetTransform = trackedTargets.get(i).getAlternateCameraToTarget();
-            distance = Math.sqrt(Math.pow(targetTransform.getX(), 2) + Math.pow(targetTransform.getY(), 2));
-            if(minAprilTagDist < distance){
-                minAprilTagDist = distance;
-            }
-        }
-
-        return minAprilTagDist;
+    public boolean poseInField(Pose2d pose){
+        return (pose.getX() < 16.54175 && pose.getY() < 8.0137); //from field json file
     }
 
-    public double poseDist(Pose2d pose1, Pose2d pose2){
-        return (Math.sqrt(Math.pow(pose1.getX() - pose2.getX(), 2) + Math.pow(pose1.getY() - pose2.getY(), 2)));
-    }
+
 }
