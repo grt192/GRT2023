@@ -269,7 +269,10 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
      * @param power The power to change the offset by.
      */
     public void changeOffsetDistMeters(double power) {
-        this.offsetDistMeters += OFFSET_FACTOR * power;
+        // if (we are below the top OR we are going down) AND (we are above the bottom OR going up), let the driver offset
+        if((getExtensionMeters() < EXTENSION_LIMIT_METERS || power < 0) && (getExtensionMeters() > 0 || power > 0)){
+            this.offsetDistMeters += OFFSET_FACTOR * power;
+        }
     }
 
     /**
