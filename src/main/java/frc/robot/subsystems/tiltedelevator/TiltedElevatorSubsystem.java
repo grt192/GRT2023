@@ -14,6 +14,8 @@ import frc.robot.subsystems.tiltedelevator.ElevatorState.OffsetState;
 
 import static frc.robot.Constants.TiltedElevatorConstants.*;
 
+import org.littletonrobotics.junction.Logger;
+
 public class TiltedElevatorSubsystem extends SubsystemBase {
     // Config
     private volatile boolean IS_MANUAL = false;
@@ -32,14 +34,14 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
     private double manualPower = 0;
 
     // Devices
-    private final TiltedElevatorIO io;
+    private final TiltedElevatorIO elevatorIO;
     private TiltedElevatorIOInputsAutoLogged inputs = new TiltedElevatorIOInputsAutoLogged();
 
     // Shuffleboard
     private final ShuffleboardTab shuffleboardTab;
 
-    public TiltedElevatorSubsystem(TiltedElevatorIO io) {
-        this.io = io;
+    public TiltedElevatorSubsystem(TiltedElevatorIO elevatorIO) {
+        this.elevatorIO = elevatorIO;
 
         shuffleboardTab = Shuffleboard.getTab("Tilted Elevator");
 
@@ -58,10 +60,11 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        io.updateInputs(inputs);
+        elevatorIO.updateInputs(inputs);
+        Logger.getInstance().processInputs("TiltedElevator", inputs);
 
         // When limit switch is pressed, reset encoder
-        if (inputs.zeroLimitSwitchPressed) io.zeroExtensionEncoder(); 
+        if (inputs.zeroLimitSwitchPressed) elevatorIO.zeroExtensionEncoder(); 
 
         // When magnet is detected, reset encoder
         /*
@@ -78,23 +81,23 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
 
         // If we're in manual power mode, use percent out power supplied by driver joystick.
         if (IS_MANUAL) {
-            io.setExtensionPower(manualPower);
+            elevatorIO.setPower(manualPower);
             return;
         }
 
         if (state == ElevatorState.HOME) {
             if (!inputs.zeroLimitSwitchPressed) {
-                io.setExtensionPower(-0.25);
-                io.enableReverseLimit(false);
+                elevatorIO.setPower(-0.25);
+                elevatorIO.enableReverseLimit(false);
             } else {
-                io.setExtensionPower(0);
-                io.enableReverseLimit(true);
+                elevatorIO.setPower(0);
+                elevatorIO.enableReverseLimit(true);
                 state = ElevatorState.GROUND;
             }
             return;
         }
 
-        io.enableReverseLimit(true);
+        elevatorIO.enableReverseLimit(true);
 
         /*
         if (SHUFFLEBOARD_ENABLE) {
@@ -111,15 +114,23 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
         // and hits the hard stop / limit switch.
         double targetExtension = getTargetExtensionMeters();
         if (targetExtension == 0 && inputs.currentExtensionMeters < Units.inchesToMeters(1) && !inputs.zeroLimitSwitchPressed) {
-            io.setExtensionPower(-0.075);
+            elevatorIO.setPower(-0.075);
         }
         // If we're trying to get max extension and we're currently within 1" of our goal, move elevator up so it hits the magnet
         // else if (targetExtension >= EXTENSION_LIMIT && (EXTENSION_LIMIT - currentPos < Units.inchesToMeters(1))) {
         //     extensionMotor.set(0.075);
         // } else {
             // Set PID reference
-            io.setExtensionPosition(targetExtension);
+            elevatorIO.setPosition(targetExtension);
         // }
+
+        Logger.getInstance().recordOutput("TiltedElevator/State", state.name());
+        Logger.getInstance().recordOutput("TiltedElevator/OffsetState", offsetState.name());
+        Logger.getInstance().recordOutput("TiltedElevator/OffsetDistMeters", offsetDistMeters);
+        Logger.getInstance().recordOutput("TiltedElevator/ManualPower", manualPower);
+
+        Logger.getInstance().recordOutput("TiltedElevator/TargetExtensionMeters", targetExtension);
+        Logger.getInstance().recordOutput("TiltedElevator/AtTarget", atTarget());
     }
 
     /**
