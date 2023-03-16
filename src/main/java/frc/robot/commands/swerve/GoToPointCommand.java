@@ -2,6 +2,7 @@ package frc.robot.commands.swerve;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -19,6 +20,10 @@ public class GoToPointCommand extends CommandBase {
     private final PIDController yController = new PIDController(3.5, 0, 0);
     private final PIDController thetaController;
 
+    private final SlewRateLimiter xRateLimiter;
+    private final SlewRateLimiter yRateLimiter;
+    private final SlewRateLimiter thetaRateLimiter;
+
     private final Pose2d targetPose;
     private Pose2d currentPose;
 
@@ -30,6 +35,10 @@ public class GoToPointCommand extends CommandBase {
         this.swerveSubsystem = swerveSubsystem;
         this.kinematics = swerveSubsystem.getKinematics();
         this.thetaController = swerveSubsystem.getThetaController();
+
+        this.xRateLimiter = new SlewRateLimiter(swerveSubsystem.MAX_ACCEL);
+        this.yRateLimiter = new SlewRateLimiter(swerveSubsystem.MAX_ACCEL);
+        this.thetaRateLimiter = new SlewRateLimiter(swerveSubsystem.MAX_ALPHA);
 
         this.targetPose = targetPose;
 
@@ -56,7 +65,9 @@ public class GoToPointCommand extends CommandBase {
 
         // Convert field-relative velocities into robot-relative chassis speeds.
         ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(
-            vx, vy, omega,
+            xRateLimiter.calculate(vx),
+            yRateLimiter.calculate(vy),
+            thetaRateLimiter.calculate(omega),
             currentPose.getRotation()
         );
 
