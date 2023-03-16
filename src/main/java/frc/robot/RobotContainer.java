@@ -297,7 +297,7 @@ public class RobotContainer {
 
             signalLEDSubsystem.setManual(mechController.getRightStickButton());
 
-            signalLEDSubsystem.setColorFromXandY(x, y);
+            signalLEDSubsystem.setColorFromInput(x, y);
         }, signalLEDSubsystem));
     }
 
