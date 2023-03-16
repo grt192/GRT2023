@@ -8,9 +8,11 @@ import edu.wpi.first.wpilibj.util.Color;
 public class LEDStrip {
     private final AddressableLED led;
     private final AddressableLEDBuffer ledBuffer;
+
     private final Timer ledTimer;
-    private final int LEDS_PER_SEC = 150;
-    private final int LED_GROUP_LENGTH = 5;
+
+    private static final int LEDS_PER_SEC = 150;
+    private static final int LED_GROUP_LENGTH = 5;
 
     public LEDStrip(int ledPort, int ledLength) {
         led = new AddressableLED(ledPort);
@@ -18,13 +20,13 @@ public class LEDStrip {
 
         led.setLength(ledBuffer.getLength());
         led.start();
+
         ledTimer = new Timer();
         ledTimer.start();
     }
 
-
     //increment the colors in the cont buffer, does not set the leds
-    public void updateContinuousColor(Color color){
+    public void updateContinuousColor(Color color) {
         int inc = Math.min((int) Math.ceil(ledTimer.get() * LEDS_PER_SEC), ledBuffer.getLength());
 
         for (int i = 0; i < ledBuffer.getLength() - inc; i++){
@@ -37,34 +39,46 @@ public class LEDStrip {
         ledTimer.start();
     }
 
-    //set cont buffer on to the leds
-    public void setContinuousColor(){
+    /**
+     * Sets the LED data to the current buffer.
+     */
+    public void setBuffer() {
         led.setData(ledBuffer);
     }
 
-    public void setTwoColors(Color color1, Color color2){
-        for(int i = 0; i < ledBuffer.getLength(); i++){
-            if(i % (LED_GROUP_LENGTH * 2) < LED_GROUP_LENGTH){
-                ledBuffer.setLED(i, color1);
-            } else {
-                ledBuffer.setLED(i, color2);
-            }
-        }
-        led.setData(ledBuffer);
-    }
-
-    //set entire cont buffer to a single color
-    //does the same thing as set solid color except the continuous buffer is reset
-    public void fillContinuousColor(Color color){
-        for(int i = 0; i < ledBuffer.getLength(); i++){
+    /**
+     * Fills the LED buffer with a solid color.
+     * @param color The color to fill the buffer with.
+     */
+    public void fillSolidColor(Color color) {
+        for (int i = 0; i < ledBuffer.getLength(); i++) {
             ledBuffer.setLED(i, color);
         }
     }
 
-    public void fillContinuousColorIgnoringOneColor(Color color, Color ignoreColor){
-        for(int i = 0; i < ledBuffer.getLength(); i++){
-            if(!ignoreColor.equals(ledBuffer.getLED(i))){
-                ledBuffer.setLED(i, color);
+    /**
+     * Fills the LED buffer with a solid color, excluding pixels of the provided ignore color.
+     * @param color The color to fill the buffer with.
+     * @param ignoreColor The color to ignore when filling.
+     */
+    public void fillSolidColorIgnoringColor(Color color, Color ignoreColor) {
+        for (int i = 0; i < ledBuffer.getLength(); i++) {
+            if (ledBuffer.getLED(i).equals(ignoreColor)) continue;
+            ledBuffer.setLED(i, color);
+        }
+    }
+
+    /**
+     * Fills the LED buffer with alternating groups of two colors.
+     * @param color1 The first color to set.
+     * @param color2 The second color to set.
+     */
+    public void fillGroupedColors(Color color1, Color color2) {
+        for (int i = 0; i < ledBuffer.getLength(); i++) {
+            if (i % (LED_GROUP_LENGTH * 2) < LED_GROUP_LENGTH){
+                ledBuffer.setLED(i, color1);
+            } else {
+                ledBuffer.setLED(i, color2);
             }
         }
     }
