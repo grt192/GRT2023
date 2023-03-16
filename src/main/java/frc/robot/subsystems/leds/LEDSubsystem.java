@@ -26,10 +26,10 @@ public class LEDSubsystem extends SubsystemBase {
 
     private final Timer aprilBlinkTimer = new Timer();
     private final Timer aprilFlashTimer = new Timer();
-    private static final double APRIL_BLINK_DURATION_SECONDS = 0.1;
+    private static final double APRIL_BLINK_DURATION_SECONDS = 0.05;
     private boolean aprilStarted = false;
 
-    private static final Color APRIL_COLOR = new Color(255, 0, 0);
+    private static final Color APRIL_COLOR = new Color(255, 255, 255);
     private static final Color CUBE_COLOR = new Color(192, 8, 254);
     private static final Color CONE_COLOR = new Color(255, 100, 0);
 
@@ -63,11 +63,10 @@ public class LEDSubsystem extends SubsystemBase {
     }
 
     /**
-     * Sets whether drivers are manually controlling the color of the LEDs.
-     * @param manual Whether drivers are manually controlling the LEDs.
+     * Toggles whether drivers are manually controlling the color of the LEDs.
      */
-    public void setManual(boolean manual) {
-        this.manual = manual;
+    public void toggleManual() {
+        this.manual = !manual;
     }
 
     /**
@@ -78,7 +77,7 @@ public class LEDSubsystem extends SubsystemBase {
             aprilStarted = true;
             aprilBlinkTimer.start();
         }
-        if (aprilBlinkTimer.hasElapsed(APRIL_BLINK_DURATION_SECONDS * 3)) {
+        if (aprilBlinkTimer.hasElapsed(APRIL_BLINK_DURATION_SECONDS * 5)) {
             aprilBlinkTimer.reset();
             aprilBlinkTimer.start();
         }

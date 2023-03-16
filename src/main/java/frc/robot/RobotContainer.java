@@ -98,7 +98,9 @@ public class RobotContainer {
         mechXButton = new JoystickButton(mechController, XboxController.Button.kX.value),
         mechYButton = new JoystickButton(mechController, XboxController.Button.kY.value),
         mechLBumper = new JoystickButton(mechController, XboxController.Button.kLeftBumper.value),
-        mechRBumper = new JoystickButton(mechController, XboxController.Button.kRightBumper.value);
+        mechRBumper = new JoystickButton(mechController, XboxController.Button.kRightBumper.value),
+        mechLStick = new JoystickButton(mechController, XboxController.Button.kLeftStick.value),
+        mechRStick = new JoystickButton(mechController, XboxController.Button.kRightStick.value);
 
     // Commands
     private final ShuffleboardTab shuffleboardTab = Shuffleboard.getTab("Driver");
@@ -294,11 +296,10 @@ public class RobotContainer {
         signalLEDSubsystem.setDefaultCommand(new RunCommand(() -> {
             double x = mechController.getRightX();
             double y = mechController.getRightY();
-
-            signalLEDSubsystem.setManual(mechController.getRightStickButton());
-
             signalLEDSubsystem.setDriverColor(x, y);
         }, signalLEDSubsystem));
+
+        mechRStick.onTrue(new InstantCommand(signalLEDSubsystem::toggleManual));
     }
 
     /**
