@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -107,7 +109,7 @@ public class RobotContainer {
 
     // Commands
     private final ShuffleboardTab shuffleboardTab = Shuffleboard.getTab("Driver");
-    private final SendableChooser<Command> autonChooser;
+    private final LoggedDashboardChooser<Command> autonChooser;
     private final MotorTestCommand testCommand;
 
     private final BaseBalancerCommand balancerCommand;
@@ -140,8 +142,8 @@ public class RobotContainer {
         balancerCommand = new DefaultBalancerCommand(driveSubsystem);
 
         // Initialize auton and test commands
-        autonChooser = new SendableChooser<>();
-        autonChooser.setDefaultOption("Skip auton", new InstantCommand());
+        autonChooser = new LoggedDashboardChooser<>("Auton/Path");
+        autonChooser.addDefaultOption("Skip auton", new InstantCommand());
 
         if (driveSubsystem instanceof BaseSwerveSubsystem) {
             final BaseSwerveSubsystem swerveSubsystem = (BaseSwerveSubsystem) driveSubsystem;
@@ -317,7 +319,7 @@ public class RobotContainer {
      * @return the command to run in autonomous
      */
     public Command getAutonomousCommand() {
-        return autonChooser.getSelected();
+        return autonChooser.get();
     }
 
     /**
