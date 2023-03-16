@@ -86,19 +86,19 @@ public class AutoAlignCommand extends InstantCommand {
 
     @Override
     public void initialize() {
-        Pose2d initialPose = swerveSubsystem.getRobotPosition();
-        ElevatorState currentElevatorState = tiltedElevatorSubsystem.getState();
-
         // Align with closest place position
-        scheduleAlignCommandWith(getClosestPlacePosition(initialPose, currentElevatorState, isRed));
+        scheduleAlignCommandWithClosest();
     }
 
     /**
-     * Aligns to the node adjacent to the current target in the direction of C3.
-     * This is a no-op if there isn't yet a node selected, or if the selected node is already C3.
+     * Aligns to the node adjacent to the current target in the direction of C3, or the closest node
+     * if no previous target is stored. This is a no-op if the selected node is already C3.
      */
     public void alignTowardsC3() {
-        if (targetPlacePosition == null) return;
+        if (targetPlacePosition == null) {
+            scheduleAlignCommandWithClosest();
+            return;
+        };
         if (targetPlacePosition.placePosition == FieldPosition.C3) return;
 
         // TODO: better way of doing this?
@@ -117,11 +117,14 @@ public class AutoAlignCommand extends InstantCommand {
     }
 
     /**
-     * Aligns to the node adjacent to the current target in the direction of A1.
-     * This is a no-op if there isn't yet a node selected, or if the selected node is already A1.
+     * Aligns to the node adjacent to the current target in the direction of A1, or the closest node
+     * if no previous target is stored. This is a no-op if the selected node is already A1.
      */
     public void alignTowardsA1() {
-        if (targetPlacePosition == null) return;
+        if (targetPlacePosition == null) {
+            scheduleAlignCommandWithClosest();
+            return;
+        };
         if (targetPlacePosition.placePosition == FieldPosition.A1) return;
 
         // TODO: better way of doing this?
@@ -220,6 +223,18 @@ public class AutoAlignCommand extends InstantCommand {
     }
 
     /**
+     * Schedules a wrapped `AlignToNodeCommand` to align the robot with the closest node.
+     * See {@link scheduleAlignCommandWith}.
+     */
+    private void scheduleAlignCommandWithClosest() {
+        booleanEntries.forEach((pos, entry) -> entry.setBoolean(false));
+
+        Pose2d initialPose = swerveSubsystem.getRobotPosition();
+        ElevatorState currentElevatorState = tiltedElevatorSubsystem.getState();
+        scheduleAlignCommandWith(getClosestPlacePosition(initialPose, currentElevatorState, isRed));
+    }
+
+    /**
      * Cancels this command, the wrapped align command if it is scheduled, and
      * any scheduled Shuffleboard button command.
      */
@@ -231,8 +246,9 @@ public class AutoAlignCommand extends InstantCommand {
         }
         super.cancel();
 
-        // Revert strafing lock
+        // Revert strafing lock and target place position
         swerveSubsystem.setChargingStationLocked(false);
+        targetPlacePosition = null;
     }
 
     private static int getShuffleboardRow(PlacePosition position) {

@@ -7,11 +7,11 @@ import com.revrobotics.ColorSensorV3;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.I2C;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.util.MotorUtil;
+import frc.robot.util.TrackingTimer;
 
 import static frc.robot.Constants.RollerConstants.*;
 
@@ -32,8 +32,9 @@ public class RollerSubsystem extends SubsystemBase {
     public boolean allowOpen = true;
     private boolean prevAllowedOpen = true;
 
-    private final Timer openTimer = new Timer();
-    private final Timer closeTimer = new Timer();
+    private final TrackingTimer openTimer = new TrackingTimer();
+    private final TrackingTimer closeTimer = new TrackingTimer();
+    private final TrackingTimer cooldownTimer = new TrackingTimer();
 
     // ~110 for nothing, 130 for cone, 160 for cube
     private static final int CONE_PROXIMITY_THRESHOLD = 115;
@@ -90,12 +91,16 @@ public class RollerSubsystem extends SubsystemBase {
     }
 
     /**
-     * Opens the roller by starting the open timer.
+     * Opens the roller by starting the open timer. Does nothing if opening is still on cooldown.
      */
     public void openMotor() {
+        if (cooldownTimer.hasStarted() && !cooldownTimer.hasElapsed(COOLDOWN_SECONDS)) return;
+
         openTimer.start();
         closeTimer.stop();
         closeTimer.reset();
+        cooldownTimer.stop();
+        cooldownTimer.reset();
     }
 
     /**
@@ -111,35 +116,29 @@ public class RollerSubsystem extends SubsystemBase {
         boolean stopOpening = !allowOpen && prevAllowedOpen; // only heed falling edge of allowed open so we can open from ground position
         prevAllowedOpen = allowOpen;
 
-        boolean opening = openTimer.get() > 0 && !openTimer.hasElapsed(OPEN_TIME_SECONDS);
-        boolean closing = !opening || stopOpening;
-
-        if (closing) {
-            closeTimer.start();
-        }
-
-        if (closeTimer.get() > 0) {
-            if (!closeTimer.hasElapsed(CLOSE_TIME_SECONDS)) {
-                openMotor.set(-.2);
-            } else {
-                openMotor.set(0);
-            }
-        } else {
-            openMotor.set(0.5);
-        }
-
-        // If the cooldown has passed, stop and reset the timer.
-        if (openTimer.hasElapsed(OPEN_TIME_SECONDS + COOLDOWN_SECONDS)) {
+        // If we're opening and not allowed to anymore, or if we've finished opening, stop opening and start closing.
+        if ((openTimer.hasStarted() && stopOpening) || openTimer.hasElapsed(OPEN_TIME_SECONDS)) {
             openTimer.stop();
             openTimer.reset();
+            closeTimer.start();
+            cooldownTimer.start();
         }
+
+        // If we're closing and finished, stop closing.
+        if (closeTimer.hasElapsed(CLOSE_TIME_SECONDS)) {
+            closeTimer.stop();
+            closeTimer.reset();
+        }
+
+        // Otherwise, open if we're opening and close if we're closing.
+        if (openTimer.hasStarted()) openMotor.set(0.5);
+        else if (closeTimer.hasStarted()) openMotor.set(-0.2);
+        else openMotor.set(0);
 
         // if wheels must intake, and the limit switch is not pressed, turn on motors
         if (limitSwitch.get()) {
             leftBeak.set(rollPower);
-            heldPiece = HeldPiece.EMPTY;
         } else {
-            heldPiece = HeldPiece.CONE;
             leftBeak.set(Math.min(rollPower, 0.0));
         }
 
