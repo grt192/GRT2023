@@ -441,7 +441,7 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
     }
 
     public boolean poseInField(Pose2d pose){
-        return (pose.getX() < 16.54175 && pose.getY() < 8.0137); //from field json file
+        return (pose.getX() < 16.54175 && pose.getX() > 0 && pose.getY() < 8.0137 && pose.getY() > 0); //from field json file
     }
 
 
