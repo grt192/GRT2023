@@ -20,7 +20,6 @@ public class TankSubsystem extends BaseDrivetrain {
     public void setDrivePowers(double forwardPower, double turnPower) {
         // POSSIBLE/CONCEPT -- double theta = Math.atan(yPower/xPower); // if the robot needs to move some amount laterally, it can rotate to this angle and move in that direction
 
-        // System.out.println("Calculating DT power");
         leftDrive = forwardPower - turnPower;
         rightDrive = forwardPower + turnPower;
     }
@@ -36,8 +35,6 @@ public class TankSubsystem extends BaseDrivetrain {
 
     @Override
     public void periodic() {
-        // This method will be called once per scheduler run
-
         if (Math.abs(leftDrive) >= 1.0) {
             leftDrive = leftDrive / Math.abs(leftDrive);
             rightDrive = rightDrive / Math.abs(leftDrive);
