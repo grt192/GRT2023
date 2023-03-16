@@ -1,27 +1,13 @@
-package frc.robot.subsystems;
+package frc.robot.subsystems.roller;
 
-import com.ctre.phoenix.motorcontrol.InvertType;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-import com.revrobotics.ColorSensorV3;
+import org.littletonrobotics.junction.Logger;
 
-import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-import frc.robot.util.MotorUtil;
-
-import static frc.robot.Constants.RollerConstants.*;
-
 public class RollerSubsystem extends SubsystemBase {
-    private final WPI_TalonSRX leftBeak;
-    private final WPI_TalonSRX rightBeak;
-    private final WPI_TalonSRX openMotor;
-
-    private final DigitalInput limitSwitch;
-    private final ColorSensorV3 crolorSensor;
+    private final RollerIO rollerIO;
+    private RollerIOInputsAutoLogged inputs = new RollerIOInputsAutoLogged();
 
     public enum HeldPiece {
         CONE, CUBE, EMPTY;
@@ -59,29 +45,14 @@ public class RollerSubsystem extends SubsystemBase {
     // private final GenericEntry gentry;
     // private final GenericEntry bentry;
 
-    private final double OPEN_TIME_SECONDS = 1.0;
-    private final double CLOSE_TIME_SECONDS = 0.5;
-    private final double COOLDOWN_SECONDS = 2.0;
+    private static final double OPEN_TIME_SECONDS = 1.0;
+    private static final double CLOSE_TIME_SECONDS = 0.5;
+    private static final double COOLDOWN_SECONDS = 2.0;
 
     private double rollPower = 0.0;
 
-    public RollerSubsystem() {
-        leftBeak = MotorUtil.createTalonSRX(LEFT_ID);
-        leftBeak.setInverted(true);
-        // leftBeak.setInverted(false);
-        leftBeak.setNeutralMode(NeutralMode.Brake);
-
-        rightBeak = MotorUtil.createTalonSRX(RIGHT_ID);
-        rightBeak.follow(leftBeak);
-        rightBeak.setInverted(InvertType.OpposeMaster);
-        rightBeak.setNeutralMode(NeutralMode.Brake);
-
-        openMotor = MotorUtil.createTalonSRX(OPEN_ID);
-        openMotor.setNeutralMode(NeutralMode.Brake);
-        openMotor.setInverted(true);
-
-        limitSwitch = new DigitalInput(LIMIT_SWITCH_ID);
-        crolorSensor = new ColorSensorV3(I2C.Port.kMXP);
+    public RollerSubsystem(RollerIO rollerIO) {
+        this.rollerIO = rollerIO;
 
         //for tuning
         // entry = tab.add("R", 0).getEntry();
@@ -108,6 +79,9 @@ public class RollerSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
+        rollerIO.updateInputs(inputs);
+        Logger.getInstance().processInputs("Roller", inputs);
+
         boolean stopOpening = !allowOpen && prevAllowedOpen; // only heed falling edge of allowed open so we can open from ground position
         prevAllowedOpen = allowOpen;
 
@@ -120,12 +94,12 @@ public class RollerSubsystem extends SubsystemBase {
 
         if (closeTimer.get() > 0) {
             if (!closeTimer.hasElapsed(CLOSE_TIME_SECONDS)) {
-                openMotor.set(-.2);
+                rollerIO.setOpenPower(-0.2);
             } else {
-                openMotor.set(0);
+                rollerIO.setOpenPower(0);
             }
         } else {
-            openMotor.set(0.5);
+            rollerIO.setOpenPower(0.5);
         }
 
         // If the cooldown has passed, stop and reset the timer.
@@ -135,12 +109,10 @@ public class RollerSubsystem extends SubsystemBase {
         }
 
         // if wheels must intake, and the limit switch is not pressed, turn on motors
-        if (limitSwitch.get()) {
-            leftBeak.set(rollPower);
-            heldPiece = HeldPiece.EMPTY;
+        if (!inputs.limitSwitchPressed) {
+            rollerIO.setRollPower(rollPower);
         } else {
-            heldPiece = HeldPiece.CONE;
-            leftBeak.set(Math.min(rollPower, 0.0));
+            rollerIO.setRollPower(Math.min(rollPower, 0.0));
         }
 
         HeldPiece limitPiece = getLimitSwitchPiece();
@@ -154,6 +126,9 @@ public class RollerSubsystem extends SubsystemBase {
         } else {
             heldPiece = limitPiece;
         }
+
+        Logger.getInstance().recordOutput("Roller/RollPower", rollPower);
+        Logger.getInstance().recordOutput("Roller/HeldPiece", heldPiece.name());
     }
 
     /**
@@ -161,7 +136,7 @@ public class RollerSubsystem extends SubsystemBase {
      * @return The piece detected by the limit switch. This is either `EMPTY` if unpressed or `CONE` if pressed.
      */
     private HeldPiece getLimitSwitchPiece() {
-        return !limitSwitch.get() ? HeldPiece.CONE : HeldPiece.EMPTY;
+        return inputs.limitSwitchPressed ? HeldPiece.CONE : HeldPiece.EMPTY;
     }
 
     /**
@@ -169,10 +144,8 @@ public class RollerSubsystem extends SubsystemBase {
      * @return The piece detected by the proximity sensor.
      */
     private HeldPiece getProximitySensorPiece() {
-        double dist = crolorSensor.getProximity();
-        if (dist >= CUBE_PROXIMITY_THRESHOLD) return HeldPiece.CUBE;
-        if (dist >= CONE_PROXIMITY_THRESHOLD) return HeldPiece.CONE;
-
+        if (inputs.proximitySensorReading >= CUBE_PROXIMITY_THRESHOLD) return HeldPiece.CUBE;
+        if (inputs.proximitySensorReading >= CONE_PROXIMITY_THRESHOLD) return HeldPiece.CONE;
         return HeldPiece.EMPTY;
     }
 
@@ -181,10 +154,9 @@ public class RollerSubsystem extends SubsystemBase {
      * @return The piece detected by the color sensor.
      */
     private HeldPiece getColorSensorPiece() {
-        Color detectedColor = crolorSensor.getColor();
-        double red = detectedColor.red * 255;
-        double green = detectedColor.green * 255;
-        double blue = detectedColor.blue * 255;
+        double red = inputs.colorSensorRed;
+        double green = inputs.colorSensorGreen;
+        double blue = inputs.colorSensorBlue;
 
         // for tuning
         // entry.setValue(red);

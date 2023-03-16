@@ -3,8 +3,8 @@ package frc.robot.commands.grabber;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
-import frc.robot.subsystems.RollerSubsystem;
-import frc.robot.subsystems.RollerSubsystem.HeldPiece;
+import frc.robot.subsystems.roller.RollerSubsystem;
+import frc.robot.subsystems.roller.RollerSubsystem.HeldPiece;
 
 /**
  * Places 1 game piece with the roller mech. This command runs the rollers in reverse

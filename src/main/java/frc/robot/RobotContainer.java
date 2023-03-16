@@ -47,6 +47,9 @@ import frc.robot.vision.SwitchableCamera;
 import frc.robot.vision.PhotonWrapper;
 import frc.robot.subsystems.drivetrain.TankSubsystem;
 import frc.robot.subsystems.leds.LEDSubsystem;
+import frc.robot.subsystems.roller.RollerIO;
+import frc.robot.subsystems.roller.RollerIOReal;
+import frc.robot.subsystems.roller.RollerSubsystem;
 import frc.robot.subsystems.tiltedelevator.ElevatorState;
 import frc.robot.subsystems.tiltedelevator.TiltedElevatorIO;
 import frc.robot.subsystems.tiltedelevator.TiltedElevatorIOReal;
@@ -58,7 +61,6 @@ import frc.robot.subsystems.drivetrain.MissileShellSwerveSweeperSubsystem;
 import frc.robot.subsystems.drivetrain.SwerveSubsystem;
 import frc.robot.subsystems.drivetrain.SwerveSubsystem2020;
 import frc.robot.subsystems.drivetrain.BaseDrivetrain;
-import frc.robot.subsystems.RollerSubsystem;
 import frc.robot.subsystems.Superstructure;
 
 /**
@@ -123,14 +125,15 @@ public class RobotContainer {
         signalLEDSubsystem = new LEDSubsystem(); 
 
         if (RobotBase.isReal()) {
+            rollerSubsystem = new RollerSubsystem(new RollerIOReal());
             tiltedElevatorSubsystem = new TiltedElevatorSubsystem(new TiltedElevatorIOReal());
         } else {
+            rollerSubsystem = new RollerSubsystem(new RollerIO() {});
             tiltedElevatorSubsystem = new TiltedElevatorSubsystem(new TiltedElevatorIO() {});
         }
 
         // driveSubsystem = new MissileShellSwerveSubsystem();
         driveSubsystem = new SwerveSubsystem(photonWrapper, signalLEDSubsystem);
-        rollerSubsystem = new RollerSubsystem();
 
         superstructure = new Superstructure(rollerSubsystem, tiltedElevatorSubsystem, signalLEDSubsystem, switchableCamera);
 
