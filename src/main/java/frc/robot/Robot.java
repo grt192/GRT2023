@@ -7,6 +7,7 @@ package frc.robot;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
+import org.littletonrobotics.junction.inputs.LoggedPowerDistribution;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
@@ -41,20 +42,20 @@ public class Robot extends LoggedRobot {
         logger.recordMetadata("GitBranch", BuildConstants.GIT_BRANCH);
         logger.recordMetadata("GitDirty", switch (BuildConstants.DIRTY) {
             case 0 -> "All changes committed";
-            case 1 -> "Uncommittedchanges";
+            case 1 -> "Uncommitted changes";
             default -> "Unknown";
         });
 
         if (isReal()) {
             // TODO: folder path
             logger.addDataReceiver(new WPILOGWriter("/media/sda1/"));
-            logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
-            new PowerDistribution(1, ModuleType.kRev); // Enables power distribution logging
+            logger.addDataReceiver(new NT4Publisher());
+            LoggedPowerDistribution.getInstance(1, ModuleType.kRev); // TODO: module ID
         } else {
-            setUseTiming(false); // Run as fast as possible
-            String logPath = LogFileUtil.findReplayLog(); // Pull the replay log from AdvantageScope (or prompt the user)
-            logger.setReplaySource(new WPILOGReader(logPath)); // Read replay log
-            logger.addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim"))); // Save outputs to a new log
+            setUseTiming(false);
+            String logPath = LogFileUtil.findReplayLog();
+            logger.setReplaySource(new WPILOGReader(logPath));
+            logger.addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim")));
         }
 
         logger.start();
