@@ -214,6 +214,9 @@ public class AutoAlignCommand extends InstantCommand {
         if (wrappedCommand != null) wrappedCommand.cancel();
         wrappedCommand = new AlignToNodeCommand(swerveSubsystem, tiltedElevatorSubsystem, targetPlacePosition, isRed);
         wrappedCommand.schedule();
+
+        // Lock parallel to the grid for better strafing
+        swerveSubsystem.setChargingStationLocked(true);
     }
 
     /**
@@ -227,6 +230,9 @@ public class AutoAlignCommand extends InstantCommand {
             command.cancel();
         }
         super.cancel();
+
+        // Revert strafing lock
+        swerveSubsystem.setChargingStationLocked(false);
     }
 
     private static int getShuffleboardRow(PlacePosition position) {
