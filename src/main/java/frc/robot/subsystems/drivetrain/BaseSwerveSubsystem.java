@@ -69,9 +69,6 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
     private static final boolean SHUFFLEBOARD_ENABLE = true;
     private volatile boolean VISION_ENABLE = true;
 
-    private static final double APRIL_TAG_MAX_DIST_TO_ODOMETRY = 1.0; //meters 
-    private static final double APRIL_TAG_CUTOFF_DIST = 6.0; //meters
-
     // The driver or auton commanded `SwerveModuleState` setpoints for each module;
     // states are given in a tuple of [top left, top right, bottom left, bottom right].
     private SwerveModuleState[] states = {
