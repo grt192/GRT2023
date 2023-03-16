@@ -1,5 +1,7 @@
 package frc.robot.commands.swerve;
 
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -70,6 +72,10 @@ public class GoToPointCommand extends CommandBase {
 
         // Pass states to swerve subsystem
         swerveSubsystem.setSwerveModuleStates(states);
+
+        Logger.getInstance().recordOutput("GoToPointCommand/Vx", vx);
+        Logger.getInstance().recordOutput("GoToPointCommand/Vy", vy);
+        Logger.getInstance().recordOutput("GoToPointCommand/Omega", omega);
     }
 
     @Override

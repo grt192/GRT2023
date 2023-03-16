@@ -6,8 +6,8 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.balancing.DefaultBalancerCommand;
 import frc.robot.commands.balancing.GoOverCommand;
 import frc.robot.positions.PlacePosition;
-import frc.robot.subsystems.RollerSubsystem;
 import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
+import frc.robot.subsystems.roller.RollerSubsystem;
 import frc.robot.subsystems.tiltedelevator.TiltedElevatorSubsystem;
 
 public class BalanceAndTaxiAutonSequence extends BaseAutonSequence {

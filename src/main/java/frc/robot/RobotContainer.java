@@ -4,9 +4,12 @@
 
 package frc.robot;
 
+import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -46,7 +49,12 @@ import frc.robot.vision.SwitchableCamera;
 import frc.robot.vision.PhotonWrapper;
 import frc.robot.subsystems.drivetrain.TankSubsystem;
 import frc.robot.subsystems.leds.LEDSubsystem;
+import frc.robot.subsystems.roller.RollerIO;
+import frc.robot.subsystems.roller.RollerIOReal;
+import frc.robot.subsystems.roller.RollerSubsystem;
 import frc.robot.subsystems.tiltedelevator.ElevatorState;
+import frc.robot.subsystems.tiltedelevator.TiltedElevatorIO;
+import frc.robot.subsystems.tiltedelevator.TiltedElevatorIOReal;
 import frc.robot.subsystems.tiltedelevator.TiltedElevatorSubsystem;
 import frc.robot.subsystems.tiltedelevator.ElevatorState.OffsetState;
 import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
@@ -55,7 +63,6 @@ import frc.robot.subsystems.drivetrain.MissileShellSwerveSweeperSubsystem;
 import frc.robot.subsystems.drivetrain.SwerveSubsystem;
 import frc.robot.subsystems.drivetrain.SwerveSubsystem2020;
 import frc.robot.subsystems.drivetrain.BaseDrivetrain;
-import frc.robot.subsystems.RollerSubsystem;
 import frc.robot.subsystems.Superstructure;
 
 /**
@@ -102,7 +109,7 @@ public class RobotContainer {
 
     // Commands
     private final ShuffleboardTab shuffleboardTab = Shuffleboard.getTab("Driver");
-    private final SendableChooser<Command> autonChooser;
+    private final LoggedDashboardChooser<Command> autonChooser;
     private final MotorTestCommand testCommand;
 
     private final BaseBalancerCommand balancerCommand;
@@ -119,18 +126,24 @@ public class RobotContainer {
         
         signalLEDSubsystem = new LEDSubsystem(); 
 
+        if (RobotBase.isReal()) {
+            rollerSubsystem = new RollerSubsystem(new RollerIOReal());
+            tiltedElevatorSubsystem = new TiltedElevatorSubsystem(new TiltedElevatorIOReal());
+        } else {
+            rollerSubsystem = new RollerSubsystem(new RollerIO() {});
+            tiltedElevatorSubsystem = new TiltedElevatorSubsystem(new TiltedElevatorIO() {});
+        }
+
         // driveSubsystem = new MissileShellSwerveSubsystem();
         driveSubsystem = new SwerveSubsystem(photonWrapper, signalLEDSubsystem);
-        rollerSubsystem = new RollerSubsystem();
-        tiltedElevatorSubsystem = new TiltedElevatorSubsystem();
 
         superstructure = new Superstructure(rollerSubsystem, tiltedElevatorSubsystem, signalLEDSubsystem, switchableCamera);
 
         balancerCommand = new DefaultBalancerCommand(driveSubsystem);
 
         // Initialize auton and test commands
-        autonChooser = new SendableChooser<>();
-        autonChooser.setDefaultOption("Skip auton", new InstantCommand());
+        autonChooser = new LoggedDashboardChooser<>("Auton/Path");
+        autonChooser.addDefaultOption("Skip auton", new InstantCommand());
 
         if (driveSubsystem instanceof BaseSwerveSubsystem) {
             final BaseSwerveSubsystem swerveSubsystem = (BaseSwerveSubsystem) driveSubsystem;
@@ -306,7 +319,7 @@ public class RobotContainer {
      * @return the command to run in autonomous
      */
     public Command getAutonomousCommand() {
-        return autonChooser.getSelected();
+        return autonChooser.get();
     }
 
     /**

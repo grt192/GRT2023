@@ -2,7 +2,7 @@ package frc.robot.commands.pretest;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.RollerSubsystem;
+import frc.robot.subsystems.roller.RollerSubsystem;
 
 public class RollerSweepCommand extends CommandBase {
     private final RollerSubsystem rollerSubsystem;

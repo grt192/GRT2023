@@ -2,8 +2,8 @@ package frc.robot.commands.grabber;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
-import frc.robot.subsystems.RollerSubsystem;
-import frc.robot.subsystems.RollerSubsystem.HeldPiece;
+import frc.robot.subsystems.roller.RollerSubsystem;
+import frc.robot.subsystems.roller.RollerSubsystem.HeldPiece;
 
 /**
  * Intakes 1 game piece with the roller mech. This command runs the rollers at a set power
