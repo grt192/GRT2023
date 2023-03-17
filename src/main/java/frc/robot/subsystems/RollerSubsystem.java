@@ -5,8 +5,11 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.revrobotics.ColorSensorV3;
 
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.I2C;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -40,25 +43,37 @@ public class RollerSubsystem extends SubsystemBase {
     private static final int CONE_PROXIMITY_THRESHOLD = 115;
     private static final int CUBE_PROXIMITY_THRESHOLD = 145;
 
-    private static final int coneRedMax = 80;
-    private static final int coneRedMin = 65;
-    private static final int coneGreenMax = 140;
-    private static final int coneGreenMin = 128;
-    private static final int coneBlueMax = 51;
-    private static final int coneBlueMin = 45;
+    // private static final int coneRedMax = 80;
+    // private static final int coneRedMin = 65;
+    // private static final int coneGreenMax = 140;
+    // private static final int coneGreenMin = 128;
+    // private static final int coneBlueMax = 51;
+    // private static final int coneBlueMin = 45;
 
-    private static final int cubeRedMax = 65;
-    private static final int cubeRedMin = 55;
-    private static final int cubeGreenMax = 120;
-    private static final int cubeGreenMin = 108;
-    private static final int cubeBlueMax = 85;
-    private static final int cubeBlueMin = 75;
+    private int coneRed = 79;
+    private int coneGreen = 129;
+    private int coneBlue = 45;
+
+    private int cubeRed = 53;
+    private int cubeGreen = 92;
+    private int cubeBlue = 110;
+
+    private int emptyRed = 68;
+    private int emptyGreen = 125;
+    private int emptyBlue = 62;
+
+    // private static final int cubeRedMax = 65;
+    // private static final int cubeRedMin = 55;
+    // private static final int cubeGreenMax = 120;
+    // private static final int cubeGreenMin = 108;
+    // private static final int cubeBlueMax = 85;
+    // private static final int cubeBlueMin = 75;
 
     //for tuning
-    // private final ShuffleboardTab tab = Shuffleboard.getTab("Color");
-    // private final GenericEntry entry; 
-    // private final GenericEntry gentry;
-    // private final GenericEntry bentry;
+    private final ShuffleboardTab tab = Shuffleboard.getTab("Color");
+    private final GenericEntry entry; 
+    private final GenericEntry gentry;
+    private final GenericEntry bentry;
 
     private final double OPEN_TIME_SECONDS = 1.0;
     private final double CLOSE_TIME_SECONDS = 0.5;
@@ -85,9 +100,9 @@ public class RollerSubsystem extends SubsystemBase {
         crolorSensor = new ColorSensorV3(I2C.Port.kMXP);
 
         //for tuning
-        // entry = tab.add("R", 0).getEntry();
-        // gentry = tab.add("G", 0).getEntry();
-        // bentry = tab.add("B", 0).getEntry();
+        entry = tab.add("R", 0).getEntry();
+        gentry = tab.add("G", 0).getEntry();
+        bentry = tab.add("B", 0).getEntry();
     }
 
     /**
@@ -144,15 +159,17 @@ public class RollerSubsystem extends SubsystemBase {
 
         HeldPiece limitPiece = getLimitSwitchPiece();
         HeldPiece proximityPiece = getProximitySensorPiece();
+        HeldPiece colorPiece = getColorSensorPiece();
 
         // If either the limit switch or the proximity sensor have detected a piece, set
         // the piece to the detected piece, prioritizing the proximity sensor over the limit
         // switch.
-        if (proximityPiece != HeldPiece.EMPTY) {
-            heldPiece = proximityPiece;
+        if (colorPiece != HeldPiece.EMPTY) {
+            heldPiece = colorPiece;
         } else {
             heldPiece = limitPiece;
         }
+        getColorSensorPiece();
     }
 
     /**
@@ -186,23 +203,32 @@ public class RollerSubsystem extends SubsystemBase {
         double blue = detectedColor.blue * 255;
 
         // for tuning
-        // entry.setValue(red);
-        // gentry.setValue(green);
-        // bentry.setValue(blue);
+        entry.setValue(red);
+        gentry.setValue(green);
+        bentry.setValue(blue);
 
-        // TODO: modify `heldPiece` based on color sensor data
-        if (red > cubeRedMin && red < cubeRedMax && blue > cubeBlueMin && blue < cubeBlueMax && green < cubeGreenMax && green > cubeGreenMin){
-            // System.out.println("cube");
+        //calculate 3d distance between measured point and each set points
+        double emptyDist = Math.pow(emptyRed - red, 2) + Math.pow(emptyGreen - green, 2) + Math.pow(emptyBlue - blue, 2);
+        double coneDist = Math.pow(coneRed - red, 2) + Math.pow(coneGreen - green, 2) + Math.pow(coneBlue - blue, 2);
+        double cubeDist = Math.pow(cubeRed - red, 2) + Math.pow(cubeGreen - green, 2) + Math.pow(cubeBlue - blue, 2);
+
+        // System.out.println("empty -  " + emptyDist + " cone - " + coneDist + " cube - " + cubeDist);
+
+        //determine that the piece is the one with the least 3d distance
+        if (cubeDist < coneDist && cubeDist < emptyDist){
+            // System.out.print("CUBE ");
             return HeldPiece.CUBE;
         }
-        else if (red > coneRedMin && red < coneRedMax && blue > coneBlueMin && blue < coneBlueMax && green < coneGreenMax && green > coneGreenMin){
-            // System.out.println("cone");
+        else if (coneDist < emptyDist){
+            // System.out.print("CONE ");
             return HeldPiece.CONE;
         }
         else{
-            // System.out.println("no object");
+            // System.out.print("NONE ");
             return HeldPiece.EMPTY;
         }
+
+        
     }
 
     /**
