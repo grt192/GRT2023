@@ -89,7 +89,7 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
             extensionEncoder.setVelocityConversionFactor(EXTENSION_ROTATIONS_TO_METERS / 60.0);
             extensionEncoder.setPosition(0);
             
-            sparkMax.setSoftLimit(SoftLimitDirection.kForward, (float) (EXTENSION_LIMIT_METERS));
+            sparkMax.setSoftLimit(SoftLimitDirection.kForward, (float) EXTENSION_LIMIT_METERS);
             sparkMax.enableSoftLimit(SoftLimitDirection.kForward, true);
             sparkMax.setSoftLimit(SoftLimitDirection.kReverse, (float) Units.inchesToMeters(-2));
             sparkMax.enableSoftLimit(SoftLimitDirection.kReverse, true);
@@ -269,12 +269,15 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
      * @param power The power to change the offset by.
      */
     public void changeOffsetDistMeters(double power) {
+        double targetExtensionNoOffset = state.getExtension(offsetState, this.pieceGrabbed);
+
+        // Clamp offset distance such that at the current state, target ext. + offset
+        // lies within [0, EXTENSION_LIMIT_METERS].
         this.offsetDistMeters = MathUtil.clamp(
-            offsetDistMeters = OFFSET_FACTOR * power + offsetDistMeters,
-            -state.getExtension(offsetState, this.pieceGrabbed),
-            EXTENSION_LIMIT_METERS - state.getExtension(offsetState, this.pieceGrabbed)
+            offsetDistMeters + OFFSET_FACTOR * power,
+            -targetExtensionNoOffset,
+            EXTENSION_LIMIT_METERS - targetExtensionNoOffset
         );
-        
     }
 
     /**
