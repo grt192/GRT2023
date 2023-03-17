@@ -255,7 +255,7 @@ public class RobotContainer {
             rollerSubsystem.setRollPower(forwardPower - reversePower);
         }, rollerSubsystem));
 
-        mechYButton.onTrue(new InstantCommand(rollerSubsystem::openMotor, rollerSubsystem));
+        mechYButton.onTrue(new InstantCommand(rollerSubsystem::startopenTimer, rollerSubsystem));
 
         tiltedElevatorSubsystem.setDefaultCommand(new RunCommand(() -> {
             double yPower = -mechController.getLeftY();

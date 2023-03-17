@@ -112,7 +112,7 @@ public class RollerSubsystem extends SubsystemBase {
     /**
      * Opens the roller by starting the open timer. Does nothing if opening is still on cooldown.
      */
-    public void openMotor() {
+    public void startopenTimer() {
         if (cooldownTimer.hasStarted() && !cooldownTimer.hasElapsed(COOLDOWN_SECONDS)) return;
 
         openTimer.start();
@@ -155,10 +155,21 @@ public class RollerSubsystem extends SubsystemBase {
         }
 
         // Otherwise, open if we're opening and close if we're closing.
-        if (openTimer.hasStarted()) openMotor.set(0.5);
-        else if (closeTimer.hasStarted()) openMotor.set(-0.2);
-        else if (heldPiece == HeldPiece.CONE) openMotor.setVoltage(-2);
-        else openMotor.set(0);
+        if (openTimer.hasStarted()) openRoller();
+        else if (closeTimer.hasStarted()) clampRoller();
+        else neitherRoller();;
+    }
+
+    private void openRoller(){
+        openMotor.set(0.5);
+    }
+
+    private void clampRoller(){
+        openMotor.set(-0.2);
+    }
+
+    private void neitherRoller(){
+        openMotor.set(0);
     }
 
     private void rollingLogic() {

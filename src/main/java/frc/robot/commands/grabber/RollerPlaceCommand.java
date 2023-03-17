@@ -37,7 +37,7 @@ public class RollerPlaceCommand extends CommandBase {
     public void initialize() {
         System.out.println("Roller to place");
         runTimer.start();
-        rollerSubsystem.openMotor();
+        rollerSubsystem.startopenTimer();
     }
 
     @Override
