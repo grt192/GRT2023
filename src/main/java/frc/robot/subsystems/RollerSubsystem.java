@@ -148,6 +148,7 @@ public class RollerSubsystem extends SubsystemBase {
         // Otherwise, open if we're opening and close if we're closing.
         if (openTimer.hasStarted()) openMotor.set(0.5);
         else if (closeTimer.hasStarted()) openMotor.set(-0.2);
+        else if (heldPiece == HeldPiece.CONE) openMotor.setVoltage(-2);
         else openMotor.set(0);
 
         // if wheels must intake, and the limit switch is not pressed, turn on motors
@@ -158,7 +159,7 @@ public class RollerSubsystem extends SubsystemBase {
         }
 
         HeldPiece limitPiece = getLimitSwitchPiece();
-        HeldPiece proximityPiece = getProximitySensorPiece();
+        // HeldPiece proximityPiece = getProximitySensorPiece();
         HeldPiece colorPiece = getColorSensorPiece();
 
         // If either the limit switch or the proximity sensor have detected a piece, set
@@ -176,7 +177,7 @@ public class RollerSubsystem extends SubsystemBase {
      * @return The piece detected by the limit switch. This is either `EMPTY` if unpressed or `CONE` if pressed.
      */
     private HeldPiece getLimitSwitchPiece() {
-        return !limitSwitch.get() ? HeldPiece.CONE : HeldPiece.EMPTY;
+        return !limitSwitch.get() ? HeldPiece.CUBE : HeldPiece.EMPTY;
     }
 
     /**
