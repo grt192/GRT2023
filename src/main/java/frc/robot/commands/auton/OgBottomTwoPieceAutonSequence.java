@@ -53,8 +53,10 @@ public class OgBottomTwoPieceAutonSequence extends BaseAutonSequence {
             // Go and grab 2nd piece
             goAndGrab(midPose3, List.of(), grabPose, true, false),
             // Go and place grabbed piece
-            FollowPathCommand.from(swerveSubsystem, grabPose, List.of(), midPose2,  false, true),
-            goAndPlace(midPose2, List.of(midPose1), initialPose, placePose2, elevatorState2)
+            FollowPathCommand.from(swerveSubsystem, grabPose, List.of(), midPose2, false, true),
+            FollowPathCommand.from(swerveSubsystem, midPose2, List.of(), midPose1, true, true),
+            //goAndPlace(midPose2, List.of(midPose1), initialPose, placeState2)
+            goAndPlace(midPose1, placePose2, elevatorState2, true)
         );
     }
 }
