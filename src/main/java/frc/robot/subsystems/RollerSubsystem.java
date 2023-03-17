@@ -159,8 +159,8 @@ public class RollerSubsystem extends SubsystemBase {
         }
 
         HeldPiece limitPiece = getLimitSwitchPiece();
-        // HeldPiece proximityPiece = getProximitySensorPiece();
-        HeldPiece colorPiece = getColorSensorPiece();
+        HeldPiece proximityPiece = getProximitySensorPiece();
+        // HeldPiece colorPiece = getColorSensorPiece();
 
         // If either the limit switch or the proximity sensor have detected a piece, set
         // the piece to the detected piece, prioritizing the proximity sensor over the limit
