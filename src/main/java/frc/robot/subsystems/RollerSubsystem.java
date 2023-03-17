@@ -132,6 +132,11 @@ public class RollerSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
+        openingLogic();
+        rollingLogic();
+    }
+
+    private void openingLogic() {
         boolean stopOpening = !allowOpen && prevAllowedOpen; // only heed falling edge of allowed open so we can open from ground position
         prevAllowedOpen = allowOpen;
 
@@ -154,23 +159,18 @@ public class RollerSubsystem extends SubsystemBase {
         else if (closeTimer.hasStarted()) openMotor.set(-0.2);
         else if (heldPiece == HeldPiece.CONE) openMotor.setVoltage(-2);
         else openMotor.set(0);
+    }
 
-        // if wheels must intake, and the limit switch is not pressed, turn on motors
-        if (limitSwitch.get()) {
-            leftBeak.set(rollPower);
-        } else {
-            leftBeak.set(Math.min(rollPower, 0.0));
-        }
-
+    private void rollingLogic() {
         HeldPiece limitPiece = getLimitSwitchPiece();
-        HeldPiece proximityPiece = getProximitySensorPiece();
+        // HeldPiece proximityPiece = getProximitySensorPiece();
         HeldPiece colorPiece = getColorSensorPiece();
 
         // If either the limit switch or the proximity sensor have detected a piece, set
         // the piece to the detected piece, prioritizing the proximity sensor over the limit
         // switch.
-        if (proximityPiece != HeldPiece.EMPTY) {
-            heldPiece = proximityPiece;
+        if (colorPiece != HeldPiece.EMPTY) {
+            heldPiece = colorPiece;
         } else {
             heldPiece = limitPiece;
         }
@@ -179,6 +179,13 @@ public class RollerSubsystem extends SubsystemBase {
         proximityEntry.setString(proximityPiece.name());
         colorEntry.setString(colorPiece.name());
         heldPieceEntry.setString(heldPiece.name());
+
+        // if wheels must intake, and the limit switch is not pressed, turn on motors
+        if (limitPiece == HeldPiece.EMPTY) {
+            leftBeak.set(rollPower);
+        } else {
+            leftBeak.set(Math.min(rollPower, 0.0));
+        }
     }
 
     /**
