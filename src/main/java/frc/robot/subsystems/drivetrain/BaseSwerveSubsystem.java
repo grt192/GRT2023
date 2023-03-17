@@ -19,7 +19,9 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+
 import frc.robot.subsystems.leds.LEDSubsystem;
+import frc.robot.util.FieldUtil;
 import frc.robot.util.ShuffleboardUtil;
 import frc.robot.vision.PhotonWrapper;
 
@@ -170,8 +172,9 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
 
         // Add vision pose estimate to pose estimator
         if (VISION_ENABLE) photonWrapper.getRobotPoses(estimate).forEach((visionPose) -> {
-            if (ledSubsystem != null) ledSubsystem.displayTagDetected();
+            if (!FieldUtil.poseInField(visionPose.estimatedPose.toPose2d())) return;
 
+            if (ledSubsystem != null) ledSubsystem.displayTagDetected();
             poseEstimator.addVisionMeasurement(
                 visionPose.estimatedPose.toPose2d(),
                 visionPose.timestampSeconds

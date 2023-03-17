@@ -21,4 +21,13 @@ public class FieldUtil {
             Rotation2d.fromDegrees(180).minus(pose.getRotation())
         );
     }
+
+    /**
+     * Returns whether a pose lies within the field.
+     * @param pose The pose to check.
+     * @return Whether the pose lies in the field.
+     */
+    public static boolean poseInField(Pose2d pose) {
+        return pose.getX() < 16.54175 && pose.getX() > 0 && pose.getY() < 8.0137 && pose.getY() > 0; //from field json file
+    }
 }
