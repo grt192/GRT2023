@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+import frc.robot.util.TrackingTimer;
 import static frc.robot.Constants.LEDConstants.*;
 
 public class LEDSubsystem extends SubsystemBase {
@@ -12,24 +13,24 @@ public class LEDSubsystem extends SubsystemBase {
 
     private final Timer blinkTimer;
     private static final double BLINK_DURATION_SECONDS = 0.5;
+    private static final double BLINK_OFF_TO_ON_RATIO = 4;
     private static final Color BLINK_COLOR = new Color(0, 0, 0);
     private boolean blinking = false;
 
     private static final double BRIGHTNESS_SCALE_FACTOR = 0.25;
     private static final double INPUT_DEADZONE = 0.1;
 
-    private Color color = CUBE_COLOR;
-    private Color lastPieceColor = color;
+    private Color currentColor = CUBE_COLOR;
+    private Color lastPieceColor = currentColor;
 
     private boolean manual = false; //when driver is directly controlling leds
     public boolean pieceGrabbed = false;
 
-    private final Timer aprilBlinkTimer = new Timer();
-    private final Timer aprilFlashTimer = new Timer();
+    private final TrackingTimer aprilBlinkTimer = new TrackingTimer();
+    private final TrackingTimer aprilFlashTimer = new TrackingTimer();
     private static final double APRIL_BLINK_DURATION_SECONDS = 0.05;
-    private boolean aprilStarted = false;
 
-    private static final Color APRIL_COLOR = new Color(255, 255, 255);
+    private static final Color APRIL_COLOR = new Color(252, 255, 236);
     private static final Color CUBE_COLOR = new Color(192, 8, 254);
     private static final Color CONE_COLOR = new Color(255, 100, 0);
 
@@ -54,12 +55,13 @@ public class LEDSubsystem extends SubsystemBase {
         if (blinkTimer.advanceIfElapsed(BLINK_DURATION_SECONDS)) blinking = !blinking;
         if (manual) {
             //if manual and continuous set the bottom to color
-            ledStrip.updateContinuousColor(color);
-            ledStrip.setBuffer();
+            ledStrip.updateContinuousColor(currentColor);
         } else {
-            setColorPulse();
+            pushColorsToBufferAsPulses();
             //setTwoColor()
         }
+
+        ledStrip.setBuffer();
     }
 
     /**
@@ -73,38 +75,30 @@ public class LEDSubsystem extends SubsystemBase {
      * Displays that an AprilTag has been detected by sending a pulse down the LEDs.
      */
     public void displayTagDetected() {
-        if (!aprilStarted) {
-            aprilStarted = true;
-            aprilBlinkTimer.start();
-        }
-        if (aprilBlinkTimer.hasElapsed(APRIL_BLINK_DURATION_SECONDS * 5)) {
-            aprilBlinkTimer.reset();
-            aprilBlinkTimer.start();
-        }
+        aprilBlinkTimer.start();
+        aprilBlinkTimer.advanceIfElapsed(APRIL_BLINK_DURATION_SECONDS * BLINK_OFF_TO_ON_RATIO);
+
         aprilFlashTimer.reset();
         aprilFlashTimer.start();
     }
 
-    private void setColorPulse() {
-        //current color is the color that will be added at the bottom of the strip buffer
-        if (!aprilBlinkTimer.hasElapsed(APRIL_BLINK_DURATION_SECONDS) && aprilBlinkTimer.hasElapsed(.001)){
+    private void pushColorsToBufferAsPulses() {
+        if (!aprilBlinkTimer.hasElapsed(APRIL_BLINK_DURATION_SECONDS) && aprilBlinkTimer.hasStarted()){
             ledStrip.updateContinuousColor(APRIL_COLOR);
         } else {
-            ledStrip.fillSolidColorIgnoringColor(color, APRIL_COLOR);
-            ledStrip.updateContinuousColor(color);
+            ledStrip.fillSolidColorIgnoringColor(currentColor, APRIL_COLOR);
+            ledStrip.updateContinuousColor(currentColor);
         }
 
         if (blinking) ledStrip.fillSolidColorIgnoringColor(BLINK_COLOR, APRIL_COLOR);
-        ledStrip.setBuffer();
     }
 
     private void setTwoColor() {
         Color color2 = !aprilFlashTimer.hasElapsed(0.05)
             ? APRIL_COLOR
-            : color;
+            : currentColor;
 
-        ledStrip.fillGroupedColors(blinking ? BLINK_COLOR : color, color2);
-        ledStrip.setBuffer();
+        ledStrip.fillGroupedColors(blinking ? BLINK_COLOR : currentColor, color2);
     }
 
     /**
@@ -118,19 +112,19 @@ public class LEDSubsystem extends SubsystemBase {
     public void setDriverColor(double x, double y){
         if (manual) {
             double angleRads = MathUtil.inputModulus(Math.atan2(y, x), 0, 2 * Math.PI);
-            color = Color.fromHSV(
+            currentColor = Color.fromHSV(
                 (int) (Math.toDegrees(angleRads) / 2.0),
                 (int) 255,
                 (int) (255 * BRIGHTNESS_SCALE_FACTOR)
             );
         } else if (x > INPUT_DEADZONE) {
-            color = CUBE_COLOR;
-            lastPieceColor = color;
+            currentColor = CUBE_COLOR;
+            lastPieceColor = currentColor;
         } else if (x < -INPUT_DEADZONE) {
-            color = CONE_COLOR;
-            lastPieceColor = color;
+            currentColor = CONE_COLOR;
+            lastPieceColor = currentColor;
         } else {
-            color = lastPieceColor;
+            currentColor = lastPieceColor;
         }
     }
 }
