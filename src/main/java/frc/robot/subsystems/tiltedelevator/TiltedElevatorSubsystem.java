@@ -272,7 +272,7 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
         this.offsetDistMeters = MathUtil.clamp(
             offsetDistMeters = OFFSET_FACTOR * power + offsetDistMeters,
             -state.getExtension(offsetState, this.pieceGrabbed),
-            EXTENSION_LIMIT_METERS - -state.getExtension(offsetState, this.pieceGrabbed)
+            EXTENSION_LIMIT_METERS -state.getExtension(offsetState, this.pieceGrabbed)
         );
         
     }
