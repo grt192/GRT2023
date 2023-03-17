@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+import frc.robot.util.TrackingTimer;
 import static frc.robot.Constants.LEDConstants.*;
 
 public class LEDSubsystem extends SubsystemBase {
@@ -25,10 +26,9 @@ public class LEDSubsystem extends SubsystemBase {
     private boolean manual = false; //when driver is directly controlling leds
     public boolean pieceGrabbed = false;
 
-    private final Timer aprilBlinkTimer = new Timer();
-    private final Timer aprilFlashTimer = new Timer();
+    private final TrackingTimer aprilBlinkTimer = new TrackingTimer();
+    private final TrackingTimer aprilFlashTimer = new TrackingTimer();
     private static final double APRIL_BLINK_DURATION_SECONDS = 0.05;
-    private boolean aprilStarted = false;
 
     private static final Color APRIL_COLOR = new Color(252, 255, 236);
     private static final Color CUBE_COLOR = new Color(192, 8, 254);
@@ -60,6 +60,7 @@ public class LEDSubsystem extends SubsystemBase {
             pushColorsToBufferAsPulses();
             //setTwoColor()
         }
+
         ledStrip.setBuffer();
     }
 
@@ -74,20 +75,15 @@ public class LEDSubsystem extends SubsystemBase {
      * Displays that an AprilTag has been detected by sending a pulse down the LEDs.
      */
     public void displayTagDetected() {
-        if (!aprilStarted) {
-            aprilStarted = true;
-            aprilBlinkTimer.start();
-        }
-        if (aprilBlinkTimer.hasElapsed(APRIL_BLINK_DURATION_SECONDS * BLINK_OFF_TO_ON_RATIO)) {
-            aprilBlinkTimer.reset();
-            aprilBlinkTimer.start();
-        }
+        aprilBlinkTimer.start();
+        aprilBlinkTimer.advanceIfElapsed(APRIL_BLINK_DURATION_SECONDS * BLINK_OFF_TO_ON_RATIO);
+
         aprilFlashTimer.reset();
         aprilFlashTimer.start();
     }
 
     private void pushColorsToBufferAsPulses() {
-        if (!aprilBlinkTimer.hasElapsed(APRIL_BLINK_DURATION_SECONDS) && aprilBlinkTimer.hasElapsed(.001)){
+        if (!aprilBlinkTimer.hasElapsed(APRIL_BLINK_DURATION_SECONDS) && aprilBlinkTimer.hasStarted()){
             ledStrip.updateContinuousColor(APRIL_COLOR);
         } else {
             ledStrip.fillSolidColorIgnoringColor(currentColor, APRIL_COLOR);
@@ -95,7 +91,6 @@ public class LEDSubsystem extends SubsystemBase {
         }
 
         if (blinking) ledStrip.fillSolidColorIgnoringColor(BLINK_COLOR, APRIL_COLOR);
-        
     }
 
     private void setTwoColor() {
