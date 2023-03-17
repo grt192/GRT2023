@@ -164,12 +164,11 @@ public class RollerSubsystem extends SubsystemBase {
         // If either the limit switch or the proximity sensor have detected a piece, set
         // the piece to the detected piece, prioritizing the proximity sensor over the limit
         // switch.
-        if (colorPiece != HeldPiece.EMPTY) {
-            heldPiece = colorPiece;
+        if (proximityPiece != HeldPiece.EMPTY) {
+            heldPiece = proximityPiece;
         } else {
             heldPiece = limitPiece;
         }
-        getColorSensorPiece();
     }
 
     /**
@@ -218,17 +217,13 @@ public class RollerSubsystem extends SubsystemBase {
         if (cubeDist < coneDist && cubeDist < emptyDist){
             // System.out.print("CUBE ");
             return HeldPiece.CUBE;
-        }
-        else if (coneDist < emptyDist){
+        } else if (coneDist < emptyDist){
             // System.out.print("CONE ");
             return HeldPiece.CONE;
-        }
-        else{
+        } else {
             // System.out.print("NONE ");
             return HeldPiece.EMPTY;
         }
-
-        
     }
 
     /**

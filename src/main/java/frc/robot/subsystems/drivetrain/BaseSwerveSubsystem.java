@@ -1,10 +1,5 @@
 package frc.robot.subsystems.drivetrain;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.photonvision.targeting.PhotonTrackedTarget;
-
 import edu.wpi.first.math.MatBuilder;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Nat;
@@ -13,7 +8,6 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -25,7 +19,9 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+
 import frc.robot.subsystems.leds.LEDSubsystem;
+import frc.robot.util.FieldUtil;
 import frc.robot.util.ShuffleboardUtil;
 import frc.robot.vision.PhotonWrapper;
 
@@ -176,13 +172,13 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
 
         // Add vision pose estimate to pose estimator
         if (VISION_ENABLE) photonWrapper.getRobotPoses(estimate).forEach((visionPose) -> {
-            if (ledSubsystem != null) ledSubsystem.displayTagDetected();
+            if (!FieldUtil.poseInField(visionPose.estimatedPose.toPose2d())) return;
 
-            if(poseInField(visionPose.estimatedPose.toPose2d())){
-                poseEstimator.addVisionMeasurement(
+            if (ledSubsystem != null) ledSubsystem.displayTagDetected();
+            poseEstimator.addVisionMeasurement(
                 visionPose.estimatedPose.toPose2d(),
-                visionPose.timestampSeconds);
-            }
+                visionPose.timestampSeconds
+            );
         });
 
         // If all commanded velocities are 0, the system is idle (drivers / commands are
@@ -439,10 +435,4 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
         this.VISION_ENABLE = visionEnable;
         visionEnableEntry.setBoolean(VISION_ENABLE);
     }
-
-    public boolean poseInField(Pose2d pose){
-        return (pose.getX() < 16.54175 && pose.getX() > 0 && pose.getY() < 8.0137 && pose.getY() > 0); //from field json file
-    }
-
-
 }
