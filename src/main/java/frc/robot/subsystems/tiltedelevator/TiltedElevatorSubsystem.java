@@ -89,7 +89,7 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
             extensionEncoder.setVelocityConversionFactor(EXTENSION_ROTATIONS_TO_METERS / 60.0);
             extensionEncoder.setPosition(0);
             
-            sparkMax.setSoftLimit(SoftLimitDirection.kForward, (float) (EXTENSION_LIMIT_METERS + Units.inchesToMeters(.5)));
+            sparkMax.setSoftLimit(SoftLimitDirection.kForward, (float) (EXTENSION_LIMIT_METERS));
             sparkMax.enableSoftLimit(SoftLimitDirection.kForward, true);
             sparkMax.setSoftLimit(SoftLimitDirection.kReverse, (float) Units.inchesToMeters(-2));
             sparkMax.enableSoftLimit(SoftLimitDirection.kReverse, true);
@@ -216,7 +216,7 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
         // } else {
             // Set PID reference
             extensionPidController.setReference(
-                MathUtil.clamp(targetExtension, 0, EXTENSION_LIMIT_METERS + Units.inchesToMeters(.75)),
+                MathUtil.clamp(targetExtension, 0, EXTENSION_LIMIT_METERS),
                 ControlType.kPosition, 0,
                 arbFeedforward, ArbFFUnits.kPercentOut
             );
@@ -272,7 +272,7 @@ public class TiltedElevatorSubsystem extends SubsystemBase {
         this.offsetDistMeters = MathUtil.clamp(
             offsetDistMeters = OFFSET_FACTOR * power + offsetDistMeters,
             -state.getExtension(offsetState, this.pieceGrabbed),
-            EXTENSION_LIMIT_METERS -state.getExtension(offsetState, this.pieceGrabbed)
+            EXTENSION_LIMIT_METERS - state.getExtension(offsetState, this.pieceGrabbed)
         );
         
     }
