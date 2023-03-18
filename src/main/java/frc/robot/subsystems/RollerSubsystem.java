@@ -39,45 +39,30 @@ public class RollerSubsystem extends SubsystemBase {
     private final TrackingTimer closeTimer = new TrackingTimer();
     private final TrackingTimer cooldownTimer = new TrackingTimer();
 
+    private static final double OPEN_TIME_SECONDS = 1.0;
+    private static final double CLOSE_TIME_SECONDS = 0.5;
+    private static final double COOLDOWN_SECONDS = 2.0;
+
     // ~110 for nothing, 130 for cone, 160 for cube
     private static final int CONE_PROXIMITY_THRESHOLD = 115;
     private static final int CUBE_PROXIMITY_THRESHOLD = 145;
 
-    // private static final int coneRedMax = 80;
-    // private static final int coneRedMin = 65;
-    // private static final int coneGreenMax = 140;
-    // private static final int coneGreenMin = 128;
-    // private static final int coneBlueMax = 51;
-    // private static final int coneBlueMin = 45;
+    private static final int CONE_RED = 79;
+    private static final int CONE_GREEN = 129;
+    private static final int CONE_BLUE = 45;
 
-    private int coneRed = 79;
-    private int coneGreen = 129;
-    private int coneBlue = 45;
+    private static final int CUBE_RED = 53;
+    private static final int CUBE_GREEN = 92;
+    private static final int CUBE_BLUE = 110;
 
-    private int cubeRed = 53;
-    private int cubeGreen = 92;
-    private int cubeBlue = 110;
-
-    private int emptyRed = 68;
-    private int emptyGreen = 125;
-    private int emptyBlue = 62;
-
-    // private static final int cubeRedMax = 65;
-    // private static final int cubeRedMin = 55;
-    // private static final int cubeGreenMax = 120;
-    // private static final int cubeGreenMin = 108;
-    // private static final int cubeBlueMax = 85;
-    // private static final int cubeBlueMin = 75;
+    private static final int EMPTY_RED = 68;
+    private static final int EMPTY_GREEN = 125;
+    private static final int EMPTY_BLUE = 62;
 
     //for tuning
-    private final ShuffleboardTab tab = Shuffleboard.getTab("Color");
-    private final GenericEntry entry; 
-    private final GenericEntry gentry;
-    private final GenericEntry bentry;
-
-    private final double OPEN_TIME_SECONDS = 1.0;
-    private final double CLOSE_TIME_SECONDS = 0.5;
-    private final double COOLDOWN_SECONDS = 2.0;
+    private final ShuffleboardTab shuffleboardTab;
+    private final GenericEntry limitEntry, proximityEntry, colorEntry, heldPieceEntry;
+    private final GenericEntry rEntry, gEntry, bEntry;
 
     private double rollPower = 0.0;
 
@@ -99,10 +84,29 @@ public class RollerSubsystem extends SubsystemBase {
         limitSwitch = new DigitalInput(LIMIT_SWITCH_ID);
         crolorSensor = new ColorSensorV3(I2C.Port.kMXP);
 
-        //for tuning
-        entry = tab.add("R", 0).getEntry();
-        gentry = tab.add("G", 0).getEntry();
-        bentry = tab.add("B", 0).getEntry();
+        shuffleboardTab = Shuffleboard.getTab("Roller");
+        limitEntry = shuffleboardTab.add("Limit piece", "EMPTY")
+            .withPosition(0, 0)
+            .getEntry();
+        proximityEntry = shuffleboardTab.add("Proximity piece", "EMPTY")
+            .withPosition(1, 0)
+            .getEntry();
+        colorEntry = shuffleboardTab.add("Color piece", "EMPTY")
+            .withPosition(2, 0)
+            .getEntry();
+        heldPieceEntry = shuffleboardTab.add("Held piece", "EMPTY")
+            .withPosition(3, 0)
+            .getEntry();
+
+        rEntry = shuffleboardTab.add("R", 0)
+            .withPosition(0, 1)
+            .getEntry();
+        gEntry = shuffleboardTab.add("G", 0)
+            .withPosition(1, 1)
+            .getEntry();
+        bEntry = shuffleboardTab.add("B", 0)
+            .withPosition(2, 1)
+            .getEntry();
     }
 
     /**
@@ -160,7 +164,7 @@ public class RollerSubsystem extends SubsystemBase {
 
         HeldPiece limitPiece = getLimitSwitchPiece();
         HeldPiece proximityPiece = getProximitySensorPiece();
-        // HeldPiece colorPiece = getColorSensorPiece();
+        HeldPiece colorPiece = getColorSensorPiece();
 
         // If either the limit switch or the proximity sensor have detected a piece, set
         // the piece to the detected piece, prioritizing the proximity sensor over the limit
@@ -170,6 +174,11 @@ public class RollerSubsystem extends SubsystemBase {
         } else {
             heldPiece = limitPiece;
         }
+
+        limitEntry.setString(limitPiece.name());
+        proximityEntry.setString(proximityPiece.name());
+        colorEntry.setString(colorPiece.name());
+        heldPieceEntry.setString(heldPiece.name());
     }
 
     /**
@@ -203,14 +212,14 @@ public class RollerSubsystem extends SubsystemBase {
         double blue = detectedColor.blue * 255;
 
         // for tuning
-        entry.setValue(red);
-        gentry.setValue(green);
-        bentry.setValue(blue);
+        rEntry.setValue(red);
+        gEntry.setValue(green);
+        bEntry.setValue(blue);
 
         //calculate 3d distance between measured point and each set points
-        double emptyDist = Math.pow(emptyRed - red, 2) + Math.pow(emptyGreen - green, 2) + Math.pow(emptyBlue - blue, 2);
-        double coneDist = Math.pow(coneRed - red, 2) + Math.pow(coneGreen - green, 2) + Math.pow(coneBlue - blue, 2);
-        double cubeDist = Math.pow(cubeRed - red, 2) + Math.pow(cubeGreen - green, 2) + Math.pow(cubeBlue - blue, 2);
+        double emptyDist = Math.pow(EMPTY_RED - red, 2) + Math.pow(EMPTY_GREEN - green, 2) + Math.pow(EMPTY_BLUE - blue, 2);
+        double coneDist = Math.pow(CONE_RED - red, 2) + Math.pow(CONE_GREEN - green, 2) + Math.pow(CONE_BLUE - blue, 2);
+        double cubeDist = Math.pow(CUBE_RED - red, 2) + Math.pow(CUBE_GREEN - green, 2) + Math.pow(CUBE_BLUE - blue, 2);
 
         // System.out.println("empty -  " + emptyDist + " cone - " + coneDist + " cube - " + cubeDist);
 

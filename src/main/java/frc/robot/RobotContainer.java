@@ -205,7 +205,7 @@ public class RobotContainer {
                     swerveSubsystem.setDrivePowers(xPower, yPower, angularPower, relative);
                 }
 
-                // Cancel auto-align command if magnitude of drive inputs is greater than 0.3.
+                // Cancel auto-align command if magnitude of drive inputs is greater than 0.15.
                 double inputMagnitude = Math.sqrt(xPower * xPower + yPower * yPower);
                 if (inputMagnitude > 0.15) autoAlignCommand.cancel();
             }, swerveSubsystem));
