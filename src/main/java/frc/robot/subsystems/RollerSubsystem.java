@@ -156,19 +156,24 @@ public class RollerSubsystem extends SubsystemBase {
 
         // Otherwise, open if we're opening and close if we're closing.
         if (openTimer.hasStarted()) openRoller();
-        else if (closeTimer.hasStarted()) clampRoller();
+        else if (closeTimer.hasStarted()) closeRoller();
+        else if (heldPiece == HeldPiece.CONE) activeclampRoller();
         else neitherRoller();;
     }
 
-    private void openRoller(){
+    protected void openRoller(){
         openMotor.set(0.5);
     }
 
-    private void clampRoller(){
+    protected void activeclampRoller(){
+        openMotor.setVoltage(-2);
+    }
+
+    protected void closeRoller(){
         openMotor.set(-0.2);
     }
 
-    private void neitherRoller(){
+    protected void neitherRoller(){
         openMotor.set(0);
     }
 

@@ -55,6 +55,7 @@ import frc.robot.subsystems.drivetrain.MissileShellSwerveSweeperSubsystem;
 import frc.robot.subsystems.drivetrain.SwerveSubsystem;
 import frc.robot.subsystems.drivetrain.SwerveSubsystem2020;
 import frc.robot.subsystems.drivetrain.BaseDrivetrain;
+import frc.robot.subsystems.PfftRollerSubsystem;
 import frc.robot.subsystems.RollerSubsystem;
 import frc.robot.subsystems.Superstructure;
 
@@ -123,7 +124,7 @@ public class RobotContainer {
 
         // driveSubsystem = new MissileShellSwerveSubsystem();
         driveSubsystem = new SwerveSubsystem(photonWrapper, signalLEDSubsystem);
-        rollerSubsystem = new RollerSubsystem();
+        rollerSubsystem = new PfftRollerSubsystem();
         tiltedElevatorSubsystem = new TiltedElevatorSubsystem();
 
         balancerCommand = new DefaultBalancerCommand(driveSubsystem);
