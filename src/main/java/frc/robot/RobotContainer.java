@@ -123,11 +123,11 @@ public class RobotContainer {
         signalLEDSubsystem = new LEDSubsystem(); 
 
         // driveSubsystem = new MissileShellSwerveSubsystem();
-        driveSubsystem = new SwerveSubsystem(photonWrapper, signalLEDSubsystem);
+        driveSubsystem = null;
         rollerSubsystem = new PfftRollerSubsystem();
         tiltedElevatorSubsystem = new TiltedElevatorSubsystem();
 
-        balancerCommand = new DefaultBalancerCommand(driveSubsystem);
+        balancerCommand = null;
 
         // Initialize auton and test commands
         autonChooser = new SendableChooser<>();
@@ -180,7 +180,7 @@ public class RobotContainer {
             .withSize(3, 1);
 
         // Configure button bindings
-        configureDriveBindings();
+        //configureDriveBindings();
         configureMechBindings();
     }
 
@@ -248,7 +248,7 @@ public class RobotContainer {
      * Configures button bindings for the roller / elevator mechs and controller.
      */
     private void configureMechBindings() {
-        mechAButton.onTrue(new DropperChooserCommand(driveSubsystem, rollerSubsystem, tiltedElevatorSubsystem));
+        //mechAButton.onTrue(new DropperChooserCommand(driveSubsystem, rollerSubsystem, tiltedElevatorSubsystem));
 
         rollerSubsystem.setDefaultCommand(new RunCommand(() -> {
             double forwardPower = 0.95 * mechController.getRightTriggerAxis();
@@ -258,48 +258,48 @@ public class RobotContainer {
 
         mechYButton.onTrue(new InstantCommand(rollerSubsystem::startopenTimer, rollerSubsystem));
 
-        tiltedElevatorSubsystem.setDefaultCommand(new RunCommand(() -> {
-            double yPower = -mechController.getLeftY();
+        // tiltedElevatorSubsystem.setDefaultCommand(new RunCommand(() -> {
+        //     double yPower = -mechController.getLeftY();
 
-            int pov = mechController.getPOV();
-            switch (pov) {
-                case 0 -> tiltedElevatorSubsystem.setState(ElevatorState.SUBSTATION);
-                case 270 -> {}
-                case 180 -> {
-                    tiltedElevatorSubsystem.setState(ElevatorState.GROUND);
-                    tiltedElevatorSubsystem.offsetState = OffsetState.OVERRIDE_HAS_PIECE;
-                }
-                case 90 -> tiltedElevatorSubsystem.resetOffset();
-            }
+        //     int pov = mechController.getPOV();
+        //     switch (pov) {
+        //         case 0 -> tiltedElevatorSubsystem.setState(ElevatorState.SUBSTATION);
+        //         case 270 -> {}
+        //         case 180 -> {
+        //             tiltedElevatorSubsystem.setState(ElevatorState.GROUND);
+        //             tiltedElevatorSubsystem.offsetState = OffsetState.OVERRIDE_HAS_PIECE;
+        //         }
+        //         case 90 -> tiltedElevatorSubsystem.resetOffset();
+        //     }
 
-            tiltedElevatorSubsystem.setManualPower(yPower);
-            tiltedElevatorSubsystem.changeOffsetDistMeters(yPower);
-        }, tiltedElevatorSubsystem));
+        //     tiltedElevatorSubsystem.setManualPower(yPower);
+        //     tiltedElevatorSubsystem.changeOffsetDistMeters(yPower);
+        // }, tiltedElevatorSubsystem));
 
-        mechBButton.onTrue(new InstantCommand(() -> {
-            // tiltedElevatorSubsystem.toggleState(ElevatorState.GROUND, ElevatorState.CHUTE);
-            tiltedElevatorSubsystem.setState(ElevatorState.GROUND);
-        }, tiltedElevatorSubsystem));
+        // mechBButton.onTrue(new InstantCommand(() -> {
+        //     // tiltedElevatorSubsystem.toggleState(ElevatorState.GROUND, ElevatorState.CHUTE);
+        //     tiltedElevatorSubsystem.setState(ElevatorState.GROUND);
+        // }, tiltedElevatorSubsystem));
 
-        mechXButton.onTrue(new InstantCommand(() -> {
-            tiltedElevatorSubsystem.setState(ElevatorState.HOME);
-        }, tiltedElevatorSubsystem));
+        // mechXButton.onTrue(new InstantCommand(() -> {
+        //     tiltedElevatorSubsystem.setState(ElevatorState.HOME);
+        // }, tiltedElevatorSubsystem));
 
-        mechRBumper.onTrue(new InstantCommand(() -> {
-            tiltedElevatorSubsystem.toggleState(ElevatorState.CUBE_MID, ElevatorState.CUBE_HIGH);
-        }, tiltedElevatorSubsystem));
+        // mechRBumper.onTrue(new InstantCommand(() -> {
+        //     tiltedElevatorSubsystem.toggleState(ElevatorState.CUBE_MID, ElevatorState.CUBE_HIGH);
+        // }, tiltedElevatorSubsystem));
 
-        mechLBumper.onTrue(new InstantCommand(() -> {
-            tiltedElevatorSubsystem.toggleState(ElevatorState.CONE_MID, ElevatorState.CONE_HIGH);
-        }, tiltedElevatorSubsystem));
+        // mechLBumper.onTrue(new InstantCommand(() -> {
+        //     tiltedElevatorSubsystem.toggleState(ElevatorState.CONE_MID, ElevatorState.CONE_HIGH);
+        // }, tiltedElevatorSubsystem));
 
-        signalLEDSubsystem.setDefaultCommand(new RunCommand(() -> {
-            double x = mechController.getRightX();
-            double y = mechController.getRightY();
-            signalLEDSubsystem.setDriverColor(x, y);
-        }, signalLEDSubsystem));
+        // signalLEDSubsystem.setDefaultCommand(new RunCommand(() -> {
+        //     double x = mechController.getRightX();
+        //     double y = mechController.getRightY();
+        //     signalLEDSubsystem.setDriverColor(x, y);
+        // }, signalLEDSubsystem));
 
-        mechRStick.onTrue(new InstantCommand(signalLEDSubsystem::toggleManual));
+        // mechRStick.onTrue(new InstantCommand(signalLEDSubsystem::toggleManual));
     }
 
     /**

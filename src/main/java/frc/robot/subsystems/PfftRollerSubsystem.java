@@ -17,7 +17,6 @@ public class PfftRollerSubsystem extends RollerSubsystem{
 
 
     public PfftRollerSubsystem(){
-
         pfftOpen = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, PFFT_FORWARD, PFFT_FORWARD_ATMOSPHERE);
         pfftClose = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, PFFT_REVERSE, PFFT_REVERSE_ATMOSPHERE);
         forwardState = Value.kReverse;
