@@ -51,13 +51,24 @@ public class RollerSubsystem extends SubsystemBase {
     private static final int CONE_GREEN = 129;
     private static final int CONE_BLUE = 45;
 
-    private static final int CUBE_RED = 53;
-    private static final int CUBE_GREEN = 92;
-    private static final int CUBE_BLUE = 110;
+    private int coneRed = 92;
+    private int coneGreen = 140;
+    private int coneBlue = 22;
 
-    private static final int EMPTY_RED = 68;
-    private static final int EMPTY_GREEN = 125;
-    private static final int EMPTY_BLUE = 62;
+    private int cubeRed = 51;
+    private int cubeGreen = 78;
+    private int cubeBlue = 127;
+
+    private int emptyRed = 68;
+    private int emptyGreen = 120;
+    private int emptyBlue = 67;
+
+    // private static final int cubeRedMax = 65;
+    // private static final int cubeRedMin = 55;
+    // private static final int cubeGreenMax = 120;
+    // private static final int cubeGreenMin = 108;
+    // private static final int cubeBlueMax = 85;
+    // private static final int cubeBlueMin = 75;
 
     //for tuning
     private final ShuffleboardTab shuffleboardTab;
