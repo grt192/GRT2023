@@ -10,7 +10,6 @@ import edu.wpi.first.math.util.Units;
 import frc.robot.commands.dropping.AutoAlignCommand;
 import frc.robot.positions.PlacePosition;
 import frc.robot.subsystems.tiltedelevator.ElevatorState;
-import frc.robot.subsystems.tiltedelevator.ElevatorState.OffsetState;
 
 public class ClosestPlacePositionTest {
     /**
@@ -216,13 +215,177 @@ public class ClosestPlacePositionTest {
     }
 
     /**
-     * Runs a unit test with the given parameters.
+     * Ensures that the `getClosestCubePlacePosition` method correctly returns the closest place
+     * position when the robot is at a given cube place position.
+     * 
+     * Current position: A1_INIT
+     * Current elevator state: ElevatorState.GROUND
+     * Expected position: A1_HYBRID
+     */
+    @Test
+    public void cubeAtCubeHybrid() {
+        runCubeTest(
+            PlacePosition.A2_HYBRID.alignPosition.BLUE,
+            PlacePosition.A2_HYBRID.elevatorState,
+            PlacePosition.A2_HYBRID
+        );
+    }
+
+    /**
+     * Ensures that the `getClosestCubePlacePosition` method correctly returns the closest place
+     * position when the robot is at a given cube place position.
+     * 
+     * Current position: A2_INIT
+     * Current elevator state: ElevatorState.CUBE_MID
+     * Expected position: A2_MID
+     */
+    @Test
+    public void cubeAtCubeMid() {
+        runCubeTest(
+            PlacePosition.A2_MID.alignPosition.BLUE,
+            PlacePosition.A2_MID.elevatorState,
+            PlacePosition.A2_MID
+        );
+    }
+
+    /**
+     * Ensures that the `getClosestCubePlacePosition` method correctly returns the closest place
+     * position when the robot is at a given cube place position.
+     * 
+     * Current position: A2_INIT
+     * Current elevator state: ElevatorState.CUBE_HIGH
+     * Expected position: A2_HIGH
+     */
+    @Test
+    public void cubeAtCubeHigh() {
+        runCubeTest(
+            PlacePosition.A2_HIGH.alignPosition.BLUE,
+            PlacePosition.A2_HIGH.elevatorState,
+            PlacePosition.A2_HIGH
+        );
+    }
+
+    /**
+     * Ensures that the `getClosestCubePlacePosition` method correctly returns the closest place
+     * position when the robot is one node left of a given cube place position.
+     * 
+     * Current position: A1_INIT
+     * Current elevator state: ElevatorState.GROUND
+     * Expected position: A2_HYBRID
+     */
+    @Test
+    public void cubeLeftOfCubeHybrid() {
+        runCubeTest(
+            PlacePosition.A1_HYBRID.alignPosition.BLUE,
+            PlacePosition.A1_HYBRID.elevatorState,
+            PlacePosition.A2_HYBRID
+        );
+    }
+
+    /**
+     * Ensures that the `getClosestCubePlacePosition` method correctly returns the closest place
+     * position when the robot is one node left of a given cube place position.
+     * 
+     * Current position: A1_INIT
+     * Current elevator state: ElevatorState.CONE_MID
+     * Expected position: A2_HIGH
+     */
+    @Test
+    public void cubeLeftOfCubeMid() {
+        runCubeTest(
+            PlacePosition.A1_MID.alignPosition.BLUE,
+            PlacePosition.A1_MID.elevatorState,
+            PlacePosition.A2_HIGH // TODO: is it expected that `CONE_MID` is closer to `CUBE_HIGH` than `CUBE_MID`?
+        );
+    }
+
+    /**
+     * Ensures that the `getClosestCubePlacePosition` method correctly returns the closest place
+     * position when the robot is one node left of a given cube place position.
+     * 
+     * Current position: A1_INIT
+     * Current elevator state: ElevatorState.CONE_HIGH
+     * Expected position: A2_HIGH
+     */
+    @Test
+    public void cubeLeftOfCubeHigh() {
+        runCubeTest(
+            PlacePosition.A1_HIGH.alignPosition.BLUE,
+            PlacePosition.A1_HIGH.elevatorState,
+            PlacePosition.A2_HIGH
+        );
+    }
+
+    /**
+     * Ensures that the `getClosestCubePlacePosition` method correctly returns the closest place
+     * position when the robot is one node right of a given cube place position.
+     * 
+     * Current position: A3_INIT
+     * Current elevator state: ElevatorState.GROUND
+     * Expected position: A2_HYBRID
+     */
+    @Test
+    public void cubeRightOfCubeHybrid() {
+        runCubeTest(
+            PlacePosition.A3_HYBRID.alignPosition.BLUE,
+            PlacePosition.A3_HYBRID.elevatorState,
+            PlacePosition.A2_HYBRID
+        );
+    }
+
+    /**
+     * Ensures that the `getClosestCubePlacePosition` method correctly returns the closest place
+     * position when the robot is one node right of a given cube place position.
+     * 
+     * Current position: A3_INIT
+     * Current elevator state: ElevatorState.CONE_MID
+     * Expected position: A2_HIGH
+     */
+    @Test
+    public void cubeRightOfCubeMid() {
+        runCubeTest(
+            PlacePosition.A3_MID.alignPosition.BLUE,
+            PlacePosition.A3_MID.elevatorState,
+            PlacePosition.A2_HIGH // TODO: is it expected that `CONE_MID` is closer to `CUBE_HIGH` than `CUBE_MID`?
+        );
+    }
+
+    /**
+     * Ensures that the `getClosestCubePlacePosition` method correctly returns the closest place
+     * position when the robot is one node right of a given cube place position.
+     * 
+     * Current position: A3_INIT
+     * Current elevator state: ElevatorState.CONE_HIGH
+     * Expected position: A2_HIGH
+     */
+    @Test
+    public void cubeRightOfCubeHigh() {
+        runCubeTest(
+            PlacePosition.A3_HIGH.alignPosition.BLUE,
+            PlacePosition.A3_HIGH.elevatorState,
+            PlacePosition.A2_HIGH
+        );
+    }
+
+    /**
+     * Runs a closest place position test with the given parameters.
      * @param robotPose The current pose of the robot.
      * @param elevatorState The current state of the elevator.
      * @param expectedPlacePosition The expected closest (blue) place position.
      */
     private void runTest(Pose2d robotPose, ElevatorState elevatorState, PlacePosition expectedPlacePosition) {
         PlacePosition target = AutoAlignCommand.getClosestPlacePosition(robotPose, elevatorState, false);
+        assertEquals(expectedPlacePosition, target);
+    }
+
+    /**
+     * Runs a closest cube place position test with the given parameters.
+     * @param robotPose The current pose of the robot.
+     * @param elevatorState The current state of the elevator.
+     * @param expectedPlacePosition The expected closest (blue) place position.
+     */
+    private void runCubeTest(Pose2d robotPose, ElevatorState elevatorState, PlacePosition expectedPlacePosition) {
+        PlacePosition target = AutoAlignCommand.getClosestCubePlacePosition(robotPose, elevatorState, false);
         assertEquals(expectedPlacePosition, target);
     }
 }
