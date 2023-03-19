@@ -16,7 +16,7 @@ public class SwerveSubsystem extends BaseSwerveSubsystem {
     public SwerveSubsystem(PhotonWrapper photonWrapper, LEDSubsystem ledSubsystem) {
         super(
             new SwerveModule.TopLeft(TL_DRIVE, TL_STEER, TL_OFFSET_RADS),
-            new SwerveModule.TopRight(TR_DRIVE, TR_STEER, TR_OFFSET_RADS),
+            new SwerveModule.TopRight(TR_DRIVE, TR_STEER, SPARE_OFFSET_RADS),
             new SwerveModule.BottomLeft(BL_DRIVE, BL_STEER, BL_OFFSET_RADS),
             new SwerveModule.BottomRight(BR_DRIVE, BR_STEER, BR_OFFSET_RADS),
             MAX_VEL, MAX_ACCEL, MAX_OMEGA, MAX_ALPHA,

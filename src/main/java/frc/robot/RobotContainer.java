@@ -39,6 +39,7 @@ import frc.robot.commands.auton.test.TwentyFeetStraightLinePath;
 import frc.robot.commands.balancing.BaseBalancerCommand;
 import frc.robot.commands.balancing.DefaultBalancerCommand;
 import frc.robot.commands.dropping.AutoAlignCommand;
+import frc.robot.commands.balancing.DualPIDBalancerCommand;
 import frc.robot.commands.dropping.DropperChooserCommand;
 import frc.robot.commands.pretest.MotorTestCommand;
 import frc.robot.controllers.BaseDriveController;
@@ -134,7 +135,7 @@ public class RobotContainer {
         rollerSubsystem = new RollerSubsystem();
         tiltedElevatorSubsystem = new TiltedElevatorSubsystem();
 
-        balancerCommand = new DefaultBalancerCommand(driveSubsystem);
+        balancerCommand = new DualPIDBalancerCommand(driveSubsystem);
 
         // Initialize auton choosers
         autonPathChooser = new SendableChooser<>();

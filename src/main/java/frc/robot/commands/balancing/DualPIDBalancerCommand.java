@@ -1,7 +1,7 @@
 package frc.robot.commands.balancing;
 
 import edu.wpi.first.math.controller.PIDController;
-
+import frc.robot.Constants.BalancerConstants;
 import frc.robot.subsystems.drivetrain.BaseDrivetrain;
 import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
 
@@ -18,7 +18,7 @@ public class DualPIDBalancerCommand extends BaseBalancerCommand {
     public DualPIDBalancerCommand(BaseDrivetrain driveSubsystem) {
         super(driveSubsystem);
 
-        anglePID = new PIDController(0.5 / 35, 0.0, 0.0); 
+        anglePID = new PIDController(BalancerConstants.COMP_CHARGING_STATION_KP, 0.0, 0.0); 
         deltaPID = new PIDController(0.1 / 0.6, 0.0, 0.0); 
     }
 
@@ -36,7 +36,7 @@ public class DualPIDBalancerCommand extends BaseBalancerCommand {
 
         if (!reachedStation) {
             returnDrivePower = -0.80;
-            reachedStation = currentPitchDegs <= -15.0;
+            reachedStation = currentPitchDegs <= -7.0;
         } else {
             double deltaPitchDegs = Math.abs(currentPitchDegs - prevPitchDegs);
             // System.out.println("DeltaAngle: " + deltaPitchDegs);
