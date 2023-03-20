@@ -18,6 +18,7 @@ public class GoOverCommand extends CommandBase {
     private boolean passedCenter;
     private boolean overStation;
     private boolean waiting;
+    private double POWER_SCALE = 1;
 
     private final Timer timer;
 
@@ -45,9 +46,8 @@ public class GoOverCommand extends CommandBase {
         }
 
         if (reachedStation && !passedCenter) {
-            returnDrivePower = 0.4;
+            returnDrivePower = -0.6;
             if (ahrs.getPitch() >= -0.0){
-                returnDrivePower = 0.4;
                 passedCenter = true;
             } 
         }
@@ -55,22 +55,23 @@ public class GoOverCommand extends CommandBase {
             if (Math.abs(ahrs.getPitch()) <= 0.5) {
                 overStation = true;
             }
-            else returnDrivePower = 0.4;
+            else returnDrivePower = -0.2;
         }
 
         if (overStation && !waiting) {
             timer.reset();
             timer.start();
-            returnDrivePower = 0.4;
+            returnDrivePower = 0;
             waiting = true;
         }
 
-        driveSubsystem.setDrivePowers(returnDrivePower);
+        driveSubsystem.setDrivePowers(returnDrivePower * POWER_SCALE);
     }
 
     @Override 
     public void end(boolean interrupted){
         driveSubsystem.setDrivePowers(0.0);
+        timer.reset();
     }
 
     @Override
