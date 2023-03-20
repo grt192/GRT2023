@@ -2,6 +2,8 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+import frc.robot.commands.dropping.AutoAlignCommand;
+import frc.robot.controllers.BaseDriveController;
 import frc.robot.subsystems.RollerSubsystem.HeldPiece;
 import frc.robot.subsystems.leds.LEDSubsystem;
 import frc.robot.subsystems.tiltedelevator.ElevatorState;
@@ -15,27 +17,34 @@ public class Superstructure extends SubsystemBase {
     private final TiltedElevatorSubsystem tiltedElevatorSubsystem;
     private final LEDSubsystem ledSubsystem;
 
+    private final AutoAlignCommand autoAlignCommand;
     private final SwitchableCamera switchableCamera;
+    private final BaseDriveController driveController;
 
     private ElevatorState lastElevatorState;
 
     public Superstructure(
         RollerSubsystem rollerSubsystem, TiltedElevatorSubsystem tiltedElevatorSubsystem, LEDSubsystem ledSubsystem,
-        SwitchableCamera switchableCamera
+        AutoAlignCommand autoAlignCommand, SwitchableCamera switchableCamera, BaseDriveController driveController
     ) {
         this.rollerSubsystem = rollerSubsystem;
         this.tiltedElevatorSubsystem = tiltedElevatorSubsystem;
-        this.switchableCamera = switchableCamera;
         this.ledSubsystem = ledSubsystem;
+
+        this.autoAlignCommand = autoAlignCommand;
+        this.switchableCamera = switchableCamera;
+        this.driveController = driveController;
     }
 
     @Override
     public void periodic() {
+        // Update subsystem "piece grabbed" states
         boolean hasPiece = rollerSubsystem.getPiece() != HeldPiece.EMPTY;
 
         tiltedElevatorSubsystem.pieceGrabbed = hasPiece;
         ledSubsystem.pieceGrabbed = hasPiece;
 
+        // Toggle driver camera when the elevator state switches to / from GROUND.
         ElevatorState currentState = tiltedElevatorSubsystem.getState();
         if (currentState != lastElevatorState) {
             switch (currentState) {
@@ -48,6 +57,14 @@ public class Superstructure extends SubsystemBase {
         }
         lastElevatorState = currentState;
 
+        // Close the roller when the elevator extends below ALLOW_OPEN_EXTENSION_METERS.
         rollerSubsystem.allowOpen = tiltedElevatorSubsystem.getExtensionMeters() >= ALLOW_OPEN_EXTENSION_METERS;
+
+        // Cancel auto-align command if magnitude of drive inputs is greater than 0.15.
+        double inputMagnitude = Math.hypot(
+            driveController.getForwardPower(),
+            driveController.getLeftPower()
+        );
+        if (inputMagnitude > 0.15) autoAlignCommand.cancel();
     }
 }

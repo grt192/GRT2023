@@ -126,8 +126,6 @@ public class RobotContainer {
         rollerSubsystem = new RollerSubsystem();
         tiltedElevatorSubsystem = new TiltedElevatorSubsystem();
 
-        superstructure = new Superstructure(rollerSubsystem, tiltedElevatorSubsystem, signalLEDSubsystem, switchableCamera);
-
         balancerCommand = new DefaultBalancerCommand(driveSubsystem);
 
         // Initialize auton and test commands
@@ -171,6 +169,11 @@ public class RobotContainer {
             autoAlignCommand = null;
         }
 
+        superstructure = new Superstructure(
+            rollerSubsystem, tiltedElevatorSubsystem, signalLEDSubsystem,
+            autoAlignCommand, switchableCamera, driveController
+        );
+
         shuffleboardTab.add("Auton", autonChooser)
             .withPosition(8, 0)
             .withSize(3, 1);
@@ -204,10 +207,6 @@ public class RobotContainer {
                 } else {
                     swerveSubsystem.setDrivePowers(xPower, yPower, angularPower, relative);
                 }
-
-                // Cancel auto-align command if magnitude of drive inputs is greater than 0.3.
-                double inputMagnitude = Math.sqrt(xPower * xPower + yPower * yPower);
-                if (inputMagnitude > 0.15) autoAlignCommand.cancel();
             }, swerveSubsystem));
 
             driveController.getFieldResetButton().onTrue(new InstantCommand(swerveSubsystem::resetDriverHeading, swerveSubsystem));
