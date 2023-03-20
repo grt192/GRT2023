@@ -1,5 +1,7 @@
 package frc.robot.positions;
 
+import java.util.EnumSet;
+
 import frc.robot.subsystems.tiltedelevator.ElevatorState;
 
 public enum PlacePosition {
@@ -156,5 +158,17 @@ public enum PlacePosition {
         this.placePosition = placePosition;
         this.alignPosition = alignPosition;
         this.elevatorState = elevatorState;
+    }
+
+    /**
+     * Gets all `PlacePositions` that represent cube nodes.
+     * @return An `EnumSet` of place positions that represent cube nodes.
+     */
+    public static EnumSet<PlacePosition> getCubePositions() {
+        return EnumSet.of(
+            PlacePosition.A2_HIGH, PlacePosition.A2_MID, PlacePosition.A2_HYBRID,
+            PlacePosition.B2_HIGH, PlacePosition.B2_MID, PlacePosition.B2_HYBRID,
+            PlacePosition.C2_HIGH, PlacePosition.C2_MID, PlacePosition.C2_HYBRID
+        );
     }
 }

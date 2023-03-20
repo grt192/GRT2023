@@ -1,6 +1,7 @@
 package frc.robot.commands.dropping;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -187,10 +188,48 @@ public class AutoAlignCommand extends InstantCommand {
      * @return The closest `PlacePosition`.
      */
     public static PlacePosition getClosestPlacePosition(Pose2d robotPose, ElevatorState elevatorState, boolean isRed) {
+        return getClosestPlacePositionOf(
+            robotPose, elevatorState, isRed,
+            Arrays.asList(PlacePosition.values())
+        );
+    }
+
+    /**
+     * Gets the closest cube place position given the current robot position and extension of the elevator. Positions are
+     * initially compared with their distance to the robot, and ties (eg. between HIGH and MID positions) are broken
+     * using elevator extension.
+     * 
+     * @param robotPose The current pose of the robot.
+     * @param elevatorState The current state of the elevator.
+     * @param isRed Whether the robot is on the red team.
+     * @return The closest cube `PlacePosition`.
+     */
+    public static PlacePosition getClosestCubePlacePosition(Pose2d robotPose, ElevatorState elevatorState, boolean isRed) {
+        return getClosestPlacePositionOf(
+            robotPose, elevatorState, isRed,
+            PlacePosition.getCubePositions()
+        );
+    }
+
+    /**
+     * Gets the closest place position of the given collection of `PlacePosition`s given the current robot position
+     * and extension of the elevator. Positions are initially compared with their distance to the robot, and ties
+     * (eg. between HIGH and MID positions) are broken using elevator extension.
+     * 
+     * @param robotPose The current pose of the robot.
+     * @param elevatorState The current state of the elevator.
+     * @param isRed Whether the robot is on the red team.
+     * @param positions The `PlacePosition`s to get the closest of.
+     * @return The closest `PlacePosition` of the given collection.
+     */
+    private static PlacePosition getClosestPlacePositionOf(
+        Pose2d robotPose, ElevatorState elevatorState, boolean isRed,
+        Collection<PlacePosition> positions
+    ) {
         double elevatorExtensionMeters = elevatorState.getExtension(OffsetState.DEFAULT, true);
 
         return Collections.min(
-            Arrays.asList(PlacePosition.values()),
+            positions,
             Comparator.comparing((PlacePosition pos) -> {
                 Translation2d targetTranslation = pos.alignPosition.getPose(isRed).getTranslation();
                 return robotPose.getTranslation().getDistance(targetTranslation);
@@ -223,15 +262,15 @@ public class AutoAlignCommand extends InstantCommand {
     }
 
     /**
-     * Schedules a wrapped `AlignToNodeCommand` to align the robot with the closest node.
-     * See {@link scheduleAlignCommandWith}.
+     * Schedules a wrapped `AlignToNodeCommand` to align the robot with the closest cube node.
+     * See {@link #scheduleAlignCommandWith(PlacePosition newPosition) scheduleAlignCommandWith}.
      */
     private void scheduleAlignCommandWithClosest() {
         booleanEntries.forEach((pos, entry) -> entry.setBoolean(false));
 
         Pose2d initialPose = swerveSubsystem.getRobotPosition();
         ElevatorState currentElevatorState = tiltedElevatorSubsystem.getState();
-        scheduleAlignCommandWith(getClosestPlacePosition(initialPose, currentElevatorState, isRed));
+        scheduleAlignCommandWith(getClosestCubePlacePosition(initialPose, currentElevatorState, isRed));
     }
 
     /**
