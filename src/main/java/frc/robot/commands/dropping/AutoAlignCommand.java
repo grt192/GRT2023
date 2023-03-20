@@ -35,7 +35,8 @@ public class AutoAlignCommand extends InstantCommand {
     private final HashMap<PlacePosition, GenericEntry> booleanEntries;
 
     private volatile PlacePosition targetPlacePosition;
-    private volatile AlignToNodeCommand wrappedCommand;
+    private volatile AlignToNodeCommand wrappedAlignCommand;
+    private volatile GoAndPlaceCommand wrappedPlaceCommand;
 
     private final ShuffleboardTab shuffleboardTab;
 
@@ -160,6 +161,17 @@ public class AutoAlignCommand extends InstantCommand {
     }
 
     /**
+     * Schedules the place command to drive forward and place the currently held game piece.
+     * This is a no-op if aligning hasn't finished (or started) yet.
+     */
+    public void driveForwardAndPlace() {
+        if (wrappedPlaceCommand == null) return;
+        if (wrappedAlignCommand == null || wrappedAlignCommand.isScheduled()) return;
+
+        wrappedPlaceCommand.schedule();
+    }
+
+    /**
      * Returns a provided HYBRID, MID, or HIGH place position, depending on the given elevator state.
      * @param elevatorState The current elevator state of the robot.
      * @param hybridPosition The HYBRID position to return.
@@ -253,9 +265,19 @@ public class AutoAlignCommand extends InstantCommand {
         booleanEntries.get(newPosition).setBoolean(true);
         targetPlacePosition = newPosition;
 
-        if (wrappedCommand != null) wrappedCommand.cancel();
-        wrappedCommand = new AlignToNodeCommand(swerveSubsystem, tiltedElevatorSubsystem, targetPlacePosition, isRed);
-        wrappedCommand.schedule();
+        // Construct and schedule wrapped aligning command
+        if (wrappedAlignCommand != null) wrappedAlignCommand.cancel();
+        wrappedAlignCommand = new AlignToNodeCommand(swerveSubsystem, tiltedElevatorSubsystem, targetPlacePosition, isRed);
+        wrappedAlignCommand.schedule();
+
+        // Construct, but don't schedule, wrapped placing command
+        if (wrappedPlaceCommand != null) wrappedPlaceCommand.cancel();
+        wrappedPlaceCommand = new GoAndPlaceCommand(
+            swerveSubsystem, null, tiltedElevatorSubsystem,
+            newPosition.alignPosition.getPose(isRed),
+            newPosition.placePosition.getPose(isRed),
+            newPosition.elevatorState
+        );
 
         // Lock parallel to the grid for better strafing
         swerveSubsystem.setChargingStationLocked(true);
@@ -274,20 +296,23 @@ public class AutoAlignCommand extends InstantCommand {
     }
 
     /**
-     * Cancels this command, the wrapped align command if it is scheduled, and
-     * any scheduled Shuffleboard button command.
+     * Cancels this command, the wrapped align command if it is scheduled, the wrapped place
+     * command if it is scheduled, and any scheduled Shuffleboard button command.
      */
     @Override
     public void cancel() {
-        if (wrappedCommand != null) wrappedCommand.cancel();
+        if (wrappedAlignCommand != null) wrappedAlignCommand.cancel();
+        if (wrappedPlaceCommand != null) wrappedPlaceCommand.cancel();
         for (InstantCommand command : setTargetCommands) {
             command.cancel();
         }
         super.cancel();
 
-        // Revert strafing lock and target place position
+        // Revert strafing lock, wrapped commands, and target place position
         swerveSubsystem.setChargingStationLocked(false);
         targetPlacePosition = null;
+        wrappedAlignCommand = null;
+        wrappedPlaceCommand = null;
     }
 
     private static int getShuffleboardRow(PlacePosition position) {

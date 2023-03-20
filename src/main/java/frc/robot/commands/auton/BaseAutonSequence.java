@@ -7,13 +7,11 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 
-import frc.robot.commands.dropping.DropperChooserCommand;
+import frc.robot.commands.dropping.GoAndPlaceCommand;
 import frc.robot.commands.grabber.RollerIntakeCommand;
 import frc.robot.commands.mover.TiltedElevatorCommand;
 import frc.robot.commands.swerve.FollowPathCommand;
-import frc.robot.commands.swerve.SwerveIdleCommand;
 import frc.robot.positions.PlacePosition;
 import frc.robot.subsystems.RollerSubsystem;
 import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
@@ -45,13 +43,13 @@ public abstract class BaseAutonSequence extends SequentialCommandGroup {
             new InstantCommand(() -> swerveSubsystem.resetPose(initialPose), swerveSubsystem),
 
             // Place preloaded game piece
-            goAndPlace(initialPose, placePose, elevatorState)
+            new GoAndPlaceCommand(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, initialPose, placePose, elevatorState)
         );
     }
 
     /**
      * Goes to a position and intakes a game piece.
-     * @param intialPose The initial pose of the robot.
+     * @param initialPose The initial pose of the robot.
      * @param waypoints The waypoints to hit along the path.
      * @param finalPose The destination pose of the robot.
      * @return The `SequentialCommandGroup` representing running the commands in order.
@@ -62,7 +60,7 @@ public abstract class BaseAutonSequence extends SequentialCommandGroup {
 
     /**
      * Goes to a position and intakes a game piece.
-     * @param intialPose The initial pose of the robot.
+     * @param initialPose The initial pose of the robot.
      * @param waypoints The waypoints to hit along the path.
      * @param finalPose The destination pose of the robot.
      * @return The `SequentialCommandGroup` representing running the commands in order.
@@ -72,46 +70,5 @@ public abstract class BaseAutonSequence extends SequentialCommandGroup {
             .alongWith(new TiltedElevatorCommand(tiltedElevatorSubsystem, ElevatorState.GROUND))
             .deadlineWith(new RollerIntakeCommand(rollerSubsystem));
             // .andThen(new SwerveIdleCommand(swerveSubsystem));
-    }
-
-    /**
-     * Goes to a position and places the currently held game piece.
-     * @param intialPose The initial pose of the robot.
-     * @param waypoints The waypoints to hit along the path.
-     * @param raisePose The pose to raise the elevator at.
-     * @param finalPose The destination pose of the robot.
-     * @param elevatorState The destination elevator state of the robot.
-     * @return The `SequentialCommandGroup` representing running the commands in order.
-     */
-    protected SequentialCommandGroup goAndPlace(Pose2d initialPose, List<Pose2d> waypoints, Pose2d raisePose, Pose2d finalPose, ElevatorState elevatorState) {
-        return FollowPathCommand.composedFrom(swerveSubsystem, initialPose, waypoints, raisePose, false, true)
-            .andThen(goAndPlace(raisePose, finalPose, elevatorState, true));
-    }
-
-    /**
-     * Goes to a position and places the currently held game piece.
-     * @param intialPose The initial pose of the robot.
-     * @param finalPose The destination pose of the robot.
-     * @param elevatorState The destination elevator state of the robot.
-     * @return The `SequentialCommandGroup` representing running the commands in order.
-     */
-    protected SequentialCommandGroup goAndPlace(Pose2d initialPose, Pose2d finalPose, ElevatorState elevatorState) {
-        return goAndPlace(initialPose, finalPose, elevatorState, false);
-    }
-
-    /**
-     * Goes to a position and places the currently held game piece.
-     * @param intialPose The initial pose of the robot.
-     * @param finalPose The destination pose of the robot.
-     * @param elevatorState The destination elevator state of the robot.
-     * @param startsMoving Whether the robot starts the `FollowPathCommand` in motion.
-     * @return The `SequentialCommandGroup` representing running the commands in order.
-     */
-    protected SequentialCommandGroup goAndPlace(Pose2d initialPose, Pose2d finalPose, ElevatorState elevatorState, boolean startsMoving) {
-        return new TiltedElevatorCommand(tiltedElevatorSubsystem, elevatorState)
-            .alongWith(FollowPathCommand.from(swerveSubsystem, initialPose, List.of(), finalPose, startsMoving, false))
-            .andThen(new SwerveIdleCommand(swerveSubsystem))
-            .andThen(new WaitCommand(0.1))
-            .andThen(DropperChooserCommand.getSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, elevatorState));
     }
 }

@@ -4,6 +4,7 @@ import java.util.List;
 
 import edu.wpi.first.math.geometry.Pose2d;
 
+import frc.robot.commands.dropping.GoAndPlaceCommand;
 import frc.robot.commands.swerve.FollowPathCommand;
 import frc.robot.positions.FieldPosition;
 import frc.robot.positions.PlacePosition;
@@ -49,7 +50,10 @@ public class BottomTwoPieceAutonSequence extends BaseAutonSequence {
             // Go and grab 2nd piece
             goAndGrab(midPose2, List.of(), grabPose, true, false),
             // Go and place grabbed piece
-            goAndPlace(grabPose, List.of(midPose2), midPose1, placePose2, elevatorState2)
+            GoAndPlaceCommand.composedFrom(
+                swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem,
+                grabPose, List.of(midPose2), midPose1, placePose2, elevatorState2
+            )
         );
     }
 }

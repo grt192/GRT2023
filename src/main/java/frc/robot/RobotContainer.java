@@ -217,6 +217,8 @@ public class RobotContainer {
             driveController.getAlignRightButton().onTrue(new InstantCommand(autoAlignCommand::alignRight));
             driveController.getCancelAutoAlignButton().onTrue(new InstantCommand(autoAlignCommand::cancel));
 
+            mechLStick.onTrue(new InstantCommand(autoAlignCommand::driveForwardAndPlace));
+
             /*
             brSwitch.onTrue(new InstantCommand(() -> {
                 swerveSubsystem.setSteerRelativeEncoderFeedback(true);
