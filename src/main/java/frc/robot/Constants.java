@@ -168,10 +168,10 @@ public final class Constants {
     }
 
     public static final class PfftRollerConstants{
-        public static final int PFFT_FORWARD = 0;
-        public static final int PFFT_REVERSE = 2;
-        public static final int PFFT_FORWARD_ATMOSPHERE = 1;
-        public static final int PFFT_REVERSE_ATMOSPHERE = 3;
+        public static final int PFFT_FORWARD = 2;
+        public static final int PFFT_FORWARD_ATMOSPHERE = 3;
+        public static final int PFFT_REVERSE = 0;
+        public static final int PFFT_REVERSE_ATMOSPHERE = 1;
     }
 
     public static final class RollerConstants {
