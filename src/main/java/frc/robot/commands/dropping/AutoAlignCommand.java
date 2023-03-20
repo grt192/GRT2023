@@ -30,7 +30,7 @@ import frc.robot.subsystems.tiltedelevator.ElevatorState.OffsetState;
 public class AutoAlignCommand extends InstantCommand {
     private final BaseSwerveSubsystem swerveSubsystem;
     private final TiltedElevatorSubsystem tiltedElevatorSubsystem;
-    private final boolean isRed;
+    private boolean isRed;
 
     private final InstantCommand[] setTargetCommands;
     private final HashMap<FieldPosition, GenericEntry> booleanEntries;
@@ -305,6 +305,14 @@ public class AutoAlignCommand extends InstantCommand {
         // Revert strafing lock and target place position
         swerveSubsystem.setChargingStationLocked(false);
         targetPlacePosition = null;
+    }
+
+    /**
+     * Sets the alliance of this auto align command.
+     * @param isRed Whether the robot is on the red team. If false, aligns to blue nodes.
+     */
+    public void setIsRed(boolean isRed) {
+        this.isRed = isRed;
     }
 
     private static int getShuffleboardRow(PlacePosition position) {

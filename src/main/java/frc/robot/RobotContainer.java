@@ -116,7 +116,7 @@ public class RobotContainer {
     private final MotorTestCommand testCommand;
 
     private final BaseBalancerCommand balancerCommand;
-    private volatile AutoAlignCommand autoAlignCommand;
+    private final AutoAlignCommand autoAlignCommand;
 
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -158,6 +158,7 @@ public class RobotContainer {
             autoAlignCommand = new AutoAlignCommand(swerveSubsystem, tiltedElevatorSubsystem, false);
         } else {
             testCommand = null;
+            autoAlignCommand = null;
         }
 
         superstructure = new Superstructure(
@@ -180,8 +181,7 @@ public class RobotContainer {
 
         ShuffleboardUtil.addBooleanListener(isRedEntry, (isRed) -> {
             if (!(driveSubsystem instanceof BaseSwerveSubsystem)) return;
-            autoAlignCommand = new AutoAlignCommand((BaseSwerveSubsystem) driveSubsystem, tiltedElevatorSubsystem, isRed);
-            configureAutoAlignBindings();
+            autoAlignCommand.setIsRed(isRed);
 
             // TODO: preconstruct auton
         });
@@ -308,13 +308,6 @@ public class RobotContainer {
         }, signalLEDSubsystem));
 
         mechRStick.onTrue(new InstantCommand(signalLEDSubsystem::toggleManual));
-    }
-
-    private void configureAutoAlignBindings() {
-        driveController.getAlignToClosestButton().onTrue(autoAlignCommand);
-        driveController.getAlignLeftButton().onTrue(new InstantCommand(autoAlignCommand::alignLeft));
-        driveController.getAlignRightButton().onTrue(new InstantCommand(autoAlignCommand::alignRight));
-        driveController.getCancelAutoAlignButton().onTrue(new InstantCommand(autoAlignCommand::cancel));
     }
 
     /**
