@@ -132,7 +132,7 @@ public final class Constants {
         public static final float EXTENSION_LIMIT_METERS = (float) Units.inchesToMeters(64.25 + 0.75); // extra 3/4" to account for steady-state error in PID
         public static final double EXTENSION_TOLERANCE_METERS = Units.inchesToMeters(1);
 
-        public static final int ZERO_LIMIT_ID = 2;
+        public static final int ZERO_LIMIT_ID = 1;
         public static final int LEFT_HALL_ID = 4;
         public static final HallEffectSensor.Magnet[] LEFT_MAGNETS = {
             new HallEffectSensor.Magnet(EXTENSION_LIMIT_METERS) // TODO: find actual location of hall effect!
