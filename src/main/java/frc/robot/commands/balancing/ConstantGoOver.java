@@ -10,10 +10,11 @@ import frc.robot.subsystems.drivetrain.BaseDrivetrain;
 import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
 
 /**
- * A command that moves robot over charging station at a varying speed, 
- *  changing speed based on the stage of the charging station the robot is on. 
+ * A command that moves robot over charging station at a constant speed, 
+ *  pausing after passing the center of rotation to allow charging station motion,
+ *  and then continuing on to exit the community.
  */
-public class GoOverCommand extends CommandBase {
+public class ConstantGoOver extends CommandBase {
     private final BaseDrivetrain driveSubsystem;
     private final AHRS ahrs; 
 
@@ -21,64 +22,56 @@ public class GoOverCommand extends CommandBase {
     private double targetHeading;
     private double currentPitch;
 
-    private boolean reachedStation;
-    private boolean passedCenter;
     private boolean overStation;
     private boolean waiting;
-    private double POWER_SCALE = 1;
+    private boolean waited;
+
+    private double POWER_SCALE = 0.5;
 
     private final Timer timer;
 
-    public GoOverCommand(BaseDrivetrain driveSubsystem, boolean isRed) {
+    public ConstantGoOver(BaseDrivetrain driveSubsystem, boolean isRed) {
         this.driveSubsystem = driveSubsystem;
         this.ahrs = driveSubsystem.getAhrs();
+        
         this.targetHeading = isRed
             ? Math.PI
             : 0.0;
+        
         timer = new Timer();
         addRequirements(driveSubsystem);
     }
 
     @Override
     public void initialize() {
-        reachedStation = false;
-        passedCenter = false;
         overStation = false;
         waiting = false;
+        waited = false; 
     }
 
     @Override
     public void execute() {
-        currentPitch = ahrs.getPitch();
+        currentPitch = ahrs. getPitch();
         System.out.println("Pitch" + currentPitch);
 
-        if (!reachedStation) {
-            returnDrivePower = -0.80;
-            reachedStation = currentPitch <= -7.0;
-            if(reachedStation) System.out.println("reached station");
-        }
-
-        if (reachedStation && !passedCenter) {
-            returnDrivePower = -0.25;
-            if (currentPitch >= -7.0){
-                passedCenter = true;
-                System.out.println("passed center");
-            } 
-        }
-        if (reachedStation && passedCenter && !overStation) {
-            if (Math.abs(currentPitch) <= 2.0) {
-                overStation = true;
-                System.out.println("over station");
+        if(!waited && currentPitch >= 2.0){ // if we haven't already waited
+            if(!waiting){ // if we need to wait, and we are not currently waiting
+                timer.reset();
+                timer.start();
+                waiting = true;
+                returnDrivePower = 0.0;
             }
-            else returnDrivePower = -0.2;
+            if(waiting && timer.hasElapsed(0.25)){ // if we are waiting and it has been at least 0.25 seconds
+                waited = true;
+                waiting = false;
+                returnDrivePower = -0.5;
+                overStation = true;
+                timer.reset();
+                timer.start();
+            }
         }
-
-        if (overStation && !waiting) {
-            timer.reset();
-            timer.start();
-            returnDrivePower = -0.3;
-            waiting = true;
-            System.out.println("waiting");
+        else{
+            returnDrivePower = -0.6; // if we do not need to wait and are not waiting
         }
 
         if(driveSubsystem instanceof BaseSwerveSubsystem){
@@ -98,6 +91,6 @@ public class GoOverCommand extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return overStation && timer.hasElapsed(1.0);
+        return overStation && timer.hasElapsed(1.5);
     }
 }

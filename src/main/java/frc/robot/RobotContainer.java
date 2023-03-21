@@ -40,6 +40,7 @@ import frc.robot.commands.balancing.BaseBalancerCommand;
 import frc.robot.commands.balancing.DefaultBalancerCommand;
 import frc.robot.commands.dropping.AutoAlignCommand;
 import frc.robot.commands.balancing.DualPIDBalancerCommand;
+import frc.robot.commands.balancing.GoOverCommand;
 import frc.robot.commands.dropping.DropperChooserCommand;
 import frc.robot.commands.pretest.MotorTestCommand;
 import frc.robot.controllers.BaseDriveController;
@@ -117,6 +118,7 @@ public class RobotContainer {
     private final MotorTestCommand testCommand;
 
     private final BaseBalancerCommand balancerCommand;
+    private final GoOverCommand goOverCommand;
     private final AutoAlignCommand autoAlignCommand;
 
     /**
@@ -136,6 +138,7 @@ public class RobotContainer {
         tiltedElevatorSubsystem = new TiltedElevatorSubsystem();
 
         balancerCommand = new DualPIDBalancerCommand(driveSubsystem);
+        goOverCommand = new GoOverCommand(driveSubsystem, false);
 
         // Initialize auton choosers
         autonPathChooser = new SendableChooser<>();
@@ -196,7 +199,7 @@ public class RobotContainer {
      * Configures button bindings for the drive subsystem and controller.
      */
     private void configureDriveBindings() {
-        driveController.getBalancerButton().whileTrue(balancerCommand);
+        driveController.getBalancerButton().whileTrue(goOverCommand);
         driveController.getCameraSwitchButton().onTrue(new InstantCommand(switchableCamera::switchCamera));
 
         if (driveSubsystem instanceof BaseSwerveSubsystem) {

@@ -40,7 +40,7 @@ public final class Constants {
             ? -2.9255307594961444 //0.21606189409364873 
             : -0.3458388725942889; // 2.795753780995504 flipped
         public static final double TR_OFFSET_RADS = IS_R1 
-            ? -0.9027260979029794 // 2.2388665556868137
+            ? -1.1199431538621365 //2.0216494997276566
             : -0.44043676455947356; // 2.7011558890303196 flipped
         public static final double BL_OFFSET_RADS = IS_R1
             ? -0.3165152510020395 // 2.8250774025877536
@@ -49,7 +49,7 @@ public final class Constants {
             ? -2.8609512726492206 // 0.28064138094057256
             : -0.56871098279953; // 2.572881670790263 flipped
 
-        public static final double SPARE_OFFSET_RADS = -0.45006162325014304815085006008076;
+        //public static final double SPARE_OFFSET_RADS = -0.43533498445619759906483314235355; // old -0.45006162325014304815085006008076
 
         public static final int TL_DRIVE = 2;
         public static final int TL_STEER = 3;
