@@ -47,10 +47,6 @@ public class RollerSubsystem extends SubsystemBase {
     private static final int CONE_PROXIMITY_THRESHOLD = 115;
     private static final int CUBE_PROXIMITY_THRESHOLD = 145;
 
-    private static final int CONE_RED = 79;
-    private static final int CONE_GREEN = 129;
-    private static final int CONE_BLUE = 45;
-
     private int coneRed = 92;
     private int coneGreen = 140;
     private int coneBlue = 22;
@@ -190,7 +186,7 @@ public class RollerSubsystem extends SubsystemBase {
 
     private void rollingLogic() {
         HeldPiece limitPiece = getLimitSwitchPiece();
-        // HeldPiece proximityPiece = getProximitySensorPiece();
+        HeldPiece proximityPiece = getProximitySensorPiece();
         HeldPiece colorPiece = getColorSensorPiece();
 
         // If either the limit switch or the proximity sensor have detected a piece, set
@@ -251,9 +247,9 @@ public class RollerSubsystem extends SubsystemBase {
         bEntry.setValue(blue);
 
         //calculate 3d distance between measured point and each set points
-        double emptyDist = Math.pow(EMPTY_RED - red, 2) + Math.pow(EMPTY_GREEN - green, 2) + Math.pow(EMPTY_BLUE - blue, 2);
-        double coneDist = Math.pow(CONE_RED - red, 2) + Math.pow(CONE_GREEN - green, 2) + Math.pow(CONE_BLUE - blue, 2);
-        double cubeDist = Math.pow(CUBE_RED - red, 2) + Math.pow(CUBE_GREEN - green, 2) + Math.pow(CUBE_BLUE - blue, 2);
+        double emptyDist = Math.pow(emptyRed - red, 2) + Math.pow(emptyGreen- green, 2) + Math.pow(emptyBlue - blue, 2);
+        double coneDist = Math.pow(coneRed - red, 2) + Math.pow(coneGreen - green, 2) + Math.pow(coneBlue - blue, 2);
+        double cubeDist = Math.pow(cubeRed - red, 2) + Math.pow(cubeGreen - green, 2) + Math.pow(cubeBlue - blue, 2);
 
         // System.out.println("empty -  " + emptyDist + " cone - " + coneDist + " cube - " + cubeDist);
 
