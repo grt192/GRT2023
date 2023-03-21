@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 
+import frc.robot.commands.swerve.GoToPointCommand;
 import frc.robot.positions.FieldPosition;
 import frc.robot.positions.PlacePosition;
 import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
@@ -35,7 +36,8 @@ public class AutoAlignCommand extends InstantCommand {
     private final HashMap<FieldPosition, GenericEntry> booleanEntries;
 
     private volatile PlacePosition targetPlacePosition;
-    private volatile AlignToNodeCommand wrappedCommand;
+    private volatile AlignToNodeCommand wrappedAlignCommand;
+    private volatile GoToPointCommand wrappedGoForwardCommand;
 
     private final ShuffleboardTab shuffleboardTab;
 
@@ -160,6 +162,15 @@ public class AutoAlignCommand extends InstantCommand {
     }
 
     /**
+     * Drives forward against the grid to place. Does nothing if there isn't a target place position.
+     */
+    public void driveForwardToPlace() {
+        if (targetPlacePosition == null) return;
+        if (wrappedAlignCommand != null) wrappedAlignCommand.cancel();
+        wrappedGoForwardCommand.schedule();
+    }
+
+    /**
      * Returns a provided HYBRID, MID, or HIGH place position, depending on the given elevator state.
      * @param elevatorState The current elevator state of the robot.
      * @param hybridPosition The HYBRID position to return.
@@ -253,9 +264,14 @@ public class AutoAlignCommand extends InstantCommand {
         booleanEntries.get(newPosition.placePosition).setBoolean(true);
         targetPlacePosition = newPosition;
 
-        if (wrappedCommand != null) wrappedCommand.cancel();
-        wrappedCommand = new AlignToNodeCommand(swerveSubsystem, tiltedElevatorSubsystem, targetPlacePosition, isRed);
-        wrappedCommand.schedule();
+        // Construct and schedule align to node command
+        if (wrappedAlignCommand != null) wrappedAlignCommand.cancel();
+        wrappedAlignCommand = new AlignToNodeCommand(swerveSubsystem, tiltedElevatorSubsystem, targetPlacePosition, isRed);
+        wrappedAlignCommand.schedule();
+
+        // Construct but don't schedule "drive forward" command
+        if (wrappedGoForwardCommand != null) wrappedGoForwardCommand.cancel();
+        wrappedGoForwardCommand = new GoToPointCommand(swerveSubsystem, targetPlacePosition.placePosition.getPose(isRed));
 
         // Lock parallel to the grid for better strafing
         swerveSubsystem.setChargingStationLocked(true);
@@ -279,7 +295,8 @@ public class AutoAlignCommand extends InstantCommand {
      */
     @Override
     public void cancel() {
-        if (wrappedCommand != null) wrappedCommand.cancel();
+        if (wrappedAlignCommand != null) wrappedAlignCommand.cancel();
+        if (wrappedGoForwardCommand != null) wrappedGoForwardCommand.cancel();
         for (InstantCommand command : setTargetCommands) {
             command.cancel();
         }
