@@ -24,12 +24,10 @@ public class MissileShellSwerveSubsystem extends BaseDrivetrain {
     };
 
     public MissileShellSwerveSubsystem() {
-        module = new SwerveModule.TopRight(
-            SwerveConstants.TR_DRIVE,
-            SwerveConstants.TR_STEER,
-            SwerveConstants.TR_OFFSET_RADS
-            //SwerveConstants.SPARE_OFFSET_RADS
-            
+        module = new SwerveModule.BottomLeft(
+            SwerveConstants.BL_DRIVE,
+            SwerveConstants.BL_STEER,
+            SwerveConstants.BL_OFFSET_RADS
         );
 
         // module.setSteerRelativeFeedback(true);

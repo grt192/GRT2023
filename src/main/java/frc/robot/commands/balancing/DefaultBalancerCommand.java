@@ -18,6 +18,7 @@ public class DefaultBalancerCommand extends BaseBalancerCommand {
 
     private double returnDrivePower; // drive power to be returned to DT
     private double prevPitchDegs;
+    private double direction;
 
     private boolean reachedStation;
     private boolean passedCenter;
@@ -31,8 +32,9 @@ public class DefaultBalancerCommand extends BaseBalancerCommand {
      * whether to balance from the front or back.
      * 
      * @param driveSubsystem The drive subsystem.
+     * @param reverseBalance true if the robot balances backwards
      */
-    public DefaultBalancerCommand(BaseDrivetrain driveSubsystem) {
+    public DefaultBalancerCommand(BaseDrivetrain driveSubsystem, boolean reverseBalance) {
         super(driveSubsystem);
 
         drivePID = new PIDController(BalancerConstants.COMP_CHARGING_STATION_KP, 0.0, 0.0);
@@ -40,6 +42,10 @@ public class DefaultBalancerCommand extends BaseBalancerCommand {
         runawayTimer = new Timer();
 
         balanceLog = new StringLogEntry(DataLogManager.getLog(), "balanceLog");
+
+        direction = reverseBalance
+            ? 1
+            : -1;
     }
 
     @Override
@@ -65,7 +71,7 @@ public class DefaultBalancerCommand extends BaseBalancerCommand {
             if (currentPitchDegs <= -15.0) {
                 reachedStation = true;
                 balanceLog.append("Reached Charging Station");
-                returnDrivePower = -0.17;
+                returnDrivePower = -0.17 * direction;
             }
             else if(runawayTimer.hasElapsed(2.0)){
                 returnDrivePower = 0.0;

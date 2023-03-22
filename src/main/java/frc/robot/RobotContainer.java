@@ -199,7 +199,7 @@ public class RobotContainer {
      * Configures button bindings for the drive subsystem and controller.
      */
     private void configureDriveBindings() {
-        driveController.getBalancerButton().whileTrue(goOverCommand);
+        driveController.getBalancerButton().whileTrue(balancerCommand);
         driveController.getCameraSwitchButton().onTrue(new InstantCommand(switchableCamera::switchCamera));
 
         if (driveSubsystem instanceof BaseSwerveSubsystem) {

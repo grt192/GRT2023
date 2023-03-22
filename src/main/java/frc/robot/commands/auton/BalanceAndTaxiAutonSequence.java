@@ -29,7 +29,7 @@ public class BalanceAndTaxiAutonSequence extends BaseAutonSequence {
             // Go over the charging station to taxi
             new GoOverCommand(swerveSubsystem, isRed),
             // Go and balance on charging station from the other side
-            new DefaultBalancerCommand(swerveSubsystem)
+            new DefaultBalancerCommand(swerveSubsystem, true)
         );
     }
 
