@@ -11,7 +11,7 @@ public enum ElevatorState {
     CUBE_MID(Units.inchesToMeters(Constants.IS_R1 ? 33 : 40)), // absolute height = 14.25 in
     CUBE_HIGH(Units.inchesToMeters(Constants.IS_R1 ? 53 : 55)), // absolute height = 31.625 in
     CONE_MID(Units.inchesToMeters(Constants.IS_R1 ? 50 : 48), 0, -Units.inchesToMeters(10)), // absolute height = 34 in
-    CONE_HIGH(Units.inchesToMeters(Constants.IS_R1 ? 53 : 61)), // absolute height = 46 in
+    CONE_HIGH(Units.inchesToMeters(Constants.IS_R1 ? 55 : 61)), // absolute height = 46 in
     HOME(Units.inchesToMeters(0));
 
     private final double extendDistanceMeters; // meters, extension distance of winch
