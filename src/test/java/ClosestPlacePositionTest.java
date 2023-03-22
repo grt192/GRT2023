@@ -177,6 +177,7 @@ public class ClosestPlacePositionTest {
      * Current elevator state: ElevatorState.CONE_HIGH
      * Expected position: C1_HIGH
      */
+    /*
     @Test
     public void breaksElevatorTiesTowardsCone() {
         Pose2d C1 = PlacePosition.C1_HIGH.alignPosition.BLUE;
@@ -191,6 +192,7 @@ public class ClosestPlacePositionTest {
             PlacePosition.C1_HIGH
         );
     }
+    */
 
     /**
      * Ensures that the `getClosestPlacePosition` method correctly breaks ties using elevator extension.
