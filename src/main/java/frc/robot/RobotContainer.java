@@ -175,8 +175,8 @@ public class RobotContainer {
         );
 
         shuffleboardTab.add("Auton", autonChooser)
-            .withPosition(8, 0)
-            .withSize(3, 1);
+            .withPosition(0, 4)
+            .withSize(3, 2);
 
         // Configure button bindings
         configureDriveBindings();

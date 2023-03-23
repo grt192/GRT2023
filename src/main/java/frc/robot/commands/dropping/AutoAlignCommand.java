@@ -32,7 +32,7 @@ public class AutoAlignCommand extends InstantCommand {
     private final boolean isRed;
 
     private final InstantCommand[] setTargetCommands;
-    private final HashMap<PlacePosition, GenericEntry> booleanEntries;
+    private final HashMap<FieldPosition, GenericEntry> booleanEntries;
 
     private volatile PlacePosition targetPlacePosition;
     private volatile AlignToNodeCommand wrappedCommand;
@@ -60,7 +60,7 @@ public class AutoAlignCommand extends InstantCommand {
         addRequirements(swerveSubsystem, tiltedElevatorSubsystem);
 
         // Initialize shuffleboard alignment buttons
-        shuffleboardTab = Shuffleboard.getTab("Grid");
+        shuffleboardTab = Shuffleboard.getTab("Driver");
         booleanEntries = new HashMap<>();
 
         PlacePosition[] positions = PlacePosition.values();
@@ -77,10 +77,10 @@ public class AutoAlignCommand extends InstantCommand {
             int column = getShuffleboardColumn(position);
             int row = getShuffleboardRow(position);
 
-            shuffleboardTab.add(position.name(), command).withPosition(column, row + 1);
+            shuffleboardTab.add(position.name(), command).withPosition(column, row);
             booleanEntries.put(
-                position,
-                shuffleboardTab.add("T: " + position.name(), false).withPosition(column, row).getEntry()
+                position.placePosition,
+                shuffleboardTab.add(position.placePosition.name(), false).withPosition(column, 3).getEntry()
             );
         }
     }
@@ -249,8 +249,8 @@ public class AutoAlignCommand extends InstantCommand {
      * @param newPosition The new `PlacePosition` to align with.
      */
     private void scheduleAlignCommandWith(PlacePosition newPosition) {
-        if (targetPlacePosition != null) booleanEntries.get(targetPlacePosition).setBoolean(false);
-        booleanEntries.get(newPosition).setBoolean(true);
+        if (targetPlacePosition != null) booleanEntries.get(targetPlacePosition.placePosition).setBoolean(false);
+        booleanEntries.get(targetPlacePosition.placePosition).setBoolean(true);
         targetPlacePosition = newPosition;
 
         if (wrappedCommand != null) wrappedCommand.cancel();
@@ -293,8 +293,8 @@ public class AutoAlignCommand extends InstantCommand {
     private static int getShuffleboardRow(PlacePosition position) {
         return switch (position) {
             case A1_HIGH, A2_HIGH, A3_HIGH, B1_HIGH, B2_HIGH, B3_HIGH, C1_HIGH, C2_HIGH, C3_HIGH -> 0;
-            case A1_MID, A2_MID, A3_MID, B1_MID, B2_MID, B3_MID, C1_MID, C2_MID, C3_MID -> 2;
-            case A1_HYBRID, A2_HYBRID, A3_HYBRID, B1_HYBRID, B2_HYBRID, B3_HYBRID, C1_HYBRID, C2_HYBRID, C3_HYBRID -> 4;
+            case A1_MID, A2_MID, A3_MID, B1_MID, B2_MID, B3_MID, C1_MID, C2_MID, C3_MID -> 1;
+            case A1_HYBRID, A2_HYBRID, A3_HYBRID, B1_HYBRID, B2_HYBRID, B3_HYBRID, C1_HYBRID, C2_HYBRID, C3_HYBRID -> 2;
             default -> throw new RuntimeException("Position not found!");
         };
     }

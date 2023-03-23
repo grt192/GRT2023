@@ -47,12 +47,12 @@ public class SwitchableCamera {
 
         // top.getProperty("raw_brightness").set(40);
         // back.getProperty("raw_brightness").set(40);
-        
+
         server = CameraServer.getServer();
 
         widget = shuffleboardTab.add("Intake Camera", getSource())
-            .withPosition(0, 0)
-            .withSize(10, 5);
+            .withPosition(9, 0)
+            .withSize(3, 3);
     }
 
     /**
