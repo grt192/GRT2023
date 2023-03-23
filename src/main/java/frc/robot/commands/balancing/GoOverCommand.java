@@ -14,6 +14,10 @@ import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
  *  changing speed based on the stage of the charging station the robot is on. 
  */
 public class GoOverCommand extends CommandBase {
+    private final double APPROACH_STATION_POWER = -0.75;
+    private final double CLIMBING_STATION_POWER = -0.45;
+    private final double PAST_CENTER_POWER = -0.25;
+
     private final BaseDrivetrain driveSubsystem;
     private final AHRS ahrs; 
 
@@ -53,13 +57,13 @@ public class GoOverCommand extends CommandBase {
         System.out.println("Pitch" + currentPitch);
 
         if (!reachedStation) {
-            returnDrivePower = -0.80;
+            returnDrivePower = APPROACH_STATION_POWER;
             reachedStation = currentPitch <= -7.0;
             if(reachedStation) System.out.println("reached station");
         }
 
         if (reachedStation && !passedCenter) {
-            returnDrivePower = -0.25;
+            returnDrivePower = CLIMBING_STATION_POWER;
             if (currentPitch >= -7.0){
                 passedCenter = true;
                 System.out.println("passed center");
@@ -70,23 +74,23 @@ public class GoOverCommand extends CommandBase {
                 overStation = true;
                 System.out.println("over station");
             }
-            else returnDrivePower = -0.2;
+            else returnDrivePower = PAST_CENTER_POWER;
         }
 
         if (overStation && !waiting) {
             timer.reset();
             timer.start();
-            returnDrivePower = -0.3;
+            returnDrivePower = PAST_CENTER_POWER;
             waiting = true;
             System.out.println("waiting");
         }
 
-        // if(driveSubsystem instanceof BaseSwerveSubsystem){
-        //     ((BaseSwerveSubsystem)driveSubsystem).setDrivePowersWithHeadingLock(returnDrivePower * POWER_SCALE,0.0, Rotation2d.fromRadians(targetHeading), true);
-        // } 
-        // else {
+        if(driveSubsystem instanceof BaseSwerveSubsystem){
+            ((BaseSwerveSubsystem)driveSubsystem).setDrivePowersWithHeadingLock(returnDrivePower * POWER_SCALE,0.0, Rotation2d.fromRadians(targetHeading), true);
+        } 
+        else {
             driveSubsystem.setDrivePowers(returnDrivePower * POWER_SCALE);
-        // }
+        }
     }
 
     @Override 
@@ -98,6 +102,6 @@ public class GoOverCommand extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return overStation && timer.hasElapsed(0.3);
+        return overStation && timer.hasElapsed(2.0);
     }
 }
