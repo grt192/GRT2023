@@ -41,6 +41,7 @@ import frc.robot.commands.balancing.DefaultBalancerCommand;
 import frc.robot.commands.dropping.AutoAlignCommand;
 import frc.robot.commands.balancing.DualPIDBalancerCommand;
 import frc.robot.commands.balancing.GoOverCommand;
+import frc.robot.commands.balancing.PIDSwitchBalancerCommand;
 import frc.robot.commands.dropping.DropperChooserCommand;
 import frc.robot.commands.pretest.MotorTestCommand;
 import frc.robot.controllers.BaseDriveController;
@@ -129,7 +130,7 @@ public class RobotContainer {
 
         photonWrapper = new PhotonWrapper();
         switchableCamera = new SwitchableCamera(shuffleboardTab);
-        
+
         signalLEDSubsystem = new LEDSubsystem(); 
 
         // driveSubsystem = new MissileShellSwerveSubsystem();
@@ -137,7 +138,7 @@ public class RobotContainer {
         rollerSubsystem = new RollerSubsystem();
         tiltedElevatorSubsystem = new TiltedElevatorSubsystem();
 
-        balancerCommand = new DualPIDBalancerCommand(driveSubsystem);
+        balancerCommand = new DefaultBalancerCommand(driveSubsystem,true);
         goOverCommand = new GoOverCommand(driveSubsystem, false);
 
         // Initialize auton choosers
@@ -199,7 +200,7 @@ public class RobotContainer {
      * Configures button bindings for the drive subsystem and controller.
      */
     private void configureDriveBindings() {
-        driveController.getBalancerButton().whileTrue(balancerCommand);
+        driveController.getBalancerButton().whileTrue(goOverCommand);
         driveController.getCameraSwitchButton().onTrue(new InstantCommand(switchableCamera::switchCamera));
 
         if (driveSubsystem instanceof BaseSwerveSubsystem) {

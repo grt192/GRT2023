@@ -25,7 +25,7 @@ public class GoOverCommand extends CommandBase {
     private boolean passedCenter;
     private boolean overStation;
     private boolean waiting;
-    private double POWER_SCALE = 1;
+    private double POWER_SCALE = 0.5;
 
     private final Timer timer;
 
@@ -33,8 +33,8 @@ public class GoOverCommand extends CommandBase {
         this.driveSubsystem = driveSubsystem;
         this.ahrs = driveSubsystem.getAhrs();
         this.targetHeading = isRed
-            ? Math.PI
-            : 0.0;
+            ? 0.0
+            : Math.PI;
         timer = new Timer();
         addRequirements(driveSubsystem);
     }
@@ -81,12 +81,12 @@ public class GoOverCommand extends CommandBase {
             System.out.println("waiting");
         }
 
-        if(driveSubsystem instanceof BaseSwerveSubsystem){
-            ((BaseSwerveSubsystem)driveSubsystem).setDrivePowersWithHeadingLock(returnDrivePower * POWER_SCALE,0.0, Rotation2d.fromRadians(targetHeading), true);
-        } 
-        else {
+        // if(driveSubsystem instanceof BaseSwerveSubsystem){
+        //     ((BaseSwerveSubsystem)driveSubsystem).setDrivePowersWithHeadingLock(returnDrivePower * POWER_SCALE,0.0, Rotation2d.fromRadians(targetHeading), true);
+        // } 
+        // else {
             driveSubsystem.setDrivePowers(returnDrivePower * POWER_SCALE);
-        }
+        // }
     }
 
     @Override 
@@ -98,6 +98,6 @@ public class GoOverCommand extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return overStation && timer.hasElapsed(1.0);
+        return overStation && timer.hasElapsed(0.3);
     }
 }

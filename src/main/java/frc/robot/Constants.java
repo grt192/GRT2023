@@ -43,7 +43,7 @@ public final class Constants {
             ? -1.1199431538621365 //2.0216494997276566
             : -0.44043676455947356; // 2.7011558890303196 flipped
         public static final double BL_OFFSET_RADS = IS_R1
-            ? 1.82083772420488//-1.320754929384913
+            ? -0.2841749310532986
             : -0.4294843792954861; // 2.712108274294307 flipped
         public static final double BR_OFFSET_RADS = IS_R1
             ? -2.8609512726492206 // 0.28064138094057256

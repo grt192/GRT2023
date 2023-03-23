@@ -60,6 +60,7 @@ public class DefaultBalancerCommand extends BaseBalancerCommand {
         
         runawayTimer.reset();
         runawayTimer.start();
+        direction = 1;
     }
 
     @Override
@@ -67,7 +68,7 @@ public class DefaultBalancerCommand extends BaseBalancerCommand {
         double currentPitchDegs = ahrs.getPitch();
 
         if (!reachedStation) {
-            returnDrivePower = -0.80;
+            returnDrivePower = -0.80 * direction;
             if (currentPitchDegs <= -15.0) {
                 reachedStation = true;
                 balanceLog.append("Reached Charging Station");
@@ -83,7 +84,7 @@ public class DefaultBalancerCommand extends BaseBalancerCommand {
             double deltaPitchDegs = Math.abs(currentPitchDegs - prevPitchDegs); 
 
             if (!passedCenter) {
-                if(currentPitchDegs >= -5.0){
+                if(currentPitchDegs >= -8.0){
                     passedCenter = true;
                     balanceLog.append("Passed Center of Charging Station");
                 }
