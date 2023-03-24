@@ -138,7 +138,7 @@ public class RobotContainer {
         rollerSubsystem = new RollerSubsystem();
         tiltedElevatorSubsystem = new TiltedElevatorSubsystem();
 
-        balancerCommand = new DefaultBalancerCommand(driveSubsystem,true);
+        balancerCommand = new DefaultBalancerCommand(driveSubsystem,false);
         goOverCommand = new GoOverCommand(driveSubsystem, false);
 
         // Initialize auton choosers
@@ -200,7 +200,7 @@ public class RobotContainer {
      * Configures button bindings for the drive subsystem and controller.
      */
     private void configureDriveBindings() {
-        driveController.getBalancerButton().whileTrue(goOverCommand);
+        driveController.getBalancerButton().whileTrue(balancerCommand);
         driveController.getCameraSwitchButton().onTrue(new InstantCommand(switchableCamera::switchCamera));
 
         if (driveSubsystem instanceof BaseSwerveSubsystem) {

@@ -3,6 +3,7 @@ package frc.robot.commands.balancing;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.util.datalog.DataLogEntry;
 import edu.wpi.first.util.datalog.StringLogEntry;
@@ -18,7 +19,10 @@ public class DefaultBalancerCommand extends BaseBalancerCommand {
 
     private double returnDrivePower; // drive power to be returned to DT
     private double prevPitchDegs;
+    
     private double direction;
+    private Rotation2d targetHeading;
+    private boolean reverse;
 
     private boolean reachedStation;
     private boolean passedCenter;
@@ -46,6 +50,10 @@ public class DefaultBalancerCommand extends BaseBalancerCommand {
         direction = reverseBalance
             ? 1
             : -1;
+        targetHeading = reverseBalance
+            ? Rotation2d.fromRadians(Math.PI)
+            : new Rotation2d();
+        reverse = reverseBalance;
     }
 
     @Override
@@ -60,7 +68,6 @@ public class DefaultBalancerCommand extends BaseBalancerCommand {
         
         runawayTimer.reset();
         runawayTimer.start();
-        direction = 1;
     }
 
     @Override
@@ -69,7 +76,7 @@ public class DefaultBalancerCommand extends BaseBalancerCommand {
 
         if (!reachedStation) {
             returnDrivePower = -0.80 * direction;
-            if (currentPitchDegs <= -15.0) {
+            if ((reverse && currentPitchDegs <= -10.0) || (!reverse && currentPitchDegs >= 10.0)) {
                 reachedStation = true;
                 balanceLog.append("Reached Charging Station");
                 returnDrivePower = -0.17 * direction;
@@ -84,7 +91,7 @@ public class DefaultBalancerCommand extends BaseBalancerCommand {
             double deltaPitchDegs = Math.abs(currentPitchDegs - prevPitchDegs); 
 
             if (!passedCenter) {
-                if(currentPitchDegs >= -8.0){
+                if((reverse && currentPitchDegs >= -10.0) || (!reverse && currentPitchDegs <= 10.0)){ // reverse && currentPitchDegs >= -8.0
                     passedCenter = true;
                     balanceLog.append("Passed Center of Charging Station");
                 }
@@ -92,7 +99,7 @@ public class DefaultBalancerCommand extends BaseBalancerCommand {
             else {
                 returnDrivePower = -1 * drivePID.calculate(currentPitchDegs, 0);
 
-                if (Math.abs(currentPitchDegs) <= 1.0 && deltaPitchDegs <= 0.1){
+                if((reverse && Math.abs(currentPitchDegs) <= 1.0 && deltaPitchDegs <= 0.1) || (!reverse && Math.abs(currentPitchDegs) >= -1.0 && deltaPitchDegs >= -0.1)){
                     balanced = true;
                     balanceLog.append("Robot balanced");
                 }
@@ -106,7 +113,7 @@ public class DefaultBalancerCommand extends BaseBalancerCommand {
             runaway = true;            
         }
 
-        driveSubsystem.setDrivePowers(returnDrivePower);
+        ((BaseSwerveSubsystem)driveSubsystem).setDrivePowersWithHeadingLock(returnDrivePower,0.0,targetHeading, true);
 
         prevPitchDegs = currentPitchDegs;
     }
