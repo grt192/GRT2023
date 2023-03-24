@@ -79,7 +79,8 @@ public class RollerSubsystem extends SubsystemBase {
 
         openMotor = MotorUtil.createTalonSRX(OPEN_ID);
         openMotor.setNeutralMode(NeutralMode.Brake);
-        openMotor.setInverted(true);
+        // openMotor.setInverted(true);
+        openMotor.setInverted(false);
 
         limitSwitch = new DigitalInput(LIMIT_SWITCH_ID);
         crolorSensor = new ColorSensorV3(I2C.Port.kMXP);
