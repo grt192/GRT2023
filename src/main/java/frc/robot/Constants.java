@@ -47,7 +47,7 @@ public final class Constants {
             : -0.4294843792954861; // 2.712108274294307 flipped
         public static final double BR_OFFSET_RADS = IS_R1
             ? -2.8609512726492206 // 0.28064138094057256
-            : 1.5007363875680646; // -1.6408562660217285 flipped
+            : -0.56871098279953; // 2.572881670790263 flipped
 
         public static final int TL_DRIVE = 2;
         public static final int TL_STEER = 3;

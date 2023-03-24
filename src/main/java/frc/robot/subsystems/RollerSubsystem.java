@@ -68,8 +68,8 @@ public class RollerSubsystem extends SubsystemBase {
 
     public RollerSubsystem() {
         leftBeak = MotorUtil.createTalonSRX(LEFT_ID);
-        leftBeak.setInverted(true);
-        // leftBeak.setInverted(false);
+        // leftBeak.setInverted(true);
+        leftBeak.setInverted(false);
         leftBeak.setNeutralMode(NeutralMode.Brake);
 
         rightBeak = MotorUtil.createTalonSRX(RIGHT_ID);
