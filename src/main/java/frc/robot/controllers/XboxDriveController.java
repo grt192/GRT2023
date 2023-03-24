@@ -16,7 +16,9 @@ public class XboxDriveController extends BaseDriveController {
         driveLBumper = new JoystickButton(driveController, XboxController.Button.kLeftBumper.value),
         driveRBumper = new JoystickButton(driveController, XboxController.Button.kRightBumper.value),
         driveLStickButton = new JoystickButton(driveController, XboxController.Button.kLeftStick.value),
-        driveRStickButton = new JoystickButton(driveController, XboxController.Button.kRightStick.value);
+        driveRStickButton = new JoystickButton(driveController, XboxController.Button.kRightStick.value),
+        driveBackButton = new JoystickButton(driveController, XboxController.Button.kBack.value),
+        driveStartButton = new JoystickButton(driveController, XboxController.Button.kStart.value);
 
     @Override
     public double getForwardPower() {
@@ -76,6 +78,11 @@ public class XboxDriveController extends BaseDriveController {
     @Override
     public JoystickButton getAlignRightButton() {
         return driveRBumper;
+    }
+
+    @Override
+    public JoystickButton getDriveForwardButton() {
+        return driveStartButton;
     }
 
     @Override

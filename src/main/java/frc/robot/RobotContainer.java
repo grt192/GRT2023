@@ -215,6 +215,7 @@ public class RobotContainer {
             driveController.getAlignToClosestButton().onTrue(autoAlignCommand);
             driveController.getAlignLeftButton().onTrue(new InstantCommand(autoAlignCommand::alignLeft));
             driveController.getAlignRightButton().onTrue(new InstantCommand(autoAlignCommand::alignRight));
+            driveController.getDriveForwardButton().onTrue(new InstantCommand(autoAlignCommand::driveForwardToPlace));
             driveController.getCancelAutoAlignButton().onTrue(new InstantCommand(autoAlignCommand::cancel));
 
             /*
