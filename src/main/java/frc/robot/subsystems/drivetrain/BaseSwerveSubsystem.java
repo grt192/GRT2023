@@ -122,20 +122,20 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
 
         shuffleboardTab = Shuffleboard.getTab("Driver");
         shuffleboardTab.add("Field", fieldWidget)
-            .withPosition(8, 1)
+            .withPosition(3, 4)
             .withSize(3, 2);
-        xEntry = shuffleboardTab.add("x pos (in)", 0).withPosition(0, 5).getEntry();
-        yEntry = shuffleboardTab.add("y pos (in)", 0).withPosition(1, 5).getEntry();
-        thetaEntry = shuffleboardTab.add("theta pos (deg)", 0).withPosition(2, 5).getEntry();
+        xEntry = shuffleboardTab.add("x pos (in)", 0).withPosition(6, 5).getEntry();
+        yEntry = shuffleboardTab.add("y pos (in)", 0).withPosition(7, 5).getEntry();
+        thetaEntry = shuffleboardTab.add("theta pos (deg)", 0).withPosition(8, 5).getEntry();
 
         swerveRelativeEntry = shuffleboardTab.add("Swerve relative", false)
-            .withPosition(3, 5)
+            .withPosition(6, 4)
             .getEntry();
         chargingStationLockedEntry = shuffleboardTab.add("Charging station locking", chargingStationLocked)
-            .withPosition(4, 5)
+            .withPosition(7, 4)
             .getEntry();
         relativeEncoderEntry = shuffleboardTab.add("Relative encoder feedback", false)
-            .withPosition(5, 5)
+            .withPosition(8, 4)
             .getEntry();
 
         visionEnableEntry = Shuffleboard.getTab("PhotonVision").add("Vision enable", VISION_ENABLE)
@@ -145,7 +145,7 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
         ShuffleboardUtil.addBooleanListener(visionEnableEntry, (value) -> VISION_ENABLE = value);
 
         GenericEntry relativeEncoderToggleEntry = shuffleboardTab.add("Relative encoder feedback (set)", false)
-            .withPosition(6, 5)
+            .withPosition(9, 4)
             .withWidget(BuiltInWidgets.kToggleSwitch)
             .getEntry();
         ShuffleboardUtil.addBooleanListener(relativeEncoderToggleEntry, (value) -> setSteerRelativeEncoderFeedback(value));
