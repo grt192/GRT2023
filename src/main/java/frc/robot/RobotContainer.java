@@ -171,11 +171,11 @@ public class RobotContainer {
             .withSize(3, 1);
 
         shuffleboardTab.add("Start position", autonInitialPoseChooser)
-            .withPosition(9, 1)
+            .withPosition(0, 5)
             .withSize(2, 1);
 
         isRedEntry = shuffleboardTab.add("Is RED", false)
-            .withPosition(8, 1)
+            .withPosition(2, 5)
             .withWidget(BuiltInWidgets.kToggleSwitch)
             .getEntry();
 

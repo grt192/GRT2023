@@ -128,7 +128,7 @@ public final class Constants {
         public static final int EXTENSION_ID = 7;
         public static final int EXTENSION_FOLLOW_ID = 8;
         public static final int EXTENSION_FOLLOW_B_ID = 9;
-        
+
         public static final float EXTENSION_LIMIT_METERS = (float) Units.inchesToMeters(64.25 + 0.75); // extra 3/4" to account for steady-state error in PID
         public static final double EXTENSION_TOLERANCE_METERS = Units.inchesToMeters(1);
 
