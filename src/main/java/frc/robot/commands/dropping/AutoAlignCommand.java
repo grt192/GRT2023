@@ -78,7 +78,7 @@ public class AutoAlignCommand extends InstantCommand {
             int row = getShuffleboardRow(position);
 
             shuffleboardTab.add(position.name(), command).withPosition(column, row);
-            booleanEntries.put(
+            if (!booleanEntries.containsKey(position.placePosition)) booleanEntries.put(
                 position.placePosition,
                 shuffleboardTab.add(position.placePosition.name(), false).withPosition(column, 3).getEntry()
             );
@@ -250,7 +250,7 @@ public class AutoAlignCommand extends InstantCommand {
      */
     private void scheduleAlignCommandWith(PlacePosition newPosition) {
         if (targetPlacePosition != null) booleanEntries.get(targetPlacePosition.placePosition).setBoolean(false);
-        booleanEntries.get(targetPlacePosition.placePosition).setBoolean(true);
+        booleanEntries.get(newPosition.placePosition).setBoolean(true);
         targetPlacePosition = newPosition;
 
         if (wrappedCommand != null) wrappedCommand.cancel();
