@@ -84,6 +84,12 @@ public class TwistJoystickDriveController extends BaseDriveController {
     }
 
     @Override
+    public JoystickButton getDriveForwardButton() {
+        // TODO: this button is double bound, but there aren't enough buttons left for these controls
+        return leftTopLeftButton;
+    }
+
+    @Override
     public JoystickButton getCancelAutoAlignButton() {
         return leftMiddleButton;
     }

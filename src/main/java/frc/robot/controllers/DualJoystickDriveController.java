@@ -93,6 +93,11 @@ public class DualJoystickDriveController extends BaseDriveController {
     }
 
     @Override
+    public JoystickButton getDriveForwardButton() {
+        return rightTopLeftButton;
+    }
+
+    @Override
     public JoystickButton getCancelAutoAlignButton() {
         return rightBackButton;
     }
