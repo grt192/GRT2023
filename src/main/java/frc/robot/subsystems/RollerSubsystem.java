@@ -39,7 +39,7 @@ public class RollerSubsystem extends SubsystemBase {
     private final TrackingTimer openTimer = new TrackingTimer();
     private final TrackingTimer closeTimer = new TrackingTimer();
     private final TrackingTimer cooldownTimer = new TrackingTimer();
-    private final Timer colorTimer = new Timer();
+    private final TrackingTimer colorTimer = new TrackingTimer();
 
     private static final double OPEN_TIME_SECONDS = 1.0;
     private static final double CLOSE_TIME_SECONDS = 0.5;
@@ -86,7 +86,6 @@ public class RollerSubsystem extends SubsystemBase {
 
         limitSwitch = new DigitalInput(LIMIT_SWITCH_ID);
         crolorSensor = new ColorSensorV3(I2C.Port.kMXP);
-        colorTimer.start();
 
         shuffleboardTab = Shuffleboard.getTab("Roller");
         limitEntry = shuffleboardTab.add("Limit piece", "EMPTY")
@@ -236,8 +235,16 @@ public class RollerSubsystem extends SubsystemBase {
 
         //if the color is 0 0 0, the sensor is broken and should be rebooted
         //only do this every couple seconds
-        if(colorTimer.advanceIfElapsed(2) && red == 0 && green == 0 && blue == 0){
-            crolorSensor = new ColorSensorV3(I2C.Port.kMXP);
+        if(red == 0 && green == 0 && blue == 0){
+            if(!colorTimer.hasStarted()){
+                crolorSensor = new ColorSensorV3(I2C.Port.kMXP);
+                colorTimer.start();
+            } else if (colorTimer.advanceIfElapsed(2)){
+                crolorSensor = new ColorSensorV3(I2C.Port.kMXP);
+            }
+        } else if(colorTimer.hasStarted()){
+            colorTimer.stop();
+            colorTimer.reset();
         }
 
         //calculate 3d distance between measured point and each set points
