@@ -8,6 +8,7 @@ import com.revrobotics.ColorSensorV3;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.I2C;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.util.Color;
@@ -24,7 +25,7 @@ public class RollerSubsystem extends SubsystemBase {
     private final WPI_TalonSRX openMotor;
 
     private final DigitalInput limitSwitch;
-    private final ColorSensorV3 crolorSensor;
+    private ColorSensorV3 crolorSensor;
 
     public enum HeldPiece {
         CONE, CUBE, EMPTY;
@@ -38,6 +39,7 @@ public class RollerSubsystem extends SubsystemBase {
     private final TrackingTimer openTimer = new TrackingTimer();
     private final TrackingTimer closeTimer = new TrackingTimer();
     private final TrackingTimer cooldownTimer = new TrackingTimer();
+    private final Timer colorTimer = new Timer();
 
     private static final double OPEN_TIME_SECONDS = 1.0;
     private static final double CLOSE_TIME_SECONDS = 0.5;
@@ -84,6 +86,7 @@ public class RollerSubsystem extends SubsystemBase {
 
         limitSwitch = new DigitalInput(LIMIT_SWITCH_ID);
         crolorSensor = new ColorSensorV3(I2C.Port.kMXP);
+        colorTimer.start();
 
         shuffleboardTab = Shuffleboard.getTab("Roller");
         limitEntry = shuffleboardTab.add("Limit piece", "EMPTY")
@@ -230,6 +233,12 @@ public class RollerSubsystem extends SubsystemBase {
         rEntry.setValue(red);
         gEntry.setValue(green);
         bEntry.setValue(blue);
+
+        //if the color is 0 0 0, the sensor is broken and should be rebooted
+        //only do this every couple seconds
+        if(colorTimer.advanceIfElapsed(2) && red == 0 && green == 0 && blue == 0){
+            crolorSensor = new ColorSensorV3(I2C.Port.kMXP);
+        }
 
         //calculate 3d distance between measured point and each set points
         double emptyDist = Math.pow(EMPTY_RED - red, 2) + Math.pow(EMPTY_GREEN - green, 2) + Math.pow(EMPTY_BLUE - blue, 2);
