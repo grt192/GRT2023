@@ -18,7 +18,7 @@ public class LEDSubsystem extends SubsystemBase {
     private boolean blinking = false;
 
     private static final double BRIGHTNESS_SCALE_FACTOR = 0.25;
-    private static final double INPUT_DEADZONE = 0.1;
+    private static final double INPUT_DEADZONE = 0.35;
 
     private Color currentColor = CUBE_COLOR;
     private Color lastPieceColor = currentColor;

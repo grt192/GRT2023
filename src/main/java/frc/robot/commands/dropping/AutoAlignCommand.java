@@ -76,7 +76,7 @@ public class AutoAlignCommand extends InstantCommand {
             PlacePosition position = positions[i];
 
             // When pressed, set the target place position to the given value and align to the node.
-            InstantCommand command = new InstantCommand(() -> scheduleAlignCommandWith(position), swerveSubsystem, tiltedElevatorSubsystem);
+            InstantCommand command = new InstantCommand(() -> scheduleAlignCommandWith(position, true), swerveSubsystem, tiltedElevatorSubsystem);
             setTargetCommands[i] = command;
 
             // Add command and boolean indicator to grid
@@ -262,8 +262,9 @@ public class AutoAlignCommand extends InstantCommand {
      * node it is aligning with.
      * 
      * @param newPosition The new `PlacePosition` to align with.
+     * @param driveForwardAfterwards TODO
      */
-    private void scheduleAlignCommandWith(PlacePosition newPosition) {
+    private void scheduleAlignCommandWith(PlacePosition newPosition, boolean driveForwardAfterwards) {
         if (targetPlacePosition != null) booleanEntries.get(targetPlacePosition.placePosition).getEntry().setBoolean(false);
         booleanEntries.get(newPosition.placePosition).getEntry().setBoolean(true);
         targetPlacePosition = newPosition;
@@ -271,15 +272,22 @@ public class AutoAlignCommand extends InstantCommand {
         if (wrappedGoForwardCommand != null) wrappedGoForwardCommand.cancel();
         if (wrappedAlignCommand != null) wrappedAlignCommand.cancel();
 
-        // Construct but don't schedule "drive forward" command
+        wrappedAlignCommand = new AlignToNodeCommand(swerveSubsystem, tiltedElevatorSubsystem, targetPlacePosition, isRed);
         wrappedGoForwardCommand = new GoToPointCommand(swerveSubsystem, targetPlacePosition.placePosition.getPose(isRed));
 
-        // Construct and schedule align to node command
-        wrappedAlignCommand = new AlignToNodeCommand(swerveSubsystem, tiltedElevatorSubsystem, targetPlacePosition, isRed);
-        wrappedAlignCommand.schedule();
+        // Schedule just the align command if not driving forward immediately after, or both if that is the case.
+        if (driveForwardAfterwards) {
+            wrappedAlignCommand.andThen(wrappedGoForwardCommand).schedule();
+        } else {
+            wrappedAlignCommand.schedule();
+        }
 
         // Lock parallel to the grid for better strafing
         swerveSubsystem.setChargingStationLocked(true);
+    }
+
+    private void scheduleAlignCommandWith(PlacePosition newPosition) {
+        scheduleAlignCommandWith(newPosition, false);
     }
 
     /**

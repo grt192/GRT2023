@@ -23,22 +23,20 @@ public class GoOverCommand extends CommandBase {
     private final AHRS ahrs; 
 
     private double returnDrivePower;
-    private double targetHeading;
 
     private boolean reachedStation;
     private boolean passedCenter;
     private boolean overStation;
     private boolean waiting;
 
+    private final Timer passedCenterTimer;
     private final Timer waitTimer;
 
     public GoOverCommand(BaseDrivetrain driveSubsystem, boolean isRed) {
         this.driveSubsystem = driveSubsystem;
         this.ahrs = driveSubsystem.getAhrs();
-        this.targetHeading = isRed
-            ? 0.0
-            : Math.PI;
         waitTimer = new Timer();
+        passedCenterTimer = new Timer();
         addRequirements(driveSubsystem);
     }
 
@@ -62,14 +60,19 @@ public class GoOverCommand extends CommandBase {
         } else if (!passedCenter) {
             returnDrivePower = CLIMBING_STATION_POWER;
             passedCenter = currentPitch >= -7.0;
-            if (passedCenter) System.out.println("passed center");
+            if (passedCenter) {
+                System.out.println("passed center");
+                passedCenterTimer.start();
+            }
         } else if (!overStation) {
             returnDrivePower = PAST_CENTER_POWER;
-            overStation = Math.abs(currentPitch) <= 2.0;
-            if (overStation) System.out.println("over station");
+            if (passedCenterTimer.hasElapsed(0.35)) { // wait a little bit before allowing ourselves to think we're passed center (bc otherwise gaslit by chargng station)
+                overStation = Math.abs(currentPitch) <= 2.0;
+                if (overStation) System.out.println("over station");
+            }
         } else if (!waiting) {
             waitTimer.start();
-            returnDrivePower = 0.0;
+            returnDrivePower = -0.2;
             waiting = true;
             System.out.println("waiting");
         }
@@ -78,7 +81,7 @@ public class GoOverCommand extends CommandBase {
             ((BaseSwerveSubsystem) driveSubsystem).setDrivePowersWithHeadingLock(
                 returnDrivePower * POWER_SCALE,
                 0.0,
-                Rotation2d.fromRadians(targetHeading),
+                new Rotation2d(Math.PI),
                 true
             );
         } else {
@@ -97,6 +100,6 @@ public class GoOverCommand extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return waitTimer.hasElapsed(2.0);
+        return waitTimer.hasElapsed(1.5);
     }
 }

@@ -22,8 +22,8 @@ public class DefaultBalancerCommand extends BaseBalancerCommand {
     private double prevPitchDegs;
     
     private final double direction;
-    private final Rotation2d targetHeading;
     private final boolean reverse;
+    private Rotation2d targetHeading;
 
     private boolean reachedStation;
     private boolean passedCenter;
@@ -49,9 +49,6 @@ public class DefaultBalancerCommand extends BaseBalancerCommand {
         balanceLog = new StringLogEntry(DataLogManager.getLog(), "balanceLog");
 
         direction = reverseBalance ? 1 : -1;
-        targetHeading = reverseBalance
-            ? Rotation2d.fromRadians(Math.PI)
-            : new Rotation2d();
         reverse = reverseBalance;
     }
 
@@ -64,7 +61,16 @@ public class DefaultBalancerCommand extends BaseBalancerCommand {
         passedCenter = false;
         balanced = false;
         runaway = false;
-        
+
+        if (driveSubsystem instanceof BaseSwerveSubsystem) {
+            double currentHeadingRads = ((BaseSwerveSubsystem) driveSubsystem).getDriverHeading().getRadians();
+            double lockHeadingRads = (Math.abs(currentHeadingRads) > Math.PI / 2.0) ? Math.PI : 0;
+
+            targetHeading = new Rotation2d(lockHeadingRads);
+        } else {
+            targetHeading = new Rotation2d();
+        }
+
         runawayTimer.reset();
         runawayTimer.start();
     }
@@ -110,8 +116,17 @@ public class DefaultBalancerCommand extends BaseBalancerCommand {
             runaway = true;            
         }
 
-        // TODO: dangerous without instanceof check
-        ((BaseSwerveSubsystem) driveSubsystem).setDrivePowersWithHeadingLock(returnDrivePower, 0.0, targetHeading, true);
+        if (driveSubsystem instanceof BaseSwerveSubsystem) {
+            BaseSwerveSubsystem swerveSubsystem = (BaseSwerveSubsystem) driveSubsystem;
+            swerveSubsystem.setDrivePowersWithHeadingLock(
+                returnDrivePower,
+                0.0,
+                targetHeading,
+                true
+            );
+        } else {
+            driveSubsystem.setDrivePowers(returnDrivePower);
+        }
 
         prevPitchDegs = currentPitchDegs;
     }

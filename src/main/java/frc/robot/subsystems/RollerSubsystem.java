@@ -80,7 +80,7 @@ public class RollerSubsystem extends SubsystemBase {
         rightBeak.setNeutralMode(NeutralMode.Brake);
 
         openMotor = MotorUtil.createTalonSRX(OPEN_ID);
-        openMotor.setNeutralMode(NeutralMode.Brake);
+        openMotor.setNeutralMode(NeutralMode.Coast);
         // openMotor.setInverted(true);
         openMotor.setInverted(false);
 

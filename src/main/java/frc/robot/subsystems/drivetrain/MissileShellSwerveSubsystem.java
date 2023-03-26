@@ -6,6 +6,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.Timer;
 
 import frc.robot.Constants.SwerveConstants;
 
@@ -16,6 +17,8 @@ public class MissileShellSwerveSubsystem extends BaseDrivetrain {
     private final SwerveModule module;
     private final SwerveDriveKinematics kinematics;
 
+    private final Timer tuningTimer = new Timer();
+
     private static final double MAX_VEL = SwerveSubsystem.MAX_VEL; // Max robot tangential velocity, in m/s
     private static final boolean OFFSET_TUNING_ENABLE = true; // Whether to use this subsystem for swerve module offset tuning.
 
@@ -24,10 +27,10 @@ public class MissileShellSwerveSubsystem extends BaseDrivetrain {
     };
 
     public MissileShellSwerveSubsystem() {
-        module = new SwerveModule.BottomLeft(
-            SwerveConstants.BL_DRIVE,
-            SwerveConstants.BL_STEER,
-            SwerveConstants.BL_OFFSET_RADS
+        module = new SwerveModule.BottomRight(
+            SwerveConstants.BR_DRIVE,
+            SwerveConstants.BR_STEER,
+            SwerveConstants.BR_OFFSET_RADS
         );
 
         // module.setSteerRelativeFeedback(true);
@@ -37,6 +40,8 @@ public class MissileShellSwerveSubsystem extends BaseDrivetrain {
             new Translation2d(),
             new Translation2d()
         );
+
+        tuningTimer.start();
     }
 
     @Override
@@ -46,7 +51,7 @@ public class MissileShellSwerveSubsystem extends BaseDrivetrain {
 
         // Print values for encoder tuning. To set a zero, currentAngle + offset = 0 -> offset = -currentAngle.
         // In case the offset is 180 degrees off, also print it plus pi.
-        if (OFFSET_TUNING_ENABLE) {
+        if (OFFSET_TUNING_ENABLE && tuningTimer.advanceIfElapsed(0.2)) {
             double currentAngleRads = module.getAbsoluteRawAngleRads();
 
             // The offset of the module assuming that it is aligned with the front of the robot.
