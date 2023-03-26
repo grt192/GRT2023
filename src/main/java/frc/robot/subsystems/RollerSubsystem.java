@@ -8,6 +8,7 @@ import com.revrobotics.ColorSensorV3;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.I2C;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.util.Color;
@@ -24,7 +25,7 @@ public class RollerSubsystem extends SubsystemBase {
     private final WPI_TalonSRX openMotor;
 
     private final DigitalInput limitSwitch;
-    private final ColorSensorV3 crolorSensor;
+    private ColorSensorV3 crolorSensor;
 
     public enum HeldPiece {
         CONE, CUBE, EMPTY;
@@ -38,6 +39,7 @@ public class RollerSubsystem extends SubsystemBase {
     private final TrackingTimer openTimer = new TrackingTimer();
     private final TrackingTimer closeTimer = new TrackingTimer();
     private final TrackingTimer cooldownTimer = new TrackingTimer();
+    private final TrackingTimer colorTimer = new TrackingTimer();
 
     private static final double OPEN_TIME_SECONDS = 1.0;
     private static final double CLOSE_TIME_SECONDS = 0.5;
@@ -192,7 +194,7 @@ public class RollerSubsystem extends SubsystemBase {
         // Otherwise, open if we're opening and close if we're closing.
         if (openTimer.hasStarted()) openMotor.set(0.5);
         else if (closeTimer.hasStarted()) openMotor.set(-0.2);
-        else if (heldPiece == HeldPiece.CONE) openMotor.set(-0.14);
+        else if (heldPiece == HeldPiece.CONE) openMotor.setVoltage(-4.0);
         else openMotor.set(0);
     }
 
@@ -230,6 +232,20 @@ public class RollerSubsystem extends SubsystemBase {
         rEntry.setValue(red);
         gEntry.setValue(green);
         bEntry.setValue(blue);
+
+        //if the color is 0 0 0, the sensor is broken and should be rebooted
+        //only do this every couple seconds
+        if(red == 0 && green == 0 && blue == 0){
+            if(!colorTimer.hasStarted()){
+                crolorSensor = new ColorSensorV3(I2C.Port.kMXP);
+                colorTimer.start();
+            } else if (colorTimer.advanceIfElapsed(2)){
+                crolorSensor = new ColorSensorV3(I2C.Port.kMXP);
+            }
+        } else if(colorTimer.hasStarted()){
+            colorTimer.stop();
+            colorTimer.reset();
+        }
 
         //calculate 3d distance between measured point and each set points
         double emptyDist = Math.pow(EMPTY_RED - red, 2) + Math.pow(EMPTY_GREEN - green, 2) + Math.pow(EMPTY_BLUE - blue, 2);

@@ -21,6 +21,8 @@ public class Superstructure extends SubsystemBase {
     private final SwitchableCamera switchableCamera;
     private final BaseDriveController driveController;
 
+    private static final double CANCEL_AUTO_ALIGN_POWER = 0.1;
+
     private ElevatorState lastElevatorState;
 
     public Superstructure(
@@ -61,10 +63,11 @@ public class Superstructure extends SubsystemBase {
         rollerSubsystem.allowOpen = tiltedElevatorSubsystem.getExtensionMeters() >= ALLOW_OPEN_EXTENSION_METERS;
 
         // Cancel auto-align command if magnitude of drive inputs is greater than 0.15.
-        double inputMagnitude = Math.hypot(
+        double translateMagnitude = Math.hypot(
             driveController.getForwardPower(),
             driveController.getLeftPower()
         );
-        if (inputMagnitude > 0.15) autoAlignCommand.cancel();
+        double turnMagnitude = Math.abs(driveController.getRotatePower());
+        if (translateMagnitude > CANCEL_AUTO_ALIGN_POWER || turnMagnitude > CANCEL_AUTO_ALIGN_POWER) autoAlignCommand.cancel();
     }
 }
