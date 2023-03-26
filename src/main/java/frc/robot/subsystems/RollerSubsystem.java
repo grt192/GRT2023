@@ -239,6 +239,7 @@ public class RollerSubsystem extends SubsystemBase {
         //if the color is 0 0 0, the sensor is broken and should be rebooted
         //only do this every couple seconds
         if(red == 0 && green == 0 && blue == 0){
+            leds.setColorSensorOff(true);
             if(!colorTimer.hasStarted()){
                 crolorSensor = new ColorSensorV3(I2C.Port.kMXP);
                 colorTimer.start();
@@ -246,8 +247,11 @@ public class RollerSubsystem extends SubsystemBase {
                 crolorSensor = new ColorSensorV3(I2C.Port.kMXP);
             }
         } else if(colorTimer.hasStarted()){
+            leds.setColorSensorOff(false);
             colorTimer.stop();
             colorTimer.reset();
+        } else {
+            leds.setColorSensorOff(false);
         }
 
         //calculate 3d distance between measured point and each set points
