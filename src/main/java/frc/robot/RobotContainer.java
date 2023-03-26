@@ -131,7 +131,7 @@ public class RobotContainer {
 
         // driveSubsystem = new MissileShellSwerveSubsystem();
         driveSubsystem = new SwerveSubsystem(photonWrapper, signalLEDSubsystem);
-        rollerSubsystem = new RollerSubsystem();
+        rollerSubsystem = new RollerSubsystem(signalLEDSubsystem);
         tiltedElevatorSubsystem = new TiltedElevatorSubsystem();
 
         balancerCommand = new DefaultBalancerCommand(driveSubsystem);

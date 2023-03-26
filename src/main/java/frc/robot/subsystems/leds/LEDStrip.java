@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.util.Color;
 public class LEDStrip {
     private final AddressableLED led;
     private final AddressableLEDBuffer ledBuffer;
+    private final AddressableLEDBuffer overlayBuffer;
 
     private final Timer ledTimer;
 
@@ -17,6 +18,7 @@ public class LEDStrip {
     public LEDStrip(int ledPort, int ledLength) {
         led = new AddressableLED(ledPort);
         ledBuffer = new AddressableLEDBuffer(ledLength);
+        overlayBuffer = new AddressableLEDBuffer(ledLength);
 
         led.setLength(ledBuffer.getLength());
         led.start();
@@ -44,6 +46,13 @@ public class LEDStrip {
      */
     public void setBuffer() {
         led.setData(ledBuffer);
+    }
+
+    /**
+     * Sets the LED data to the overlay buffer
+     */
+    public void setOverlay() {
+        led.setData(overlayBuffer);
     }
 
     /**
@@ -79,6 +88,32 @@ public class LEDStrip {
                 ledBuffer.setLED(i, color1);
             } else {
                 ledBuffer.setLED(i, color2);
+            }
+        }
+    }
+    
+    /**
+     * Copies the ledBuffer to the overlayBuffer
+     * this is done so that the overlay buffer does not affect the continuous led mode
+     */
+    public void copyToOverlay(){
+        for (int i = 0; i < ledBuffer.getLength(); i++){
+            overlayBuffer.setLED(i, ledBuffer.getLED(i));
+        }
+    }
+
+    /**
+     * Fills LED buffer with a color that is in groups, the on to off ratio is
+     * onGroupLength:offGroupLength
+     * @param color The color you are filling
+     * @param onGroupLength The length of leds to be turned to color
+     * @param offGroupLength The length of leds to be skipped
+     */
+    public void fillGroupedWithBlanks(Color color, int onGroupLength, int offGroupLength) {
+        copyToOverlay();
+        for (int i = 0; i < overlayBuffer.getLength(); i++) {
+            if (i % (onGroupLength + offGroupLength) < onGroupLength){
+                overlayBuffer.setLED(i, color);
             }
         }
     }

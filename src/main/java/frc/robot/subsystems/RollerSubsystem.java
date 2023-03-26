@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
+import frc.robot.subsystems.leds.LEDSubsystem;
 import frc.robot.util.MotorUtil;
 import frc.robot.util.TrackingTimer;
 
@@ -66,9 +66,11 @@ public class RollerSubsystem extends SubsystemBase {
     private final GenericEntry limitEntry, proximityEntry, colorEntry, heldPieceEntry;
     private final GenericEntry rEntry, gEntry, bEntry;
 
+    private final LEDSubsystem leds;
+
     private double rollPower = 0.0;
 
-    public RollerSubsystem() {
+    public RollerSubsystem(LEDSubsystem ledSubsystem) {
         leftBeak = MotorUtil.createTalonSRX(LEFT_ID);
         // leftBeak.setInverted(true);
         leftBeak.setInverted(false);
@@ -86,6 +88,7 @@ public class RollerSubsystem extends SubsystemBase {
 
         limitSwitch = new DigitalInput(LIMIT_SWITCH_ID);
         crolorSensor = new ColorSensorV3(I2C.Port.kMXP);
+        leds = ledSubsystem;
 
         shuffleboardTab = Shuffleboard.getTab("Roller");
         limitEntry = shuffleboardTab.add("Limit piece", "EMPTY")

@@ -22,7 +22,7 @@ import frc.robot.subsystems.tiltedelevator.TiltedElevatorSubsystem;
 
 public class AutonPathTest {
     private static final SwerveSubsystem swerveSubsystem = new SwerveSubsystem(null, null);
-    private static final RollerSubsystem rollerSubsystem = new RollerSubsystem();
+    private static final RollerSubsystem rollerSubsystem = new RollerSubsystem(null);
     private static final TiltedElevatorSubsystem tiltedElevatorSubsystem = new TiltedElevatorSubsystem();
 
     /**
