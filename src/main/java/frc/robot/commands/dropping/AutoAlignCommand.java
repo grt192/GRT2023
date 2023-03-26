@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ComplexWidget;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 
 import frc.robot.commands.swerve.GoToPointCommand;
@@ -39,7 +40,7 @@ public class AutoAlignCommand extends InstantCommand {
     private final HashMap<FieldPosition, SimpleWidget> booleanEntries;
 
     private volatile PlacePosition targetPlacePosition;
-    private volatile AlignToNodeCommand wrappedAlignCommand;
+    private volatile Command wrappedAlignCommand;
     private volatile GoToPointCommand wrappedGoForwardCommand;
 
     private final ShuffleboardTab shuffleboardTab;
@@ -169,7 +170,7 @@ public class AutoAlignCommand extends InstantCommand {
      * Drives forward against the grid to place. Does nothing if there isn't a target place position.
      */
     public void driveForwardToPlace() {
-        if (targetPlacePosition == null) return;
+        if (wrappedGoForwardCommand == null) return;
         if (wrappedAlignCommand != null) wrappedAlignCommand.cancel();
         wrappedGoForwardCommand.schedule();
     }
@@ -272,15 +273,20 @@ public class AutoAlignCommand extends InstantCommand {
         if (wrappedGoForwardCommand != null) wrappedGoForwardCommand.cancel();
         if (wrappedAlignCommand != null) wrappedAlignCommand.cancel();
 
-        wrappedAlignCommand = new AlignToNodeCommand(swerveSubsystem, tiltedElevatorSubsystem, targetPlacePosition, isRed);
-        wrappedGoForwardCommand = new GoToPointCommand(swerveSubsystem, targetPlacePosition.placePosition.getPose(isRed));
-
-        // Schedule just the align command if not driving forward immediately after, or both if that is the case.
+        // If we automatically drive forward afterwards, the align command is a composition that automatically schedules the
+        // drive forward command and the go forward command is set to null.
         if (driveForwardAfterwards) {
-            wrappedAlignCommand.andThen(wrappedGoForwardCommand).schedule();
+            wrappedAlignCommand = new AlignToNodeCommand(swerveSubsystem, tiltedElevatorSubsystem, targetPlacePosition, isRed).andThen(
+                new GoToPointCommand(swerveSubsystem, targetPlacePosition.placePosition.getPose(isRed))
+            );
+            wrappedGoForwardCommand = null;
         } else {
-            wrappedAlignCommand.schedule();
+            wrappedAlignCommand = new AlignToNodeCommand(swerveSubsystem, tiltedElevatorSubsystem, targetPlacePosition, isRed);
+            wrappedGoForwardCommand = new GoToPointCommand(swerveSubsystem, targetPlacePosition.placePosition.getPose(isRed));
         }
+
+        // Schedule align command immediately
+        wrappedAlignCommand.schedule();
 
         // Lock parallel to the grid for better strafing
         swerveSubsystem.setChargingStationLocked(true);
