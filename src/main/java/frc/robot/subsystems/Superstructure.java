@@ -1,5 +1,8 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.commands.dropping.AutoAlignCommand;
@@ -24,6 +27,11 @@ public class Superstructure extends SubsystemBase {
     private static final double CANCEL_AUTO_ALIGN_POWER = 0.1;
 
     private ElevatorState lastElevatorState;
+
+    private final ShuffleboardTab shuffleboardTab = Shuffleboard.getTab("Driver");
+    private final GenericEntry cancellingEntry = shuffleboardTab.add("Align cancel", false)
+        .withPosition(9, 3)
+        .getEntry();
 
     public Superstructure(
         RollerSubsystem rollerSubsystem, TiltedElevatorSubsystem tiltedElevatorSubsystem, LEDSubsystem ledSubsystem,
@@ -68,6 +76,9 @@ public class Superstructure extends SubsystemBase {
             driveController.getLeftPower()
         );
         double turnMagnitude = Math.abs(driveController.getRotatePower());
-        if (translateMagnitude > CANCEL_AUTO_ALIGN_POWER || turnMagnitude > CANCEL_AUTO_ALIGN_POWER) autoAlignCommand.cancel();
+        boolean cancelling = translateMagnitude > CANCEL_AUTO_ALIGN_POWER || turnMagnitude > CANCEL_AUTO_ALIGN_POWER;
+        
+        if (cancelling) autoAlignCommand.cancel();
+        cancellingEntry.setBoolean(cancelling);
     }
 }

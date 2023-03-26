@@ -273,19 +273,18 @@ public class AutoAlignCommand extends InstantCommand {
         if (wrappedGoForwardCommand != null) wrappedGoForwardCommand.cancel();
         if (wrappedAlignCommand != null) wrappedAlignCommand.cancel();
 
+        wrappedGoForwardCommand = new GoToPointCommand(swerveSubsystem, targetPlacePosition.placePosition.getPose(isRed));
+
         // If we automatically drive forward afterwards, the align command is a composition that automatically schedules the
-        // drive forward command and the go forward command is set to null.
+        // drive forward command. Otherwise, just align.
         if (driveForwardAfterwards) {
             wrappedAlignCommand = new AlignToNodeCommand(swerveSubsystem, tiltedElevatorSubsystem, targetPlacePosition, isRed).andThen(
                 new GoToPointCommand(swerveSubsystem, targetPlacePosition.placePosition.getPose(isRed))
             );
-            wrappedGoForwardCommand = null;
         } else {
             wrappedAlignCommand = new AlignToNodeCommand(swerveSubsystem, tiltedElevatorSubsystem, targetPlacePosition, isRed);
-            wrappedGoForwardCommand = new GoToPointCommand(swerveSubsystem, targetPlacePosition.placePosition.getPose(isRed));
         }
 
-        // Schedule align command immediately
         wrappedAlignCommand.schedule();
 
         // Lock parallel to the grid for better strafing
