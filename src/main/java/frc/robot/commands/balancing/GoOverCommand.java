@@ -24,14 +24,13 @@ public class GoOverCommand extends CommandBase {
 
     private double returnDrivePower;
     private double targetHeading;
-    private double currentPitch;
 
     private boolean reachedStation;
     private boolean passedCenter;
     private boolean overStation;
     private boolean waiting;
 
-    private final Timer timer;
+    private final Timer waitTimer;
 
     public GoOverCommand(BaseDrivetrain driveSubsystem, boolean isRed) {
         this.driveSubsystem = driveSubsystem;
@@ -39,7 +38,7 @@ public class GoOverCommand extends CommandBase {
         this.targetHeading = isRed
             ? 0.0
             : Math.PI;
-        timer = new Timer();
+        waitTimer = new Timer();
         addRequirements(driveSubsystem);
     }
 
@@ -53,34 +52,24 @@ public class GoOverCommand extends CommandBase {
 
     @Override
     public void execute() {
-        currentPitch = ahrs.getPitch();
+        double currentPitch = ahrs.getPitch();
         System.out.println("Pitch" + currentPitch);
 
         if (!reachedStation) {
             returnDrivePower = APPROACH_STATION_POWER;
             reachedStation = currentPitch <= -7.0;
-            if(reachedStation) System.out.println("reached station");
-        }
-
-        if (reachedStation && !passedCenter) {
+            if (reachedStation) System.out.println("reached station");
+        } else if (!passedCenter) {
             returnDrivePower = CLIMBING_STATION_POWER;
-            if (currentPitch >= -7.0){
-                passedCenter = true;
-                System.out.println("passed center");
-            } 
-        }
-        if (reachedStation && passedCenter && !overStation) {
-            if (Math.abs(currentPitch) <= 2.0) {
-                overStation = true;
-                System.out.println("over station");
-            }
-            else returnDrivePower = PAST_CENTER_POWER;
-        }
-
-        if (overStation && !waiting) {
-            timer.reset();
-            timer.start();
+            passedCenter = currentPitch >= -7.0;
+            if (passedCenter) System.out.println("passed center");
+        } else if (!overStation) {
             returnDrivePower = PAST_CENTER_POWER;
+            overStation = Math.abs(currentPitch) <= 2.0;
+            if (overStation) System.out.println("over station");
+        } else if (!waiting) {
+            waitTimer.start();
+            returnDrivePower = 0.0;
             waiting = true;
             System.out.println("waiting");
         }
@@ -100,12 +89,14 @@ public class GoOverCommand extends CommandBase {
     @Override 
     public void end(boolean interrupted) {
         driveSubsystem.setDrivePowers(0.0);
-        timer.reset();
         System.out.println("ended");
+
+        waitTimer.stop();
+        waitTimer.reset();
     }
 
     @Override
     public boolean isFinished() {
-        return overStation && timer.hasElapsed(2.0);
+        return waitTimer.hasElapsed(2.0);
     }
 }
