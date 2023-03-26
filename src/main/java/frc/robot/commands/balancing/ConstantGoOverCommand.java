@@ -11,33 +11,32 @@ import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
 
 /**
  * A command that moves robot over charging station at a constant speed, 
- *  pausing after passing the center of rotation to allow charging station motion,
- *  and then continuing on to exit the community.
+ * pausing after passing the center of rotation to allow charging station motion,
+ * and then continuing on to exit the community.
  */
-public class ConstantGoOver extends CommandBase {
+public class ConstantGoOverCommand extends CommandBase {
     private final BaseDrivetrain driveSubsystem;
     private final AHRS ahrs; 
 
     private double returnDrivePower;
     private double targetHeading;
-    private double currentPitch;
 
     private boolean overStation;
     private boolean waiting;
     private boolean waited;
 
-    private double POWER_SCALE = 0.5;
+    private static final double POWER_SCALE = 0.5;
 
     private final Timer timer;
 
-    public ConstantGoOver(BaseDrivetrain driveSubsystem, boolean isRed) {
+    public ConstantGoOverCommand(BaseDrivetrain driveSubsystem, boolean isRed) {
         this.driveSubsystem = driveSubsystem;
         this.ahrs = driveSubsystem.getAhrs();
-        
+
         this.targetHeading = isRed
             ? Math.PI
             : 0.0;
-        
+
         timer = new Timer();
         addRequirements(driveSubsystem);
     }
@@ -51,17 +50,17 @@ public class ConstantGoOver extends CommandBase {
 
     @Override
     public void execute() {
-        currentPitch = ahrs. getPitch();
+        double currentPitch = ahrs.getPitch();
         System.out.println("Pitch" + currentPitch);
 
-        if(!waited && currentPitch >= 2.0){ // if we haven't already waited
-            if(!waiting){ // if we need to wait, and we are not currently waiting
+        if (!waited && currentPitch >= 2.0) { // if we haven't already waited
+            if (!waiting) { // if we need to wait, and we are not currently waiting
                 timer.reset();
                 timer.start();
                 waiting = true;
                 returnDrivePower = 0.0;
             }
-            if(waiting && timer.hasElapsed(0.25)){ // if we are waiting and it has been at least 0.25 seconds
+            if (waiting && timer.hasElapsed(0.25)) { // if we are waiting and it has been at least 0.25 seconds
                 waited = true;
                 waiting = false;
                 returnDrivePower = -0.5;
@@ -69,15 +68,18 @@ public class ConstantGoOver extends CommandBase {
                 timer.reset();
                 timer.start();
             }
-        }
-        else{
+        } else {
             returnDrivePower = -0.6; // if we do not need to wait and are not waiting
         }
 
-        if(driveSubsystem instanceof BaseSwerveSubsystem){
-            ((BaseSwerveSubsystem)driveSubsystem).setDrivePowersWithHeadingLock(returnDrivePower * POWER_SCALE,0.0, Rotation2d.fromRadians(targetHeading), true);
-        } 
-        else {
+        if (driveSubsystem instanceof BaseSwerveSubsystem) {
+            ((BaseSwerveSubsystem) driveSubsystem).setDrivePowersWithHeadingLock(
+                returnDrivePower * POWER_SCALE,
+                0.0,
+                Rotation2d.fromRadians(targetHeading),
+                true
+            );
+        } else {
             driveSubsystem.setDrivePowers(returnDrivePower * POWER_SCALE);
         }
     }

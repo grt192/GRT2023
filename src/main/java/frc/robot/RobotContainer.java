@@ -138,7 +138,7 @@ public class RobotContainer {
         rollerSubsystem = new RollerSubsystem();
         tiltedElevatorSubsystem = new TiltedElevatorSubsystem();
 
-        balancerCommand = new DefaultBalancerCommand(driveSubsystem,false);
+        balancerCommand = new DefaultBalancerCommand(driveSubsystem, false);
         goOverCommand = new GoOverCommand(driveSubsystem, false);
 
         // Initialize auton choosers
@@ -147,7 +147,7 @@ public class RobotContainer {
         autonPathChooser.addOption("Top auton (1-piece)", TopOnePieceAutonSequence::new);
         // autonPathChooser.addOption("Top auton (2-piece)", TopTwoPieceAutonSequence::new);
         autonPathChooser.addOption("Balance auton", BalanceAutonSequence::withDeadline);
-        // autonPathChooser.addOption("Balance and taxi auton", BalanceAndTaxiAutonSequence::withDeadline);
+        autonPathChooser.addOption("Balance and taxi auton", BalanceAndTaxiAutonSequence::withDeadline);
         autonPathChooser.addOption("Bottom auton (1-piece)", BottomOnePieceAutonSequence::new);
         // autonPathChooser.addOption("Bottom auton (2-piece)", BottomTwoPieceAutonSequence::new);
         // autonPathChooser.addOption("Bottom balance auton", BottomBalanceAutonSequence::withDeadline);

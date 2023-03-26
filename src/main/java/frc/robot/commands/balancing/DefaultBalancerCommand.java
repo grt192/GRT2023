@@ -7,10 +7,11 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.util.datalog.DataLogEntry;
 import edu.wpi.first.util.datalog.StringLogEntry;
+
 import frc.robot.subsystems.drivetrain.BaseDrivetrain;
 import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
 
-import frc.robot.Constants.BalancerConstants;
+import static frc.robot.Constants.BalancerConstants.*;
 
 public class DefaultBalancerCommand extends BaseBalancerCommand {
     private final PIDController drivePID;
@@ -20,16 +21,16 @@ public class DefaultBalancerCommand extends BaseBalancerCommand {
     private double returnDrivePower; // drive power to be returned to DT
     private double prevPitchDegs;
     
-    private double direction;
-    private Rotation2d targetHeading;
-    private boolean reverse;
+    private final double direction;
+    private final Rotation2d targetHeading;
+    private final boolean reverse;
 
     private boolean reachedStation;
     private boolean passedCenter;
     private boolean balanced;
     private boolean runaway;
 
-    private StringLogEntry balanceLog;
+    private final StringLogEntry balanceLog;
 
     /**
      * Constructs a default balancer command from a drive subsystem and a boolean indicating
@@ -41,15 +42,13 @@ public class DefaultBalancerCommand extends BaseBalancerCommand {
     public DefaultBalancerCommand(BaseDrivetrain driveSubsystem, boolean reverseBalance) {
         super(driveSubsystem);
 
-        drivePID = new PIDController(BalancerConstants.COMP_CHARGING_STATION_KP, 0.0, 0.0);
-        
+        drivePID = new PIDController(COMP_CHARGING_STATION_KP, 0.0, 0.0);
+
         runawayTimer = new Timer();
 
         balanceLog = new StringLogEntry(DataLogManager.getLog(), "balanceLog");
 
-        direction = reverseBalance
-            ? 1
-            : -1;
+        direction = reverseBalance ? 1 : -1;
         targetHeading = reverseBalance
             ? Rotation2d.fromRadians(Math.PI)
             : new Rotation2d();
@@ -80,8 +79,7 @@ public class DefaultBalancerCommand extends BaseBalancerCommand {
                 reachedStation = true;
                 balanceLog.append("Reached Charging Station");
                 returnDrivePower = -0.17 * direction;
-            }
-            else if(runawayTimer.hasElapsed(2.0)){
+            } else if (runawayTimer.hasElapsed(2.0)) {
                 returnDrivePower = 0.0;
                 System.out.println("BALANCER RUNAWAY DETECTED");
                 balanceLog.append("BALANCER RUNAWAY DETECTED - BALANCING INTERRUPTED");
@@ -91,29 +89,29 @@ public class DefaultBalancerCommand extends BaseBalancerCommand {
             double deltaPitchDegs = Math.abs(currentPitchDegs - prevPitchDegs); 
 
             if (!passedCenter) {
-                if((reverse && currentPitchDegs >= -10.0) || (!reverse && currentPitchDegs <= 10.0)){ // reverse && currentPitchDegs >= -8.0
+                if ((reverse && currentPitchDegs >= -10.0) || (!reverse && currentPitchDegs <= 10.0)) { // reverse && currentPitchDegs >= -8.0
                     passedCenter = true;
                     balanceLog.append("Passed Center of Charging Station");
                 }
-            } 
-            else {
+            } else {
                 returnDrivePower = -1 * drivePID.calculate(currentPitchDegs, 0);
 
-                if((reverse && Math.abs(currentPitchDegs) <= 1.0 && deltaPitchDegs <= 0.1) || (!reverse && Math.abs(currentPitchDegs) >= -1.0 && deltaPitchDegs >= -0.1)){
+                if ((reverse && Math.abs(currentPitchDegs) <= 1.0 && deltaPitchDegs <= 0.1) || (!reverse && Math.abs(currentPitchDegs) >= -1.0 && deltaPitchDegs >= -0.1)){
                     balanced = true;
                     balanceLog.append("Robot balanced");
                 }
             }
         }
 
-        if(!ahrs.isConnected()){
+        if (!ahrs.isConnected()) {
             returnDrivePower = 0.0;
             System.out.println("BALANCER RUNAWAY DETECTED");
             balanceLog.append("NAVX DISCONNECT DETECTED - BALANCING INTERRUPTED");
             runaway = true;            
         }
 
-        ((BaseSwerveSubsystem)driveSubsystem).setDrivePowersWithHeadingLock(returnDrivePower,0.0,targetHeading, true);
+        // TODO: dangerous without instanceof check
+        ((BaseSwerveSubsystem) driveSubsystem).setDrivePowersWithHeadingLock(returnDrivePower, 0.0, targetHeading, true);
 
         prevPitchDegs = currentPitchDegs;
     }

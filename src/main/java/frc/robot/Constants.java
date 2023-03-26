@@ -25,17 +25,17 @@ import org.photonvision.PhotonCamera;
  * wherever the constants are needed, to reduce verbosity.
  */
 public final class Constants {
-    public static final boolean IS_R1 = true;
+    public static final boolean IS_R1 = false;
     public static final boolean GLOBAL_SHUFFLEBOARD_ENABLE = false;
 
-    public static final class TankConstants{
+    public static final class TankConstants {
         public static final int LEFT_MAIN = 19;
         public static final int LEFT_FOLLOW = 18;
         public static final int RIGHT_MAIN = 20;
         public static final int RIGHT_FOLLOW = 1;
     }
 
-    public static final class SwerveConstants { //may be flipped rn
+    public static final class SwerveConstants {
         public static final double TL_OFFSET_RADS = IS_R1 
             ? -2.9255307594961444 //0.21606189409364873 
             : -0.3458388725942889; // 2.795753780995504 flipped
@@ -48,8 +48,6 @@ public final class Constants {
         public static final double BR_OFFSET_RADS = IS_R1
             ? -2.8609512726492206 // 0.28064138094057256
             : -0.56871098279953; // 2.572881670790263 flipped
-
-        //public static final double SPARE_OFFSET_RADS = -0.43533498445619759906483314235355; // old -0.45006162325014304815085006008076
 
         public static final int TL_DRIVE = 2;
         public static final int TL_STEER = 3;
@@ -190,8 +188,8 @@ public final class Constants {
         public static final double EXTENSION_OFFSET_SPEED = 0.001;
     }
 
-    public static final class BalancerConstants{
-        public static final double GRT_CHARGING_STATION_KP = 0.3/35;
+    public static final class BalancerConstants {
+        public static final double GRT_CHARGING_STATION_KP = 0.3 / 35;
         public static final double COMP_CHARGING_STATION_KP = 0.0072;
     }
 }

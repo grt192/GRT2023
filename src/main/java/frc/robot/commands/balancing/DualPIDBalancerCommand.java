@@ -1,9 +1,11 @@
 package frc.robot.commands.balancing;
 
 import edu.wpi.first.math.controller.PIDController;
-import frc.robot.Constants.BalancerConstants;
+
 import frc.robot.subsystems.drivetrain.BaseDrivetrain;
 import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
+
+import static frc.robot.Constants.BalancerConstants.*;
 
 public class DualPIDBalancerCommand extends BaseBalancerCommand {
     private final PIDController anglePID;
@@ -18,7 +20,7 @@ public class DualPIDBalancerCommand extends BaseBalancerCommand {
     public DualPIDBalancerCommand(BaseDrivetrain driveSubsystem) {
         super(driveSubsystem);
 
-        anglePID = new PIDController(BalancerConstants.COMP_CHARGING_STATION_KP, 0.0, 0.0); 
+        anglePID = new PIDController(COMP_CHARGING_STATION_KP, 0.0, 0.0); 
         deltaPID = new PIDController(0.1 / 0.6, 0.0, 0.0); 
     }
 
