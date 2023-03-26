@@ -268,14 +268,15 @@ public class AutoAlignCommand extends InstantCommand {
         booleanEntries.get(newPosition.placePosition).getEntry().setBoolean(true);
         targetPlacePosition = newPosition;
 
-        // Construct and schedule align to node command
+        if (wrappedGoForwardCommand != null) wrappedGoForwardCommand.cancel();
         if (wrappedAlignCommand != null) wrappedAlignCommand.cancel();
-        wrappedAlignCommand = new AlignToNodeCommand(swerveSubsystem, tiltedElevatorSubsystem, targetPlacePosition, isRed);
-        wrappedAlignCommand.schedule();
 
         // Construct but don't schedule "drive forward" command
-        if (wrappedGoForwardCommand != null) wrappedGoForwardCommand.cancel();
         wrappedGoForwardCommand = new GoToPointCommand(swerveSubsystem, targetPlacePosition.placePosition.getPose(isRed));
+
+        // Construct and schedule align to node command
+        wrappedAlignCommand = new AlignToNodeCommand(swerveSubsystem, tiltedElevatorSubsystem, targetPlacePosition, isRed);
+        wrappedAlignCommand.schedule();
 
         // Lock parallel to the grid for better strafing
         swerveSubsystem.setChargingStationLocked(true);
@@ -286,8 +287,6 @@ public class AutoAlignCommand extends InstantCommand {
      * See {@link #scheduleAlignCommandWith(PlacePosition newPosition) scheduleAlignCommandWith}.
      */
     private void scheduleAlignCommandWithClosest() {
-        booleanEntries.forEach((pos, widget) -> widget.getEntry().setBoolean(false));
-
         Pose2d initialPose = swerveSubsystem.getRobotPosition();
         ElevatorState currentElevatorState = tiltedElevatorSubsystem.getState();
         scheduleAlignCommandWith(getClosestCubePlacePosition(initialPose, currentElevatorState, isRed));
@@ -299,6 +298,8 @@ public class AutoAlignCommand extends InstantCommand {
      */
     @Override
     public void cancel() {
+        if (targetPlacePosition != null) booleanEntries.get(targetPlacePosition.placePosition).getEntry().setBoolean(false);
+
         if (wrappedAlignCommand != null) wrappedAlignCommand.cancel();
         if (wrappedGoForwardCommand != null) wrappedGoForwardCommand.cancel();
         for (InstantCommand command : setTargetCommands) {

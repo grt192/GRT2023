@@ -49,6 +49,7 @@ public class SwitchableCamera {
         // back.getProperty("raw_brightness").set(40);
 
         server = CameraServer.getServer();
+        server.setSource(bottom);
 
         widget = shuffleboardTab.add("Intake Camera", getSource())
             .withPosition(9, 0)
@@ -69,8 +70,8 @@ public class SwitchableCamera {
      */
     public void setCamera(boolean useTop) {
         this.topActive = useTop;
-        server.setSource(this.topActive ? top : bottom);
-        widget.withProperties(Map.of("Rotation", this.topActive ? "NONE" : "QUARTER_CW"));
+        // server.setSource(this.topActive ? top : bottom);
+        // widget.withProperties(Map.of("Rotation", this.topActive ? "NONE" : "QUARTER_CW"));
     }
 
     /**
