@@ -14,9 +14,10 @@ import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
  *  changing speed based on the stage of the charging station the robot is on. 
  */
 public class GoOverCommand extends CommandBase {
-    private final double APPROACH_STATION_POWER = -0.75;
-    private final double CLIMBING_STATION_POWER = -0.45;
-    private final double PAST_CENTER_POWER = -0.25;
+    private static final double APPROACH_STATION_POWER = -0.75;
+    private static final double CLIMBING_STATION_POWER = -0.45;
+    private static final double PAST_CENTER_POWER = -0.25;
+    private static final double POWER_SCALE = 0.5;
 
     private final BaseDrivetrain driveSubsystem;
     private final AHRS ahrs; 
@@ -29,7 +30,6 @@ public class GoOverCommand extends CommandBase {
     private boolean passedCenter;
     private boolean overStation;
     private boolean waiting;
-    private double POWER_SCALE = 0.5;
 
     private final Timer timer;
 
@@ -85,16 +85,20 @@ public class GoOverCommand extends CommandBase {
             System.out.println("waiting");
         }
 
-        if(driveSubsystem instanceof BaseSwerveSubsystem){
-            ((BaseSwerveSubsystem)driveSubsystem).setDrivePowersWithHeadingLock(returnDrivePower * POWER_SCALE,0.0, Rotation2d.fromRadians(targetHeading), true);
-        } 
-        else {
+        if (driveSubsystem instanceof BaseSwerveSubsystem) {
+            ((BaseSwerveSubsystem) driveSubsystem).setDrivePowersWithHeadingLock(
+                returnDrivePower * POWER_SCALE,
+                0.0,
+                Rotation2d.fromRadians(targetHeading),
+                true
+            );
+        } else {
             driveSubsystem.setDrivePowers(returnDrivePower * POWER_SCALE);
         }
     }
 
     @Override 
-    public void end(boolean interrupted){
+    public void end(boolean interrupted) {
         driveSubsystem.setDrivePowers(0.0);
         timer.reset();
         System.out.println("ended");
