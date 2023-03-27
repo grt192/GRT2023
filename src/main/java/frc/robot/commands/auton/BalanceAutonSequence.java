@@ -26,7 +26,7 @@ public class BalanceAutonSequence extends BaseAutonSequence {
 
         addCommands(
             // Go and balance on charging station
-            new DefaultBalancerCommand(swerveSubsystem)
+            new DefaultBalancerCommand(swerveSubsystem, true)
         );
     }
 

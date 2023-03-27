@@ -28,26 +28,26 @@ public final class Constants {
     public static final boolean IS_R1 = false;
     public static final boolean GLOBAL_SHUFFLEBOARD_ENABLE = false;
 
-    public static final class TankConstants{
+    public static final class TankConstants {
         public static final int LEFT_MAIN = 19;
         public static final int LEFT_FOLLOW = 18;
         public static final int RIGHT_MAIN = 20;
         public static final int RIGHT_FOLLOW = 1;
     }
 
-    public static final class SwerveConstants { //may be flipped rn
+    public static final class SwerveConstants {
         public static final double TL_OFFSET_RADS = IS_R1 
-            ? -2.9255307594961444 //0.21606189409364873 
-            : -0.3458388725942889; // 2.795753780995504 flipped
+            ? -2.9255307594961444 // 0.21606189409364873 
+            : -2.4960072914785663;
         public static final double TR_OFFSET_RADS = IS_R1 
-            ? -0.9027260979029794 // 2.2388665556868137
-            : -0.44043676455947356; // 2.7011558890303196 flipped
+            ? -1.1199431538621365 // 2.0216494997276566
+            : -0.41136027574934353;
         public static final double BL_OFFSET_RADS = IS_R1
-            ? -0.3165152510020395 // 2.8250774025877536
-            : -0.4294843792954861; // 2.712108274294307 flipped
+            ? -2.374440566697393
+            : 0.6375202695515494;
         public static final double BR_OFFSET_RADS = IS_R1
             ? -2.8609512726492206 // 0.28064138094057256
-            : -0.56871098279953; // 2.572881670790263 flipped
+            : -2.667189121246338;
 
         public static final int TL_DRIVE = 2;
         public static final int TL_STEER = 3;
@@ -186,5 +186,10 @@ public final class Constants {
 
         public static final double ANGLE_OFFSET_SPEED = 0.001;
         public static final double EXTENSION_OFFSET_SPEED = 0.001;
+    }
+
+    public static final class BalancerConstants {
+        public static final double GRT_CHARGING_STATION_KP = 0.3 / 35;
+        public static final double COMP_CHARGING_STATION_KP = 0.0072;
     }
 }

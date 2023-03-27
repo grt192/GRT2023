@@ -2,30 +2,41 @@ package frc.robot.commands.balancing;
 
 import com.kauailabs.navx.frc.AHRS;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 import frc.robot.subsystems.drivetrain.BaseDrivetrain;
+import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
 
+/**
+ * A command that moves robot over charging station at a varying speed, 
+ *  changing speed based on the stage of the charging station the robot is on. 
+ */
 public class GoOverCommand extends CommandBase {
+    private static final double APPROACH_STATION_POWER = -0.75;
+    private static final double CLIMBING_STATION_POWER = -0.45;
+    private static final double PAST_CENTER_POWER = -0.25;
+    private static final double POWER_SCALE = 0.5;
+
     private final BaseDrivetrain driveSubsystem;
     private final AHRS ahrs; 
 
-    private double returnDrivePower; // drive power to be returned to DT
-    private double returnAngularPower; // angular power to return to DT (for heading correction)
+    private double returnDrivePower;
 
     private boolean reachedStation;
     private boolean passedCenter;
     private boolean overStation;
     private boolean waiting;
 
-    private final Timer timer;
+    private final Timer passedCenterTimer;
+    private final Timer waitTimer;
 
-    public GoOverCommand(BaseDrivetrain driveSubsystem) {
+    public GoOverCommand(BaseDrivetrain driveSubsystem, boolean isRed) {
         this.driveSubsystem = driveSubsystem;
         this.ahrs = driveSubsystem.getAhrs();
-
-        timer = new Timer();
+        waitTimer = new Timer();
+        passedCenterTimer = new Timer();
         addRequirements(driveSubsystem);
     }
 
@@ -39,37 +50,56 @@ public class GoOverCommand extends CommandBase {
 
     @Override
     public void execute() {
+        double currentPitch = ahrs.getPitch();
+        System.out.println("Pitch" + currentPitch);
+
         if (!reachedStation) {
-            returnDrivePower = -0.80;
-            reachedStation = ahrs.getPitch() <= -15.0;
-        }
-
-        if (reachedStation && !passedCenter) {
-            returnDrivePower = 0.5;
-            if (ahrs.getPitch() >= -0.0){
-                returnDrivePower = 0.4;
-                passedCenter = true;
-            } 
-        }
-        if (reachedStation && passedCenter && !overStation) {
-            if (Math.abs(ahrs.getPitch()) <= 0.5) {
-                overStation = true;
+            returnDrivePower = APPROACH_STATION_POWER;
+            reachedStation = currentPitch <= -7.0;
+            if (reachedStation) System.out.println("reached station");
+        } else if (!passedCenter) {
+            returnDrivePower = CLIMBING_STATION_POWER;
+            passedCenter = currentPitch >= -7.0;
+            if (passedCenter) {
+                System.out.println("passed center");
+                passedCenterTimer.start();
             }
-            else returnDrivePower = 0.4;
-        }
-
-        if (overStation && !waiting) {
-            timer.reset();
-            timer.start();
-            returnDrivePower = 0.4;
+        } else if (!overStation) {
+            returnDrivePower = PAST_CENTER_POWER;
+            if (passedCenterTimer.hasElapsed(0.35)) { // wait a little bit before allowing ourselves to think we're passed center (bc otherwise gaslit by chargng station)
+                overStation = Math.abs(currentPitch) <= 2.0;
+                if (overStation) System.out.println("over station");
+            }
+        } else if (!waiting) {
+            waitTimer.start();
+            returnDrivePower = -0.2;
             waiting = true;
+            System.out.println("waiting");
         }
 
-        driveSubsystem.setDrivePowers(returnDrivePower);
+        if (driveSubsystem instanceof BaseSwerveSubsystem) {
+            ((BaseSwerveSubsystem) driveSubsystem).setDrivePowersWithHeadingLock(
+                returnDrivePower * POWER_SCALE,
+                0.0,
+                new Rotation2d(Math.PI),
+                true
+            );
+        } else {
+            driveSubsystem.setDrivePowers(returnDrivePower * POWER_SCALE);
+        }
+    }
+
+    @Override 
+    public void end(boolean interrupted) {
+        driveSubsystem.setDrivePowers(0.0);
+        System.out.println("ended");
+
+        waitTimer.stop();
+        waitTimer.reset();
     }
 
     @Override
     public boolean isFinished() {
-        return overStation && timer.hasElapsed(0.5);
+        return waitTimer.hasElapsed(1.5);
     }
 }

@@ -39,6 +39,9 @@ import frc.robot.commands.auton.test.TwentyFeetStraightLinePath;
 import frc.robot.commands.balancing.BaseBalancerCommand;
 import frc.robot.commands.balancing.DefaultBalancerCommand;
 import frc.robot.commands.dropping.AutoAlignCommand;
+import frc.robot.commands.balancing.DualPIDBalancerCommand;
+import frc.robot.commands.balancing.GoOverCommand;
+import frc.robot.commands.balancing.PIDSwitchBalancerCommand;
 import frc.robot.commands.dropping.DropperChooserCommand;
 import frc.robot.commands.pretest.MotorTestCommand;
 import frc.robot.controllers.BaseDriveController;
@@ -116,6 +119,7 @@ public class RobotContainer {
     private final MotorTestCommand testCommand;
 
     private final BaseBalancerCommand balancerCommand;
+    private final GoOverCommand goOverCommand;
     private final AutoAlignCommand autoAlignCommand;
 
     /**
@@ -126,7 +130,7 @@ public class RobotContainer {
 
         photonWrapper = new PhotonWrapper();
         switchableCamera = new SwitchableCamera(shuffleboardTab);
-        
+
         signalLEDSubsystem = new LEDSubsystem(); 
 
         // driveSubsystem = new MissileShellSwerveSubsystem();
@@ -134,7 +138,8 @@ public class RobotContainer {
         rollerSubsystem = new RollerSubsystem();
         tiltedElevatorSubsystem = new TiltedElevatorSubsystem();
 
-        balancerCommand = new DefaultBalancerCommand(driveSubsystem);
+        balancerCommand = new DefaultBalancerCommand(driveSubsystem, false);
+        goOverCommand = new GoOverCommand(driveSubsystem, false);
 
         // Initialize auton choosers
         autonPathChooser = new SendableChooser<>();
@@ -142,7 +147,7 @@ public class RobotContainer {
         autonPathChooser.addOption("Top auton (1-piece)", TopOnePieceAutonSequence::new);
         // autonPathChooser.addOption("Top auton (2-piece)", TopTwoPieceAutonSequence::new);
         autonPathChooser.addOption("Balance auton", BalanceAutonSequence::withDeadline);
-        // autonPathChooser.addOption("Balance and taxi auton", BalanceAndTaxiAutonSequence::withDeadline);
+        autonPathChooser.addOption("Balance and taxi auton", BalanceAndTaxiAutonSequence::withDeadline);
         autonPathChooser.addOption("Bottom auton (1-piece)", BottomOnePieceAutonSequence::new);
         // autonPathChooser.addOption("Bottom auton (2-piece)", BottomTwoPieceAutonSequence::new);
         // autonPathChooser.addOption("Bottom balance auton", BottomBalanceAutonSequence::withDeadline);

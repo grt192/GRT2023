@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ComplexWidget;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 
 import frc.robot.commands.swerve.GoToPointCommand;
@@ -39,7 +40,7 @@ public class AutoAlignCommand extends InstantCommand {
     private final HashMap<FieldPosition, SimpleWidget> booleanEntries;
 
     private volatile PlacePosition targetPlacePosition;
-    private volatile AlignToNodeCommand wrappedAlignCommand;
+    private volatile Command wrappedAlignCommand;
     private volatile GoToPointCommand wrappedGoForwardCommand;
 
     private final ShuffleboardTab shuffleboardTab;
@@ -76,7 +77,7 @@ public class AutoAlignCommand extends InstantCommand {
             PlacePosition position = positions[i];
 
             // When pressed, set the target place position to the given value and align to the node.
-            InstantCommand command = new InstantCommand(() -> scheduleAlignCommandWith(position), swerveSubsystem, tiltedElevatorSubsystem);
+            InstantCommand command = new InstantCommand(() -> scheduleAlignCommandWith(position, true), swerveSubsystem, tiltedElevatorSubsystem);
             setTargetCommands[i] = command;
 
             // Add command and boolean indicator to grid
@@ -169,7 +170,7 @@ public class AutoAlignCommand extends InstantCommand {
      * Drives forward against the grid to place. Does nothing if there isn't a target place position.
      */
     public void driveForwardToPlace() {
-        if (targetPlacePosition == null) return;
+        if (wrappedGoForwardCommand == null) return;
         if (wrappedAlignCommand != null) wrappedAlignCommand.cancel();
         wrappedGoForwardCommand.schedule();
     }
@@ -262,8 +263,9 @@ public class AutoAlignCommand extends InstantCommand {
      * node it is aligning with.
      * 
      * @param newPosition The new `PlacePosition` to align with.
+     * @param driveForwardAfterwards TODO
      */
-    private void scheduleAlignCommandWith(PlacePosition newPosition) {
+    private void scheduleAlignCommandWith(PlacePosition newPosition, boolean driveForwardAfterwards) {
         if (targetPlacePosition != null) booleanEntries.get(targetPlacePosition.placePosition).getEntry().setBoolean(false);
         booleanEntries.get(newPosition.placePosition).getEntry().setBoolean(true);
         targetPlacePosition = newPosition;
@@ -271,15 +273,26 @@ public class AutoAlignCommand extends InstantCommand {
         if (wrappedGoForwardCommand != null) wrappedGoForwardCommand.cancel();
         if (wrappedAlignCommand != null) wrappedAlignCommand.cancel();
 
-        // Construct but don't schedule "drive forward" command
         wrappedGoForwardCommand = new GoToPointCommand(swerveSubsystem, targetPlacePosition.placePosition.getPose(isRed));
 
-        // Construct and schedule align to node command
-        wrappedAlignCommand = new AlignToNodeCommand(swerveSubsystem, tiltedElevatorSubsystem, targetPlacePosition, isRed);
+        // If we automatically drive forward afterwards, the align command is a composition that automatically schedules the
+        // drive forward command. Otherwise, just align.
+        if (driveForwardAfterwards) {
+            wrappedAlignCommand = new AlignToNodeCommand(swerveSubsystem, tiltedElevatorSubsystem, targetPlacePosition, isRed).andThen(
+                new GoToPointCommand(swerveSubsystem, targetPlacePosition.placePosition.getPose(isRed))
+            );
+        } else {
+            wrappedAlignCommand = new AlignToNodeCommand(swerveSubsystem, tiltedElevatorSubsystem, targetPlacePosition, isRed);
+        }
+
         wrappedAlignCommand.schedule();
 
         // Lock parallel to the grid for better strafing
         swerveSubsystem.setChargingStationLocked(true);
+    }
+
+    private void scheduleAlignCommandWith(PlacePosition newPosition) {
+        scheduleAlignCommandWith(newPosition, false);
     }
 
     /**

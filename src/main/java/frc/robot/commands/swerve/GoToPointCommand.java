@@ -72,11 +72,24 @@ public class GoToPointCommand extends CommandBase {
         swerveSubsystem.setSwerveModuleStates(states);
     }
 
+    /**
+     * Gets whether the robot is aligned to its target heading.
+     * @param tolerance The tolerance, in radians, for the heading.
+     * @return Whether the robot is aligned to its target heading.
+     */
+    public boolean isHeadingAligned(double tolerance) {
+        // Semi-hacky solution to prevent null pointer exceptions from calling this
+        // before a call of `.execute()`.
+        if (currentPose == null) return false;
+
+        double thetaErrorRads = Math.abs(targetPose.getRotation().minus(currentPose.getRotation()).getRadians());
+        return thetaErrorRads < tolerance;
+    }
+
     @Override
     public boolean isFinished() {
         double xErrorMeters = Math.abs(targetPose.getX() - currentPose.getX());
         double yErrorMeters = Math.abs(targetPose.getY() - currentPose.getY());
-        double thetaErrorRads = Math.abs(targetPose.getRotation().minus(currentPose.getRotation()).getRadians());
-        return xErrorMeters < X_TOLERANCE_METERS && yErrorMeters < Y_TOLERANCE_METERS && thetaErrorRads < THETA_TOLERANCE_RADS;
+        return xErrorMeters < X_TOLERANCE_METERS && yErrorMeters < Y_TOLERANCE_METERS && isHeadingAligned(THETA_TOLERANCE_RADS);
     }
 }

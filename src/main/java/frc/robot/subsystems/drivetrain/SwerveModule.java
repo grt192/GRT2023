@@ -50,9 +50,9 @@ public class SwerveModule implements BaseSwerveModule {
     private static final double driveP = 0.05;
     private static final double driveI = 0;
     private static final double driveD = 0;
-    private static final double driveFF = 0.176697057706;
+    private static final double driveFF = 0.186697057706;
 
-    private static final double steerP = 0.7;
+    private static final double steerP = 1.0;
     private static final double steerI = 0;
     private static final double steerD = 0;
     private static final double steerFF = 0;
