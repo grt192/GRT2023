@@ -10,11 +10,10 @@ import static frc.robot.Constants.LEDConstants.*;
 
 public class LEDSubsystem extends SubsystemBase {
     private final LEDStrip ledStrip;
-    
     private final LEDLayer baseLayer;
-    private final LEDLayer manualLayer;
-    private final LEDLayer aprilLayer;
-    private final LEDLayer colorLayer;
+    private final LEDLayer manualColorLayer;
+    private final LEDLayer aprilDetectedLayer;
+    private final LEDLayer colorSensorLayer;
 
     private final Timer blinkTimer;
     private static final double BLINK_DURATION_SECONDS = 0.5;
@@ -22,36 +21,35 @@ public class LEDSubsystem extends SubsystemBase {
     private static final Color BLINK_COLOR = new Color(0, 0, 0);
     private boolean blinking = false;
 
+    private final TrackingTimer aprilBlinkTimer = new TrackingTimer();
+    private static final double APRIL_BLINK_DURATION_SECONDS = 0.05;
+
     private static final double BRIGHTNESS_SCALE_FACTOR = 0.25;
     private static final double INPUT_DEADZONE = 0.35;
     private static final int LEDS_PER_SEC = 150;
 
     private Color pieceColor = CUBE_COLOR;
     private Color manualColor = new Color(0, 0, 0);
-    private Color lastPieceColor = pieceColor;
 
-    private boolean manual = false; //when driver is directly controlling leds
+    private boolean manual = false; // If the driver is directly controlling leds
     public boolean pieceGrabbed = false;
 
-    private final TrackingTimer aprilBlinkTimer = new TrackingTimer();
-    private static final double APRIL_BLINK_DURATION_SECONDS = 0.05;
-
-    private static final Color APRIL_COLOR = new Color(252, 255, 236);
+    private static final Color APRIL_COLOR = scaleDownColorBrightness(new Color(252, 255, 236));
     private static final Color CUBE_COLOR = scaleDownColorBrightness(new Color(192, 8, 254));
     private static final Color CONE_COLOR = scaleDownColorBrightness(new Color(255, 100, 0));
     private static final Color COLOR_SENSOR_OFF_COLOR = scaleDownColorBrightness(new Color(255, 0, 0));
 
     private boolean colorSensorOff = false;
 
-    private Timer ledTimer;
+    private final Timer ledTimer;
 
     public LEDSubsystem() {
         ledStrip = new LEDStrip(LED_PWM_PORT, LED_LENGTH);
-        
+
         baseLayer = new LEDLayer(LED_LENGTH);
-        manualLayer = new LEDLayer(LED_LENGTH);
-        aprilLayer = new LEDLayer(LED_LENGTH);
-        colorLayer = new LEDLayer(LED_LENGTH);
+        manualColorLayer = new LEDLayer(LED_LENGTH);
+        aprilDetectedLayer = new LEDLayer(LED_LENGTH);
+        colorSensorLayer = new LEDLayer(LED_LENGTH);
 
         blinkTimer = new Timer();
         ledTimer = new Timer();
@@ -73,26 +71,7 @@ public class LEDSubsystem extends SubsystemBase {
         // and the blink color.
         if (blinkTimer.advanceIfElapsed(BLINK_DURATION_SECONDS)) blinking = !blinking;
         
-        setLEDs();
-    }
-
-    /**
-     * Toggles whether drivers are manually controlling the color of the LEDs.
-     */
-    public void toggleManual() {
-        this.manual = !manual;
-    }
-
-    /**
-     * Displays that an AprilTag has been detected by sending a pulse down the LEDs.
-     */
-    public void displayTagDetected() {
-        aprilBlinkTimer.start();
-        aprilBlinkTimer.advanceIfElapsed(APRIL_BLINK_DURATION_SECONDS * BLINK_OFF_TO_ON_RATIO);
-    }
-
-    private void setLEDs() {
-        //number of leds to increment each continuous led layer by
+        // Number of leds to increment each continuous led layer by
         int inc = Math.min((int) Math.ceil(ledTimer.get() * LEDS_PER_SEC), LED_LENGTH);
         ledTimer.reset();
         ledTimer.start();
@@ -113,40 +92,55 @@ public class LEDSubsystem extends SubsystemBase {
          * the color blinks between BLINK_COLOR and the PIECE_COLOR (cone or cube) 
          */
 
-        //Update baseLayer
-        if(blinking){
+        // Update baseLayer
+        if (blinking) {
             baseLayer.fillColor(BLINK_COLOR);
         } else { 
             baseLayer.fillColor(pieceColor);
         }
 
-        //Update manualLayer
-        if(manual){
-            manualLayer.incrementColors(inc, manualColor);
+        // Update manualLayer
+        if (manual) {
+            manualColorLayer.incrementColors(inc, manualColor);
         } else {
-            manualLayer.reset();
+            manualColorLayer.reset();
         }
 
-        //Update aprilLayer
-        if (!aprilBlinkTimer.hasElapsed(APRIL_BLINK_DURATION_SECONDS) && aprilBlinkTimer.hasStarted()){
-            aprilLayer.incrementColors(inc, APRIL_COLOR);
+        // Update aprilLayer
+        if (!aprilBlinkTimer.hasElapsed(APRIL_BLINK_DURATION_SECONDS) && aprilBlinkTimer.hasStarted()) {
+            aprilDetectedLayer.incrementColors(inc, APRIL_COLOR);
         } else {
-            aprilLayer.incrementColors(inc, null);
+            aprilDetectedLayer.incrementColors(inc, null);
         }
 
-        //Update colorLayer
-        if (colorSensorOff){
-            colorLayer.fillGrouped(10, 20, COLOR_SENSOR_OFF_COLOR);
+        // Update colorLayer
+        if (colorSensorOff) {
+            colorSensorLayer.fillGrouped(10, 20, COLOR_SENSOR_OFF_COLOR);
         } else {
-            colorLayer.reset();
+            colorSensorLayer.reset();
         }
 
-        //add layers to buffer, set leds to the buffer
+        // Add layers to buffer, set leds
         ledStrip.addLayer(baseLayer);
-        ledStrip.addLayer(manualLayer);
-        ledStrip.addLayer(aprilLayer);
-        ledStrip.addLayer(colorLayer);
+        ledStrip.addLayer(manualColorLayer);
+        ledStrip.addLayer(aprilDetectedLayer);
+        ledStrip.addLayer(colorSensorLayer);
         ledStrip.setBuffer();
+    }
+
+    /**
+     * Toggles whether drivers are manually controlling the color of the LEDs.
+     */
+    public void toggleManual() {
+        this.manual = !manual;
+    }
+
+    /**
+     * Displays that an AprilTag has been detected by sending a pulse down the LEDs.
+     */
+    public void displayTagDetected() {
+        aprilBlinkTimer.start();
+        aprilBlinkTimer.advanceIfElapsed(APRIL_BLINK_DURATION_SECONDS * BLINK_OFF_TO_ON_RATIO);
     }
 
     /**
@@ -171,23 +165,17 @@ public class LEDSubsystem extends SubsystemBase {
      * @param y The y input of the joystick.
      */
     public void setDriverColors(double x, double y){
-        
         double angleRads = MathUtil.inputModulus(Math.atan2(y, x), 0, 2 * Math.PI);
         manualColor = Color.fromHSV(
             (int) (Math.toDegrees(angleRads) / 2.0),
             (int) 255,
             (int) (255 * BRIGHTNESS_SCALE_FACTOR)
         );
-        
 
         if (x > INPUT_DEADZONE) {
             pieceColor = CUBE_COLOR;
-            lastPieceColor = pieceColor;
         } else if (x < -INPUT_DEADZONE) {
             pieceColor = CONE_COLOR;
-            lastPieceColor = pieceColor;
-        } else {
-            pieceColor = lastPieceColor;
         }
     }
 

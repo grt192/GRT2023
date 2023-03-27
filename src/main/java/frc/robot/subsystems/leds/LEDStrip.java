@@ -25,13 +25,12 @@ public class LEDStrip {
     }
 
     /**
-     * Add a layer to the ledBuffer
-     * @param layer the layer to be added ontop
-     * null leds are considered a transparent led
+     * Applies an `LEDLayer` on top of the LED buffer.
+     * @param layer The layer to be added on top of the buffer. Null leds are considered transparent and "fall through" to the previous layer's color.
      */
     public void addLayer(LEDLayer layer) {
-        for(int i = 0; i < ledLength; i++){
-            if(layer.getLED(i) != null){
+        for (int i = 0; i < ledLength; i++) {
+            if (layer.getLED(i) != null) {
                 ledBuffer.setLED(i, layer.getLED(i));
             }
         }
