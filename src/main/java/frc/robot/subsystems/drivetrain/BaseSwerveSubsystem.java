@@ -428,6 +428,19 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
     }
 
     /**
+     * Gets the closest "straight line" heading (ie. either 0 or 180 degrees) to the current
+     * heading of the robot. Useful for heading lock.
+     * 
+     * @return The cloesest "straight line" heading, as a `Rotation2d`.
+     */
+    public Rotation2d getClosestStraightLineHeading() {
+        double currentHeadingRads = getDriverHeading().getRadians();
+        double targetHeadingRads = (Math.abs(currentHeadingRads) > Math.PI / 2.0) ? Math.PI : 0;
+
+        return new Rotation2d(targetHeadingRads);
+    }
+
+    /**
      * Sets whether vision data is enabled.
      * @param visionEnable Whether to enable vision data for localization.
      */

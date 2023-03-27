@@ -263,7 +263,7 @@ public class AutoAlignCommand extends InstantCommand {
      * node it is aligning with.
      * 
      * @param newPosition The new `PlacePosition` to align with.
-     * @param driveForwardAfterwards TODO
+     * @param driveForwardAfterwards Whether to automatically schedule the "drive forwards" command after aligning.
      */
     private void scheduleAlignCommandWith(PlacePosition newPosition, boolean driveForwardAfterwards) {
         if (targetPlacePosition != null) booleanEntries.get(targetPlacePosition.placePosition).getEntry().setBoolean(false);
@@ -291,6 +291,14 @@ public class AutoAlignCommand extends InstantCommand {
         swerveSubsystem.setChargingStationLocked(true);
     }
 
+    /**
+     * Schedules a wrapped `AlignToNodeCommand` to align the robot with the selected node.
+     * If an align command was previously scheduled, cancel it before scheduling another.
+     * This method also toggles the given boolean entries on shuffleboard to display which
+     * node it is aligning with.
+     * 
+     * @param newPosition The new `PlacePosition` to align with.
+     */
     private void scheduleAlignCommandWith(PlacePosition newPosition) {
         scheduleAlignCommandWith(newPosition, false);
     }

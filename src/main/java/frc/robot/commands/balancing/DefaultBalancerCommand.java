@@ -63,10 +63,8 @@ public class DefaultBalancerCommand extends BaseBalancerCommand {
         runaway = false;
 
         if (driveSubsystem instanceof BaseSwerveSubsystem) {
-            double currentHeadingRads = ((BaseSwerveSubsystem) driveSubsystem).getDriverHeading().getRadians();
-            double lockHeadingRads = (Math.abs(currentHeadingRads) > Math.PI / 2.0) ? Math.PI : 0;
-
-            targetHeading = new Rotation2d(lockHeadingRads);
+            BaseSwerveSubsystem swerveSubsystem = (BaseSwerveSubsystem) driveSubsystem;
+            targetHeading = swerveSubsystem.getClosestStraightLineHeading();
         } else {
             targetHeading = new Rotation2d();
         }

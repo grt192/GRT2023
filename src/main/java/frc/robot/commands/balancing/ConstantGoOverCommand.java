@@ -19,7 +19,6 @@ public class ConstantGoOverCommand extends CommandBase {
     private final AHRS ahrs; 
 
     private double returnDrivePower;
-    private double targetHeading;
 
     private boolean overStation;
     private boolean waiting;
@@ -29,13 +28,10 @@ public class ConstantGoOverCommand extends CommandBase {
 
     private final Timer timer;
 
+    // TODO: `isRed` not necessary?
     public ConstantGoOverCommand(BaseDrivetrain driveSubsystem, boolean isRed) {
         this.driveSubsystem = driveSubsystem;
         this.ahrs = driveSubsystem.getAhrs();
-
-        this.targetHeading = isRed
-            ? Math.PI
-            : 0.0;
 
         timer = new Timer();
         addRequirements(driveSubsystem);
@@ -76,7 +72,7 @@ public class ConstantGoOverCommand extends CommandBase {
             ((BaseSwerveSubsystem) driveSubsystem).setDrivePowersWithHeadingLock(
                 returnDrivePower * POWER_SCALE,
                 0.0,
-                Rotation2d.fromRadians(targetHeading),
+                new Rotation2d(Math.PI),
                 true
             );
         } else {
