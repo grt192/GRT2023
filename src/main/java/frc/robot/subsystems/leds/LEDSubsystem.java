@@ -33,7 +33,6 @@ public class LEDSubsystem extends SubsystemBase {
     public boolean pieceGrabbed = false;
 
     private final TrackingTimer aprilBlinkTimer = new TrackingTimer();
-    private final TrackingTimer aprilFlashTimer = new TrackingTimer();
     private static final double APRIL_BLINK_DURATION_SECONDS = 0.05;
 
     private static final Color APRIL_COLOR = new Color(252, 255, 236);
@@ -90,9 +89,6 @@ public class LEDSubsystem extends SubsystemBase {
     public void displayTagDetected() {
         aprilBlinkTimer.start();
         aprilBlinkTimer.advanceIfElapsed(APRIL_BLINK_DURATION_SECONDS * BLINK_OFF_TO_ON_RATIO);
-
-        aprilFlashTimer.reset();
-        aprilFlashTimer.start();
     }
 
     private void pushColorsToBufferAsPulses() {
