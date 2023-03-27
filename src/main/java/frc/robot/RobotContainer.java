@@ -265,7 +265,7 @@ public class RobotContainer {
 
         rollerSubsystem.setDefaultCommand(new RunCommand(() -> {
             double forwardPower = 0.95 * mechController.getRightTriggerAxis();
-            double reversePower = 0.65 * mechController.getLeftTriggerAxis();
+            double reversePower = 0.55 * mechController.getLeftTriggerAxis();
             rollerSubsystem.setRollPower(forwardPower - reversePower);
         }, rollerSubsystem));
 
