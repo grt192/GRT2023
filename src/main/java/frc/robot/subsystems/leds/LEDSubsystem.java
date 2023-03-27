@@ -75,8 +75,6 @@ public class LEDSubsystem extends SubsystemBase {
         if (blinkTimer.advanceIfElapsed(BLINK_DURATION_SECONDS)) blinking = !blinking;
         
         pushColorsToBufferAsPulses();
-      
-
     }
 
     /**
@@ -172,6 +170,10 @@ public class LEDSubsystem extends SubsystemBase {
         }
     }
 
+    /**
+     * Sets the color sensor status
+     * @param dead whether the color sensor is dead or not
+     */
     public void setColorSensorOff(boolean dead){
         colorSensorOff = dead;
     }
