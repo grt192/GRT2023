@@ -31,12 +31,23 @@ public class LEDSubsystem extends SubsystemBase {
     private static final double APRIL_BLINK_DURATION_SECONDS = 0.05;
 
     private static final Color APRIL_COLOR = new Color(252, 255, 236);
-    private static final Color CUBE_COLOR = new Color(192, 8, 254);
-    private static final Color CONE_COLOR = new Color(255, 100, 0);
+    private static final Color CUBE_COLOR = scaleDownColorBrightness(new Color(192, 8, 254));
+    private static final Color CONE_COLOR = scaleDownColorBrightness(new Color(255, 100, 0));
+    private static final Color COLOR_SENSOR_OFF_COLOR = scaleDownColorBrightness(new Color(255, 0, 0));
+
+    private boolean colorSensorOff = false;
 
     public LEDSubsystem() {
         ledStrip = new LEDStrip(LED_PWM_PORT, LED_LENGTH);
         blinkTimer = new Timer();
+    }
+
+    private static Color scaleDownColorBrightness(Color color) {
+        return new Color(
+            color.red * BRIGHTNESS_SCALE_FACTOR,
+            color.green * BRIGHTNESS_SCALE_FACTOR,
+            color.blue * BRIGHTNESS_SCALE_FACTOR
+        );
     }
 
     @Override
@@ -61,7 +72,13 @@ public class LEDSubsystem extends SubsystemBase {
             //setTwoColor()
         }
 
-        ledStrip.setBuffer();
+        //if the color sensor is off, add red in groups on top of the current buffer, otherwise push the current buffer
+        if(colorSensorOff){
+            ledStrip.fillGroupedWithBlanks(COLOR_SENSOR_OFF_COLOR, 10, 20);
+            ledStrip.setOverlay();
+        } else {
+            ledStrip.setBuffer();
+        }
     }
 
     /**
@@ -126,5 +143,9 @@ public class LEDSubsystem extends SubsystemBase {
         } else {
             currentColor = lastPieceColor;
         }
+    }
+
+    public void setColorSensorOff(boolean dead){
+        colorSensorOff = dead;
     }
 }

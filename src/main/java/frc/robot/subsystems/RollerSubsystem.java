@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
+import frc.robot.subsystems.leds.LEDSubsystem;
 import frc.robot.util.MotorUtil;
 import frc.robot.util.TrackingTimer;
 
@@ -35,6 +35,7 @@ public class RollerSubsystem extends SubsystemBase {
 
     public boolean allowOpen = true;
     private boolean prevAllowedOpen = true;
+    private boolean colorSensorConnected = true;
 
     private final TrackingTimer openTimer = new TrackingTimer();
     private final TrackingTimer closeTimer = new TrackingTimer();
@@ -236,15 +237,19 @@ public class RollerSubsystem extends SubsystemBase {
         //if the color is 0 0 0, the sensor is broken and should be rebooted
         //only do this every couple seconds
         if(red == 0 && green == 0 && blue == 0){
+            colorSensorConnected = false;
             if(!colorTimer.hasStarted()){
                 crolorSensor = new ColorSensorV3(I2C.Port.kMXP);
                 colorTimer.start();
             } else if (colorTimer.advanceIfElapsed(2)){
                 crolorSensor = new ColorSensorV3(I2C.Port.kMXP);
             }
-        } else if(colorTimer.hasStarted()){
-            colorTimer.stop();
-            colorTimer.reset();
+        } else {
+            colorSensorConnected = true;
+            if (colorTimer.hasStarted()) {
+                colorTimer.stop();
+                colorTimer.reset();
+            }
         }
 
         //calculate 3d distance between measured point and each set points
@@ -273,5 +278,9 @@ public class RollerSubsystem extends SubsystemBase {
      */
     public HeldPiece getPiece() {
         return heldPiece;
+    }
+
+    public boolean colorSensorConnected() {
+        return colorSensorConnected;
     }
 }
