@@ -10,6 +10,11 @@ import static frc.robot.Constants.LEDConstants.*;
 
 public class LEDSubsystem extends SubsystemBase {
     private final LEDStrip ledStrip;
+    
+    private final LEDLayer baseLayer;
+    private final LEDLayer manualLayer;
+    private final LEDLayer aprilLayer;
+    private final LEDLayer colorLayer;
 
     private final Timer blinkTimer;
     private static final double BLINK_DURATION_SECONDS = 0.5;
@@ -20,8 +25,9 @@ public class LEDSubsystem extends SubsystemBase {
     private static final double BRIGHTNESS_SCALE_FACTOR = 0.25;
     private static final double INPUT_DEADZONE = 0.35;
 
-    private Color currentColor = CUBE_COLOR;
-    private Color lastPieceColor = currentColor;
+    private Color pieceColor = CUBE_COLOR;
+    private Color manualColor = new Color(0, 0, 0);
+    private Color lastPieceColor = pieceColor;
 
     private boolean manual = false; //when driver is directly controlling leds
     public boolean pieceGrabbed = false;
@@ -34,20 +40,23 @@ public class LEDSubsystem extends SubsystemBase {
     private static final Color CUBE_COLOR = scaleDownColorBrightness(new Color(192, 8, 254));
     private static final Color CONE_COLOR = scaleDownColorBrightness(new Color(255, 100, 0));
     private static final Color COLOR_SENSOR_OFF_COLOR = scaleDownColorBrightness(new Color(255, 0, 0));
+    private static final int LEDS_PER_SEC = 150;
 
     private boolean colorSensorOff = false;
 
+    private Timer ledTimer;
+
     public LEDSubsystem() {
         ledStrip = new LEDStrip(LED_PWM_PORT, LED_LENGTH);
-        blinkTimer = new Timer();
-    }
+        
+        baseLayer = new LEDLayer(LED_LENGTH);
+        manualLayer = new LEDLayer(LED_LENGTH);
+        aprilLayer = new LEDLayer(LED_LENGTH);
+        colorLayer = new LEDLayer(LED_LENGTH);
 
-    private static Color scaleDownColorBrightness(Color color) {
-        return new Color(
-            color.red * BRIGHTNESS_SCALE_FACTOR,
-            color.green * BRIGHTNESS_SCALE_FACTOR,
-            color.blue * BRIGHTNESS_SCALE_FACTOR
-        );
+        blinkTimer = new Timer();
+        ledTimer = new Timer();
+        ledTimer.start();
     }
 
     @Override
@@ -64,21 +73,10 @@ public class LEDSubsystem extends SubsystemBase {
         // Toggle the blink boolean every duration to swap the LEDs between the driver piece color
         // and the blink color.
         if (blinkTimer.advanceIfElapsed(BLINK_DURATION_SECONDS)) blinking = !blinking;
-        if (manual) {
-            //if manual and continuous set the bottom to color
-            ledStrip.updateContinuousColor(currentColor);
-        } else {
-            pushColorsToBufferAsPulses();
-            //setTwoColor()
-        }
+        
+        pushColorsToBufferAsPulses();
+      
 
-        //if the color sensor is off, add red in groups on top of the current buffer, otherwise push the current buffer
-        if(colorSensorOff){
-            ledStrip.fillGroupedWithBlanks(COLOR_SENSOR_OFF_COLOR, 10, 20);
-            ledStrip.setOverlay();
-        } else {
-            ledStrip.setBuffer();
-        }
     }
 
     /**
@@ -100,22 +98,49 @@ public class LEDSubsystem extends SubsystemBase {
     }
 
     private void pushColorsToBufferAsPulses() {
-        if (!aprilBlinkTimer.hasElapsed(APRIL_BLINK_DURATION_SECONDS) && aprilBlinkTimer.hasStarted()){
-            ledStrip.updateContinuousColor(APRIL_COLOR);
-        } else {
-            ledStrip.fillSolidColorIgnoringColor(currentColor, APRIL_COLOR);
-            ledStrip.updateContinuousColor(currentColor);
+        int inc = Math.min((int) Math.ceil(ledTimer.get() * LEDS_PER_SEC), LED_LENGTH);
+
+        //Update baseLayer
+        if(blinking){
+            baseLayer.fillColor(BLINK_COLOR);
+        } else { 
+            baseLayer.fillColor(pieceColor);
         }
 
-        if (blinking) ledStrip.fillSolidColorIgnoringColor(BLINK_COLOR, APRIL_COLOR);
+        //Update manualLayer
+        if(manual){
+            manualLayer.incrementColors(inc, manualColor);
+        } else {
+            manualLayer.reset();
+        }
+
+        //Update aprilLayer
+        if (!aprilBlinkTimer.hasElapsed(APRIL_BLINK_DURATION_SECONDS) && aprilBlinkTimer.hasStarted()){
+            aprilLayer.incrementColors(inc, APRIL_COLOR);
+        } else {
+            aprilLayer.incrementColors(inc, null);
+        }
+
+        //Update colorLayer
+        if (colorSensorOff){
+            colorLayer.fillGrouped(10, 20, COLOR_SENSOR_OFF_COLOR);
+        } else {
+            colorLayer.reset();
+        }
+
+        ledStrip.addLayer(baseLayer);
+        ledStrip.addLayer(manualLayer);
+        ledStrip.addLayer(aprilLayer);
+        ledStrip.addLayer(colorLayer);
+        ledStrip.setBuffer();
     }
 
-    private void setTwoColor() {
-        Color color2 = !aprilFlashTimer.hasElapsed(0.05)
-            ? APRIL_COLOR
-            : currentColor;
-
-        ledStrip.fillGroupedColors(blinking ? BLINK_COLOR : currentColor, color2);
+    private static Color scaleDownColorBrightness(Color color) {
+        return new Color(
+            color.red * BRIGHTNESS_SCALE_FACTOR,
+            color.green * BRIGHTNESS_SCALE_FACTOR,
+            color.blue * BRIGHTNESS_SCALE_FACTOR
+        );
     }
 
     /**
@@ -126,22 +151,24 @@ public class LEDSubsystem extends SubsystemBase {
      * @param x The x input of the joystick.
      * @param y The y input of the joystick.
      */
-    public void setDriverColor(double x, double y){
-        if (manual) {
-            double angleRads = MathUtil.inputModulus(Math.atan2(y, x), 0, 2 * Math.PI);
-            currentColor = Color.fromHSV(
-                (int) (Math.toDegrees(angleRads) / 2.0),
-                (int) 255,
-                (int) (255 * BRIGHTNESS_SCALE_FACTOR)
-            );
-        } else if (x > INPUT_DEADZONE) {
-            currentColor = CUBE_COLOR;
-            lastPieceColor = currentColor;
+    public void setDriverColors(double x, double y){
+        
+        double angleRads = MathUtil.inputModulus(Math.atan2(y, x), 0, 2 * Math.PI);
+        manualColor = Color.fromHSV(
+            (int) (Math.toDegrees(angleRads) / 2.0),
+            (int) 255,
+            (int) (255 * BRIGHTNESS_SCALE_FACTOR)
+        );
+        
+
+        if (x > INPUT_DEADZONE) {
+            pieceColor = CUBE_COLOR;
+            lastPieceColor = pieceColor;
         } else if (x < -INPUT_DEADZONE) {
-            currentColor = CONE_COLOR;
-            lastPieceColor = currentColor;
+            pieceColor = CONE_COLOR;
+            lastPieceColor = pieceColor;
         } else {
-            currentColor = lastPieceColor;
+            pieceColor = lastPieceColor;
         }
     }
 

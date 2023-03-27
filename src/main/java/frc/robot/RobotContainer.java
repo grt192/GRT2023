@@ -309,7 +309,7 @@ public class RobotContainer {
         signalLEDSubsystem.setDefaultCommand(new RunCommand(() -> {
             double x = mechController.getRightX();
             double y = mechController.getRightY();
-            signalLEDSubsystem.setDriverColor(x, y);
+            signalLEDSubsystem.setDriverColors(x, y);
         }, signalLEDSubsystem));
 
         mechRStick.onTrue(new InstantCommand(signalLEDSubsystem::toggleManual));
