@@ -24,6 +24,7 @@ public class LEDSubsystem extends SubsystemBase {
 
     private static final double BRIGHTNESS_SCALE_FACTOR = 0.25;
     private static final double INPUT_DEADZONE = 0.35;
+    private static final int LEDS_PER_SEC = 150;
 
     private Color pieceColor = CUBE_COLOR;
     private Color manualColor = new Color(0, 0, 0);
@@ -39,7 +40,6 @@ public class LEDSubsystem extends SubsystemBase {
     private static final Color CUBE_COLOR = scaleDownColorBrightness(new Color(192, 8, 254));
     private static final Color CONE_COLOR = scaleDownColorBrightness(new Color(255, 100, 0));
     private static final Color COLOR_SENSOR_OFF_COLOR = scaleDownColorBrightness(new Color(255, 0, 0));
-    private static final int LEDS_PER_SEC = 150;
 
     private boolean colorSensorOff = false;
 
@@ -73,7 +73,7 @@ public class LEDSubsystem extends SubsystemBase {
         // and the blink color.
         if (blinkTimer.advanceIfElapsed(BLINK_DURATION_SECONDS)) blinking = !blinking;
         
-        pushColorsToBufferAsPulses();
+        setLEDs();
     }
 
     /**
@@ -91,8 +91,27 @@ public class LEDSubsystem extends SubsystemBase {
         aprilBlinkTimer.advanceIfElapsed(APRIL_BLINK_DURATION_SECONDS * BLINK_OFF_TO_ON_RATIO);
     }
 
-    private void pushColorsToBufferAsPulses() {
+    private void setLEDs() {
+        //number of leds to increment each continuous led layer by
         int inc = Math.min((int) Math.ceil(ledTimer.get() * LEDS_PER_SEC), LED_LENGTH);
+        ledTimer.reset();
+        ledTimer.start();
+
+        /*
+         * LAYER SYSTEM: each layer is a array of colors, slots can also be null indicating a transparent slots
+         * trasparent slots are given to the layer beneath them
+         * 
+         * Layers, from top to bottom:
+         * 
+         * 4.colorLayer: when the color sensor is disconnected, 10 of every 30 leds are colored the rest are empty, otherwise empty
+         * 
+         * 3.aprilLayer: sends pulses of the set color when there is an april tag detected, empty in between pulses and when there are no april tags
+         * 
+         * 2.manualLayer: a continuous stream of color set by the right mech joystick when it is pushed down, empty when the joystick is not pushed down
+         * 
+         * 1.baseLayer: ALWAYS FULL, either filled CONE or CUBE color depending on the selected color by the mech joystick, if a piece is held
+         * the color blinks between BLINK_COLOR and the PIECE_COLOR (cone or cube) 
+         */
 
         //Update baseLayer
         if(blinking){
@@ -122,6 +141,7 @@ public class LEDSubsystem extends SubsystemBase {
             colorLayer.reset();
         }
 
+        //add layers to buffer, set leds to the buffer
         ledStrip.addLayer(baseLayer);
         ledStrip.addLayer(manualLayer);
         ledStrip.addLayer(aprilLayer);
@@ -129,6 +149,11 @@ public class LEDSubsystem extends SubsystemBase {
         ledStrip.setBuffer();
     }
 
+    /**
+     * Scales brightness by the BRIGHTNESS_SCALE_FACTOR
+     * @param color the color to scale down
+     * @return the color after it has been scaled down
+     */
     private static Color scaleDownColorBrightness(Color color) {
         return new Color(
             color.red * BRIGHTNESS_SCALE_FACTOR,

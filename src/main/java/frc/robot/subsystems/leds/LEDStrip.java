@@ -2,8 +2,6 @@ package frc.robot.subsystems.leds;
 
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
-import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.util.Color;
 
 public class LEDStrip {
     private final AddressableLED led;

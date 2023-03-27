@@ -58,7 +58,7 @@ public class LEDLayer {
     }
 
     /**
-     * Sets entire layer to empty leds
+     * Sets entire layer to empty leds (null)
      */
     public void reset(){
         fillColor(null);
