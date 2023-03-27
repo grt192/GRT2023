@@ -30,7 +30,7 @@ public class LEDSubsystem extends SubsystemBase {
     private final TrackingTimer aprilFlashTimer = new TrackingTimer();
     private static final double APRIL_BLINK_DURATION_SECONDS = 0.05;
 
-    private static final Color APRIL_COLOR = scaleDownColorBrightness(new Color(252, 255, 236));
+    private static final Color APRIL_COLOR = new Color(252, 255, 236);
     private static final Color CUBE_COLOR = scaleDownColorBrightness(new Color(192, 8, 254));
     private static final Color CONE_COLOR = scaleDownColorBrightness(new Color(255, 100, 0));
     private static final Color COLOR_SENSOR_OFF_COLOR = scaleDownColorBrightness(new Color(255, 0, 0));
@@ -43,9 +43,11 @@ public class LEDSubsystem extends SubsystemBase {
     }
 
     private static Color scaleDownColorBrightness(Color color) {
-        return new Color(color.red * BRIGHTNESS_SCALE_FACTOR,
+        return new Color(
+            color.red * BRIGHTNESS_SCALE_FACTOR,
             color.green * BRIGHTNESS_SCALE_FACTOR,
-            color.blue * BRIGHTNESS_SCALE_FACTOR);
+            color.blue * BRIGHTNESS_SCALE_FACTOR
+        );
     }
 
     @Override
@@ -77,7 +79,6 @@ public class LEDSubsystem extends SubsystemBase {
         } else {
             ledStrip.setBuffer();
         }
-
     }
 
     /**

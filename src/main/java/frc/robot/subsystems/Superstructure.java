@@ -45,6 +45,7 @@ public class Superstructure extends SubsystemBase {
 
         tiltedElevatorSubsystem.pieceGrabbed = hasPiece;
         ledSubsystem.pieceGrabbed = hasPiece;
+        ledSubsystem.setColorSensorOff(!rollerSubsystem.colorSensorConnected());
 
         // Toggle driver camera when the elevator state switches to / from GROUND.
         ElevatorState currentState = tiltedElevatorSubsystem.getState();

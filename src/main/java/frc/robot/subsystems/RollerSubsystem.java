@@ -35,6 +35,7 @@ public class RollerSubsystem extends SubsystemBase {
 
     public boolean allowOpen = true;
     private boolean prevAllowedOpen = true;
+    private boolean colorSensorConnected = true;
 
     private final TrackingTimer openTimer = new TrackingTimer();
     private final TrackingTimer closeTimer = new TrackingTimer();
@@ -66,11 +67,9 @@ public class RollerSubsystem extends SubsystemBase {
     private final GenericEntry limitEntry, proximityEntry, colorEntry, heldPieceEntry;
     private final GenericEntry rEntry, gEntry, bEntry;
 
-    private final LEDSubsystem leds;
-
     private double rollPower = 0.0;
 
-    public RollerSubsystem(LEDSubsystem ledSubsystem) {
+    public RollerSubsystem() {
         leftBeak = MotorUtil.createTalonSRX(LEFT_ID);
         // leftBeak.setInverted(true);
         leftBeak.setInverted(false);
@@ -88,7 +87,6 @@ public class RollerSubsystem extends SubsystemBase {
 
         limitSwitch = new DigitalInput(LIMIT_SWITCH_ID);
         crolorSensor = new ColorSensorV3(I2C.Port.kMXP);
-        leds = ledSubsystem;
 
         shuffleboardTab = Shuffleboard.getTab("Roller");
         limitEntry = shuffleboardTab.add("Limit piece", "EMPTY")
@@ -239,19 +237,19 @@ public class RollerSubsystem extends SubsystemBase {
         //if the color is 0 0 0, the sensor is broken and should be rebooted
         //only do this every couple seconds
         if(red == 0 && green == 0 && blue == 0){
-            leds.setColorSensorOff(true);
+            colorSensorConnected = false;
             if(!colorTimer.hasStarted()){
                 crolorSensor = new ColorSensorV3(I2C.Port.kMXP);
                 colorTimer.start();
             } else if (colorTimer.advanceIfElapsed(2)){
                 crolorSensor = new ColorSensorV3(I2C.Port.kMXP);
             }
-        } else if(colorTimer.hasStarted()){
-            leds.setColorSensorOff(false);
-            colorTimer.stop();
-            colorTimer.reset();
         } else {
-            leds.setColorSensorOff(false);
+            colorSensorConnected = true;
+            if (colorTimer.hasStarted()) {
+                colorTimer.stop();
+                colorTimer.reset();
+            }
         }
 
         //calculate 3d distance between measured point and each set points
@@ -280,5 +278,9 @@ public class RollerSubsystem extends SubsystemBase {
      */
     public HeldPiece getPiece() {
         return heldPiece;
+    }
+
+    public boolean colorSensorConnected() {
+        return colorSensorConnected;
     }
 }
