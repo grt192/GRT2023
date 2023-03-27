@@ -10,6 +10,10 @@ import static frc.robot.Constants.LEDConstants.*;
 
 public class LEDSubsystem extends SubsystemBase {
     private final LEDStrip ledStrip;
+    private final LEDLayer baseLayer;
+    private final LEDLayer manualColorLayer;
+    private final LEDLayer aprilDetectedLayer;
+    private final LEDLayer colorSensorLayer;
 
     private final Timer blinkTimer;
     private static final double BLINK_DURATION_SECONDS = 0.5;
@@ -17,37 +21,39 @@ public class LEDSubsystem extends SubsystemBase {
     private static final Color BLINK_COLOR = new Color(0, 0, 0);
     private boolean blinking = false;
 
-    private static final double BRIGHTNESS_SCALE_FACTOR = 0.25;
-    private static final double INPUT_DEADZONE = 0.35;
-
-    private Color currentColor = CUBE_COLOR;
-    private Color lastPieceColor = currentColor;
-
-    private boolean manual = false; //when driver is directly controlling leds
-    public boolean pieceGrabbed = false;
-
     private final TrackingTimer aprilBlinkTimer = new TrackingTimer();
-    private final TrackingTimer aprilFlashTimer = new TrackingTimer();
     private static final double APRIL_BLINK_DURATION_SECONDS = 0.05;
 
-    private static final Color APRIL_COLOR = new Color(252, 255, 236);
+    private static final double BRIGHTNESS_SCALE_FACTOR = 0.25;
+    private static final double INPUT_DEADZONE = 0.35;
+    private static final int LEDS_PER_SEC = 150;
+
+    private Color pieceColor = CUBE_COLOR;
+    private Color manualColor = new Color(0, 0, 0);
+
+    private boolean manual = false; // If the driver is directly controlling leds
+    public boolean pieceGrabbed = false;
+
+    private static final Color APRIL_COLOR = scaleDownColorBrightness(new Color(252, 255, 236));
     private static final Color CUBE_COLOR = scaleDownColorBrightness(new Color(192, 8, 254));
     private static final Color CONE_COLOR = scaleDownColorBrightness(new Color(255, 100, 0));
     private static final Color COLOR_SENSOR_OFF_COLOR = scaleDownColorBrightness(new Color(255, 0, 0));
 
     private boolean colorSensorOff = false;
 
+    private final Timer ledTimer;
+
     public LEDSubsystem() {
         ledStrip = new LEDStrip(LED_PWM_PORT, LED_LENGTH);
-        blinkTimer = new Timer();
-    }
 
-    private static Color scaleDownColorBrightness(Color color) {
-        return new Color(
-            color.red * BRIGHTNESS_SCALE_FACTOR,
-            color.green * BRIGHTNESS_SCALE_FACTOR,
-            color.blue * BRIGHTNESS_SCALE_FACTOR
-        );
+        baseLayer = new LEDLayer(LED_LENGTH);
+        manualColorLayer = new LEDLayer(LED_LENGTH);
+        aprilDetectedLayer = new LEDLayer(LED_LENGTH);
+        colorSensorLayer = new LEDLayer(LED_LENGTH);
+
+        blinkTimer = new Timer();
+        ledTimer = new Timer();
+        ledTimer.start();
     }
 
     @Override
@@ -64,21 +70,62 @@ public class LEDSubsystem extends SubsystemBase {
         // Toggle the blink boolean every duration to swap the LEDs between the driver piece color
         // and the blink color.
         if (blinkTimer.advanceIfElapsed(BLINK_DURATION_SECONDS)) blinking = !blinking;
-        if (manual) {
-            //if manual and continuous set the bottom to color
-            ledStrip.updateContinuousColor(currentColor);
-        } else {
-            pushColorsToBufferAsPulses();
-            //setTwoColor()
+        
+        // Number of leds to increment each continuous led layer by
+        int inc = Math.min((int) Math.ceil(ledTimer.get() * LEDS_PER_SEC), LED_LENGTH);
+        ledTimer.reset();
+        ledTimer.start();
+
+        /*
+         * LAYER SYSTEM: each layer is a array of colors, slots can also be null indicating a transparent slots
+         * trasparent slots are given to the layer beneath them
+         * 
+         * Layers, from top to bottom:
+         * 
+         * 4.colorLayer: when the color sensor is disconnected, 10 of every 30 leds are colored the rest are empty, otherwise empty
+         * 
+         * 3.aprilLayer: sends pulses of the set color when there is an april tag detected, empty in between pulses and when there are no april tags
+         * 
+         * 2.manualLayer: a continuous stream of color set by the right mech joystick when it is pushed down, empty when the joystick is not pushed down
+         * 
+         * 1.baseLayer: ALWAYS FULL, either filled CONE or CUBE color depending on the selected color by the mech joystick, if a piece is held
+         * the color blinks between BLINK_COLOR and the PIECE_COLOR (cone or cube) 
+         */
+
+        // Update baseLayer
+        if (blinking) {
+            baseLayer.fillColor(BLINK_COLOR);
+        } else { 
+            baseLayer.fillColor(pieceColor);
         }
 
-        //if the color sensor is off, add red in groups on top of the current buffer, otherwise push the current buffer
-        if(colorSensorOff){
-            ledStrip.fillGroupedWithBlanks(COLOR_SENSOR_OFF_COLOR, 10, 20);
-            ledStrip.setOverlay();
+        // Update manualLayer
+        if (manual) {
+            manualColorLayer.incrementColors(inc, manualColor);
         } else {
-            ledStrip.setBuffer();
+            manualColorLayer.reset();
         }
+
+        // Update aprilLayer
+        if (!aprilBlinkTimer.hasElapsed(APRIL_BLINK_DURATION_SECONDS) && aprilBlinkTimer.hasStarted()) {
+            aprilDetectedLayer.incrementColors(inc, APRIL_COLOR);
+        } else {
+            aprilDetectedLayer.incrementColors(inc, null);
+        }
+
+        // Update colorLayer
+        if (colorSensorOff) {
+            colorSensorLayer.fillGrouped(10, 20, COLOR_SENSOR_OFF_COLOR);
+        } else {
+            colorSensorLayer.reset();
+        }
+
+        // Add layers to buffer, set leds
+        ledStrip.addLayer(baseLayer);
+        ledStrip.addLayer(manualColorLayer);
+        ledStrip.addLayer(aprilDetectedLayer);
+        ledStrip.addLayer(colorSensorLayer);
+        ledStrip.setBuffer();
     }
 
     /**
@@ -94,28 +141,19 @@ public class LEDSubsystem extends SubsystemBase {
     public void displayTagDetected() {
         aprilBlinkTimer.start();
         aprilBlinkTimer.advanceIfElapsed(APRIL_BLINK_DURATION_SECONDS * BLINK_OFF_TO_ON_RATIO);
-
-        aprilFlashTimer.reset();
-        aprilFlashTimer.start();
     }
 
-    private void pushColorsToBufferAsPulses() {
-        if (!aprilBlinkTimer.hasElapsed(APRIL_BLINK_DURATION_SECONDS) && aprilBlinkTimer.hasStarted()){
-            ledStrip.updateContinuousColor(APRIL_COLOR);
-        } else {
-            ledStrip.fillSolidColorIgnoringColor(currentColor, APRIL_COLOR);
-            ledStrip.updateContinuousColor(currentColor);
-        }
-
-        if (blinking) ledStrip.fillSolidColorIgnoringColor(BLINK_COLOR, APRIL_COLOR);
-    }
-
-    private void setTwoColor() {
-        Color color2 = !aprilFlashTimer.hasElapsed(0.05)
-            ? APRIL_COLOR
-            : currentColor;
-
-        ledStrip.fillGroupedColors(blinking ? BLINK_COLOR : currentColor, color2);
+    /**
+     * Scales brightness by the BRIGHTNESS_SCALE_FACTOR
+     * @param color the color to scale down
+     * @return the color after it has been scaled down
+     */
+    private static Color scaleDownColorBrightness(Color color) {
+        return new Color(
+            color.red * BRIGHTNESS_SCALE_FACTOR,
+            color.green * BRIGHTNESS_SCALE_FACTOR,
+            color.blue * BRIGHTNESS_SCALE_FACTOR
+        );
     }
 
     /**
@@ -126,25 +164,25 @@ public class LEDSubsystem extends SubsystemBase {
      * @param x The x input of the joystick.
      * @param y The y input of the joystick.
      */
-    public void setDriverColor(double x, double y){
-        if (manual) {
-            double angleRads = MathUtil.inputModulus(Math.atan2(y, x), 0, 2 * Math.PI);
-            currentColor = Color.fromHSV(
-                (int) (Math.toDegrees(angleRads) / 2.0),
-                (int) 255,
-                (int) (255 * BRIGHTNESS_SCALE_FACTOR)
-            );
-        } else if (x > INPUT_DEADZONE) {
-            currentColor = CUBE_COLOR;
-            lastPieceColor = currentColor;
+    public void setDriverColors(double x, double y){
+        double angleRads = MathUtil.inputModulus(Math.atan2(y, x), 0, 2 * Math.PI);
+        manualColor = Color.fromHSV(
+            (int) (Math.toDegrees(angleRads) / 2.0),
+            (int) 255,
+            (int) (255 * BRIGHTNESS_SCALE_FACTOR)
+        );
+
+        if (x > INPUT_DEADZONE) {
+            pieceColor = CUBE_COLOR;
         } else if (x < -INPUT_DEADZONE) {
-            currentColor = CONE_COLOR;
-            lastPieceColor = currentColor;
-        } else {
-            currentColor = lastPieceColor;
+            pieceColor = CONE_COLOR;
         }
     }
 
+    /**
+     * Sets the color sensor status
+     * @param dead whether the color sensor is dead or not
+     */
     public void setColorSensorOff(boolean dead){
         colorSensorOff = dead;
     }
