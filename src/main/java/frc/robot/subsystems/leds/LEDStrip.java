@@ -45,9 +45,9 @@ public class LEDStrip {
      * @return The color of the led layers combined
      */
     public Color calcColorWithOpacity(Color baseColor, Color topColor, double opacity){
-        int r = (int) Math.floor(256 * (((1 - opacity) * baseColor.red) + (opacity * topColor.red)));
-        int g = (int) Math.floor(256 * (((1 - opacity) * baseColor.green) + (opacity * topColor.green)));
-        int b = (int) Math.floor(256 * (((1 - opacity) * baseColor.blue) + (opacity * topColor.blue)));
+        double r = (((1 - opacity) * baseColor.red) + (opacity * topColor.red));
+        double g = (((1 - opacity) * baseColor.green) + (opacity * topColor.green));
+        double b = (((1 - opacity) * baseColor.blue) + (opacity * topColor.blue));
 
         return(new Color(r, g, b));
     }
