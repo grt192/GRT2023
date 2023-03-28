@@ -83,11 +83,11 @@ public class LEDSubsystem extends SubsystemBase {
         // Update baseLayer - the piece color indicated by the mech driver, or the blink color if a piece
         // is held and we are blinking.
         Color baseColor = blinking ? BLINK_COLOR : pieceColor;
-        baseLayer.fillColor(baseColor, 1);
+        baseLayer.fillColor(baseColor);
 
         // Update manualColorLayer - the manual color set by the mech driver in manual mode.
         if (manual) {
-            manualColorLayer.incrementColors(inc, manualColor, 1);
+            manualColorLayer.incrementColors(inc, manualColor);
         } else {
             manualColorLayer.reset();
         }
@@ -111,9 +111,9 @@ public class LEDSubsystem extends SubsystemBase {
 
         // Update aprilDetectedLayer - white pulses to indicate an april tag detection.
         if (!aprilBlinkTimer.hasElapsed(APRIL_BLINK_DURATION_SECONDS) && aprilBlinkTimer.hasStarted()) {
-            aprilDetectedLayer.incrementColors(inc, APRIL_COLOR, 1);
+            aprilDetectedLayer.incrementColors(inc, APRIL_COLOR);
         } else {
-            aprilDetectedLayer.incrementColors(inc, null, 1);
+            aprilDetectedLayer.incrementColors(inc, null);
         }
 
         // Add layers to buffer, set leds
