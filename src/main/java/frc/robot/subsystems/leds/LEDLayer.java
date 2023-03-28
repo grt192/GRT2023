@@ -22,6 +22,10 @@ public class LEDLayer {
         opacityArray[i] = opacity;
     }
 
+    public void setLED(int i, Color color){
+        setLED(i, color, 1);
+    }
+
     /**
      * Gets the color of the LED at a specified index.
      * @param i The LED index to retrieve.
@@ -55,6 +59,10 @@ public class LEDLayer {
         }
     }
 
+    public void incrementColors(int inc, Color color){
+        incrementColors(inc, color, 1);
+    }
+
     /**
      * Fills the layer with a solid color.
      * @param color The color to fill the layer with.
@@ -64,6 +72,10 @@ public class LEDLayer {
         for (int i = 0; i < colorArray.length; i++) {
             setLED(i, color, opacity);
         }
+    }
+
+    public void fillColor(Color color){
+        fillColor(color, 1);
     }
 
     /**
@@ -90,8 +102,8 @@ public class LEDLayer {
         }
     }
 
-    public void fillGrouped(int onGroupLength, int offGroupLength, Color color, double opacity){
-        fillGrouped(onGroupLength, offGroupLength, 0, color, opacity, 0);
+    public void fillGrouped(int onGroupLength, int offGroupLength, Color color){
+        fillGrouped(onGroupLength, offGroupLength, 0, color, 1, 0);
     }
 
     /**
