@@ -15,6 +15,7 @@ public class LEDLayer {
      * Sets an LED at a specified index.
      * @param i The LED index to set.
      * @param color The color to set the LED at index i to (null is equivalent to transparent).
+     * @param opacity The opacity to set the LED at index i to
      */
     public void setLED(int i, Color color, double opacity) {
         colorArray[i] = color;
@@ -69,11 +70,14 @@ public class LEDLayer {
      * Fills the layer with alternating groups of "on" and "off" LEDs. "off" leds are set to null (transparent).
      * @param onGroupLength The length of the "on" group.
      * @param offGroupLength The length of the "off" group.
+     * @param borderLength The length of a gradient border which fades in at the edge of each "on" length
      * @param color The color to set the "on" LEDs.
+     * @param opacity The opacity of the "on" LEDs.
+     * @param offset The number of LEDs to offset the base by
      */
-    public void fillGrouped(int onGroupLength, int offGroupLength, int borderLength, Color color, double opacity, double offset) {
+    public void fillGrouped(int onGroupLength, int offGroupLength, int borderLength, Color color, double opacity, int offset) {
         for (int i = 0; i < colorArray.length; i++) {
-            int ledNumInSegment = i % (2 * borderLength + onGroupLength + offGroupLength);
+            int ledNumInSegment = (i + offset) % (2 * borderLength + onGroupLength + offGroupLength);
             if (ledNumInSegment < borderLength){
                 setLED(i, color, opacity *  (ledNumInSegment + 1) / (borderLength + 1));
             } else if (ledNumInSegment < onGroupLength + borderLength) {
