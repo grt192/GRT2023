@@ -25,7 +25,7 @@ public class LEDSubsystem extends SubsystemBase {
     private static final double APRIL_BLINK_DURATION_SECONDS = 0.05;
 
     private final Timer fadeTimer = new Timer();
-    private static final double COLOR_SENSOR_FADE_PERIOD_SECONDS = 1.0;
+    private static final double COLOR_SENSOR_FADE_PERIOD_SECONDS = .5;
     private boolean colorSensorOff = false;
 
     private static final double BRIGHTNESS_SCALE_FACTOR = 0.25;
@@ -94,7 +94,7 @@ public class LEDSubsystem extends SubsystemBase {
         if (colorSensorOff) {
             fadeTimer.start();
             colorSensorLayer.fillGrouped(
-                10, 20,
+                5, 10,
                 crossFadeWithTime(COLOR_SENSOR_OFF_COLOR, baseColor, fadeTimer.get(), COLOR_SENSOR_FADE_PERIOD_SECONDS)
             );
         } else {
