@@ -24,6 +24,10 @@ public class LEDSubsystem extends SubsystemBase {
     private final TrackingTimer aprilBlinkTimer = new TrackingTimer();
     private static final double APRIL_BLINK_DURATION_SECONDS = 0.05;
 
+    private final Timer fadeTimer = new Timer();
+    private static final double COLOR_SENSOR_FADE_PERIOD_SECONDS = .5;
+    private boolean colorSensorOff = false;
+
     private static final double BRIGHTNESS_SCALE_FACTOR = 0.25;
     private static final double INPUT_DEADZONE = 0.35;
     private static final int LEDS_PER_SEC = 150;
@@ -39,9 +43,7 @@ public class LEDSubsystem extends SubsystemBase {
     private static final Color CONE_COLOR = scaleDownColorBrightness(new Color(255, 100, 0));
     private static final Color COLOR_SENSOR_OFF_COLOR = scaleDownColorBrightness(new Color(255, 0, 0));
 
-    private boolean colorSensorOff = false;
-
-    private final Timer ledTimer;
+    private final Timer ledTimer; // TODO: better naming
 
     public LEDSubsystem() {
         ledStrip = new LEDStrip(LED_PWM_PORT, LED_LENGTH);
@@ -76,55 +78,43 @@ public class LEDSubsystem extends SubsystemBase {
         ledTimer.reset();
         ledTimer.start();
 
-        /*
-         * LAYER SYSTEM: each layer is a array of colors, slots can also be null indicating a transparent slots
-         * trasparent slots are given to the layer beneath them
-         * 
-         * Layers, from top to bottom:
-         * 
-         * 4.colorLayer: when the color sensor is disconnected, 10 of every 30 leds are colored the rest are empty, otherwise empty
-         * 
-         * 3.aprilLayer: sends pulses of the set color when there is an april tag detected, empty in between pulses and when there are no april tags
-         * 
-         * 2.manualLayer: a continuous stream of color set by the right mech joystick when it is pushed down, empty when the joystick is not pushed down
-         * 
-         * 1.baseLayer: ALWAYS FULL, either filled CONE or CUBE color depending on the selected color by the mech joystick, if a piece is held
-         * the color blinks between BLINK_COLOR and the PIECE_COLOR (cone or cube) 
-         */
+        // Update baseLayer - the piece color indicated by the mech driver, or the blink color if a piece
+        // is held and we are blinking.
+        Color baseColor = blinking ? BLINK_COLOR : pieceColor;
+        baseLayer.fillColor(baseColor);
 
-        // Update baseLayer
-        if (blinking) {
-            baseLayer.fillColor(BLINK_COLOR);
-        } else { 
-            baseLayer.fillColor(pieceColor);
-        }
-
-        // Update manualLayer
+        // Update manualColorLayer - the manual color set by the mech driver in manual mode.
         if (manual) {
             manualColorLayer.incrementColors(inc, manualColor);
         } else {
             manualColorLayer.reset();
         }
 
-        // Update aprilLayer
+        // Update colorSensorLayer - pulsing red grouped indicators to indicate a color sensor failure.
+        if (colorSensorOff) {
+            fadeTimer.start();
+            colorSensorLayer.fillGrouped(
+                5, 10,
+                crossFadeWithTime(COLOR_SENSOR_OFF_COLOR, baseColor, fadeTimer.get(), COLOR_SENSOR_FADE_PERIOD_SECONDS)
+            );
+        } else {
+            fadeTimer.stop();
+            fadeTimer.reset();
+            colorSensorLayer.reset();
+        }
+
+        // Update aprilDetectedLayer - white pulses to indicate an april tag detection.
         if (!aprilBlinkTimer.hasElapsed(APRIL_BLINK_DURATION_SECONDS) && aprilBlinkTimer.hasStarted()) {
             aprilDetectedLayer.incrementColors(inc, APRIL_COLOR);
         } else {
             aprilDetectedLayer.incrementColors(inc, null);
         }
 
-        // Update colorLayer
-        if (colorSensorOff) {
-            colorSensorLayer.fillGrouped(10, 20, COLOR_SENSOR_OFF_COLOR);
-        } else {
-            colorSensorLayer.reset();
-        }
-
         // Add layers to buffer, set leds
         ledStrip.addLayer(baseLayer);
         ledStrip.addLayer(manualColorLayer);
-        ledStrip.addLayer(aprilDetectedLayer);
         ledStrip.addLayer(colorSensorLayer);
+        ledStrip.addLayer(aprilDetectedLayer);
         ledStrip.setBuffer();
     }
 
@@ -144,9 +134,29 @@ public class LEDSubsystem extends SubsystemBase {
     }
 
     /**
-     * Scales brightness by the BRIGHTNESS_SCALE_FACTOR
-     * @param color the color to scale down
-     * @return the color after it has been scaled down
+     * Cross-fades between two colors using a sinusoidal scaling function.
+     * @param color The color to set.
+     * @param fadeColor The color to fade into.
+     * @param currentTimeSeconds The current elapsed time of fading.
+     * @param periodSeconds The period of the fade function, in seconds.
+     * @return The scaled and faded color.
+     */
+    private static Color crossFadeWithTime(Color color, Color fadeColor, double currentTimeSeconds, double periodSeconds) {
+        // The [0.0, 1.0] brightness scale to scale the color by. Scale = 1/2 * cos(t) + 1/2 where
+        // t is scaled to produce the desired period.
+        double scale = 0.5 * Math.cos(currentTimeSeconds * 2 * Math.PI / periodSeconds) + 0.5;
+
+        return new Color(
+            color.red * scale + fadeColor.red * (1 - scale),
+            color.green * scale + fadeColor.green * (1 - scale),
+            color.blue * scale + fadeColor.blue * (1 - scale)
+        );
+    }
+
+    /**
+     * Scales a color's brightness by the BRIGHTNESS_SCALE_FACTOR.
+     * @param color The color to scale down.
+     * @return The scaled down color.
      */
     private static Color scaleDownColorBrightness(Color color) {
         return new Color(

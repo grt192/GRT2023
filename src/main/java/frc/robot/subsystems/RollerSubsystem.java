@@ -281,6 +281,6 @@ public class RollerSubsystem extends SubsystemBase {
     }
 
     public boolean colorSensorConnected() {
-        return colorSensorConnected;
+        return false;
     }
 }

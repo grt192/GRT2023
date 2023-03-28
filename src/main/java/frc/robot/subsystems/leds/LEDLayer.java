@@ -45,17 +45,10 @@ public class LEDLayer {
      * Fills the layer with a solid color.
      * @param color The color to fill the layer with.
      */
-    public void fillColor(Color color){
+    public void fillColor(Color color) {
         for (int i = 0; i < ledArray.length; i++) {
             setLED(i, color);
         }
-    }
-
-    /**
-     * Resets the layer by setting all LEDs to null (transparent).
-     */
-    public void reset() {
-        fillColor(null);
     }
 
     /**
@@ -64,13 +57,20 @@ public class LEDLayer {
      * @param offGroupLength The length of the "off" group.
      * @param color The color to set the "on" LEDs.
      */
-    public void fillGrouped(int onGroupLength, int offGroupLength, Color color){
+    public void fillGrouped(int onGroupLength, int offGroupLength, Color color) {
         for (int i = 0; i < ledArray.length; i++) {
-            if (i % (onGroupLength + offGroupLength) < onGroupLength){
+            if (i % (onGroupLength + offGroupLength) < onGroupLength) {
                 setLED(i, color);
             } else {
                 setLED(i, null);
             }
         }
+    }
+
+    /**
+     * Resets the layer by setting all LEDs to null (transparent).
+     */
+    public void reset() {
+        fillColor(null);
     }
 }
