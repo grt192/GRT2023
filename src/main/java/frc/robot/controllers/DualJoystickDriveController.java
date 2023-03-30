@@ -102,6 +102,11 @@ public class DualJoystickDriveController extends BaseDriveController {
         return rightBackButton;
     }
 
+    @Override
+    public boolean approachShelf() {
+        return leftBackButton.getAsBoolean();
+    }
+
     /**
      * Gets the amount to scale translational input by.
      * @return The scale to apply to translational input.

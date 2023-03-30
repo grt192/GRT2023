@@ -212,7 +212,9 @@ public class RobotContainer {
                 double angularPower = driveController.getRotatePower();
                 boolean relative = driveController.getSwerveRelative();
 
-                if (driveController.getSwerveHeadingLock()) {
+                if (driveController.approachShelf()) {
+                    swerveSubsystem.setDrivePowersWithHeadingLock(0.65, yPower, new Rotation2d(0), false);
+                } else if (driveController.getSwerveHeadingLock()) {
                     double currentHeadingRads = swerveSubsystem.getDriverHeading().getRadians();
                     double lockHeadingRads = (Math.abs(currentHeadingRads) > Math.PI / 2.0) ? Math.PI : 0;
 

@@ -43,4 +43,8 @@ public abstract class BaseDriveController {
     public abstract JoystickButton getAlignRightButton();
     public abstract JoystickButton getDriveForwardButton();
     public abstract JoystickButton getCancelAutoAlignButton();
+
+    public boolean approachShelf() {
+        return false;
+    }
 }
