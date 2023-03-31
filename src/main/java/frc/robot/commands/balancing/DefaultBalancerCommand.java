@@ -80,7 +80,7 @@ public class DefaultBalancerCommand extends BaseBalancerCommand {
         double currentPitchDegs = ahrs.getPitch();
 
         if (!reachedStation) {
-            returnDrivePower = -0.80 * direction;
+            returnDrivePower = -0.75 * direction;
             if ((reverse && currentPitchDegs <= -10.0) || (!reverse && currentPitchDegs >= 10.0)) {
                 reachedStation = true;
                 balanceLog.append("Reached Charging Station");
@@ -101,8 +101,8 @@ public class DefaultBalancerCommand extends BaseBalancerCommand {
                 }
             } else {
                 returnDrivePower = -1 * drivePID.calculate(currentPitchDegs, 0);
-
-                if ((reverse && Math.abs(currentPitchDegs) <= 1.0 && deltaPitchDegs <= 0.1) || (!reverse && Math.abs(currentPitchDegs) >= -1.0 && deltaPitchDegs >= -0.1)){
+                // if ((reverse && Math.abs(currentPitchDegs) <= 1.0 && deltaPitchDegs <= 0.1) || (!reverse && Math.abs(currentPitchDegs) >= -1.0 && deltaPitchDegs >= -0.1)){
+                if (Math.abs(currentPitchDegs) <= 1.0 && ((reverse && deltaPitchDegs <= 0.1) || (!reverse && deltaPitchDegs >= -0.1))){
                     balanced = true;
                     balanceLog.append("Robot balanced");
                 }

@@ -108,8 +108,13 @@ public abstract class BaseAutonSequence extends SequentialCommandGroup {
      * @return The `SequentialCommandGroup` representing running the commands in order.
      */
     protected SequentialCommandGroup goAndPlace(Pose2d initialPose, Pose2d finalPose, ElevatorState elevatorState, boolean startsMoving) {
-        return new TiltedElevatorCommand(tiltedElevatorSubsystem, elevatorState)
-            .alongWith(FollowPathCommand.from(swerveSubsystem, initialPose, List.of(), finalPose, startsMoving, false))
+        TiltedElevatorCommand elevatorCommand = new TiltedElevatorCommand(tiltedElevatorSubsystem, elevatorState);
+
+        Command driveForwardCommand = elevatorState == ElevatorState.CONE_MID || elevatorState == ElevatorState.CONE_HIGH
+            ? elevatorCommand.andThen(FollowPathCommand.from(swerveSubsystem, initialPose, List.of(), finalPose, startsMoving, false))
+            : elevatorCommand.alongWith(FollowPathCommand.from(swerveSubsystem, initialPose, List.of(), finalPose, startsMoving, false));
+
+        return driveForwardCommand
             .andThen(new SwerveIdleCommand(swerveSubsystem))
             .andThen(new WaitCommand(0.1))
             .andThen(DropperChooserCommand.getSequence(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, elevatorState));

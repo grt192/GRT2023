@@ -285,6 +285,7 @@ public class AutoAlignCommand extends InstantCommand {
             wrappedAlignCommand = new AlignToNodeCommand(swerveSubsystem, tiltedElevatorSubsystem, targetPlacePosition, isRed);
         }
 
+        // System.out.println("Aligning with " + targetPlacePosition.name());
         wrappedAlignCommand.schedule();
 
         // Lock parallel to the grid for better strafing

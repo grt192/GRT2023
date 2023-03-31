@@ -33,6 +33,14 @@ public abstract class BaseDriveController {
      */
     public abstract boolean getSwerveHeadingLock();
 
+    /**
+     * Gets whether the swerve is approaching the shelf to intake a piece.
+     * @return Whether the swerve should automatically approach the shelf.
+     */
+    public boolean approachShelf() {
+        return false;
+    }
+
     public abstract JoystickButton getBalancerButton();
     public abstract JoystickButton getFieldResetButton();
     public abstract JoystickButton getCameraSwitchButton();
@@ -43,8 +51,4 @@ public abstract class BaseDriveController {
     public abstract JoystickButton getAlignRightButton();
     public abstract JoystickButton getDriveForwardButton();
     public abstract JoystickButton getCancelAutoAlignButton();
-
-    public boolean approachShelf() {
-        return false;
-    }
 }

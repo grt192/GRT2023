@@ -196,6 +196,7 @@ public class RollerSubsystem extends SubsystemBase {
         if (openTimer.hasStarted()) openMotor.set(0.5);
         else if (closeTimer.hasStarted()) openMotor.set(-0.2);
         else if (heldPiece == HeldPiece.CONE) openMotor.setVoltage(-4.0);
+        else if (rollPower > 0) openMotor.setVoltage(-2.0);
         else openMotor.set(0);
     }
 

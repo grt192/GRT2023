@@ -99,12 +99,12 @@ public class DualJoystickDriveController extends BaseDriveController {
 
     @Override
     public JoystickButton getCancelAutoAlignButton() {
-        return rightBackButton;
+        return leftBackButton;
     }
 
     @Override
     public boolean approachShelf() {
-        return leftBackButton.getAsBoolean();
+        return rightBackButton.getAsBoolean();
     }
 
     /**
