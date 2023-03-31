@@ -70,6 +70,7 @@ public class Superstructure extends SubsystemBase {
 
         // Close the roller when the elevator extends below ALLOW_OPEN_EXTENSION_METERS.
         rollerSubsystem.allowOpen = tiltedElevatorSubsystem.getExtensionMeters() >= ALLOW_OPEN_EXTENSION_METERS;
+        ledSubsystem.setHeldPiece(rollerSubsystem.getPiece());
 
         // Cancel auto-align command if magnitude of drive inputs is greater than 0.15.
         // double translateMagnitude = Math.hypot(
