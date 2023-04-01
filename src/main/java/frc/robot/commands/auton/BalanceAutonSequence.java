@@ -25,6 +25,7 @@ public class BalanceAutonSequence extends BaseAutonSequence {
         super(swerveSubsystem, rollerSubsystem, tiltedElevatorSubsystem, initialPosition, isRed);
 
         addCommands(
+            new WaitCommand(1.4), //to let elevator lower all the way untested
             // Go and balance on charging station
             new DefaultBalancerCommand(swerveSubsystem, true)
         );
