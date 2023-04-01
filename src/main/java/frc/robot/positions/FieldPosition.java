@@ -9,49 +9,49 @@ import frc.robot.util.FieldUtil;
 public enum FieldPosition {
     C3(new Pose2d(
         Units.inchesToMeters(74),
-        Units.inchesToMeters(195.55),
+        Units.inchesToMeters(196.19), // 195.55
         Rotation2d.fromDegrees(180)
     )),
     C2(new Pose2d(
         Units.inchesToMeters(74),
-        Units.inchesToMeters(174.123),
+        Units.inchesToMeters(174.19), // 174.123
         Rotation2d.fromDegrees(180)
     )),
     C1(new Pose2d(
         Units.inchesToMeters(74),
-        Units.inchesToMeters(152.123),
+        Units.inchesToMeters(152.19), // 152.123
         Rotation2d.fromDegrees(180)
     )),
 
     B3(new Pose2d(
         Units.inchesToMeters(74),
-        Units.inchesToMeters(129.75),
+        Units.inchesToMeters(130.19), // 129.75
         Rotation2d.fromDegrees(180)
     )),
     B2(new Pose2d(
         Units.inchesToMeters(74),
-        Units.inchesToMeters(107.801),
+        Units.inchesToMeters(108.19), // 107.801
         Rotation2d.fromDegrees(180)
     )),
     B1(new Pose2d(
         Units.inchesToMeters(74),
-        Units.inchesToMeters(86.149),
+        Units.inchesToMeters(86.19), // 86.149
         Rotation2d.fromDegrees(180)
     )),
 
     A3(new Pose2d(
         Units.inchesToMeters(74),
-        Units.inchesToMeters(64.818),
+        Units.inchesToMeters(64.19), // 64.818
         Rotation2d.fromDegrees(180)
     )),
     A2(new Pose2d(
         Units.inchesToMeters(74),
-        Units.inchesToMeters(41.761),
+        Units.inchesToMeters(42.19), // 41.761
         Rotation2d.fromDegrees(180)
     )),
     A1(new Pose2d(
         Units.inchesToMeters(74),
-        Units.inchesToMeters(20.016),
+        Units.inchesToMeters(20.19), // 20.016
         Rotation2d.fromDegrees(180)
     )),
 
