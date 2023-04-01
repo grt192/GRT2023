@@ -219,7 +219,7 @@ public class RobotContainer {
 
                 if (driveController.approachShelf()) { //changed to 0.45
                     if (rollerSubsystem.getPiece() == HeldPiece.EMPTY){
-                        swerveSubsystem.setDrivePowersWithHeadingLock(0.45, yPower, new Rotation2d(0), false);
+                        swerveSubsystem.setDrivePowersWithHeadingLock(0.375, yPower, new Rotation2d(0), false);
                     } else {
                         swerveSubsystem.setDrivePowers(0, 0, 0, relative);
                     }
