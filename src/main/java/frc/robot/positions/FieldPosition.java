@@ -5,101 +5,102 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 
 import frc.robot.util.FieldUtil;
+import static frc.robot.Constants.FieldConstants.*;
 
 public enum FieldPosition {
     C3(new Pose2d(
-        Units.inchesToMeters(74),
-        Units.inchesToMeters(196.19), // 195.55
+        Units.inchesToMeters(GRID_X_INCHES),
+        Units.inchesToMeters(C3_Y_INCHES), // 195.55
         Rotation2d.fromDegrees(180)
     )),
     C2(new Pose2d(
-        Units.inchesToMeters(74),
-        Units.inchesToMeters(174.19), // 174.123
+        Units.inchesToMeters(GRID_X_INCHES),
+        Units.inchesToMeters(C2_Y_INCHES), // 174.123
         Rotation2d.fromDegrees(180)
     )),
     C1(new Pose2d(
-        Units.inchesToMeters(74),
-        Units.inchesToMeters(152.19), // 152.123
+        Units.inchesToMeters(GRID_X_INCHES),
+        Units.inchesToMeters(C1_Y_INCHES), // 152.123
         Rotation2d.fromDegrees(180)
     )),
 
     B3(new Pose2d(
-        Units.inchesToMeters(74),
-        Units.inchesToMeters(130.19), // 129.75
+        Units.inchesToMeters(GRID_X_INCHES),
+        Units.inchesToMeters(B3_Y_INCHES), // 129.75
         Rotation2d.fromDegrees(180)
     )),
     B2(new Pose2d(
-        Units.inchesToMeters(74),
-        Units.inchesToMeters(108.19), // 107.801
+        Units.inchesToMeters(GRID_X_INCHES),
+        Units.inchesToMeters(B2_Y_INCHES), // 107.801
         Rotation2d.fromDegrees(180)
     )),
     B1(new Pose2d(
-        Units.inchesToMeters(74),
-        Units.inchesToMeters(86.19), // 86.149
+        Units.inchesToMeters(GRID_X_INCHES),
+        Units.inchesToMeters(B1_Y_INCHES), // 86.149
         Rotation2d.fromDegrees(180)
     )),
 
     A3(new Pose2d(
-        Units.inchesToMeters(74),
-        Units.inchesToMeters(64.19), // 64.818
+        Units.inchesToMeters(GRID_X_INCHES),
+        Units.inchesToMeters(A3_Y_INCHES), // 64.818
         Rotation2d.fromDegrees(180)
     )),
     A2(new Pose2d(
-        Units.inchesToMeters(74),
-        Units.inchesToMeters(42.19), // 41.761
+        Units.inchesToMeters(GRID_X_INCHES),
+        Units.inchesToMeters(A2_Y_INCHES), // 41.761
         Rotation2d.fromDegrees(180)
     )),
     A1(new Pose2d(
-        Units.inchesToMeters(74),
-        Units.inchesToMeters(20.19), // 20.016
+        Units.inchesToMeters(GRID_X_INCHES),
+        Units.inchesToMeters(A1_Y_INCHES), // 20.016
         Rotation2d.fromDegrees(180)
     )),
 
     C3_INIT(new Pose2d(
-        Units.inchesToMeters(86.885),
-        Units.inchesToMeters(195.55),
+        Units.inchesToMeters(GRID_X_INCHES + ALIGNMENT_OFFSET_INCHES),
+        Units.inchesToMeters(C3_Y_INCHES), // 195.55
         Rotation2d.fromDegrees(180)
     )),
     C2_INIT(new Pose2d(
-        Units.inchesToMeters(86.885),
-        Units.inchesToMeters(174.123),
+        Units.inchesToMeters(GRID_X_INCHES + ALIGNMENT_OFFSET_INCHES),
+        Units.inchesToMeters(C2_Y_INCHES), // 174.123
         Rotation2d.fromDegrees(180)
     )),
     C1_INIT(new Pose2d(
-        Units.inchesToMeters(86.885),
-        Units.inchesToMeters(152.123),
+        Units.inchesToMeters(GRID_X_INCHES + ALIGNMENT_OFFSET_INCHES),
+        Units.inchesToMeters(C1_Y_INCHES), // 152.123
         Rotation2d.fromDegrees(180)
     )),
 
     B3_INIT(new Pose2d(
-        Units.inchesToMeters(86.885),
-        Units.inchesToMeters(129.75),
+        Units.inchesToMeters(GRID_X_INCHES + ALIGNMENT_OFFSET_INCHES),
+        Units.inchesToMeters(B3_Y_INCHES), // 129.75
         Rotation2d.fromDegrees(180)
     )),
     B2_INIT(new Pose2d(
-        Units.inchesToMeters(86.885),
-        Units.inchesToMeters(107.801),
+        Units.inchesToMeters(GRID_X_INCHES + ALIGNMENT_OFFSET_INCHES),
+        Units.inchesToMeters(B2_Y_INCHES), // 107.801
         Rotation2d.fromDegrees(180)
     )),
     B1_INIT(new Pose2d(
-        Units.inchesToMeters(86.885),
-        Units.inchesToMeters(86.149),
+        Units.inchesToMeters(GRID_X_INCHES + ALIGNMENT_OFFSET_INCHES),
+        Units.inchesToMeters(B1_Y_INCHES), // 86.149
         Rotation2d.fromDegrees(180)
     )),
 
     A3_INIT(new Pose2d(
-        Units.inchesToMeters(86.885),
-        Units.inchesToMeters(64.818),
+        Units.inchesToMeters(GRID_X_INCHES + ALIGNMENT_OFFSET_INCHES),
+        Units.inchesToMeters(A3_Y_INCHES), // 64.818
         Rotation2d.fromDegrees(180)
     )),
     A2_INIT(new Pose2d(
-        Units.inchesToMeters(86.885),
-        Units.inchesToMeters(41.761),
+        Units.inchesToMeters(GRID_X_INCHES + ALIGNMENT_OFFSET_INCHES),
+        Units.inchesToMeters(A2_Y_INCHES), // 41.761
         Rotation2d.fromDegrees(180)
     )),
     A1_INIT(new Pose2d(
-        Units.inchesToMeters(86.885),
-        Units.inchesToMeters(20.016),
+        Units.inchesToMeters(GRID_X_INCHES + ALIGNMENT_OFFSET_INCHES),
+        Units.inchesToMeters(A1_Y_INCHES), // 20.016
         Rotation2d.fromDegrees(180)
     )),
 

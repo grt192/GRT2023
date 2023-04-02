@@ -199,4 +199,23 @@ public final class Constants {
         public static final double GRT_CHARGING_STATION_KP = 0.3 / 35;
         public static final double COMP_CHARGING_STATION_KP = 0.007;
     }
+
+    public static final class FieldConstants {
+        public static final double ROBOT_LENGTH_INCHES = 38.5;
+
+        public static final double GRID_X_INCHES = 53.938 + (ROBOT_LENGTH_INCHES / 2.0);
+        public static final double ALIGNMENT_OFFSET_INCHES = 12.885;
+
+        public static final double C3_Y_INCHES = 196.19;
+        public static final double C2_Y_INCHES = 174.19;
+        public static final double C1_Y_INCHES = 152.19;
+
+        public static final double B3_Y_INCHES = 130.19;
+        public static final double B2_Y_INCHES = 108.19;
+        public static final double B1_Y_INCHES = 86.19;
+
+        public static final double A3_Y_INCHES = 64.19;
+        public static final double A2_Y_INCHES = 42.19;
+        public static final double A1_Y_INCHES = 20.19;
+    }
 }
