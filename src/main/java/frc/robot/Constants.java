@@ -41,13 +41,13 @@ public final class Constants {
             : -2.4960072914785663;
         public static final double TR_OFFSET_RADS = IS_R1 
             ? -1.1199431538621365 // 2.0216494997276566
-            : -0.41136027574934353;
+            : -0.3756485104600369; //2.7659441431297562;
         public static final double BL_OFFSET_RADS = IS_R1
             ? -2.374440566697393
-            : 0.6375202695515494;
+            : -0.0563106973979135 ; //3.0852819561918796
         public static final double BR_OFFSET_RADS = IS_R1
             ? -2.8609512726492206 // 0.28064138094057256
-            : -2.667189121246338;
+            :  0.6332055648141584; //-2.5083870887756348
 
         public static final int TL_DRIVE = 2;
         public static final int TL_STEER = 3;
@@ -147,12 +147,19 @@ public final class Constants {
             new Rotation3d(Math.PI, 0, 0)
         );
 
-        public static final PhotonCamera BACK_CAMERA = new PhotonCamera("HD_USB_Camera");
-        public static final Transform3d BACK_CAMERA_POSE = new Transform3d(
+        public static final PhotonCamera RIGHT_CAMERA = new PhotonCamera("HD_USB_Camera");
+        public static final Transform3d RIGHT_CAMERA_POSE = new Transform3d(
             // new Translation3d(Units.inchesToMeters(7.375), Units.inchesToMeters(10.597), Units.inchesToMeters(22.638875)),
-            new Translation3d(Units.inchesToMeters(7.625), Units.inchesToMeters(7.767605), Units.inchesToMeters(22.25)),
-            new Rotation3d(Math.PI, 0, Math.PI)
+            new Translation3d(Units.inchesToMeters(10.125), Units.inchesToMeters(-7.767605), Units.inchesToMeters(22.25)),
+            new Rotation3d(Math.PI, 0, 0)
         );
+
+        // public static final PhotonCamera BACK_CAMERA = new PhotonCamera("HD_USB_Camera");
+        // public static final Transform3d BACK_CAMERA_POSE = new Transform3d(
+        //     // new Translation3d(Units.inchesToMeters(7.375), Units.inchesToMeters(10.597), Units.inchesToMeters(22.638875)),
+        //     new Translation3d(Units.inchesToMeters(7.625), Units.inchesToMeters(7.767605), Units.inchesToMeters(22.25)),
+        //     new Rotation3d(Math.PI, 0, Math.PI)
+        // );
     }
 
     public static final class LEDConstants {
@@ -190,6 +197,25 @@ public final class Constants {
 
     public static final class BalancerConstants {
         public static final double GRT_CHARGING_STATION_KP = 0.3 / 35;
-        public static final double COMP_CHARGING_STATION_KP = 0.0072;
+        public static final double COMP_CHARGING_STATION_KP = 0.007;
+    }
+
+    public static final class FieldConstants {
+        public static final double ROBOT_LENGTH_INCHES = 38.5;
+
+        public static final double GRID_X_INCHES = 53.938 + (ROBOT_LENGTH_INCHES / 2.0);
+        public static final double ALIGNMENT_OFFSET_INCHES = 12.885;
+
+        public static final double C3_Y_INCHES = 196.19;
+        public static final double C2_Y_INCHES = 174.19;
+        public static final double C1_Y_INCHES = 152.19;
+
+        public static final double B3_Y_INCHES = 130.19;
+        public static final double B2_Y_INCHES = 108.19;
+        public static final double B1_Y_INCHES = 86.19;
+
+        public static final double A3_Y_INCHES = 64.19;
+        public static final double A2_Y_INCHES = 42.19;
+        public static final double A1_Y_INCHES = 20.19;
     }
 }

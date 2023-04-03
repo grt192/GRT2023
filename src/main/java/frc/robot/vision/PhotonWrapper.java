@@ -59,8 +59,8 @@ public class PhotonWrapper {
             backPoseEstimator = new PhotonPoseEstimator(
                 fieldLayout,
                 PoseStrategy.MULTI_TAG_PNP,
-                BACK_CAMERA,
-                BACK_CAMERA_POSE
+                RIGHT_CAMERA,
+                RIGHT_CAMERA_POSE
             );
             backPoseEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
         } catch (IOException e) {

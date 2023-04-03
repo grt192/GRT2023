@@ -92,4 +92,9 @@ public class GoToPointCommand extends CommandBase {
         double yErrorMeters = Math.abs(targetPose.getY() - currentPose.getY());
         return xErrorMeters < X_TOLERANCE_METERS && yErrorMeters < Y_TOLERANCE_METERS && isHeadingAligned(THETA_TOLERANCE_RADS);
     }
+
+    @Override
+    public void end(boolean interrupted) {
+        currentPose = null;
+    }
 }

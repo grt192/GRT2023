@@ -99,7 +99,12 @@ public class DualJoystickDriveController extends BaseDriveController {
 
     @Override
     public JoystickButton getCancelAutoAlignButton() {
-        return rightBackButton;
+        return leftBackButton;
+    }
+
+    @Override
+    public boolean approachShelf() {
+        return rightBackButton.getAsBoolean();
     }
 
     /**
@@ -108,7 +113,7 @@ public class DualJoystickDriveController extends BaseDriveController {
      */
     private double getDriveScaling() {
         boolean isSlowMode = leftJoystick.getTrigger();
-        return isSlowMode ? 0.3 : 1.0;
+        return isSlowMode ? 0.24 : 1.0;
     }
 
     /**
@@ -117,6 +122,6 @@ public class DualJoystickDriveController extends BaseDriveController {
      */
     private double getTurnScaling() {
         boolean isSlowMode = leftJoystick.getTrigger();
-        return isSlowMode ? 0.25 : 0.5;
+        return isSlowMode ? 0.125 : 0.5;
     }
 }

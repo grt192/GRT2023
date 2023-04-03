@@ -4,8 +4,10 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
+import frc.robot.subsystems.RollerSubsystem;
+import frc.robot.subsystems.RollerSubsystem.HeldPiece;
 import frc.robot.util.TrackingTimer;
+
 import static frc.robot.Constants.LEDConstants.*;
 
 public class LEDSubsystem extends SubsystemBase {
@@ -14,6 +16,7 @@ public class LEDSubsystem extends SubsystemBase {
     private final LEDLayer manualColorLayer;
     private final LEDLayer aprilDetectedLayer;
     private final LEDLayer colorSensorLayer;
+    private final LEDLayer heldPieceLayer;
 
     private final Timer blinkTimer;
     private static final double BLINK_DURATION_SECONDS = 0.5;
@@ -35,6 +38,13 @@ public class LEDSubsystem extends SubsystemBase {
     private Color pieceColor = CUBE_COLOR;
     private Color manualColor = new Color(0, 0, 0);
 
+    private HeldPiece heldPiece = HeldPiece.EMPTY;
+    private boolean risingEdge = false;
+    private boolean fallingEdge = false;
+    private Color RISING_EDGE_COLOR = new Color(0, 0, 255);
+    private Color FALLING_EDGE_COLOR = new Color(255, 0, 0);
+    private Timer heldPieceTimer = new Timer();
+
     private boolean manual = false; // If the driver is directly controlling leds
     public boolean pieceGrabbed = false;
 
@@ -52,6 +62,7 @@ public class LEDSubsystem extends SubsystemBase {
         manualColorLayer = new LEDLayer(LED_LENGTH);
         aprilDetectedLayer = new LEDLayer(LED_LENGTH);
         colorSensorLayer = new LEDLayer(LED_LENGTH);
+        heldPieceLayer = new LEDLayer(LED_LENGTH);
 
         blinkTimer = new Timer();
         ledTimer = new Timer();
@@ -90,6 +101,18 @@ public class LEDSubsystem extends SubsystemBase {
             manualColorLayer.reset();
         }
 
+        if(fallingEdge){
+            heldPieceLayer.fillColor(FALLING_EDGE_COLOR);
+            heldPieceTimer.reset();
+            heldPieceTimer.start();
+        } else if (risingEdge){
+            heldPieceLayer.fillColor(RISING_EDGE_COLOR);
+            heldPieceTimer.reset();
+            heldPieceTimer.start();
+        } else if (heldPieceTimer.hasElapsed(1)){
+            heldPieceLayer.fillColor(null);
+        }
+
         // Update colorSensorLayer - pulsing red grouped indicators to indicate a color sensor failure.
         if (colorSensorOff) {
             fadeTimer.start();
@@ -113,6 +136,7 @@ public class LEDSubsystem extends SubsystemBase {
         // Add layers to buffer, set leds
         ledStrip.addLayer(baseLayer);
         ledStrip.addLayer(manualColorLayer);
+        ledStrip.addLayer(heldPieceLayer);
         ledStrip.addLayer(colorSensorLayer);
         ledStrip.addLayer(aprilDetectedLayer);
         ledStrip.setBuffer();
@@ -195,5 +219,20 @@ public class LEDSubsystem extends SubsystemBase {
      */
     public void setColorSensorOff(boolean dead){
         colorSensorOff = dead;
+    }
+
+    public void setHeldPiece(HeldPiece newHeldPiece){
+        if(heldPiece == HeldPiece.EMPTY && newHeldPiece != HeldPiece.EMPTY){
+            risingEdge = true;
+        } else {
+            risingEdge = false;
+        }
+
+        if(heldPiece != HeldPiece.EMPTY && newHeldPiece == HeldPiece.EMPTY){
+            fallingEdge = true;
+        } else {
+            fallingEdge = false;
+        }
+        heldPiece = newHeldPiece;
     }
 }

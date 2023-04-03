@@ -65,6 +65,7 @@ import frc.robot.subsystems.drivetrain.SwerveSubsystem2020;
 import frc.robot.subsystems.drivetrain.BaseDrivetrain;
 import frc.robot.subsystems.RollerSubsystem;
 import frc.robot.subsystems.Superstructure;
+import frc.robot.subsystems.RollerSubsystem.HeldPiece;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -157,6 +158,10 @@ public class RobotContainer {
             autonInitialPoseChooser.addOption(position.name(), position);
         }
 
+        // shuffleboardTab.add(driveSubsystem)
+        //    .withPosition(9, 0)
+        //    .withSize(3, 3);
+
         if (driveSubsystem instanceof BaseSwerveSubsystem) {
             final BaseSwerveSubsystem swerveSubsystem = (BaseSwerveSubsystem) driveSubsystem;
             testCommand = new MotorTestCommand(swerveSubsystem, tiltedElevatorSubsystem, rollerSubsystem);
@@ -212,7 +217,13 @@ public class RobotContainer {
                 double angularPower = driveController.getRotatePower();
                 boolean relative = driveController.getSwerveRelative();
 
-                if (driveController.getSwerveHeadingLock()) {
+                if (driveController.approachShelf()) { //changed to 0.45
+                    if (rollerSubsystem.getPiece() == HeldPiece.EMPTY){
+                        swerveSubsystem.setDrivePowersWithHeadingLock(0.375, yPower, new Rotation2d(0), false);
+                    } else {
+                        swerveSubsystem.setDrivePowers(0, 0, 0, relative);
+                    }
+                } else if (driveController.getSwerveHeadingLock()) {
                     double currentHeadingRads = swerveSubsystem.getDriverHeading().getRadians();
                     double lockHeadingRads = (Math.abs(currentHeadingRads) > Math.PI / 2.0) ? Math.PI : 0;
 
@@ -322,9 +333,13 @@ public class RobotContainer {
     public Command getAutonomousCommand() {
         // TODO: find some way to set up listeners such that we can preconstruct this before auton starts
         if (!(driveSubsystem instanceof BaseSwerveSubsystem)) return null;
+
+        PlacePosition initialPose = autonInitialPoseChooser.getSelected();
+        if (initialPose == null) return null;
+
         return autonPathChooser.getSelected().create(
             (BaseSwerveSubsystem) driveSubsystem, rollerSubsystem, tiltedElevatorSubsystem,
-            autonInitialPoseChooser.getSelected(), isRedEntry.getBoolean(false)
+            initialPose, isRedEntry.getBoolean(false)
         );
     }
 

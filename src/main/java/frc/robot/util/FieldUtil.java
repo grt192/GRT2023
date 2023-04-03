@@ -5,7 +5,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 
 public class FieldUtil {
-    private static double FIELD_WIDTH_METERS = Units.inchesToMeters(650.75);
+    private static double FIELD_WIDTH_METERS = 16.54175;
 
     /**
      * Mirrors a pose across the game field. Use this to mirror BLUE autonomous poses to get 

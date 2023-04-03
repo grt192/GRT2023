@@ -29,9 +29,9 @@ public class Superstructure extends SubsystemBase {
     private ElevatorState lastElevatorState;
 
     private final ShuffleboardTab shuffleboardTab = Shuffleboard.getTab("Driver");
-    private final GenericEntry cancellingEntry = shuffleboardTab.add("Align cancel", false)
-        .withPosition(9, 3)
-        .getEntry();
+    // private final GenericEntry cancellingEntry = shuffleboardTab.add("Align cancel", false)
+    //     .withPosition(9, 3)
+    //     .getEntry();
 
     public Superstructure(
         RollerSubsystem rollerSubsystem, TiltedElevatorSubsystem tiltedElevatorSubsystem, LEDSubsystem ledSubsystem,
@@ -70,16 +70,17 @@ public class Superstructure extends SubsystemBase {
 
         // Close the roller when the elevator extends below ALLOW_OPEN_EXTENSION_METERS.
         rollerSubsystem.allowOpen = tiltedElevatorSubsystem.getExtensionMeters() >= ALLOW_OPEN_EXTENSION_METERS;
+        ledSubsystem.setHeldPiece(rollerSubsystem.getPiece());
 
         // Cancel auto-align command if magnitude of drive inputs is greater than 0.15.
-        double translateMagnitude = Math.hypot(
-            driveController.getForwardPower(),
-            driveController.getLeftPower()
-        );
-        double turnMagnitude = Math.abs(driveController.getRotatePower());
-        boolean cancelling = translateMagnitude > CANCEL_AUTO_ALIGN_POWER || turnMagnitude > CANCEL_AUTO_ALIGN_POWER;
+        // double translateMagnitude = Math.hypot(
+        //     driveController.getForwardPower(),
+        //     driveController.getLeftPower()
+        // );
+        // double turnMagnitude = Math.abs(driveController.getRotatePower());
+        // boolean cancelling = translateMagnitude > CANCEL_AUTO_ALIGN_POWER || turnMagnitude > CANCEL_AUTO_ALIGN_POWER;
         
-        if (cancelling) autoAlignCommand.cancel();
-        cancellingEntry.setBoolean(cancelling);
+        // if (cancelling) autoAlignCommand.cancel();
+        // cancellingEntry.setBoolean(cancelling);
     }
 }
