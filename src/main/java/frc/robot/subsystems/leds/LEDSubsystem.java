@@ -98,7 +98,7 @@ public class LEDSubsystem extends SubsystemBase {
             colorOffset %= LED_LENGTH;
             fadeTimer.start();
             colorSensorLayer.fillGrouped(
-                5, 10, 3,
+                5, 10, 5,
                 COLOR_SENSOR_OFF_COLOR,
                 crossFadeWithTime(fadeTimer.get(), COLOR_SENSOR_FADE_PERIOD_SECONDS),
                 (int) colorOffset

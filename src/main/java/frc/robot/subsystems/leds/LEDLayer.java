@@ -95,7 +95,7 @@ public class LEDLayer {
             } else if (ledNumInSegment < onGroupLength + borderLength) {
                 setLED(i, color, opacity);
             } else if(ledNumInSegment < onGroupLength + borderLength * 2){
-                setLED(i, color, opacity * (1 - (ledNumInSegment - onGroupLength - borderLength + 1) / (borderLength + 1)));
+                setLED(i, color, opacity * (1 - ((ledNumInSegment - onGroupLength - borderLength + 1.) / (borderLength + 1))));                
             } else {
                 setLED(i, null, opacity);
             }
