@@ -302,7 +302,7 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
      * Gets the states of each module as a `SwerveModulePosition[]`.
      * @return The states of each module.
      */
-    private SwerveModulePosition[] getModuleStates() {
+    public SwerveModulePosition[] getModuleStates() {
         return new SwerveModulePosition[] {
             topLeftModule.getState(),
             topRightModule.getState(),
