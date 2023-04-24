@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
+import frc.robot.util.TrackingTimer;
 
 public class GoToPointCommand extends CommandBase {
     private final BaseSwerveSubsystem swerveSubsystem;
@@ -21,7 +22,7 @@ public class GoToPointCommand extends CommandBase {
     private final PIDController yController = new PIDController(3.5, 0, 0);
     private final PIDController thetaController;
 
-    private final Timer timer = new Timer();
+    private final Timer stopTimer = new Timer();
 
     private final Pose2d targetPose;
     private Pose2d currentPose;
@@ -31,16 +32,19 @@ public class GoToPointCommand extends CommandBase {
     private static final double THETA_TOLERANCE_RADS = Math.toRadians(3.0);
     private static final double SPEED_TOLERANCE_METERS_PER_SEC = 1;
 
+    SwerveModulePosition[] previousModulePositions;
+
     public GoToPointCommand(BaseSwerveSubsystem swerveSubsystem, Pose2d targetPose) {
         this.swerveSubsystem = swerveSubsystem;
         this.kinematics = swerveSubsystem.getKinematics();
         this.thetaController = swerveSubsystem.getThetaController();
+        previousModulePositions = swerveSubsystem.getModuleStates();
 
         this.targetPose = targetPose;
 
         addRequirements(swerveSubsystem);
 
-        timer.start();
+        stopTimer.start();
     }
 
     @Override
@@ -102,14 +106,14 @@ public class GoToPointCommand extends CommandBase {
         //iterates through each module, comparing its speed to the tolerance
         SwerveModulePosition[] modulePositions = swerveSubsystem.getModuleStates();
 
-        for (SwerveModulePosition modulePosition : modulePositions){
-            if(modulePosition.distanceMeters > tolerance){
+        for (int i = 0; i < 4; i++) {
+            if(Math.abs(modulePositions[i].distanceMeters - previousModulePositions[i].distanceMeters) / stopTimer.get() > tolerance){
                 return false;
             }
         }
+        stopTimer.reset();
 
         System.out.println("Speed m/s " + modulePositions[0].distanceMeters);
-        
 
         return true;
     }
