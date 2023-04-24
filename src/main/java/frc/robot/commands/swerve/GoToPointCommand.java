@@ -8,6 +8,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
@@ -20,13 +21,15 @@ public class GoToPointCommand extends CommandBase {
     private final PIDController yController = new PIDController(3.5, 0, 0);
     private final PIDController thetaController;
 
+    private final Timer timer = new Timer();
+
     private final Pose2d targetPose;
     private Pose2d currentPose;
 
     private static final double X_TOLERANCE_METERS = Units.inchesToMeters(1.0);
     private static final double Y_TOLERANCE_METERS = Units.inchesToMeters(1.0);
     private static final double THETA_TOLERANCE_RADS = Math.toRadians(3.0);
-    private static final double SPEED_TOLERANCE_METERS_PER_SEC = .1;
+    private static final double SPEED_TOLERANCE_METERS_PER_SEC = 1;
 
     public GoToPointCommand(BaseSwerveSubsystem swerveSubsystem, Pose2d targetPose) {
         this.swerveSubsystem = swerveSubsystem;
@@ -36,6 +39,8 @@ public class GoToPointCommand extends CommandBase {
         this.targetPose = targetPose;
 
         addRequirements(swerveSubsystem);
+
+        timer.start();
     }
 
     @Override
@@ -103,6 +108,9 @@ public class GoToPointCommand extends CommandBase {
             }
         }
 
+        System.out.println("Speed m/s " + modulePositions[0].distanceMeters);
+        
+
         return true;
     }
 
@@ -110,6 +118,7 @@ public class GoToPointCommand extends CommandBase {
     public boolean isFinished() {
         double xErrorMeters = Math.abs(targetPose.getX() - currentPose.getX());
         double yErrorMeters = Math.abs(targetPose.getY() - currentPose.getY());
+        isStopped(SPEED_TOLERANCE_METERS_PER_SEC);
         return xErrorMeters < X_TOLERANCE_METERS && yErrorMeters < Y_TOLERANCE_METERS && isHeadingAligned(THETA_TOLERANCE_RADS) && isStopped(SPEED_TOLERANCE_METERS_PER_SEC);
     }
 
