@@ -49,62 +49,74 @@ public class DualJoystickDriveController extends BaseDriveController {
 
     @Override
     public boolean getSwerveRelative() {
-        return rightJoystick.getTrigger();
+        return false;
+        // return rightJoystick.getTrigger();
     }
 
     @Override
     public boolean getSwerveHeadingLock() {
-        return leftMiddleButton.getAsBoolean();
+        return false;
+        // return leftMiddleButton.getAsBoolean();
     }
 
     @Override
     public JoystickButton getBalancerButton() {
-        return rightTopRightButton;
+        return null;
+        // return rightTopRightButton;
     }
 
     @Override
     public JoystickButton getFieldResetButton() {
-        return leftTopRightButton;
+        return null;
+        // return leftTopRightButton;
     }
 
     @Override
     public JoystickButton getCameraSwitchButton() {
-        return leftTopRightButton;
+        return null;
+        // return leftTopRightButton;
     }
 
     @Override
     public JoystickButton getChargingStationLockButton() {
-        return leftTopLeftButton;
+        return null;
+        // return leftTopLeftButton;
     }
 
     @Override
     public JoystickButton getAlignToClosestButton() {
-        return rightMiddleButton;
+        return null;
+        //return rightMiddleButton;
     }
 
     @Override
     public JoystickButton getAlignLeftButton() {
-        return rightMiddleLeftButton;
+        return null;
+        //return rightMiddleLeftButton;
     }
 
     @Override
     public JoystickButton getAlignRightButton() {
-        return rightMiddleRightButton;
+        return null;
+        //return rightMiddleRightButton;
     }
 
     @Override
     public JoystickButton getDriveForwardButton() {
-        return rightTopLeftButton;
+        return null;
+        //return rightTopLeftButton;
     }
 
     @Override
     public JoystickButton getCancelAutoAlignButton() {
-        return leftBackButton;
+        return null;
+        //return leftBackButton;
     }
 
     @Override
     public boolean approachShelf() {
-        return rightBackButton.getAsBoolean();
+        return false;
+        //return rightBackButton.getAsBoolean();
     }
 
     /**
