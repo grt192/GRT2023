@@ -25,7 +25,7 @@ public class AlignToNodeCommand extends ParallelCommandGroup {
         BaseSwerveSubsystem swerveSubsystem, TiltedElevatorSubsystem tiltedElevatorSubsystem,
         PlacePosition targetPlacePosition, boolean isRed
     ) {
-        GoToPointCommand driveCommand = new GoToPointCommand(swerveSubsystem, targetPlacePosition.alignPosition.getPose(isRed));
+        GoToPointCommand driveCommand = new GoToPointCommand(swerveSubsystem, targetPlacePosition.alignPosition.getPose(isRed), true);
 
         addCommands(
             driveCommand,

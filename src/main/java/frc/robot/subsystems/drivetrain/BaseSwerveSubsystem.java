@@ -51,7 +51,7 @@ public abstract class BaseSwerveSubsystem extends BaseDrivetrain {
 
     private final Timer lockTimer;
     private static final double LOCK_TIMEOUT_SECONDS = 1.0; // The elapsed idle time to wait before locking
-    private static final boolean LOCKING_ENABLE = true;
+    private static final boolean LOCKING_ENABLE = false;
     private boolean chargingStationLocked = false;
 
     private Rotation2d driverHeadingOffset = new Rotation2d(0);

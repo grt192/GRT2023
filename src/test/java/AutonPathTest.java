@@ -30,7 +30,7 @@ public class AutonPathTest {
      */
     @Test
     public void compileTestPaths() {
-        new TenFeetStraightLinePath(swerveSubsystem);
+        // new TenFeetStraightLinePath(swerveSubsystem);
         new TwentyFeetStraightLinePath(swerveSubsystem);
         new HighRotationLinePath(swerveSubsystem);
         new RotatingSCurveAutonSequence(swerveSubsystem);

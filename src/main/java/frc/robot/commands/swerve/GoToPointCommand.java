@@ -27,14 +27,14 @@ public class GoToPointCommand extends CommandBase {
     private final Pose2d targetPose;
     private Pose2d currentPose;
 
-    private static final double X_TOLERANCE_METERS = Units.inchesToMeters(1.0);
-    private static final double Y_TOLERANCE_METERS = Units.inchesToMeters(1.0);
-    private static final double THETA_TOLERANCE_RADS = Math.toRadians(3.0);
+    private static final double X_TOLERANCE_METERS = Units.inchesToMeters(.3);
+    private static final double Y_TOLERANCE_METERS = Units.inchesToMeters(.3);
+    private static final double THETA_TOLERANCE_RADS = Math.toRadians(.3);
     private static final double SPEED_TOLERANCE_METERS_PER_SEC = 1;
 
     SwerveModulePosition[] previousModulePositions;
 
-    public GoToPointCommand(BaseSwerveSubsystem swerveSubsystem, Pose2d targetPose) {
+    public GoToPointCommand(BaseSwerveSubsystem swerveSubsystem, Pose2d targetPose, boolean visionEnable) {
         this.swerveSubsystem = swerveSubsystem;
         this.kinematics = swerveSubsystem.getKinematics();
         this.thetaController = swerveSubsystem.getThetaController();
@@ -43,6 +43,10 @@ public class GoToPointCommand extends CommandBase {
         this.targetPose = targetPose;
 
         addRequirements(swerveSubsystem);
+
+        
+        swerveSubsystem.setVisionEnabled(visionEnable);
+        
 
         stopTimer.start();
     }
@@ -111,9 +115,11 @@ public class GoToPointCommand extends CommandBase {
                 return false;
             }
         }
-        stopTimer.reset();
 
-        System.out.println("Speed m/s " + modulePositions[0].distanceMeters);
+        System.out.println("Speed m/s " + (modulePositions[0].distanceMeters - previousModulePositions[0].distanceMeters) / stopTimer.get());
+        
+        stopTimer.reset();
+        previousModulePositions = modulePositions;
 
         return true;
     }
@@ -128,6 +134,7 @@ public class GoToPointCommand extends CommandBase {
 
     @Override
     public void end(boolean interrupted) {
+        swerveSubsystem.setVisionEnabled(true);
         currentPose = null;
     }
 }

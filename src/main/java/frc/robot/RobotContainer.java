@@ -152,6 +152,7 @@ public class RobotContainer {
         autonPathChooser.addOption("Bottom auton (1-piece)", BottomOnePieceAutonSequence::new);
         // autonPathChooser.addOption("Bottom auton (2-piece)", BottomTwoPieceAutonSequence::new);
         // autonPathChooser.addOption("Bottom balance auton", BottomBalanceAutonSequence::withDeadline);
+        autonPathChooser.addOption("10 ft auton", TenFeetStraightLinePath::new);
 
         autonInitialPoseChooser = new SendableChooser<>();
         for (PlacePosition position : PlacePosition.values()) {
