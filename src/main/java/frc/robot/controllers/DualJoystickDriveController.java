@@ -13,20 +13,20 @@ public class DualJoystickDriveController extends BaseDriveController {
         leftTrigger = new JoystickButton(leftJoystick, 1),
         leftMiddleButton = new JoystickButton(leftJoystick, 2),
         leftTopLeftButton = new JoystickButton(leftJoystick, 3),
-        leftTopRightButton = new JoystickButton(leftJoystick, 4),
+        leftTopRightButton = new JoystickButton(leftJoystick, 3),
         leftMiddleLeftButton = new JoystickButton(leftJoystick, 5),
         leftMiddleRightButton = new JoystickButton(leftJoystick, 6),
         leftBackButton = new JoystickButton(leftJoystick, 7);
 
     private final Joystick rightJoystick = new Joystick(1);
     private final JoystickButton
-        rightTrigger = new JoystickButton(rightJoystick, 1),
-        rightMiddleButton = new JoystickButton(rightJoystick, 2),
-        rightTopLeftButton = new JoystickButton(rightJoystick, 3),
-        rightTopRightButton = new JoystickButton(rightJoystick, 4),
-        rightMiddleLeftButton = new JoystickButton(rightJoystick, 5),
-        rightMiddleRightButton = new JoystickButton(rightJoystick, 6),
-        rightBackButton = new JoystickButton(rightJoystick, 7);
+    //     rightTrigger = new JoystickButton(rightJoystick, 1),
+        rightMiddleButton = new JoystickButton(rightJoystick, 3);
+    //     rightTopLeftButton = new JoystickButton(rightJoystick, 3),
+    //     rightTopRightButton = new JoystickButton(rightJoystick, 4),
+    //     rightMiddleLeftButton = new JoystickButton(rightJoystick, 5),
+    //     rightMiddleRightButton = new JoystickButton(rightJoystick, 6),
+    //     rightBackButton = new JoystickButton(rightJoystick, 7);
 
     private static final double JOYSTICK_DEADBAND = 0.08;
 
@@ -59,12 +59,13 @@ public class DualJoystickDriveController extends BaseDriveController {
 
     @Override
     public JoystickButton getBalancerButton() {
-        return rightTopRightButton;
+        return null;
+        //return rightTopRightButton;
     }
 
     @Override
     public JoystickButton getFieldResetButton() {
-        return leftTopRightButton;
+        return rightMiddleButton;
     }
 
     @Override
@@ -79,22 +80,26 @@ public class DualJoystickDriveController extends BaseDriveController {
 
     @Override
     public JoystickButton getAlignToClosestButton() {
-        return rightMiddleButton;
+        return null;
+        //return rightMiddleButton;
     }
 
     @Override
     public JoystickButton getAlignLeftButton() {
-        return rightMiddleLeftButton;
+        return null;
+        //return rightMiddleLeftButton;
     }
 
     @Override
     public JoystickButton getAlignRightButton() {
-        return rightMiddleRightButton;
+        return null;
+        //return rightMiddleRightButton;
     }
 
     @Override
     public JoystickButton getDriveForwardButton() {
-        return rightTopLeftButton;
+        return null;
+        //return rightTopLeftButton;
     }
 
     @Override
@@ -104,7 +109,8 @@ public class DualJoystickDriveController extends BaseDriveController {
 
     @Override
     public boolean approachShelf() {
-        return rightBackButton.getAsBoolean();
+        return false;
+        //return rightBackButton.getAsBoolean();
     }
 
     /**

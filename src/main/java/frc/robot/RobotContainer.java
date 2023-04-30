@@ -205,8 +205,8 @@ public class RobotContainer {
      * Configures button bindings for the drive subsystem and controller.
      */
     private void configureDriveBindings() {
-        driveController.getBalancerButton().whileTrue(balancerCommand);
-        driveController.getCameraSwitchButton().onTrue(new InstantCommand(switchableCamera::switchCamera));
+        // driveController.getBalancerButton().whileTrue(balancerCommand);
+        // driveController.getCameraSwitchButton().onTrue(new InstantCommand(switchableCamera::switchCamera));
 
         if (driveSubsystem instanceof BaseSwerveSubsystem) {
             final BaseSwerveSubsystem swerveSubsystem = (BaseSwerveSubsystem) driveSubsystem;
@@ -234,13 +234,13 @@ public class RobotContainer {
             }, swerveSubsystem));
 
             driveController.getFieldResetButton().onTrue(new InstantCommand(swerveSubsystem::resetDriverHeading, swerveSubsystem));
-            driveController.getChargingStationLockButton().onTrue(new InstantCommand(swerveSubsystem::toggleChargingStationLocked, swerveSubsystem));
+            // driveController.getChargingStationLockButton().onTrue(new InstantCommand(swerveSubsystem::toggleChargingStationLocked, swerveSubsystem));
 
-            driveController.getAlignToClosestButton().onTrue(autoAlignCommand);
-            driveController.getAlignLeftButton().onTrue(new InstantCommand(autoAlignCommand::alignLeft));
-            driveController.getAlignRightButton().onTrue(new InstantCommand(autoAlignCommand::alignRight));
-            driveController.getDriveForwardButton().onTrue(new InstantCommand(autoAlignCommand::driveForwardToPlace));
-            driveController.getCancelAutoAlignButton().onTrue(new InstantCommand(autoAlignCommand::cancel));
+            // driveController.getAlignToClosestButton().onTrue(autoAlignCommand);
+            // driveController.getAlignLeftButton().onTrue(new InstantCommand(autoAlignCommand::alignLeft));
+            // driveController.getAlignRightButton().onTrue(new InstantCommand(autoAlignCommand::alignRight));
+            // driveController.getDriveForwardButton().onTrue(new InstantCommand(autoAlignCommand::driveForwardToPlace));
+            // driveController.getCancelAutoAlignButton().onTrue(new InstantCommand(autoAlignCommand::cancel));
 
             /*
             brSwitch.onTrue(new InstantCommand(() -> {
