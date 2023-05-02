@@ -119,7 +119,7 @@ public class DualJoystickDriveController extends BaseDriveController {
      */
     private double getDriveScaling() {
         boolean isSlowMode = leftJoystick.getTrigger();
-        return isSlowMode ? 0.24 : 1.0;
+        return isSlowMode ? 0.3 : 1.0;
     }
 
     /**
