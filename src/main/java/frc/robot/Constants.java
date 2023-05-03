@@ -38,10 +38,10 @@ public final class Constants {
     public static final class SwerveConstants {
         public static final double TL_OFFSET_RADS = IS_R1 
             ? -2.9255307594961444 // 0.21606189409364873 
-            : -1.7595665454864502;//1.382026108103343;
+            : 1.382026108103343;
         public static final double TR_OFFSET_RADS = IS_R1 
             ? -1.1199431538621365 // 2.0216494997276566
-            : -0.3700309236857553;// 2.771561729904038;
+            : 2.771561729904038;
         public static final double BL_OFFSET_RADS = IS_R1
             ? -2.374440566697393
             : -0.0563106973979135 ; //3.0852819561918796
