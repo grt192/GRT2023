@@ -279,7 +279,11 @@ public class AutoAlignCommand extends InstantCommand {
         // drive forward command. Otherwise, just align.
         if (driveForwardAfterwards) {
             wrappedAlignCommand = new AlignToNodeCommand(swerveSubsystem, tiltedElevatorSubsystem, targetPlacePosition, isRed).andThen(
-                new GoToPointCommand(swerveSubsystem, targetPlacePosition.placePosition.getPose(isRed), false)
+                new InstantCommand(() -> System.out.println("FINISHED ALIGNING"))
+            ).andThen(
+                new GoToPointCommand(swerveSubsystem, targetPlacePosition.placePosition.getPose(isRed), false, .2)
+            ).andThen(
+                new InstantCommand(() -> System.out.println("FINISHED EVERYTHING"))
             );
         } else {
             wrappedAlignCommand = new AlignToNodeCommand(swerveSubsystem, tiltedElevatorSubsystem, targetPlacePosition, isRed);
