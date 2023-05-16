@@ -25,12 +25,16 @@ public class AlignToNodeCommand extends ParallelCommandGroup {
         BaseSwerveSubsystem swerveSubsystem, TiltedElevatorSubsystem tiltedElevatorSubsystem,
         PlacePosition targetPlacePosition, boolean isRed
     ) {
-        GoToPointCommand driveCommand = new GoToPointCommand(swerveSubsystem, targetPlacePosition.alignPosition.getPose(isRed));
+        GoToPointCommand driveCommand = new GoToPointCommand(swerveSubsystem, targetPlacePosition.alignPosition.getPose(isRed), true);
 
         addCommands(
-            driveCommand,
+            driveCommand.andThen(new InstantCommand(() -> System.out.println("FINISHED DRIVE"))),
             new WaitUntilCommand(() -> driveCommand.isHeadingAligned(ELEVATOR_TOLERANCE_RADS)).andThen(
+                new InstantCommand(() -> System.out.println("FINISHED ELEVATOR ALIGN"))
+            ).andThen(
                 new InstantCommand(() -> tiltedElevatorSubsystem.setState(targetPlacePosition.elevatorState), tiltedElevatorSubsystem)
+            ).andThen(
+                new InstantCommand(() -> System.out.println("FINISHED ELEVATOR"))
             )
         );
     }

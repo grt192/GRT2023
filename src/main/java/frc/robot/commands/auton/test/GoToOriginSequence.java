@@ -12,7 +12,8 @@ public class GoToOriginSequence extends SequentialCommandGroup {
         addCommands(
             new GoToPointCommand(
                 swerveSubsystem, 
-                new Pose2d()
+                new Pose2d(),
+                true
             )
         );
     }

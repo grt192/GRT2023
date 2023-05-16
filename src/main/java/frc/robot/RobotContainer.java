@@ -127,7 +127,8 @@ public class RobotContainer {
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
     public RobotContainer() {
-        driveController = new DualJoystickDriveController();
+        // driveController = new DualJoystickDriveController();
+        driveController = new XboxDriveController();
 
         photonWrapper = new PhotonWrapper();
         switchableCamera = new SwitchableCamera(shuffleboardTab);
@@ -152,6 +153,7 @@ public class RobotContainer {
         autonPathChooser.addOption("Bottom auton (1-piece)", BottomOnePieceAutonSequence::new);
         // autonPathChooser.addOption("Bottom auton (2-piece)", BottomTwoPieceAutonSequence::new);
         // autonPathChooser.addOption("Bottom balance auton", BottomBalanceAutonSequence::withDeadline);
+        autonPathChooser.addOption("10 ft auton", TenFeetStraightLinePath::new);
 
         autonInitialPoseChooser = new SendableChooser<>();
         for (PlacePosition position : PlacePosition.values()) {
