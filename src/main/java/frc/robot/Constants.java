@@ -25,7 +25,7 @@ import org.photonvision.PhotonCamera;
  * wherever the constants are needed, to reduce verbosity.
  */
 public final class Constants {
-    public static final boolean IS_R1 = false;
+    public static final boolean IS_R1 = true;
     public static final boolean GLOBAL_SHUFFLEBOARD_ENABLE = false;
 
     public static final class TankConstants {

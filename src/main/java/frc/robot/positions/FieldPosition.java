@@ -109,10 +109,22 @@ public enum FieldPosition {
         Units.inchesToMeters(29),
         Rotation2d.fromDegrees(180)
     )),
+
+    BOTTOM_EARLYTURNTEST_MIDPOS(new Pose2d( // pose to hit before starting the early turning, to prevent robot from swinging thru midPose1
+        Units.inchesToMeters(126.635),
+        Units.inchesToMeters(29),
+        Rotation2d.fromDegrees(180)
+    )),
+
     BOTTOM_MIDPOS_2(new Pose2d(
         Units.inchesToMeters(170),
         Units.inchesToMeters(29), 
         Rotation2d.fromDegrees(180)
+    )),
+    BOTTOM_MIDPOS_3(new Pose2d(
+        Units.inchesToMeters(246.543),
+        Units.inchesToMeters(34.97), 
+        Rotation2d.fromDegrees(0)
     )),
 
     BOTTOM_1PIECEPOS(new Pose2d(
