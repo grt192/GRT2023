@@ -7,6 +7,14 @@ import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
 
 import static frc.robot.Constants.BalancerConstants.*;
 
+/**
+     * Balance command that calculates the drive power based on the sum of two PIDs
+     * The PID sum consists of angle PID and a change-in-angle PID
+     * 
+     * This command was not used at any 2023 competition. 
+     * Refer to DefaultBalancerCommand for the competition command.  
+     * 
+     */
 public class DualPIDBalancerCommand extends BaseBalancerCommand {
     private final PIDController anglePID;
     private final PIDController deltaPID;

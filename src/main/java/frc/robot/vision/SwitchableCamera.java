@@ -11,6 +11,12 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 
 /**
  * A `VideoSource` that toggles between a front and back camera.
+ * 
+ * The ShuffleBoard UI used in the 2023 season allowed drivers to switch
+ * camera feeds using a button on the controllers.
+ * 
+ * The individual cameras have special settings introduced to make video streams better
+ * for each view. 
  */
 public class SwitchableCamera {
     private final UsbCamera top;
