@@ -6,6 +6,14 @@ import edu.wpi.first.math.controller.PIDController;
 import frc.robot.subsystems.drivetrain.BaseDrivetrain;
 import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
 
+/**
+     * Balance command that switches angle PID based on magnitude of angular error.
+     * Switching between the rough and fine PID effectively changes the PID constants.
+     * 
+     * This command was not used at any 2023 competition. 
+     * Refer to DefaultBalancerCommand for the competition command.  
+     * 
+     */
 public class PIDSwitchBalancerCommand extends BaseBalancerCommand {
     private final PIDController roughPID;
     private final PIDController finePID;

@@ -12,6 +12,12 @@ import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
 /**
  * A command that moves robot over charging station at a varying speed, 
  *  changing speed based on the stage of the charging station the robot is on. 
+ * 
+ * Command enables the robot to go over the charging station.
+ * Mobility outside of the 'community' would earn 3 extra points in the 2023 game.
+ * 
+ * This command was not used at any 2023 competition. 
+ * Testing on this command was not fully complete, so the overall functionality of this code is unknown. 
  */
 public class GoOverCommand extends CommandBase {
     private static final double APPROACH_STATION_POWER = -0.75;

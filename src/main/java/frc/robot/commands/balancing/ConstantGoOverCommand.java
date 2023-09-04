@@ -13,6 +13,12 @@ import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
  * A command that moves robot over charging station at a constant speed, 
  * pausing after passing the center of rotation to allow charging station motion,
  * and then continuing on to exit the community.
+ * 
+ * Command enables the robot to go over the charging station.
+ * Mobility outside of the 'community' would earn 3 extra points in the 2023 game.
+ * 
+ * This command was not used at any 2023 competition. 
+ * Testing on this command was not fully complete, so the overall functionality of this code is unknown. 
  */
 public class ConstantGoOverCommand extends CommandBase {
     private final BaseDrivetrain driveSubsystem;
@@ -28,7 +34,7 @@ public class ConstantGoOverCommand extends CommandBase {
     private static final double POWER_SCALE = 0.5;
 
     private final Timer timer;
-
+    
     public ConstantGoOverCommand(BaseDrivetrain driveSubsystem, boolean isRed) {
         this.driveSubsystem = driveSubsystem;
         this.ahrs = driveSubsystem.getAhrs();

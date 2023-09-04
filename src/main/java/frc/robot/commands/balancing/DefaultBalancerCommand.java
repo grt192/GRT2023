@@ -36,6 +36,8 @@ public class DefaultBalancerCommand extends BaseBalancerCommand {
      * Constructs a default balancer command from a drive subsystem and a boolean indicating
      * whether to balance from the front or back.
      * 
+     * This command was used at all competitions in 2023. 
+     * 
      * @param driveSubsystem The drive subsystem.
      * @param reverseBalance true if the robot balances backwards
      */
