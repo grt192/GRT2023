@@ -29,7 +29,9 @@ public class LEDSubsystem extends SubsystemBase {
 
     private final Timer fadeTimer = new Timer();
     private static final double COLOR_SENSOR_FADE_PERIOD_SECONDS = .5;
+    private final double COLOR_PULSE_SPEED = .2;
     private boolean colorSensorOff = false;
+    private double colorOffset = 0;
 
     private static final double BRIGHTNESS_SCALE_FACTOR = 0.25;
     private static final double INPUT_DEADZONE = 0.35;
@@ -115,10 +117,14 @@ public class LEDSubsystem extends SubsystemBase {
 
         // Update colorSensorLayer - pulsing red grouped indicators to indicate a color sensor failure.
         if (colorSensorOff) {
+            colorOffset += inc * COLOR_PULSE_SPEED;
+            colorOffset %= LED_LENGTH;
             fadeTimer.start();
             colorSensorLayer.fillGrouped(
-                5, 10,
-                crossFadeWithTime(COLOR_SENSOR_OFF_COLOR, baseColor, fadeTimer.get(), COLOR_SENSOR_FADE_PERIOD_SECONDS)
+                5, 10, 5,
+                COLOR_SENSOR_OFF_COLOR,
+                crossFadeWithTime(fadeTimer.get(), COLOR_SENSOR_FADE_PERIOD_SECONDS),
+                (int) colorOffset
             );
         } else {
             fadeTimer.stop();
@@ -159,22 +165,14 @@ public class LEDSubsystem extends SubsystemBase {
 
     /**
      * Cross-fades between two colors using a sinusoidal scaling function.
-     * @param color The color to set.
-     * @param fadeColor The color to fade into.
      * @param currentTimeSeconds The current elapsed time of fading.
      * @param periodSeconds The period of the fade function, in seconds.
-     * @return The scaled and faded color.
+     * @return The scale to set the opacity to
      */
-    private static Color crossFadeWithTime(Color color, Color fadeColor, double currentTimeSeconds, double periodSeconds) {
+    private static double crossFadeWithTime(double currentTimeSeconds, double periodSeconds) {
         // The [0.0, 1.0] brightness scale to scale the color by. Scale = 1/2 * cos(t) + 1/2 where
         // t is scaled to produce the desired period.
-        double scale = 0.5 * Math.cos(currentTimeSeconds * 2 * Math.PI / periodSeconds) + 0.5;
-
-        return new Color(
-            color.red * scale + fadeColor.red * (1 - scale),
-            color.green * scale + fadeColor.green * (1 - scale),
-            color.blue * scale + fadeColor.blue * (1 - scale)
-        );
+        return(0.5 * Math.cos(currentTimeSeconds * 2 * Math.PI / periodSeconds) + 0.5);
     }
 
     /**
