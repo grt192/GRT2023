@@ -58,6 +58,7 @@ import frc.robot.subsystems.tiltedelevator.TiltedElevatorSubsystem;
 import frc.robot.subsystems.tiltedelevator.ElevatorState.OffsetState;
 import frc.robot.util.ShuffleboardUtil;
 import frc.robot.subsystems.drivetrain.BaseSwerveSubsystem;
+import frc.robot.subsystems.drivetrain.TankEmulatorSwerveSubsystem;
 import frc.robot.subsystems.drivetrain.MissileShellSwerveSubsystem;
 import frc.robot.subsystems.drivetrain.MissileShellSwerveSweeperSubsystem;
 import frc.robot.subsystems.drivetrain.SwerveSubsystem;
@@ -136,7 +137,7 @@ public class RobotContainer {
         signalLEDSubsystem = new LEDSubsystem(); 
 
         // driveSubsystem = new MissileShellSwerveSubsystem();
-        driveSubsystem = new SwerveSubsystem(photonWrapper, signalLEDSubsystem);
+        driveSubsystem = new TankEmulatorSwerveSubsystem(photonWrapper, signalLEDSubsystem);
         rollerSubsystem = new RollerSubsystem();
         tiltedElevatorSubsystem = new TiltedElevatorSubsystem();
 
@@ -210,7 +211,16 @@ public class RobotContainer {
         driveController.getBalancerButton().whileTrue(balancerCommand);
         driveController.getCameraSwitchButton().onTrue(new InstantCommand(switchableCamera::switchCamera));
 
-        if (driveSubsystem instanceof BaseSwerveSubsystem) {
+        if(driveSubsystem instanceof TankEmulatorSwerveSubsystem){
+            final TankEmulatorSwerveSubsystem tankSubsystem = (TankEmulatorSwerveSubsystem) driveSubsystem;
+            tankSubsystem.setDefaultCommand(new RunCommand(() -> {
+                double forwardPower = driveController.getForwardPower();
+                double rotatePower = driveController.getRotatePower();
+                tankSubsystem.setDrivePowers(forwardPower, rotatePower);
+        }, tankSubsystem));
+        }
+
+        else if (driveSubsystem instanceof BaseSwerveSubsystem) {
             final BaseSwerveSubsystem swerveSubsystem = (BaseSwerveSubsystem) driveSubsystem;
 
             swerveSubsystem.setDefaultCommand(new RunCommand(() -> {
